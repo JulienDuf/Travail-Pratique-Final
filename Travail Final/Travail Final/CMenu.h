@@ -62,7 +62,7 @@ public:
 		}
 	}
 
-	// Porcédure permettant d'afficher les menus...
+	// Porcédure permettant d'afficher le menu...
 	// En entrée:
 	// Param1: Le renderer de destination du menu.
 	void ShowMenu(SDL_Renderer* _pSDLRenderer) {

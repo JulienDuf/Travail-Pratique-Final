@@ -32,6 +32,8 @@ void Start(void) {
 //
 void Close(void) {
 
+	delete pEvent;
+
 	SDL_Quit();
 	TTF_Quit();
 }

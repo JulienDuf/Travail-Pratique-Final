@@ -71,6 +71,8 @@
   <ItemGroup>
     <ClInclude Include="CControl.h" />
     <ClInclude Include="CLabel.h" />
+    <ClInclude Include="CListeDC.h" />
+    <ClInclude Include="CMenu.h" />
     <ClInclude Include="CWindow.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

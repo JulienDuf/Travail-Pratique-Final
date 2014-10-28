@@ -9,6 +9,11 @@ private :
 	SDL_Rect m_pRectPosition; // La postion/destination qu'on veut l'afficher.
 
 public:
-	//CLabel(string _strTexte, TTF_Font* _Font,)
+
+	CLabel(string _strTexte, TTF_Font* _Font) {
+
+	}
+
+	void ShowControl(SDL_Renderer* )
 
 };

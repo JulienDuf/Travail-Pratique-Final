@@ -5,9 +5,10 @@
 #include <SDL2\SDL_image.h>
 #include <iostream>
 using namespace std;
-#include "CWindow.h"
 #include "CControl.h"
 #include "CLabel.h"
+#include "CMenu.h"
+#include "CWindow.h"
 
 // Variables
 bool boExecution; // Variable de la boucle principale du programme.

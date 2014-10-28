@@ -3,6 +3,11 @@
 #include <SDL2\SDL.h>
 #include <SDL2\SDL_ttf.h>
 #include <SDL2\SDL_image.h>
+#include <iostream>
+using namespace std;
+#include "CWindow.h"
+#include "CControl.h"
+#include "CLabel.h"
 
 // Variables
 bool boExecution; // Variable de la boucle principale du programme.

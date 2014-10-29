@@ -29,7 +29,7 @@ public:
 		pSDLSurface = TTF_RenderText_Blended(_Font, _strTexte.c_str(), _Couleur); // Créé la surface contenant le texte.
 
 		// Met la surface en texture.
-		SDL_CreateTextureFromSurface(_pRenderer, pSDLSurface);
+		SDL_CreateTextureFromSurface(_pRenderer, pSDLSurface); // À REGARDER ... FUITES DE MÉMOIRES ? CAR ELLE RETOURNE DANS LE VIDE ! = ...
 		SDL_FreeSurface(pSDLSurface); // Détruit la surface.
 
 		// Définie le rect de position...

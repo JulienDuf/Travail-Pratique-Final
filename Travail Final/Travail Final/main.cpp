@@ -9,6 +9,7 @@ using namespace std;
 #include "CLabel.h"
 #include "CMenu.h"
 #include "CWindow.h"
+#include "CButton.h"
 
 // Variables
 bool boExecution; // Variable de la boucle principale du programme.

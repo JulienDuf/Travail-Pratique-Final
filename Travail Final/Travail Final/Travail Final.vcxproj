@@ -69,6 +69,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CButton.h" />
     <ClInclude Include="CControl.h" />
     <ClInclude Include="CLabel.h" />
     <ClInclude Include="CMenu.h" />

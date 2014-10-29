@@ -5,18 +5,39 @@
 //
 class CButton {
 private:
+
 	SDL_Texture* m_pSDLTextureButton; // La texture du button.
 	SDL_Rect m_pSDLRectPositionButton; // Position qu'on veut l'afficher.
 	unsigned int m_uiNombreButton; // Le nombre de button dans le sprite.
 	SDL_Rect m_pSDLRectSource; // La source du sprite.
 	unsigned int m_uiButtonState; // À quel sprite on est rendu.
 public:
+
 	CButton(char* _chrTexte, TTF_Font* _pSDLFont, SDL_Color _SDLColor, SDL_Surface* _pSDLSurface, SDL_Rect _SDLRectPosition, unsigned int _uiNombreButton, unsigned int _uiState, SDL_Renderer* _pSDLRenderer) {
+		
+		/*
+		C'est très bon, mais il faut faire un for avec le SDL_BlitSurface, car en ce moment le texte se met seulement sur un état de 
+		bouton.
+		Attention !! : Tu utilise le m_pSDLRectSource sans l'avoir initialisé !!
+		Note : Dans le for, il va falloir que modifie le x du rect source pour que le texte ne soit pas toujours mit à la même place.
+		*/
+		
+		/*
+		Autre chose : Un certain Gabriel préfère que nos w et nos h soit défini dans le main, donc les grandeurs ne respecteront pas 
+		nécessairement les grandeurs réelles de la texture, donc pas de SDL_QueryTexture. Il faut plutôt utiliser le _SDLRectPosition.
+		Dernière chose, tu n'initialise pas les x et les y des rect.
+		*/
+		
+		/*
+		Je sais qu je t'ai écrit beaucoup de chose, mais ta logique pour le constructeur est très bonne, il y a juste quelque que manquement.
+		*/
 		m_uiNombreButton = _uiNombreButton;
 		// Rend le text en surface.
 		SDL_Surface* pSDLSurfaceTmp; // Surface temporaire.
 
 		pSDLSurfaceTmp = TTF_RenderText_Blended(_pSDLFont, _chrTexte, _SDLColor); // Avoir la surface du texte.
+
+		// Faire un for...
 
 		// Créer les 2 surfaces en 1.
 		SDL_BlitSurface(pSDLSurfaceTmp, NULL, _pSDLSurface, &m_pSDLRectSource); 

@@ -5,12 +5,12 @@
 // Modifiée par Gabriel Beaudry (gabriel.bdry@gmail.com) le 28 octobre 2014.
 //
 
-#include "CListeDC.h"
+#include "CArbreAVL.h"
 
 class CWindow {
 private:
 
-	CListeDC<CMenu*>* m_pListeMenu; // Liste des menus.
+	CArbreAVL<CMenu*>* m_pArbreMenu; // Liste des menus.
 	SDL_Window* m_pSDLWindow; // La fenetre.
 	SDL_Renderer* m_pSDLRenderer; // Renderer.
 public:
@@ -21,7 +21,7 @@ public:
 	CWindow(unsigned int _uiLargeur, unsigned int _uiHauteur) {
 		SDL_CreateWindowAndRenderer(_uiLargeur, _uiHauteur, NULL, &m_pSDLWindow, &m_pSDLRenderer); // Créer une fenêtre avec largeur, hauteur et le renderer.
 		SDL_SetWindowPosition(m_pSDLWindow, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
-		m_pListeMenu = new CListeDC<CMenu*>();
+		m_pArbreMenu = new CArbreAVL<CMenu*>();
 	}
 
 	// Destructeur ...
@@ -39,7 +39,7 @@ public:
 
 		va_start(parametres, argc);
 		for (int i = 0; i < argc; i++) {
-			m_pListeMenu->AjouterDebut(va_arg(parametres, CMenu*));
+			m_pArbreMenu->Ajouter(va_arg(parametres, CMenu*));
 		}
 		va_end(parametres);
 	}
@@ -53,7 +53,7 @@ public:
 
 		va_start(parametres, argc);
 		for (int i = 0; i < argc; i++) {
-			m_pListeMenu->AllerAObjetCurseur(va_arg(parametres, CMenu*), true);
+			m_pArbreMenu->Retirer(va_arg(parametres, CMenu*));
 		}
 		va_end(parametres);
 	}

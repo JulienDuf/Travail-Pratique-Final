@@ -7,7 +7,7 @@
 class CMenu {
 private:
 
-	CListeDC<CControl*>* m_pListeControl; // Liste des contrôles.
+	CArbreAVL<CControl*>* m_pArbreControl; // Liste des contrôles.
 	bool m_boShow; // Booléen qui dicte si le menu s'affiche ou non.
 
 public:
@@ -24,7 +24,7 @@ public:
 
 			va_start(parametres, argc);
 			for (int i = 0; i < argc; i++) {
-				m_pListeControl->AjouterDebut(va_arg(parametres, CControl*));
+				m_pArbreControl->Ajouter(va_arg(parametres, CControl*));
 			}
 			va_end(parametres);
 		}
@@ -40,7 +40,7 @@ public:
 
 			va_start(parametres, argc);
 			for (int i = 0; i < argc; i++) {
-				m_pListeControl->AjouterDebut(va_arg(parametres, CControl*));
+				m_pArbreControl->Ajouter(va_arg(parametres, CControl*));
 			}
 			va_end(parametres);
 		}
@@ -56,7 +56,7 @@ public:
 
 			va_start(parametres, argc);
 			for (int i = 0; i < argc; i++) {
-				m_pListeControl->AllerAObjetCurseur(va_arg(parametres, CControl*), true);
+				m_pArbreControl->Retirer(va_arg(parametres, CControl*));
 			}
 			va_end(parametres);
 		}
@@ -67,7 +67,7 @@ public:
 	// Param1: Le renderer de destination du menu.
 	void ShowMenu(SDL_Renderer* _pSDLRenderer) {
 		if (m_boShow) {
-			//m_pListeControl-> à faire avec l'arbre???
+			m_pArbreControl->ParcoursControl(_pSDLRenderer);
 		}
 	}
 };

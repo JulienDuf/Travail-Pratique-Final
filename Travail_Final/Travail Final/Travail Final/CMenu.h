@@ -19,6 +19,7 @@ public:
 	// Param3...; Contrôles à ajouter.
 	CMenu(bool _boShow, unsigned int argc, ...) {
 		m_boShow = _boShow;
+		m_pArbreControl = new CArbreAVL<CControl*>();
 		if (argc > 0) {
 			va_list parametres;
 

@@ -11,6 +11,7 @@ private:
 	unsigned int m_uiNombreButton; // Le nombre de button dans le sprite.
 	SDL_Rect m_pSDLRectSource; // La source du sprite.
 	unsigned int m_uiButtonState; // À quel sprite on est rendu.
+
 public:
 
 	CButton(char* _chrTexte, TTF_Font* _pSDLFont, SDL_Color _SDLColor, SDL_Surface* _pSDLSurface, SDL_Rect _SDLRectPosition, unsigned int _uiNombreButton, unsigned int _uiState, SDL_Renderer* _pSDLRenderer) {
@@ -22,25 +23,25 @@ public:
 
 		pSDLSurfaceTmp = TTF_RenderText_Blended(_pSDLFont, _chrTexte, _SDLColor); // Avoir la surface du texte.
 		
-		SDL_Rect SDLRectText; // Rect du texte.
+		SDL_Rect SDLRectText = {0,0,0,0}; // Rect du texte.
 		
 		// La destination est le meme que la source.
 		m_pSDLRectPositionButton = _SDLRectPosition;
 		m_pSDLRectSource = m_pSDLRectPositionButton;
 		// Largeur d'une image.
 		m_pSDLRectSource.w = m_pSDLRectSource.w / _uiNombreButton;
-		m_pSDLRectPositionButton.w = m_pSDLRectPositionButton.w / _uiNombreButton;
-		m_pSDLRectPositionButton.h = m_pSDLRectSource.h;
 		m_pSDLRectPositionButton.w = m_pSDLRectSource.w;
 
 		// Pour centrer le texte sur les bouttons.
-		SDLRectText.x = (_pSDLSurface->w - pSDLSurfaceTmp->w) / 2‏; 
-		SDLRectText.y = (_pSDLSurface->h - pSDLSurfaceTmp->h) / 2‏;
+
+		SDLRectText.x = (m_pSDLRectSource.w - pSDLSurfaceTmp->w) / 2;
+		SDLRectText.y = (m_pSDLRectSource.w - pSDLSurfaceTmp->h) / 2;
+
 		// Faire un for...
 		for (int i = 0; i < _uiNombreButton; i++) {
 			// Créer les 2 surfaces en 1.
-			SDLRectText.x += m_pSDLRectSource.w;
 			SDL_BlitSurface(pSDLSurfaceTmp, NULL, _pSDLSurface, &SDLRectText);
+			SDLRectText.x += m_pSDLRectSource.w;
 		}
 
 		
@@ -50,13 +51,6 @@ public:
 
 		// La texture du boutton avec le texte.
 		m_pSDLTextureButton = SDL_CreateTextureFromSurface(_pSDLRenderer, _pSDLSurface);
-
-		
-		
-		
-
-		
-		
 
 		// L'image a laquel on est rendu dans le sprite ("L'état).
 		m_uiButtonState = _uiNombreButton;
@@ -78,10 +72,12 @@ public:
 		m_pSDLRectPositionButton = _SDLRectDestination;
 		m_pSDLRectSource.w = (m_pSDLRectSource.w / _uiNombreButton); // La largeur d'une image.
 		m_pSDLRectSource.x = m_pSDLRectSource.w * _uiState; // Pour afficher le bon état.
+		m_pSDLRectSource.y = 0;
 		m_pSDLRectPositionButton.w = m_pSDLRectPositionButton.w / _uiNombreButton; // La largeur de la destination.
 
 
 	}
+	
 	// Procédure qui affiche le boutton.
 	// Paramètre : _pSDLRenderer : Le renderer de la fdestination du controle.
 	void ShowControl(SDL_Renderer* _pSDLRenderer) {

@@ -5,6 +5,7 @@
 #include <SDL2\SDL_image.h>
 #include <iostream>
 using namespace std;
+#include "CArbreAVL.h"
 #include "CControl.h"
 #include "CLabel.h"
 #include "CMenu.h"

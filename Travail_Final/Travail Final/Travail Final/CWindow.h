@@ -5,8 +5,6 @@
 // Modifiée par Gabriel Beaudry (gabriel.bdry@gmail.com) le 28 octobre 2014.
 //
 
-#include "CArbreAVL.h"
-
 class CWindow {
 private:
 

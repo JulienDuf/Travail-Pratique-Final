@@ -3,4 +3,4 @@
 Jeudi 24 octobre 2014. Nous avons établi comment nous voulions entammé notre projet. Nous avons décidé le cycle de vie itératif. Ensuite, nous avons établi les 
 fonctionnalités du menu et comment il ressemblera.	Mardi 28 octobre 2014. 2h de travail. Familiariser avec les programmes et j'ai fait le diagramme 
 d'utilisation pour les menus. 10 min Aussi j'ai ajouter les classes CWindow, CLabel et CControl. Mercredi 29 octobre 2014. 30 min. J'ai fait le constructeur de
-la classe Cbutton. 
+la classe Cbutton. Jeudi 30 octobre 2014. 1h20. J'ai fini la classe CButton avec une petite pause de 15 minutes.

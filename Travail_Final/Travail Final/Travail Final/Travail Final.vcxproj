@@ -72,6 +72,7 @@
     <ClInclude Include="CButton.h" />
     <ClInclude Include="CControl.h" />
     <ClInclude Include="CLabel.h" />
+    <ClInclude Include="CLabelLeftRight.h" />
     <ClInclude Include="CMenu.h" />
     <ClInclude Include="CWindow.h" />
   </ItemGroup>

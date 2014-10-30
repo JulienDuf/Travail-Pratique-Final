@@ -1,7 +1,7 @@
-//
+ï»¿//
 // 420-202-RE Gr. 01 : Travail final.
-// Classe représentant un boutton.
-// Créé le 29 octobre 2014 par Xavier St-Georges (xavierst-georges@hotmail.com)
+// Classe reprÃ©sentant un boutton.
+// CrÃ©Ã© le 29 octobre 2014 par Xavier St-Georges (xavierst-georges@hotmail.com)
 //
 class CButton {
 private:
@@ -10,37 +10,40 @@ private:
 	SDL_Rect m_pSDLRectPositionButton; // Position qu'on veut l'afficher.
 	unsigned int m_uiNombreButton; // Le nombre de button dans le sprite.
 	SDL_Rect m_pSDLRectSource; // La source du sprite.
-	unsigned int m_uiButtonState; // À quel sprite on est rendu.
+	unsigned int m_uiButtonState; // Ã€ quel sprite on est rendu.
 public:
 
 	CButton(char* _chrTexte, TTF_Font* _pSDLFont, SDL_Color _SDLColor, SDL_Surface* _pSDLSurface, SDL_Rect _SDLRectPosition, unsigned int _uiNombreButton, unsigned int _uiState, SDL_Renderer* _pSDLRenderer) {
 		
-		/*
-		C'est très bon, mais il faut faire un for avec le SDL_BlitSurface, car en ce moment le texte se met seulement sur un état de 
-		bouton.
-		Attention !! : Tu utilise le m_pSDLRectSource sans l'avoir initialisé !!
-		Note : Dans le for, il va falloir que modifie le x du rect source pour que le texte ne soit pas toujours mit à la même place.
-		*/
-		
-		/*
-		Autre chose : Un certain Gabriel préfère que nos w et nos h soit défini dans le main, donc les grandeurs ne respecteront pas 
-		nécessairement les grandeurs réelles de la texture, donc pas de SDL_QueryTexture. Il faut plutôt utiliser le _SDLRectPosition.
-		Dernière chose, tu n'initialise pas les x et les y des rect.
-		*/
-		
-		/*
-		Je sais qu je t'ai écrit beaucoup de chose, mais ta logique pour le constructeur est très bonne, il y a juste quelque que manquement.
-		*/
+		// Nombre de boutton dans le sprite.
 		m_uiNombreButton = _uiNombreButton;
 		// Rend le text en surface.
 		SDL_Surface* pSDLSurfaceTmp; // Surface temporaire.
 
 		pSDLSurfaceTmp = TTF_RenderText_Blended(_pSDLFont, _chrTexte, _SDLColor); // Avoir la surface du texte.
+		
+		SDL_Rect SDLRectText; // Rect du texte.
+		
+		// La destination est le meme que la source.
+		m_pSDLRectPositionButton = _SDLRectPosition;
+		m_pSDLRectSource = m_pSDLRectPositionButton;
+		// Largeur d'une image.
+		m_pSDLRectSource.w = m_pSDLRectSource.w / _uiNombreButton;
+		m_pSDLRectPositionButton.w = m_pSDLRectPositionButton.w / _uiNombreButton;
+		m_pSDLRectPositionButton.h = m_pSDLRectSource.h;
+		m_pSDLRectPositionButton.w = m_pSDLRectSource.w;
 
+		// Pour centrer le texte sur les bouttons.
+		SDLRectText.x = (_pSDLSurface->w - pSDLSurfaceTmp->w) / 2â€; 
+		SDLRectText.y = (_pSDLSurface->h - pSDLSurfaceTmp->h) / 2â€;
 		// Faire un for...
+		for (int i = 0; i < _uiNombreButton; i++) {
+			// CrÃ©er les 2 surfaces en 1.
+			SDLRectText.x += m_pSDLRectSource.w;
+			SDL_BlitSurface(pSDLSurfaceTmp, NULL, _pSDLSurface, &SDLRectText);
+		}
 
-		// Créer les 2 surfaces en 1.
-		SDL_BlitSurface(pSDLSurfaceTmp, NULL, _pSDLSurface, &m_pSDLRectSource); 
+		
 
 		// Delete surface temporaire du texte.
 		SDL_FreeSurface(pSDLSurfaceTmp);
@@ -48,17 +51,48 @@ public:
 		// La texture du boutton avec le texte.
 		m_pSDLTextureButton = SDL_CreateTextureFromSurface(_pSDLRenderer, _pSDLSurface);
 
-		// Avoir les attribu des Rects.
-		SDL_QueryTexture(m_pSDLTextureButton, NULL, NULL, &m_pSDLRectSource.w, &m_pSDLRectSource.h); // avoir la largueur et hauteur de la texture.
-		// Largeur d'une image.
-		m_pSDLRectSource.w = m_pSDLRectSource.w / _uiNombreButton;
+		
+		
+		
 
-		// La destination est le meme que la source.
-		m_pSDLRectPositionButton.h = m_pSDLRectSource.h; // La hauteur.
-		m_pSDLRectPositionButton.w = m_pSDLRectSource.w; // La destination est la même que la source.
+		
+		
 
-		// L'image a laquel on est rendu dans le sprite ("L'état).
+		// L'image a laquel on est rendu dans le sprite ("L'Ã©tat).
 		m_uiButtonState = _uiNombreButton;
 
+	}
+	//
+	// Constructeur pour un boutton qui n'a pas de texte.
+	// ParamÃ¨tres : _pSDLTexture : Texture du bouton, _SDLRectDestination : La destination de la texture, _uiNombreButton : Le nombre de button dans le sprite, _uiState : L'Ã©tat (quel bouton).
+	CButton(SDL_Texture* _pSDLTexture, SDL_Rect _SDLRectDestination, unsigned int _uiNombreButton, unsigned int _uiState) {
+		// La texture du button.
+		m_pSDLTextureButton = _pSDLTexture;
+
+		//
+		m_uiButtonState = _uiState;
+		m_uiNombreButton = _uiNombreButton;
+
+
+		// Position du rect.
+		m_pSDLRectPositionButton = _SDLRectDestination;
+		m_pSDLRectSource.w = (m_pSDLRectSource.w / _uiNombreButton); // La largeur d'une image.
+		m_pSDLRectSource.x = m_pSDLRectSource.w * _uiState; // Pour afficher le bon Ã©tat.
+		m_pSDLRectPositionButton.w = m_pSDLRectPositionButton.w / _uiNombreButton; // La largeur de la destination.
+
+
+	}
+	// ProcÃ©dure qui affiche le boutton.
+	// ParamÃ¨tre : _pSDLRenderer : Le renderer de la fdestination du controle.
+	void ShowControl(SDL_Renderer* _pSDLRenderer) {
+		// Met la texture dans le renderer.
+		SDL_RenderCopy(_pSDLRenderer, m_pSDLTextureButton, &m_pSDLRectSource, &m_pSDLRectPositionButton);
+	}
+	//
+	// ProcÃ©dure qui permet de changer l'Ã©tat du boutton.
+	// ParamÃ¨tre : 
+	void ModifyButtonState(unsigned int _uiState) {
+		m_pSDLRectSource.x = m_pSDLRectSource.w * _uiState; // Aussi simple que ca ?
+		
 	}
 };

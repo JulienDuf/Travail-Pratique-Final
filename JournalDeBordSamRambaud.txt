@@ -1,2 +1,3 @@
 23 octobre: Travail sur analyse des besoins des fonctionalités du menu principal.
 28 octobre: Creation et travail sur le diagramme de classe des menus.
+30 octobre: Création de la classe LabelLeftRight, modification dans le diagramme de classes des menus (Attributs privés, constructeurs)

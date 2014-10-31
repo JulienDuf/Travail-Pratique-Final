@@ -1,6 +1,6 @@
 //
 // 420-202-RE Gr. 01 : Travail final.
-// Classe représentant une fenêtre.
+// Classe représentant un label.
 // Créé le 28 octobre 2014 par Xavier St-Georges (xavierst-georges@hotmail.com)
 // Modification fait par Julien Dufresne (dufresne_julien@hotmai.ca) le 28 octobre 2014
 // Modifiée par Gabriel Beaudry (gabriel.bdry@gmail.com) le 28 octobre 2014.
@@ -49,7 +49,7 @@ public:
 		m_RectPosition = _RectPosition;
 	}
 
-	// Porcédure permettant d'afficher le label...
+	// Procédure permettant d'afficher le label...
 	// En entrée:
 	// Param1: Le renderer de destination du Control.
 	void ShowControl(SDL_Renderer* _pRenderer) {
@@ -57,6 +57,13 @@ public:
 		// Met la texture dans le renderer.
 		SDL_RenderCopy(_pRenderer, m_pSDLTextureLabel, NULL, &m_RectPosition);
 
+	}
+
+	// Procédure réagissant à un événement...
+	// Entrée:
+	// Param1: Le gestionaire d'événement de SDL.
+	void ReactToEvent(SDL_Event* _pSDLEvent) {
+	
 	}
 
 };

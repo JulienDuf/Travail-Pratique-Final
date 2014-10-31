@@ -32,6 +32,19 @@ private:
 		}
 	}
 
+	// Procédure qui appel tous les ReactToEvent de mon arbre...
+	void ParcoursReaction(CNoeudArbreAVL<T>* _pNoeud, SDL_Event* _pSDLEvent) {
+		// S'il a un enfant gauche...
+		if (_pNoeud->ObtenirEG() != nullptr) {
+			ParcoursReaction(_pNoeud->ObtenirEG(), _pSDLEvent);
+		}
+		_pNoeud->ObtenirElement()->ReactToEvent(_pSDLEvent);
+		// S'il a un enfant droit
+		if (_pNoeud->ObtenirED() != nullptr) {
+			ParcoursReaction(_pNoeud->ObtenirED(), _pSDLEvent);
+		}
+
+	}
 	
 	void ParcoursDestructeur(CNoeudArbreAVL<T>* _pNoeud) {
 		// S'il a un enfant gauche...
@@ -369,6 +382,13 @@ public:
 		}
 	}
 	
+	// Procédure qui parcours les contrôles pour ReactToEvent...
+	void ParcoursReaction(SDL_Event* _pSDLEvent) {
+		if (m_pRacine != nullptr) {
+			ParcoursReaction(m_pRacine, _pSDLEvent); // Parcour des contrôles.
+		}
+	}
+
 	void ParcoursDestructeur() {
 		if (m_pRacine != nullptr) {
 			ParcoursDestructeur(m_pRacine);

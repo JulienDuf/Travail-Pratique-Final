@@ -12,6 +12,7 @@ using namespace std;
 #include "CWindow.h"
 #include "CButton.h"
 #include "CLabelLeftRight.h"
+#include "CEvenement.h"
 
 // Variables
 bool boExecution; // Variable de la boucle principale du programme.

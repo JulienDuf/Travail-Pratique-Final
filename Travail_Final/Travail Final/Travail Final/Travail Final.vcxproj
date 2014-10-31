@@ -69,8 +69,10 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CArbreAVL.h" />
     <ClInclude Include="CButton.h" />
     <ClInclude Include="CControl.h" />
+    <ClInclude Include="CEvenement.h" />
     <ClInclude Include="CLabel.h" />
     <ClInclude Include="CLabelLeftRight.h" />
     <ClInclude Include="CMenu.h" />

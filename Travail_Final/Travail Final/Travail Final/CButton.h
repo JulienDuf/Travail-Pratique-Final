@@ -91,4 +91,11 @@ public:
 		m_pSDLRectSource.x = m_pSDLRectSource.w * _uiState; // Aussi simple que ca ?
 		
 	}
+
+	// Procédure réagissant à un événement...
+	// Entrée:
+	// Param1: Le gestionaire d'événement de SDL.
+	void ReactToEvent(SDL_Event* _pSDLEvent) {
+
+	}
 };

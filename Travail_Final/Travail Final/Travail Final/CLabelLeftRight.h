@@ -68,9 +68,9 @@ public:
 
 	// Procédure réagissant à un événement...
 	// Entrée:
-	// Param1: Le gestionaire d'événement de SDL.
-	CControl* ReactToEvent(SDL_Event* _pSDLEvent) {
-
+	// Sortie: Si le control à réagit
+	bool ReactToEvent(SDL_Event* _pSDLEvent) {
+		
 	}
 
 	//Accesseurs

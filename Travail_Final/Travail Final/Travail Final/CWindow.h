@@ -11,9 +11,10 @@ private:
 	CArbreAVL<CMenu*>* m_pArbreMenu; // Liste des menus.
 	SDL_Window* m_pSDLWindow; // La fenetre.
 	SDL_Renderer* m_pSDLRenderer; // Renderer.
+
 public:
 
-	// Constructeur ...
+	// Constructeur de CWindow...
 	// Parametre : _uiLargeur : Largeur de la fenêtre.
 	//			 : _uiHauteur : Hauteur de la fenêtre.
 	CWindow(unsigned int _uiLargeur, unsigned int _uiHauteur) {

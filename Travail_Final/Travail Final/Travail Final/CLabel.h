@@ -63,7 +63,7 @@ public:
 	// Entrée:
 	// Param1: Le gestionaire d'événement de SDL.
 	void ReactToEvent(SDL_Event* _pSDLEvent) {
-	
+	// Aucun event de label.
 	}
 
 };

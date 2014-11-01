@@ -63,6 +63,10 @@ public:
 		}
 	}
 
+	CControl* ReactToEvent(SDL_Event* _pSDLEvent) {
+		return m_pArbreControl->ParcoursReaction(_pSDLEvent);
+	}
+
 	// Porcédure permettant d'afficher le menu...
 	// En entrée:
 	// Param1: Le renderer de destination du menu.

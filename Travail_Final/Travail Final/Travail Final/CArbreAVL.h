@@ -33,7 +33,7 @@ private:
 	}
 
 	// Procédure qui appel tous les ReactToEvent de mon arbre...
-	void ParcoursReaction(CNoeudArbreAVL<T>* _pNoeud, SDL_Event* _pSDLEvent) {
+	CControl* ParcoursReaction(CNoeudArbreAVL<T>* _pNoeud, SDL_Event* _pSDLEvent) {
 		// S'il a un enfant gauche...
 		if (_pNoeud->ObtenirEG() != nullptr) {
 			ParcoursReaction(_pNoeud->ObtenirEG(), _pSDLEvent);

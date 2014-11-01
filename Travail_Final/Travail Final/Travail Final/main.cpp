@@ -6,6 +6,7 @@
 #include <iostream>
 using namespace std;
 #include "CArbreAVL.h"
+#include "CListeDC.h"
 #include "CControl.h"
 #include "CLabel.h"
 #include "CMenu.h"

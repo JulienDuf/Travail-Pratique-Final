@@ -30,6 +30,7 @@ public:
 		m_pSDLRectSource = m_pSDLRectPositionButton;
 		// Largeur d'une image.
 		m_pSDLRectSource.w = m_pSDLRectSource.w / _uiNombreButton;
+		m_pSDLRectSource.y = 0;
 		m_pSDLRectPositionButton.w = m_pSDLRectSource.w;
 
 		// Pour centrer le texte sur les bouttons.
@@ -53,7 +54,9 @@ public:
 		m_pSDLTextureButton = SDL_CreateTextureFromSurface(_pSDLRenderer, _pSDLSurface);
 
 		// L'image a laquel on est rendu dans le sprite ("L'état).
-		m_uiButtonState = _uiNombreButton;
+		m_uiButtonState = _uiState;
+
+		ModifyButtonState(_uiState);
 
 	}
 	//

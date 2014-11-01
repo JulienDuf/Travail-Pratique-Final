@@ -21,6 +21,8 @@ public:
 		SDL_CreateWindowAndRenderer(_uiLargeur, _uiHauteur, NULL, &m_pSDLWindow, &m_pSDLRenderer); // Créer une fenêtre avec largeur, hauteur et le renderer.
 		SDL_SetWindowPosition(m_pSDLWindow, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 		m_pArbreMenu = new CArbreAVL<CMenu*>();
+
+		SDL_SetRenderDrawColor(m_pSDLRenderer, 255,255,255,255);
 	}
 
 	// Destructeur ...
@@ -59,8 +61,12 @@ public:
 
 	// Procédure qui rendre l'image final.
 	// Paramètre : _Renderer : Le renderer.
-	void Rafraichir(SDL_Renderer* _Renderer) {
-		SDL_RenderPresent(_Renderer); // Renderer.
+	void Rafraichir(void) {
+		SDL_RenderClear(m_pSDLRenderer);
+
+		m_pArbreMenu->ParcoursMenu(m_pSDLRenderer);
+
+		SDL_RenderPresent(m_pSDLRenderer); // Renderer.
 	}
 
 	// Le titre de la fenêtre.

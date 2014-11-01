@@ -20,6 +20,19 @@ private:
 	// Parcours [:
 
 	// Procédure qui appel tous les ShowControl de mon arbre...
+	void ParcoursMenu(CNoeudArbreAVL<T>* _pNoeud, SDL_Renderer* _pSDLRendererParcours) {
+		// S'il a un enfant gauche...
+		if (_pNoeud->ObtenirEG() != nullptr) {
+			ParcoursMenu(_pNoeud->ObtenirEG(), _pSDLRendererParcours);
+		}
+		_pNoeud->ObtenirElement()->ShowMenu(_pSDLRendererParcours);
+		// S'il a un enfant droit
+		if (_pNoeud->ObtenirED() != nullptr) {
+			ParcoursMenu(_pNoeud->ObtenirED(), _pSDLRendererParcours);
+		}
+	}
+
+	// Procédure qui appel tous les ShowControl de mon arbre...
 	void ParcoursControl(CNoeudArbreAVL<T>* _pNoeud, SDL_Renderer* _pSDLRendererParcours) {
 		// S'il a un enfant gauche...
 		if (_pNoeud->ObtenirEG() != nullptr) {
@@ -375,6 +388,13 @@ public:
 	}
 
 	// Méthodes public ...
+
+	// Procédure qui parcours les contrôles pour ShowControl...
+	void ParcoursMenu(SDL_Renderer* _pSDLRendererParcours) {
+		if (m_pRacine != nullptr) {
+			ParcoursMenu(m_pRacine, _pSDLRendererParcours); // Parcour des contrôles.
+		}
+	}
 
 	// Procédure qui parcours les contrôles pour ShowControl...
 	void ParcoursControl(SDL_Renderer* _pSDLRendererParcours) {

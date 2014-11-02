@@ -1,12 +1,12 @@
-﻿La génération a démarré 2014-11-01 15:55:48.
+﻿La génération a démarré 2014-11-01 20:23:57.
      1>Projet "C:\Users\Julien\Documents\GitHub\Travail-Pratique-Final\Travail_Final\Travail Final\Travail Final\Travail Final.vcxproj" sur le nœud 2 (Build cible(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
          main.cpp
+     1>c:\users\julien\documents\github\travail-pratique-final\travail_final\travail final\travail final\cbutton.h(45): warning C4018: '<' : incompatibilité signed/unsigned
      1>c:\users\julien\documents\github\travail-pratique-final\travail_final\travail final\travail final\cmenu.h(27): warning C4018: '<' : incompatibilité signed/unsigned
-     1>c:\users\julien\documents\github\travail-pratique-final\travail_final\travail final\travail final\cwindow.h(42): warning C4018: '<' : incompatibilité signed/unsigned
-     1>c:\users\julien\documents\github\travail-pratique-final\travail_final\travail final\travail final\cwindow.h(56): warning C4018: '<' : incompatibilité signed/unsigned
-     1>c:\users\julien\documents\github\travail-pratique-final\travail_final\travail final\travail final\cbutton.h(42): warning C4018: '<' : incompatibilité signed/unsigned
+     1>c:\users\julien\documents\github\travail-pratique-final\travail_final\travail final\travail final\cwindow.h(43): warning C4018: '<' : incompatibilité signed/unsigned
+     1>c:\users\julien\documents\github\travail-pratique-final\travail_final\travail final\travail final\cwindow.h(57): warning C4018: '<' : incompatibilité signed/unsigned
      1>c:\users\julien\documents\github\travail-pratique-final\travail_final\travail final\travail final\clabelleftright.h(32): warning C4018: '<' : incompatibilité signed/unsigned
      1>c:\users\julien\documents\github\travail-pratique-final\travail_final\travail final\travail final\carbreavl.h(195): warning C4715: 'CArbreAVL<CMenu *>::Rechercher' : les chemins de contrôle ne retournent pas tous une valeur
      1>c:\users\julien\documents\github\travail-pratique-final\travail_final\travail final\travail final\carbreavl.h(195): warning C4715: 'CArbreAVL<CControl *>::Rechercher' : les chemins de contrôle ne retournent pas tous une valeur
@@ -17,4 +17,4 @@
 
 La génération a réussi.
 
-Temps écoulé 00:00:00.71
+Temps écoulé 00:00:00.66

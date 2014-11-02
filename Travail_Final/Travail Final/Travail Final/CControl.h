@@ -9,6 +9,6 @@ public:
 
 	virtual void ShowControl(SDL_Renderer* _pSDLRenderer) = 0;
 
-	virtual CControl* ReactToEvent(SDL_Event* _pSDLEvent) = 0;
+	virtual bool ReactToEvent(SDL_Event* _pSDLEvent) = 0;
 
 };

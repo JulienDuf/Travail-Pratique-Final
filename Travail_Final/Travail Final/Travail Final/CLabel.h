@@ -7,7 +7,7 @@
 // Fin du codage de la classe.
 //
 
-class CLabel {
+class CLabel : public CControl{
 private:
 
 	SDL_Texture* m_pSDLTextureLabel; // La texture d'un label.
@@ -49,6 +49,11 @@ public:
 		m_RectPosition = _RectPosition;
 	}
 
+	~CLabel() {
+
+		SDL_DestroyTexture(m_pSDLTextureLabel);
+	}
+
 	// Procédure permettant d'afficher le label...
 	// En entrée:
 	// Param1: Le renderer de destination du Control.
@@ -64,7 +69,11 @@ public:
 	// Param1: Le gestionaire d'événement de SDL.
 	// Sortie: Si le control à réagit
 	bool ReactToEvent(SDL_Event* _pSDLEvent) {
-	// Aucun event de label.
+	
+		if ((m_RectPosition.x >= _pSDLEvent->motion.x && m_RectPosition.x + m_RectPosition.w <= _pSDLEvent->motion.x) && (m_RectPosition.y >= _pSDLEvent->motion.y && m_RectPosition.y + m_RectPosition.h <= _pSDLEvent->motion.y))
+			return true;
+
+		return false;
 	}
 
 };

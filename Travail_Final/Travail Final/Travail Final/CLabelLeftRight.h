@@ -3,7 +3,7 @@ Classe Gérant les Labels "Left Right"
 Créée le 30 octobre par Samuel Rambaud (Sam.Rambaud@outlook.com)
 */
 
-class CLabelLeftRight {
+class CLabelLeftRight : public CControl{
 private:
 
 	CListeDC<SDL_Texture*>* m_pListeTexture;
@@ -54,6 +54,13 @@ public:
 		m_pButtonLeft = _pButtonLeft;
 		m_pButtonRight = _pButtonRight;
 	}
+	
+	~CLabelLeftRight() {
+
+		delete m_pButtonLeft;
+		delete m_pButtonRight;
+	}
+	
 	/*
 	Affiche les controles visuels
 	parametres:

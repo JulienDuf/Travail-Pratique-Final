@@ -8,10 +8,10 @@ using namespace std;
 #include "CArbreAVL.h"
 #include "CListeDC.h"
 #include "CControl.h"
+#include "CButton.h"
 #include "CLabel.h"
 #include "CMenu.h"
 #include "CWindow.h"
-#include "CButton.h"
 #include "CLabelLeftRight.h"
 #include "CEvenement.h"
 
@@ -19,8 +19,6 @@ using namespace std;
 bool boExecution; // Variable de la boucle principale du programme.
 
 SDL_Event* pEvent; // Les événemens du programme;
-
-SDL_Surface* pSDLSurfaceBouton; // La surface d'un bouton.
 
 CWindow* pWindowJeu; // La fenêtre de jeu.
 
@@ -40,6 +38,7 @@ CButton* pBtnQuitter; // Le bouton pour quitter le jeu.
 void Start(char* _strApplicationFilename){
 
 	string strEmplacement;
+	int iW, iH;
 
 	// Trouve l'emplacement du dossier debug.
 	string strApplicationPath(_strApplicationFilename);
@@ -51,19 +50,18 @@ void Start(char* _strApplicationFilename){
 	TTF_Init();
 
 	strEmplacement = strApplicationPath;
-	strEmplacement.append("Bouton\\BoutonMettreTexte.png");
-	pSDLSurfaceBouton = IMG_Load(strEmplacement.c_str());
-
-	strEmplacement = strApplicationPath;
 	strEmplacement.append("ARCADECLASSIC.TTF");
-	pFontBouton = TTF_OpenFont(strEmplacement.c_str(), 14);
+	pFontBouton = TTF_OpenFont(strEmplacement.c_str(), 30);
 
 	CouleurTexte = { 0, 0, 0, 0 };
 
 	pWindowJeu = new CWindow(1024, 768); // Créé la fenêtre.
+	pWindowJeu->GetSize(&iW, &iH);
 
-	pBtnNouvellePartie = new CButton("Nouvelle Partie", pFontBouton, CouleurTexte, pSDLSurfaceBouton, {50,50,1200,40}, 3, 2, pWindowJeu->ObtenirRenderer());
-	pBtnQuitter = new CButton("Quitter", pFontBouton, CouleurTexte, pSDLSurfaceBouton, { 50, 150, 480, 40 }, 3, 0, pWindowJeu->ObtenirRenderer());
+	strEmplacement = strApplicationPath;
+	strEmplacement.append("Bouton\\BoutonMettreTexte.png");
+	pBtnNouvellePartie = new CButton("Nouvelle    Partie", pFontBouton, CouleurTexte, strEmplacement.c_str(), { (iW - 500) / 2, 250, 1500, 60 }, 3, 0, pWindowJeu->ObtenirRenderer());
+	pBtnQuitter = new CButton("Quitter", pFontBouton, CouleurTexte, strEmplacement.c_str(), { (iW - 500) / 2, 320, 1500, 60 }, 3, 2, pWindowJeu->ObtenirRenderer());
 
 
 	pMenuPrincipal = new CMenu(true, 2, pBtnNouvellePartie, pBtnQuitter); // Crée le menu principal.
@@ -82,11 +80,7 @@ void Start(char* _strApplicationFilename){
 void Close(void) {
 
 	delete pEvent;
-
-	SDL_FreeSurface(pSDLSurfaceBouton);
-
-	delete pBtnNouvellePartie;
-	delete pBtnQuitter;
+	delete pWindowJeu;
 
 	SDL_Quit();
 	TTF_Quit();
@@ -111,6 +105,11 @@ int main(int argc, char* argv[]) {
 			// Si un des boutons de la souris est enfoncés.
 			case SDL_MOUSEBUTTONDOWN:
 
+				break;
+
+			case SDL_KEYDOWN:
+				if (pEvent->key.keysym.scancode == SDL_SCANCODE_ESCAPE)
+					boExecution = false;
 				break;
 			}
 		}

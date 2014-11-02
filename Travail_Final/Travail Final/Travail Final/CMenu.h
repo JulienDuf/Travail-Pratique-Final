@@ -31,6 +31,11 @@ public:
 		}
 	}
 
+	~CMenu() {
+
+		delete m_pArbreControl;
+	}
+
 	// Procédure permettant d'ajouter des contrôles au menu...
 	// En entrée:
 	// Param1; Nombre de Contrôles à ajouter.

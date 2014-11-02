@@ -3,7 +3,7 @@
 // Classe représentant un boutton.
 // Créé le 29 octobre 2014 par Xavier St-Georges (xavierst-georges@hotmail.com)
 //
-class CButton {
+class CButton : public CControl{
 private:
 
 	SDL_Texture* m_pSDLTextureButton; // La texture du button.
@@ -14,15 +14,18 @@ private:
 
 public:
 
-	CButton(char* _chrTexte, TTF_Font* _pSDLFont, SDL_Color _SDLColor, SDL_Surface* _pSDLSurface, SDL_Rect _SDLRectPosition, unsigned int _uiNombreButton, unsigned int _uiState, SDL_Renderer* _pSDLRenderer) {
+	CButton(char* _chrTexte, TTF_Font* _pSDLFont, SDL_Color _SDLColor, string _strEmplacement, SDL_Rect _SDLRectPosition, unsigned int _uiNombreButton, unsigned int _uiState, SDL_Renderer* _pSDLRenderer) {
 		
 		// Nombre de boutton dans le sprite.
 		m_uiNombreButton = _uiNombreButton;
+
 		// Rend le text en surface.
 		SDL_Surface* pSDLSurfaceTmp; // Surface temporaire.
+		SDL_Surface* pSDLSurfaceTexte; // Surface du texte.
 
-		pSDLSurfaceTmp = TTF_RenderText_Blended(_pSDLFont, _chrTexte, _SDLColor); // Avoir la surface du texte.
-		
+		pSDLSurfaceTexte = TTF_RenderText_Blended(_pSDLFont, _chrTexte, _SDLColor); // Avoir la surface du texte.
+		pSDLSurfaceTmp = IMG_Load(_strEmplacement.c_str());
+
 		SDL_Rect SDLRectText = {0,0,0,0}; // Rect du texte.
 		
 		// La destination est le meme que la source.
@@ -35,23 +38,22 @@ public:
 
 		// Pour centrer le texte sur les bouttons.
 
-		SDLRectText.x = (m_pSDLRectSource.w - pSDLSurfaceTmp->w) / 2;
-		SDLRectText.y = (m_pSDLRectSource.w - pSDLSurfaceTmp->h) / 2;
+		SDLRectText.x = (m_pSDLRectSource.w - pSDLSurfaceTexte->w) / 2;
+		SDLRectText.y = (m_pSDLRectSource.h - pSDLSurfaceTexte->h) / 2;
 
 		// Faire un for...
 		for (int i = 0; i < _uiNombreButton; i++) {
 			// Créer les 2 surfaces en 1.
-			SDL_BlitSurface(pSDLSurfaceTmp, NULL, _pSDLSurface, &SDLRectText);
+			SDL_BlitSurface(pSDLSurfaceTexte, NULL, pSDLSurfaceTmp, &SDLRectText);
 			SDLRectText.x += m_pSDLRectSource.w;
 		}
 
-		
+		// La texture du boutton avec le texte.
+		m_pSDLTextureButton = SDL_CreateTextureFromSurface(_pSDLRenderer, pSDLSurfaceTmp);
 
 		// Delete surface temporaire du texte.
 		SDL_FreeSurface(pSDLSurfaceTmp);
-
-		// La texture du boutton avec le texte.
-		m_pSDLTextureButton = SDL_CreateTextureFromSurface(_pSDLRenderer, _pSDLSurface);
+		SDL_FreeSurface(pSDLSurfaceTexte);
 
 		// L'image a laquel on est rendu dans le sprite ("L'état).
 		m_uiButtonState = _uiState;
@@ -81,6 +83,11 @@ public:
 
 	}
 	
+
+	~CButton() {
+
+		SDL_DestroyTexture(m_pSDLTextureButton);
+	}
 	// Procédure qui affiche le boutton.
 	// Paramètre : _pSDLRenderer : Le renderer de la fdestination du controle.
 	void ShowControl(SDL_Renderer* _pSDLRenderer) {
@@ -100,6 +107,6 @@ public:
 	// Param1: Le gestionaire d'événement de SDL.
 	// Sortie: Si le control à réagit
 	bool ReactToEvent(SDL_Event* _pSDLEvent) {
-		
+		return false;
 	}
 };

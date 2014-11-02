@@ -29,6 +29,7 @@ public:
 	~CWindow(void) {
 		SDL_DestroyRenderer(m_pSDLRenderer);
 		SDL_DestroyWindow(m_pSDLWindow);
+		delete m_pArbreMenu;
 	}
 
 	// Procédure permettant d'ajouter des menus...
@@ -81,5 +82,10 @@ public:
 	// Aucun paramètre.
 	SDL_Renderer* ObtenirRenderer(void){
 		return m_pSDLRenderer;
+	}
+
+	void GetSize(int* _iX, int* _iY) {
+
+		SDL_GetWindowSize(m_pSDLWindow, _iX, _iY);
 	}
 };

@@ -48,7 +48,7 @@ CLabelLeftRight* pLblLRChoixMap; // Le labelLesftRight ou on choisi la map pour 
 //
 void Start(char* _strApplicationFilename){
 
-	string strEmplacement;
+	string strEmplacement; //
 	int iW, iH;
 
 	// Trouve l'emplacement du dossier debug.
@@ -66,7 +66,7 @@ void Start(char* _strApplicationFilename){
 
 	CouleurTexte = { 0, 0, 0, 0 };
 
-	pWindowJeu = new CWindow(1024, 768); // Créé la fenêtre.
+	pWindowJeu = new CWindow(1366, 768); // Créé la fenêtre.
 	pWindowJeu->GetSize(&iW, &iH);
 
 	strEmplacement = strApplicationPath;
@@ -81,7 +81,7 @@ void Start(char* _strApplicationFilename){
 	pLblDescriptionMap = new CLabel(pWindowJeu->ObtenirRenderer(), " ", pFontBouton, CouleurTexte, {700, 100, 500, 500});
 
 	pMenuPrincipal = new CMenu(true, 2, pBtnNouvellePartie, pBtnQuitter); // Crée le menu principal.
-	pMenuNouvellePartie = new CMenu(false, 0); // Créé le menu nouvelle partie.
+	pMenuNouvellePartie = new CMenu(false, 5, pBtnDebutPartie, pBtnRetour, pLblDescriptionMap, pLblNombreJoueurEquipe, pLblNombreEquipe); // Créé le menu nouvelle partie.
 
 	pWindowJeu->AjouterMenu(2, pMenuPrincipal, pMenuNouvellePartie);
 
@@ -90,8 +90,7 @@ void Start(char* _strApplicationFilename){
 
 }
 
-//
-// Procédure détialisant les librairies et détruisants les variables.
+//étruisants les variables.
 //
 void Close(void) {
 
@@ -120,7 +119,7 @@ int main(int argc, char* argv[]) {
 
 			// Si un des boutons de la souris est enfoncés.
 			case SDL_MOUSEBUTTONDOWN:
-
+				
 				break;
 
 			case SDL_KEYDOWN:

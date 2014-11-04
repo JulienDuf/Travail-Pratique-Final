@@ -31,6 +31,17 @@ CMenu* pMenuNouvellePartie; // Le menu créant une nouvelle partie.
 
 CButton* pBtnNouvellePartie; // Le bouton pour aller vers le menu Nouvelle partie.
 CButton* pBtnQuitter; // Le bouton pour quitter le jeu.
+CButton* pBtnDebutPartie; // Le bouton pour commencer la partie.
+CButton* pBtnRetour; // Le bouton pour retourn au menu principal.
+
+CLabel* pLblNombreEquipe; // Le label étant écrit le mot " Nombre d'équipe ".
+CLabel* pLblNombreJoueurEquipe; // Le label étant écrit le mot " Nombre de joueur par équipe ".
+CLabel* pLblDescriptionMap; // Le label ou est inscrit la description de la map.
+
+CLabelLeftRight* pLblLRChoixNbrEquipe; // Le labelLesftRight ou on choisi le nombre d'équipe.
+CLabelLeftRight* pLblLRChoixNbrJoueurEquipe; // Le labelLesftRight ou on choisi le nombre de joueur par équipe.
+CLabelLeftRight* pLblLRChoixMap; // Le labelLesftRight ou on choisi la map pour le jeu.
+
 
 //
 // Procédure initialisant les librairies et variables.
@@ -60,9 +71,14 @@ void Start(char* _strApplicationFilename){
 
 	strEmplacement = strApplicationPath;
 	strEmplacement.append("Bouton\\BoutonMettreTexte.png");
-	pBtnNouvellePartie = new CButton("Nouvelle    Partie", pFontBouton, CouleurTexte, strEmplacement.c_str(), { (iW - 500) / 2, 250, 1500, 60 }, 3, 0, pWindowJeu->ObtenirRenderer());
-	pBtnQuitter = new CButton("Quitter", pFontBouton, CouleurTexte, strEmplacement.c_str(), { (iW - 500) / 2, 320, 1500, 60 }, 3, 2, pWindowJeu->ObtenirRenderer());
+	pBtnNouvellePartie = new CButton("Nouvelle    Partie", pFontBouton, CouleurTexte, strEmplacement.c_str(), { (iW - 500) / 2, 250, 500, 60 }, 3, 0, pWindowJeu->ObtenirRenderer());
+	pBtnQuitter = new CButton("Quitter", pFontBouton, CouleurTexte, strEmplacement.c_str(), { (iW - 500) / 2, 320, 500, 60 }, 3, 0, pWindowJeu->ObtenirRenderer());
+	pBtnDebutPartie = new CButton("Débuter la parite", pFontBouton, CouleurTexte, strEmplacement.c_str(), { 700, 700, 500, 60 }, 3, 0, pWindowJeu->ObtenirRenderer());
+	pBtnRetour = new CButton("Retour", pFontBouton, CouleurTexte, strEmplacement.c_str(), { 700, 770, 500, 60 }, 3, 0, pWindowJeu->ObtenirRenderer());
 
+	pLblNombreEquipe = new CLabel(pWindowJeu->ObtenirRenderer(), "Nombre d'équipe", pFontBouton, CouleurTexte, { 100, 600, 150, 30 });
+	pLblNombreJoueurEquipe = new CLabel(pWindowJeu->ObtenirRenderer(), "Nombre joueur par équipe", pFontBouton, CouleurTexte, { 100, 600, 200, 30 });
+	pLblDescriptionMap = new CLabel(pWindowJeu->ObtenirRenderer(), " ", pFontBouton, CouleurTexte, {700, 100, 500, 500});
 
 	pMenuPrincipal = new CMenu(true, 2, pBtnNouvellePartie, pBtnQuitter); // Crée le menu principal.
 	pMenuNouvellePartie = new CMenu(false, 0); // Créé le menu nouvelle partie.

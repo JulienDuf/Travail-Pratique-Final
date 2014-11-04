@@ -31,10 +31,12 @@ public:
 		// La destination est le meme que la source.
 		m_pSDLRectPositionButton = _SDLRectPosition;
 		m_pSDLRectSource = m_pSDLRectPositionButton;
+
 		// Largeur d'une image.
-		m_pSDLRectSource.w = m_pSDLRectSource.w / _uiNombreButton;
+		m_pSDLRectSource.w = pSDLSurfaceTmp->w;
+		m_pSDLRectSource.h = pSDLSurfaceTmp->h;
+		m_pSDLRectSource.w = m_pSDLRectSource.w / m_uiNombreButton;
 		m_pSDLRectSource.y = 0;
-		m_pSDLRectPositionButton.w = m_pSDLRectSource.w;
 
 		// Pour centrer le texte sur les bouttons.
 

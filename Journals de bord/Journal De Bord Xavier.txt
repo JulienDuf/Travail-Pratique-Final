@@ -1,0 +1,5 @@
+							Journal de bord
+
+Jeudi 24 octobre 2014. Nous avons établi comment nous voulions entammé notre projet. Nous avons décidé le cycle de vie itératif. Ensuite, nous avons établi les 
+fonctionnalités du menu et comment il ressemblera.	Mardi 28 octobre 2014. 2h de travail. Familiariser avec les programmes et j'ai fait le diagramme 
+d'utilisation pour les menus.

@@ -1,0 +1,16 @@
+Jeudi 23 octobre 2014
+
+Nous avons choisi la phase de conception itérative et écrit l'analyse des besoins du menu en équipe.
+
+----------------------------------------------------------------------------------------------------------------
+
+Mardi 28 octobre 2014
+
+Nous avons appris à se servir de github. Nous nous sommes séparés les tâches pour faire différents diagrammes,
+j'ai été assigné le diagramme d'état du menu. J'ai construit le diagramme d'état sur GenMyModel.
+
+Il y a beaucoup de perte de temps pour l'instant puisque je ne suis pas habitué avec github, mais avec de l'aide
+ça marche bien.
+
+----------------------------------------------------------------------------------------------------------------
+

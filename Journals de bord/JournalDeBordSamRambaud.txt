@@ -1,0 +1,2 @@
+23 octobre: Travail sur analyse des besoins des fonctionalités du menu principal.
+28 octobre: Creation et travail sur le diagramme de classe des menus.

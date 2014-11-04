@@ -109,37 +109,34 @@ public:
 	// Entrée:
 	// Param1: Le gestionaire d'événement de SDL.
 	// Sortie: Si le control à réagit
-	bool ReactToEvent(SDL_Event* _pSDLEvent) {
+	unsigned int ReactToEvent(SDL_Event* _pSDLEvent) {
 
 		// Si le curseur est sur le bouton...
-		if ((m_SDLRectPositionButton.x >= _pSDLEvent->motion.x && m_SDLRectPositionButton.x + m_SDLRectPositionButton.w <= _pSDLEvent->motion.x) && (m_SDLRectPositionButton.y >= _pSDLEvent->motion.y && m_SDLRectPositionButton.y + m_SDLRectPositionButton.h <= _pSDLEvent->motion.y))
+		if ((m_SDLRectPositionButton.x >= _pSDLEvent->motion.x && m_SDLRectPositionButton.x + m_SDLRectPositionButton.w <= _pSDLEvent->motion.x) && (m_SDLRectPositionButton.y >= _pSDLEvent->motion.y && m_SDLRectPositionButton.y + m_SDLRectPositionButton.h <= _pSDLEvent->motion.y)) {
 			switch (_pSDLEvent->type) {
 
 			case SDL_MOUSEMOTION:	// Hover
 
 				ModifyButtonState(1);
-				return true;
+				return MouseButtonUp;
 				break;
 
 			case SDL_MOUSEBUTTONDOWN:	// Click
 
 				ModifyButtonState(2);
-				return true;
+				return MouseButtonDown;
 				break;
 
 			case SDL_MOUSEBUTTONUP:		// Unclick
 
 				ModifyButtonState(1);
-				return true;
+				return MouseButtonUp;
 				break;
 
+			}
 		}
-
-		// Sinon si le curseur n'est pas sur le bouton...
-		else
+		else // Sinon si le curseur n'est pas sur le bouton...
 			ModifyButtonState(0);		// Normal
-
-		return false;
 	}
 
 

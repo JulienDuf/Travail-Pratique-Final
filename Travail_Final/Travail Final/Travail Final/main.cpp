@@ -114,19 +114,14 @@ int main(int argc, char* argv[]) {
 		// Tant qu'il y a des événements à gérer.
 		while (SDL_PollEvent(pEvent)) {
 
-			// Selon les types d'événements.
-			switch (pEvent->type) {
+			CControl* pReacttmp;
 
-			// Si un des boutons de la souris est enfoncés.
-			case SDL_MOUSEBUTTONDOWN:
-				
+			switch (pMenuPrincipal->ReactToEvent(pEvent, )) {
+			case MouseButtonDown:
 				break;
 
-			case SDL_KEYDOWN:
-				if (pEvent->key.keysym.scancode == SDL_SCANCODE_ESCAPE)
-					boExecution = false;
-				break;
 			}
+			
 		}
 	}
 

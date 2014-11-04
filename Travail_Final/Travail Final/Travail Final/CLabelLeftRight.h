@@ -88,7 +88,7 @@ public:
 	// Procédure réagissant à un événement...
 	// Entrée:
 	// Sortie: Si le control à réagit
-	bool ReactToEvent(SDL_Event* _pSDLEvent) {
+	unsigned int ReactToEvent(SDL_Event* _pSDLEvent) {
 		
 		m_pButtonLeft->ReactToEvent(_pSDLEvent);
 		m_pButtonRight->ReactToEvent(_pSDLEvent);
@@ -98,8 +98,6 @@ public:
 
 		else if (m_pButtonRight->ObtenirButtonState() == 2)
 			m_pListeTexture->AllerSuivantCurseur();
-
-
 	}
 
 	//Accesseurs

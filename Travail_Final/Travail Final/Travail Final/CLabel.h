@@ -68,10 +68,10 @@ public:
 	// Entrée:
 	// Param1: Le gestionaire d'événement de SDL.
 	// Sortie: Si le control à réagit
-	bool ReactToEvent(SDL_Event* _pSDLEvent) {
+	unsigned int ReactToEvent(SDL_Event* _pSDLEvent) {
 	
 		if ((m_RectPosition.x >= _pSDLEvent->motion.x && m_RectPosition.x + m_RectPosition.w <= _pSDLEvent->motion.x) && (m_RectPosition.y >= _pSDLEvent->motion.y && m_RectPosition.y + m_RectPosition.h <= _pSDLEvent->motion.y))
-			return true;
+			return MouseButtonUp;
 
 		return false;
 	}

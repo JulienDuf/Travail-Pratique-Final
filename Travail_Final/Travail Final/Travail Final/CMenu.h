@@ -68,7 +68,7 @@ public:
 		}
 	}
 
-	CControl* ReactToEvent(SDL_Event* _pSDLEvent) {
+	unsigned int ReactToEvent(SDL_Event* _pSDLEvent) {
 		return m_pArbreControl->ParcoursReaction(_pSDLEvent);
 	}
 
@@ -80,4 +80,9 @@ public:
 			m_pArbreControl->ParcoursControl(_pSDLRenderer);
 		}
 	}
+
+	void DefinirboShow(bool _boShow) {
+
+	}
+
 };

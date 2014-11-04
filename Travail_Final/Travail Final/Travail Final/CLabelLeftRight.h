@@ -47,9 +47,21 @@ public:
 		Param3; Bouton de droite.
 		Param4; Bouton de Gauche.
 	*/
-	CLabelLeftRight(CListeDC<SDL_Texture*>* _pListeTexture, SDL_Rect _SDLRectLabel, CButton* _pButtonLeft, CButton* _pButtonRight) {
-		m_pListeTexture = _pListeTexture;
-		m_pListeTexture->AllerDebut();
+	CLabelLeftRight(SDL_Rect _SDLRectLabel, CButton* _pButtonLeft, CButton* _pButtonRight, int argc, ...) {
+		//m_pListeTexture = _pListeTexture;
+		//m_pListeTexture->AllerDebut();
+		m_pListeTexture = new CListeDC<SDL_Texture*>();
+
+		if (argc > 0) {
+			va_list parametres;
+
+			va_start(parametres, argc);
+			for (int i = 0; i < argc; i++) {
+				m_pListeTexture->AjouterFin(va_arg(parametres, SDL_Texture*));
+			}
+			va_end(parametres);
+		}
+
 		m_SDLRectLabel = _SDLRectLabel;
 		m_pButtonLeft = _pButtonLeft;
 		m_pButtonRight = _pButtonRight;
@@ -78,6 +90,16 @@ public:
 	// Sortie: Si le control à réagit
 	bool ReactToEvent(SDL_Event* _pSDLEvent) {
 		
+		m_pButtonLeft->ReactToEvent(_pSDLEvent);
+		m_pButtonRight->ReactToEvent(_pSDLEvent);
+
+		if (m_pButtonLeft->ObtenirButtonState() == 2)
+			m_pListeTexture->AllerPrecedentCurseur();
+
+		else if (m_pButtonRight->ObtenirButtonState() == 2)
+			m_pListeTexture->AllerSuivantCurseur();
+
+
 	}
 
 	//Accesseurs

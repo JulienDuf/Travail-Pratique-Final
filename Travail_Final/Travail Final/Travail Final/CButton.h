@@ -7,10 +7,10 @@ class CButton : public CControl{
 private:
 
 	SDL_Texture* m_pSDLTextureButton; // La texture du button.
-	SDL_Rect m_pSDLRectPositionButton; // Position qu'on veut l'afficher.
+	SDL_Rect m_SDLRectPositionButton; // Position qu'on veut l'afficher.
 	unsigned int m_uiNombreButton; // Le nombre de button dans le sprite.
-	SDL_Rect m_pSDLRectSource; // La source du sprite.
-	unsigned int m_uiButtonState; // À quel sprite on est rendu.
+	SDL_Rect m_SDLRectSource; // La source du sprite.
+	unsigned int m_uiButtonState; // À quel sprite on est rendu ( =0 quand il est accessible, =1 quand la souris est au dessus, =2 quand il est clické ).
 
 public:
 
@@ -29,25 +29,25 @@ public:
 		SDL_Rect SDLRectText = {0,0,0,0}; // Rect du texte.
 		
 		// La destination est le meme que la source.
-		m_pSDLRectPositionButton = _SDLRectPosition;
-		m_pSDLRectSource = m_pSDLRectPositionButton;
+		m_SDLRectPositionButton = _SDLRectPosition;
+		m_SDLRectSource = m_SDLRectPositionButton;
 
 		// Largeur d'une image.
-		m_pSDLRectSource.w = pSDLSurfaceTmp->w;
-		m_pSDLRectSource.h = pSDLSurfaceTmp->h;
-		m_pSDLRectSource.w = m_pSDLRectSource.w / m_uiNombreButton;
-		m_pSDLRectSource.y = 0;
+		m_SDLRectSource.w = pSDLSurfaceTmp->w;
+		m_SDLRectSource.h = pSDLSurfaceTmp->h;
+		m_SDLRectSource.w = m_SDLRectSource.w / m_uiNombreButton;
+		m_SDLRectSource.y = 0;
 
 		// Pour centrer le texte sur les bouttons.
 
-		SDLRectText.x = (m_pSDLRectSource.w - pSDLSurfaceTexte->w) / 2;
-		SDLRectText.y = (m_pSDLRectSource.h - pSDLSurfaceTexte->h) / 2;
+		SDLRectText.x = (m_SDLRectSource.w - pSDLSurfaceTexte->w) / 2;
+		SDLRectText.y = (m_SDLRectSource.h - pSDLSurfaceTexte->h) / 2;
 
 		// Faire un for...
 		for (int i = 0; i < _uiNombreButton; i++) {
 			// Créer les 2 surfaces en 1.
 			SDL_BlitSurface(pSDLSurfaceTexte, NULL, pSDLSurfaceTmp, &SDLRectText);
-			SDLRectText.x += m_pSDLRectSource.w;
+			SDLRectText.x += m_SDLRectSource.w;
 		}
 
 		// La texture du boutton avec le texte.
@@ -76,11 +76,11 @@ public:
 
 
 		// Position du rect.
-		m_pSDLRectPositionButton = _SDLRectDestination;
-		m_pSDLRectSource.w = (m_pSDLRectSource.w / _uiNombreButton); // La largeur d'une image.
-		m_pSDLRectSource.x = m_pSDLRectSource.w * _uiState; // Pour afficher le bon état.
-		m_pSDLRectSource.y = 0;
-		m_pSDLRectPositionButton.w = m_pSDLRectPositionButton.w / _uiNombreButton; // La largeur de la destination.
+		m_SDLRectPositionButton = _SDLRectDestination;
+		m_SDLRectSource.w = (m_SDLRectSource.w / _uiNombreButton); // La largeur d'une image.
+		m_SDLRectSource.x = m_SDLRectSource.w * _uiState; // Pour afficher le bon état.
+		m_SDLRectSource.y = 0;
+		m_SDLRectPositionButton.w = m_SDLRectPositionButton.w / _uiNombreButton; // La largeur de la destination.
 
 
 	}
@@ -94,13 +94,14 @@ public:
 	// Paramètre : _pSDLRenderer : Le renderer de la fdestination du controle.
 	void ShowControl(SDL_Renderer* _pSDLRenderer) {
 		// Met la texture dans le renderer.
-		SDL_RenderCopy(_pSDLRenderer, m_pSDLTextureButton, &m_pSDLRectSource, &m_pSDLRectPositionButton);
+		SDL_RenderCopy(_pSDLRenderer, m_pSDLTextureButton, &m_SDLRectSource, &m_SDLRectPositionButton);
 	}
 	//
 	// Procédure qui permet de changer l'état du boutton.
-	// Paramètre : 
+	// Paramètre : _uiState : Variable qui indique l'état auquel on veut modifier le bouton.
 	void ModifyButtonState(unsigned int _uiState) {
-		m_pSDLRectSource.x = m_pSDLRectSource.w * _uiState; // Aussi simple que ca ?
+		m_SDLRectSource.x = m_SDLRectSource.w * _uiState; // Aussi simple que ca ?
+		m_uiButtonState = _uiState;
 		
 	}
 
@@ -109,6 +110,44 @@ public:
 	// Param1: Le gestionaire d'événement de SDL.
 	// Sortie: Si le control à réagit
 	bool ReactToEvent(SDL_Event* _pSDLEvent) {
+
+		// Si le curseur est sur le bouton...
+		if ((m_SDLRectPositionButton.x >= _pSDLEvent->motion.x && m_SDLRectPositionButton.x + m_SDLRectPositionButton.w <= _pSDLEvent->motion.x) && (m_SDLRectPositionButton.y >= _pSDLEvent->motion.y && m_SDLRectPositionButton.y + m_SDLRectPositionButton.h <= _pSDLEvent->motion.y))
+			switch (_pSDLEvent->type) {
+
+			case SDL_MOUSEMOTION:	// Hover
+
+				ModifyButtonState(1);
+				return true;
+				break;
+
+			case SDL_MOUSEBUTTONDOWN:	// Click
+
+				ModifyButtonState(2);
+				return true;
+				break;
+
+			case SDL_MOUSEBUTTONUP:		// Unclick
+
+				ModifyButtonState(1);
+				return true;
+				break;
+
+		}
+
+		// Sinon si le curseur n'est pas sur le bouton...
+		else
+			ModifyButtonState(0);		// Normal
+
 		return false;
 	}
+
+
+	// Accesseur pour l'état du bouton.
+	unsigned int ObtenirButtonState(void) {
+
+		return m_uiButtonState;
+
+	}
+
 };

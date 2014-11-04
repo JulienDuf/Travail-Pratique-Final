@@ -1,4 +1,4 @@
-﻿La génération a démarré 2014-11-04 14:33:39.
+﻿La génération a démarré 2014-11-04 17:08:51.
      1>Projet "C:\Users\Julien\Documents\GitHub\Travail-Pratique-Final\Travail_Final\Travail Final\Travail Final\Travail Final.vcxproj" sur le nœud 2 (Build cible(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
@@ -16,4 +16,4 @@
 
 La génération a réussi.
 
-Temps écoulé 00:00:00.78
+Temps écoulé 00:00:01.01

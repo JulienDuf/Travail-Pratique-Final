@@ -77,13 +77,14 @@ public:
 		m_uiButtonState = _uiState;
 		m_uiNombreButton = _uiNombreButton;
 
+		m_SDLRectSource = _SDLRectDestination;
+		m_SDLRectSource.y = 0;
+		SDL_QueryTexture(m_pSDLTextureButton, NULL, NULL, &m_SDLRectSource.w, &m_SDLRectSource.h);
+		m_SDLRectSource.w = m_SDLRectSource.w / m_uiNombreButton;
+		ModifyButtonState(m_uiButtonState);
 
 		// Position du rect.
 		m_SDLRectPositionButton = _SDLRectDestination;
-		m_SDLRectSource.w = (m_SDLRectSource.w / _uiNombreButton); // La largeur d'une image.
-		m_SDLRectSource.x = m_SDLRectSource.w * _uiState; // Pour afficher le bon état.
-		m_SDLRectSource.y = 0;
-		m_SDLRectPositionButton.w = m_SDLRectPositionButton.w / _uiNombreButton; // La largeur de la destination.
 
 		m_pProcedureClic = _ProcedureClic;
 
@@ -134,7 +135,8 @@ public:
 		case SDL_MOUSEBUTTONUP:		// Unclick
 			if ((m_SDLRectPositionButton.x <= _pSDLEvent->motion.x && m_SDLRectPositionButton.x + m_SDLRectPositionButton.w >= _pSDLEvent->motion.x) && (m_SDLRectPositionButton.y <= _pSDLEvent->motion.y && m_SDLRectPositionButton.y + m_SDLRectPositionButton.h >= _pSDLEvent->motion.y)) {
 				ModifyButtonState(1);
-				m_pProcedureClic();
+				if (m_pProcedureClic != nullptr)
+					m_pProcedureClic();
 			}
 			break;
 

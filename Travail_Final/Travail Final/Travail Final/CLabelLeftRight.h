@@ -40,6 +40,8 @@ public:
 			va_end(parametres);
 		}
 
+		m_pListeTexture->AllerDebut();
+
 		m_pButtonLeft = _pButtonLeft;
 		m_pButtonRight = _pButtonRight;
 	}
@@ -67,6 +69,8 @@ public:
 			va_end(parametres);
 		}
 
+		m_pListeTexture->AllerDebut();
+
 		m_SDLRectLabel = _SDLRectLabel;
 		m_pButtonLeft = _pButtonLeft;
 		m_pButtonRight = _pButtonRight;
@@ -78,6 +82,25 @@ public:
 		delete m_pButtonRight;
 	}
 	
+	// Procédure permettant d'ajouter des textures à la liste.
+	// En entrée:
+	// Param1; Nombre de textures à ajouter.
+	// Param2...; Texture à ajouter.
+	void AjouterControl(int argc, ...) {
+		
+		if (argc > 0) {
+			va_list parametres;
+
+			va_start(parametres, argc);
+			for (int i = 0; i < argc; i++) {
+				m_pListeTexture->AjouterFin(va_arg(parametres, SDL_Texture*));
+			}
+			va_end(parametres);
+
+			m_pListeTexture->AllerDebut();
+		}
+	}
+
 	/*
 	Affiche les controles visuels
 	parametres:

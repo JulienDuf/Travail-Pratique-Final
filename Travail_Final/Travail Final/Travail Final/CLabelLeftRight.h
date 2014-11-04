@@ -24,17 +24,22 @@ public:
 	_pButtonRight : Bouton de droite.
 	_pButtonLeft : Bouton de gauche.
 	*/
-	CLabelLeftRight(CListeDC<char*>* _pListechar, TTF_Font* _pTTF_FontText, SDL_Color _SDLColorText, SDL_Rect _SDLRectLabel, SDL_Renderer* _pSDLRenderer, CButton* _pButtonLeft, CButton* _pButtonRight) {
-		_pListechar->AllerDebut();
+	CLabelLeftRight(TTF_Font* _pTTF_FontText, SDL_Color _SDLColorText, SDL_Rect _SDLRectLabel, SDL_Renderer* _pSDLRenderer, CButton* _pButtonLeft, CButton* _pButtonRight, int argc, ...) {
 		SDL_Surface* pSDLSurfacetmp;
 		m_pListeTexture = new CListeDC<SDL_Texture*>();
 		m_SDLRectLabel = _SDLRectLabel;
-		for (int i = 0; i < _pListechar->ObtenirCompte(); i++) {
-			pSDLSurfacetmp = TTF_RenderText_Blended(_pTTF_FontText, _pListechar->ObtenirElementCurseur(), _SDLColorText);
-			m_pListeTexture->AjouterFin(SDL_CreateTextureFromSurface(_pSDLRenderer, pSDLSurfacetmp));
-			SDL_FreeSurface(pSDLSurfacetmp);
-			_pListechar->AllerSuivantCurseur();
+		if (argc > 0) {
+			va_list parametres;
+
+			va_start(parametres, argc);
+			for (int i = 0; i < argc; i++) {
+				pSDLSurfacetmp = TTF_RenderText_Blended(_pTTF_FontText, va_arg(parametres, char*), _SDLColorText);
+				m_pListeTexture->AjouterFin(SDL_CreateTextureFromSurface(_pSDLRenderer, pSDLSurfacetmp));
+				SDL_FreeSurface(pSDLSurfacetmp);
+			}
+			va_end(parametres);
 		}
+
 		m_pButtonLeft = _pButtonLeft;
 		m_pButtonRight = _pButtonRight;
 	}
@@ -88,7 +93,7 @@ public:
 	// Procédure réagissant à un événement...
 	// Entrée:
 	// Sortie: Si le control à réagit
-	unsigned int ReactToEvent(SDL_Event* _pSDLEvent) {
+	void ReactToEvent(SDL_Event* _pSDLEvent) {
 		
 		m_pButtonLeft->ReactToEvent(_pSDLEvent);
 		m_pButtonRight->ReactToEvent(_pSDLEvent);
@@ -100,13 +105,4 @@ public:
 			m_pListeTexture->AllerSuivantCurseur();
 	}
 
-	//Accesseurs
-
-	CButton* GetButtonLeft(void) {
-		return m_pButtonLeft;
-	}
-
-	CButton* GetButtonRight(void) {
-		return m_pButtonRight;
-	}
 };

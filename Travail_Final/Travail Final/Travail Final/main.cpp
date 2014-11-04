@@ -22,6 +22,9 @@ SDL_Event* pEvent; // Les événemens du programme;
 
 CWindow* pWindowJeu; // La fenêtre de jeu.
 
+SDL_Texture* pFlecheGauche;
+SDL_Texture* pFlecheDroite;
+
 TTF_Font* pFontBouton; // La font du texte des boutons.
 
 SDL_Color CouleurTexte; // La couleur du texte.
@@ -43,6 +46,29 @@ CLabelLeftRight* pLblLRChoixNbrJoueurEquipe; // Le labelLesftRight ou on choisi 
 CLabelLeftRight* pLblLRChoixMap; // Le labelLesftRight ou on choisi la map pour le jeu.
 
 
+void ClickBoutonNouvellePartie(void) {
+
+	pMenuNouvellePartie->DefinirboShow(true);
+	pMenuPrincipal->DefinirboShow(false);
+}
+
+void ClickBoutonRetour(void) {
+
+	pMenuNouvellePartie->DefinirboShow(false);
+	pMenuPrincipal->DefinirboShow(true);
+}
+
+void ClickBoutonDebutPartie(void) {
+
+	pMenuNouvellePartie->DefinirboShow(false);
+	pMenuPrincipal->DefinirboShow(false);
+}
+
+void ClickBoutonQuitter(void) {
+
+	boExecution = false;
+}
+
 //
 // Procédure initialisant les librairies et variables.
 //
@@ -60,25 +86,37 @@ void Start(char* _strApplicationFilename){
 	SDL_Init(SDL_INIT_VIDEO);
 	TTF_Init();
 
-	strEmplacement = strApplicationPath;
-	strEmplacement.append("ARCADECLASSIC.TTF");
-	pFontBouton = TTF_OpenFont(strEmplacement.c_str(), 30);
-
-	CouleurTexte = { 0, 0, 0, 0 };
-
 	pWindowJeu = new CWindow(1366, 768); // Créé la fenêtre.
 	pWindowJeu->GetSize(&iW, &iH);
 
 	strEmplacement = strApplicationPath;
+	strEmplacement.append("ARCADECLASSIC.TTF");
+	pFontBouton = TTF_OpenFont(strEmplacement.c_str(), 30);
+
+	strEmplacement = strApplicationPath;
+	strEmplacement.append("Bouton\\FlecheDroite.png");
+	pFlecheDroite = IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str());
+
+	strEmplacement = strApplicationPath;
+	strEmplacement.append("Bouton\\FlecheGauche.png");
+	pFlecheGauche = IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str());
+
+	CouleurTexte = { 0, 0, 0, 0 };
+
+	strEmplacement = strApplicationPath;
 	strEmplacement.append("Bouton\\BoutonMettreTexte.png");
-	pBtnNouvellePartie = new CButton("Nouvelle    Partie", pFontBouton, CouleurTexte, strEmplacement.c_str(), { (iW - 500) / 2, 250, 500, 60 }, 3, 0, pWindowJeu->ObtenirRenderer());
-	pBtnQuitter = new CButton("Quitter", pFontBouton, CouleurTexte, strEmplacement.c_str(), { (iW - 500) / 2, 320, 500, 60 }, 3, 0, pWindowJeu->ObtenirRenderer());
-	pBtnDebutPartie = new CButton("Débuter la parite", pFontBouton, CouleurTexte, strEmplacement.c_str(), { 700, 700, 500, 60 }, 3, 0, pWindowJeu->ObtenirRenderer());
-	pBtnRetour = new CButton("Retour", pFontBouton, CouleurTexte, strEmplacement.c_str(), { 700, 770, 500, 60 }, 3, 0, pWindowJeu->ObtenirRenderer());
+	pBtnNouvellePartie = new CButton("Nouvelle    Partie", pFontBouton, CouleurTexte, strEmplacement.c_str(), { (iW - 500) / 2, 250, 500, 60 }, 3, 0, pWindowJeu->ObtenirRenderer(), ClickBoutonNouvellePartie);
+	pBtnQuitter = new CButton("Quitter", pFontBouton, CouleurTexte, strEmplacement.c_str(), { (iW - 500) / 2, 320, 500, 60 }, 3, 0, pWindowJeu->ObtenirRenderer(), ClickBoutonQuitter);
+	pBtnDebutPartie = new CButton("Débuter la parite", pFontBouton, CouleurTexte, strEmplacement.c_str(), { 700, 300, 500, 60 }, 3, 0, pWindowJeu->ObtenirRenderer(), ClickBoutonDebutPartie);
+	pBtnRetour = new CButton("Retour", pFontBouton, CouleurTexte, strEmplacement.c_str(), { 700, 370, 500, 60 }, 3, 0, pWindowJeu->ObtenirRenderer(), ClickBoutonRetour);
 
 	pLblNombreEquipe = new CLabel(pWindowJeu->ObtenirRenderer(), "Nombre d'équipe", pFontBouton, CouleurTexte, { 100, 600, 150, 30 });
 	pLblNombreJoueurEquipe = new CLabel(pWindowJeu->ObtenirRenderer(), "Nombre joueur par équipe", pFontBouton, CouleurTexte, { 100, 600, 200, 30 });
 	pLblDescriptionMap = new CLabel(pWindowJeu->ObtenirRenderer(), " ", pFontBouton, CouleurTexte, {700, 100, 500, 500});
+
+	pLblLRChoixNbrEquipe = new CLabelLeftRight(pFontBouton, CouleurTexte, { 120, 630, 50, 40 }, pWindowJeu->ObtenirRenderer(), new CButton(pFlecheGauche, {75, 635, 40, 40}, 4, 1, NULL), new CButton(pFlecheDroite, {215, 635, 40, 40}, 4, 1, NULL), 5, "2", "3", "4", "5", "6");
+	pLblLRChoixNbrJoueurEquipe = new CLabelLeftRight(pFontBouton, CouleurTexte, { 120, 670, 50, 40 }, pWindowJeu->ObtenirRenderer(), new CButton(pFlecheGauche, { 75, 675, 40, 40 }, 4, 1, NULL), new CButton(pFlecheDroite, { 215, 675, 40, 40 }, 4, 1, NULL), 3, "4", "5", "6");
+
 
 	pMenuPrincipal = new CMenu(true, 2, pBtnNouvellePartie, pBtnQuitter); // Crée le menu principal.
 	pMenuNouvellePartie = new CMenu(false, 5, pBtnDebutPartie, pBtnRetour, pLblDescriptionMap, pLblNombreJoueurEquipe, pLblNombreEquipe); // Créé le menu nouvelle partie.
@@ -114,13 +152,10 @@ int main(int argc, char* argv[]) {
 		// Tant qu'il y a des événements à gérer.
 		while (SDL_PollEvent(pEvent)) {
 
-			CControl* pReacttmp;
+			pMenuPrincipal->ReactToEvent(pEvent);
+			pMenuNouvellePartie->ReactToEvent(pEvent);
 
-			switch (pMenuPrincipal->ReactToEvent(pEvent, )) {
-			case MouseButtonDown:
-				break;
-
-			}
+			
 			
 		}
 	}

@@ -46,12 +46,12 @@ private:
 	}
 
 	// Procédure qui appel tous les ReactToEvent de mon arbre...
-	unsigned int ParcoursReaction(CNoeudArbreAVL<T>* _pNoeud, SDL_Event* _pSDLEvent) {
+	void ParcoursReaction(CNoeudArbreAVL<T>* _pNoeud, SDL_Event* _pSDLEvent) {
 		// S'il a un enfant gauche...
 		if (_pNoeud->ObtenirEG() != nullptr) {
 			ParcoursReaction(_pNoeud->ObtenirEG(), _pSDLEvent);
 		}
-		return _pNoeud->ObtenirElement()->ReactToEvent(_pSDLEvent);
+		_pNoeud->ObtenirElement()->ReactToEvent(_pSDLEvent);
 		// S'il a un enfant droit
 		if (_pNoeud->ObtenirED() != nullptr) {
 			ParcoursReaction(_pNoeud->ObtenirED(), _pSDLEvent);
@@ -403,9 +403,9 @@ public:
 	}
 	
 	// Procédure qui parcours les contrôles pour ReactToEvent...
-	unsigned int ParcoursReaction(SDL_Event* _pSDLEvent) {
+	void ParcoursReaction(SDL_Event* _pSDLEvent) {
 		if (m_pRacine != nullptr) {
-			return ParcoursReaction(m_pRacine, _pSDLEvent); // Parcour des contrôles.
+			ParcoursReaction(m_pRacine, _pSDLEvent); // Parcour des contrôles.
 		}
 	}
 

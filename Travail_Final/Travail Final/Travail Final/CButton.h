@@ -11,10 +11,11 @@ private:
 	unsigned int m_uiNombreButton; // Le nombre de button dans le sprite.
 	SDL_Rect m_SDLRectSource; // La source du sprite.
 	unsigned int m_uiButtonState; // À quel sprite on est rendu ( =0 quand il est accessible, =1 quand la souris est au dessus, =2 quand il est clické ).
+	void(*m_pProcedureClic)(void); // La procédure qui détermine quoi faire lors d'un clic.
 
 public:
 
-	CButton(char* _chrTexte, TTF_Font* _pSDLFont, SDL_Color _SDLColor, string _strEmplacement, SDL_Rect _SDLRectPosition, unsigned int _uiNombreButton, unsigned int _uiState, SDL_Renderer* _pSDLRenderer) {
+	CButton(char* _chrTexte, TTF_Font* _pSDLFont, SDL_Color _SDLColor, string _strEmplacement, SDL_Rect _SDLRectPosition, unsigned int _uiNombreButton, unsigned int _uiState, SDL_Renderer* _pSDLRenderer, void _ProcedureClic(void)) {
 		
 		// Nombre de boutton dans le sprite.
 		m_uiNombreButton = _uiNombreButton;
@@ -62,11 +63,13 @@ public:
 
 		ModifyButtonState(_uiState);
 
+		m_pProcedureClic = _ProcedureClic;
+
 	}
 	//
 	// Constructeur pour un boutton qui n'a pas de texte.
 	// Paramètres : _pSDLTexture : Texture du bouton, _SDLRectDestination : La destination de la texture, _uiNombreButton : Le nombre de button dans le sprite, _uiState : L'état (quel bouton).
-	CButton(SDL_Texture* _pSDLTexture, SDL_Rect _SDLRectDestination, unsigned int _uiNombreButton, unsigned int _uiState) {
+	CButton(SDL_Texture* _pSDLTexture, SDL_Rect _SDLRectDestination, unsigned int _uiNombreButton, unsigned int _uiState, void _ProcedureClic(void)) {
 		// La texture du button.
 		m_pSDLTextureButton = _pSDLTexture;
 
@@ -82,6 +85,7 @@ public:
 		m_SDLRectSource.y = 0;
 		m_SDLRectPositionButton.w = m_SDLRectPositionButton.w / _uiNombreButton; // La largeur de la destination.
 
+		m_pProcedureClic = _ProcedureClic;
 
 	}
 	
@@ -109,34 +113,34 @@ public:
 	// Entrée:
 	// Param1: Le gestionaire d'événement de SDL.
 	// Sortie: Si le control à réagit
-	unsigned int ReactToEvent(SDL_Event* _pSDLEvent) {
+	void ReactToEvent(SDL_Event* _pSDLEvent) {
 
 		// Si le curseur est sur le bouton...
-		if ((m_SDLRectPositionButton.x >= _pSDLEvent->motion.x && m_SDLRectPositionButton.x + m_SDLRectPositionButton.w <= _pSDLEvent->motion.x) && (m_SDLRectPositionButton.y >= _pSDLEvent->motion.y && m_SDLRectPositionButton.y + m_SDLRectPositionButton.h <= _pSDLEvent->motion.y)) {
-			switch (_pSDLEvent->type) {
+		switch (_pSDLEvent->type) {
 
-			case SDL_MOUSEMOTION:	// Hover
-
+		case SDL_MOUSEMOTION:	// Hover
+			if ((m_SDLRectPositionButton.x <= _pSDLEvent->motion.x && m_SDLRectPositionButton.x + m_SDLRectPositionButton.w >= _pSDLEvent->motion.x) && (m_SDLRectPositionButton.y <= _pSDLEvent->motion.y && m_SDLRectPositionButton.y + m_SDLRectPositionButton.h >= _pSDLEvent->motion.y))
 				ModifyButtonState(1);
-				return MouseButtonUp;
-				break;
+			else
+				ModifyButtonState(0);
+			break;
 
-			case SDL_MOUSEBUTTONDOWN:	// Click
-
+		case SDL_MOUSEBUTTONDOWN:	// Click
+			if ((m_SDLRectPositionButton.x <= _pSDLEvent->motion.x && m_SDLRectPositionButton.x + m_SDLRectPositionButton.w >= _pSDLEvent->motion.x) && (m_SDLRectPositionButton.y <= _pSDLEvent->motion.y && m_SDLRectPositionButton.y + m_SDLRectPositionButton.h >= _pSDLEvent->motion.y)) {
 				ModifyButtonState(2);
-				return MouseButtonDown;
-				break;
-
-			case SDL_MOUSEBUTTONUP:		// Unclick
-
-				ModifyButtonState(1);
-				return MouseButtonUp;
-				break;
-
 			}
+			break;
+
+		case SDL_MOUSEBUTTONUP:		// Unclick
+			if ((m_SDLRectPositionButton.x <= _pSDLEvent->motion.x && m_SDLRectPositionButton.x + m_SDLRectPositionButton.w >= _pSDLEvent->motion.x) && (m_SDLRectPositionButton.y <= _pSDLEvent->motion.y && m_SDLRectPositionButton.y + m_SDLRectPositionButton.h >= _pSDLEvent->motion.y)) {
+				ModifyButtonState(1);
+				m_pProcedureClic();
+			}
+			break;
+
 		}
-		else // Sinon si le curseur n'est pas sur le bouton...
-			ModifyButtonState(0);		// Normal
+		
+		//ModifyButtonState(0);		// Normal
 	}
 
 

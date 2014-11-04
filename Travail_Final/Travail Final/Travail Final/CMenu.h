@@ -68,8 +68,8 @@ public:
 		}
 	}
 
-	unsigned int ReactToEvent(SDL_Event* _pSDLEvent) {
-		return m_pArbreControl->ParcoursReaction(_pSDLEvent);
+	void ReactToEvent(SDL_Event* _pSDLEvent) {
+		m_pArbreControl->ParcoursReaction(_pSDLEvent);
 	}
 
 	// Porcédure permettant d'afficher le menu...
@@ -82,7 +82,7 @@ public:
 	}
 
 	void DefinirboShow(bool _boShow) {
-
+		m_boShow = _boShow;
 	}
 
 };

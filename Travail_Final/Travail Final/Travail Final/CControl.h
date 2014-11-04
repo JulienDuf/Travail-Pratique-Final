@@ -12,6 +12,6 @@ public:
 
 	virtual void ShowControl(SDL_Renderer* _pSDLRenderer) = 0;
 
-	virtual unsigned int ReactToEvent(SDL_Event* _pSDLEvent) = 0;
+	virtual void ReactToEvent(SDL_Event* _pSDLEvent) = 0;
 
 };

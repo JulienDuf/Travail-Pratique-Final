@@ -1,5 +1,6 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 ﻿La génération a démarré 2014-11-04 10:22:50 AM.
      1>Projet "C:\Users\Xavier\Documents\GitHub\Travail-Pratique-Final\Travail_Final\Travail Final\Travail Final\Travail Final.vcxproj" sur le nœud 2 (Build cible(s)).
      1>ClCompile:
@@ -20,6 +21,17 @@
 La génération a réussi.
 
 Temps écoulé 00:00:00.75
+=======
+﻿La génération a démarré 04/nov./2014 10:23:08 AM.
+     1>Projet "C:\Users\Sam\Documents\GitHub\Travail-Pratique-Final\Travail_Final\Travail Final\Travail Final\Travail Final.vcxproj" sur le nœud 2 (Build cible(s)).
+     1>Link:
+         Travail Final.vcxproj -> C:\Users\Sam\Documents\GitHub\Travail-Pratique-Final\Travail_Final\Travail Final\Debug\Travail Final.exe
+     1>Génération du projet "C:\Users\Sam\Documents\GitHub\Travail-Pratique-Final\Travail_Final\Travail Final\Travail Final\Travail Final.vcxproj" terminée (Build cible(s)).
+
+La génération a réussi.
+
+Temps écoulé 00:00:00.17
+>>>>>>> origin/BrancheMenu
 =======
 ﻿La génération a démarré 04/nov./2014 10:23:08 AM.
      1>Projet "C:\Users\Sam\Documents\GitHub\Travail-Pratique-Final\Travail_Final\Travail Final\Travail Final\Travail Final.vcxproj" sur le nœud 2 (Build cible(s)).

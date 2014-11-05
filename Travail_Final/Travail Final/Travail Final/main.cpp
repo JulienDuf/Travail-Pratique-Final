@@ -45,25 +45,28 @@ CLabelLeftRight* pLblLRChoixNbrEquipe; // Le labelLesftRight ou on choisi le nom
 CLabelLeftRight* pLblLRChoixNbrJoueurEquipe; // Le labelLesftRight ou on choisi le nombre de joueur par équipe.
 CLabelLeftRight* pLblLRChoixMap; // Le labelLesftRight ou on choisi la map pour le jeu.
 
-
+// Procédure pour le click sur le bouton nouvelle partie...
 void ClickBoutonNouvellePartie(void) {
 
 	pMenuNouvellePartie->DefinirboShow(true);
 	pMenuPrincipal->DefinirboShow(false);
 }
 
+// Procédure pour le click sur le bouton retour dans le menu nouvelle partie...
 void ClickBoutonRetour(void) {
 
 	pMenuNouvellePartie->DefinirboShow(false);
 	pMenuPrincipal->DefinirboShow(true);
 }
 
+// Procédure pour le click sur le bouton début partie...
 void ClickBoutonDebutPartie(void) {
 
 	pMenuNouvellePartie->DefinirboShow(false);
 	pMenuPrincipal->DefinirboShow(false);
 }
 
+// Procédure pour le click sur le bouton quitter...
 void ClickBoutonQuitter(void) {
 
 	boExecution = false;
@@ -233,6 +236,10 @@ int main(int argc, char* argv[]) {
 
 			pMenuPrincipal->ReactToEvent(pEvent);
 			pMenuNouvellePartie->ReactToEvent(pEvent);
+
+			if (pEvent->type == SDL_QUIT) {
+				boExecution = false;
+			}
 
 		}
 	}

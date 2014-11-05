@@ -7,7 +7,7 @@
 // Fin du codage de la classe.
 //
 
-class CLabel : public CControl{
+class CLabel : public CControl {
 private:
 
 	SDL_Texture* m_pSDLTextureLabel; // La texture d'un label.

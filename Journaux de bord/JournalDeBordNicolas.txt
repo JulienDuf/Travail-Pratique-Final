@@ -29,3 +29,7 @@ Jeudi 6 novembre 2014
 11:30 AM
 
 J'ai ajouté les classes CTimer et CSprite au projet. J'ai créé et codé les classes CPlayer et CMap et je les ai commenté.
+
+3:00 PM
+
+Écriture de l'analyse du jeu avec Gab, travail sur le sprite du personnage pour le mouvement de gauche avec Xavier.

@@ -4,6 +4,7 @@
 #include <SDL2\SDL_ttf.h>
 #include <SDL2\SDL_image.h>
 #include <iostream>
+#include <fstream>
 using namespace std;
 #include "CArbreAVL.h"
 #include "CListeDC.h"
@@ -72,12 +73,60 @@ void ClickBoutonQuitter(void) {
 	boExecution = false;
 }
 
+// Procédure pour le click sur le bouton droit du labelLeftRight de choix de la map...
+void ClickBoutonDroitChoixMap(void) {
+
+	pLblDescriptionMap->ChangeTexture(true);
+
+}
+
+// Procédure pour le click sur le bouton gauche du labelLeftRight de choix de la map...
+void ClickBoutonGaucheChoixMap(void) {
+
+	pLblDescriptionMap->ChangeTexture(false);
+
+}
+
+
+// Procédure qui lis les informations d'une map.
+// En entrée:
+// Param1 : L'emplacement du fichier à lire.
+void ReadMapInfo(string _strEmplacement) {
+
+	// Variables temporaires...
+	string strTmp[5];
+	char chrTmp[50];
+	ifstream FichierMap;
+
+	// Ouverture du fichier...
+	_strEmplacement.append("\\map.txt");
+	FichierMap.open(_strEmplacement);
+
+	// Si le fichier est ouvert...
+	if (FichierMap.is_open()) {
+
+		// Pour toutes les ligens de fichier, on les met dans le tableau temporaires.
+		for (int i = 0; i < 5; i++) {
+
+			FichierMap.getline(chrTmp, 50);
+			strTmp[i].append(chrTmp);
+
+		}
+
+		// Ferme le fichier.
+		FichierMap.close();
+	}
+
+	// Ajoute ce qui a été lu dans le label.
+	pLblDescriptionMap->AjouterTexture(pWindowJeu->ObtenirRenderer(), strTmp, 5, pFontBouton, CouleurTexte);
+
+}
 
 // Procédure qui transforme les deux images d'une map en une image.
 // Param1: L'emplacement de l'image.
 // Param2: Le nom du dossier ou sont les images.
 // Param3: La texture ou sera la texture finale.
-void PutMapToTexture(string _strEmplacement, string _NomDossier, SDL_Texture** _SDLTextureStockage) {
+void PutMapToTexture(string _strEmplacement, SDL_Texture** _SDLTextureStockage) {
 
 	// Variables temporaires...
 	string strEmplacement;
@@ -85,15 +134,15 @@ void PutMapToTexture(string _strEmplacement, string _NomDossier, SDL_Texture** _
 	SDL_Surface* pSDLSurfaceCopie;
 	SDL_Rect RectTmp = { 0, 0, 0, 0 };
 
-	// Ajoute le nom du dossier Maps dans la variable d'emplacement des images.
-	_strEmplacement.append("Maps\\");
+	// Lis les infos de la map.
+	ReadMapInfo(_strEmplacement);
 
 	// Téléchargement des images
 	strEmplacement = _strEmplacement;
-	strEmplacement.append(_NomDossier + "\\background.jpg");
+	strEmplacement.append("\\background.jpg");
 	pSDLSurfaceCopie = IMG_Load(strEmplacement.c_str());
 	strEmplacement = _strEmplacement;
-	strEmplacement.append(_NomDossier + "\\map.png");
+	strEmplacement.append("\\map.png");
 	pSDLSurfaceTmp = IMG_Load(strEmplacement.c_str());
 
 	// Redéfinition du rect et blit des deux surfaces...
@@ -106,6 +155,7 @@ void PutMapToTexture(string _strEmplacement, string _NomDossier, SDL_Texture** _
 	SDL_FreeSurface(pSDLSurfaceCopie);
 	SDL_FreeSurface(pSDLSurfaceTmp);
 }
+
 
 //
 // Procédure initialisant les librairies et variables.
@@ -133,7 +183,7 @@ void Start(char* _strApplicationFilename){
 	
 	// Chargement de font du texte des boutons...
 	strEmplacement = strApplicationPath;
-	strEmplacement.append("ARCADECLASSIC.TTF");
+	strEmplacement.append("calibri.ttf");
 	pFontBouton = TTF_OpenFont(strEmplacement.c_str(), 30);
 
 	// Chargements de la texture pour le bouton droit d'un LabelLeftRight.
@@ -156,41 +206,43 @@ void Start(char* _strApplicationFilename){
 	pBtnDebutPartie = new CButton("Debuter     la      partie", pFontBouton, CouleurTexte, strEmplacement.c_str(), { 790, 530, 500, 60 }, 3, 0, pWindowJeu->ObtenirRenderer(), ClickBoutonDebutPartie);
 	pBtnRetour = new CButton("Retour", pFontBouton, CouleurTexte, strEmplacement.c_str(), { 790, 600, 500, 60 }, 3, 0, pWindowJeu->ObtenirRenderer(), ClickBoutonRetour);
 
+
 	// Création des labels...
 	pLblNombreEquipe = new CLabel(pWindowJeu->ObtenirRenderer(), "Nombre d equipes", pFontBouton, CouleurTexte, { 180, 520, 231, 32 });
 	pLblNombreJoueurEquipe = new CLabel(pWindowJeu->ObtenirRenderer(), "Nombre de joueurs par equipe", pFontBouton, CouleurTexte, { 100, 620, 407, 32 });
+	pLblDescriptionMap = new CLabel(pWindowJeu->ObtenirRenderer(), { 900, 130, 500, 32 * 5 });
 
 	// Créations des lableLeftRight...
 	pLblLRChoixNbrEquipe = new CLabelLeftRight(pFontBouton, CouleurTexte, { 270, 550, 50, 50 }, pWindowJeu->ObtenirRenderer(), new CButton(pFlecheGauche, {225, 554, 35, 35}, 4, 1, NULL), new CButton(pFlecheDroite, {325, 554, 35, 35}, 4, 1, NULL), 5, "2", "3", "4", "5", "6");
 	pLblLRChoixNbrJoueurEquipe = new CLabelLeftRight(pFontBouton, CouleurTexte, { 270, 650, 50, 50 }, pWindowJeu->ObtenirRenderer(), new CButton(pFlecheGauche, {225, 654, 35, 35 }, 4, 1, NULL), new CButton(pFlecheDroite, { 325, 654, 35, 35 }, 4, 1, NULL), 3, "4", "5", "6");
-	pLblLRChoixMap = new CLabelLeftRight({120, 50, 623, 367}, new CButton(pFlecheGauche, { 20, 199, 80, 80 }, 4, 1, NULL), new CButton(pFlecheDroite, { 760, 199, 80, 80 }, 4, 1, NULL), 0);
+	pLblLRChoixMap = new CLabelLeftRight({ 120, 50, 623, 367 }, new CButton(pFlecheGauche, { 20, 199, 80, 80 }, 4, 1, ClickBoutonGaucheChoixMap), new CButton(pFlecheDroite, { 760, 199, 80, 80 }, 4, 1, ClickBoutonDroitChoixMap), 0);
 	 
 	// Met les map en une texture...
-	PutMapToTexture(strApplicationPath, "arcaderoom", &pTextureTmp);
+	PutMapToTexture(strApplicationPath + "Maps\\arcaderoom", &pTextureTmp);
 	pLblLRChoixMap->AjouterControl(1, pTextureTmp);
 	pTextureTmp = nullptr;
 
-	PutMapToTexture(strApplicationPath, "country", &pTextureTmp);
+	PutMapToTexture(strApplicationPath + "Maps\\country", &pTextureTmp);
 	pLblLRChoixMap->AjouterControl(1, pTextureTmp);
 	pTextureTmp = nullptr;
 
-	PutMapToTexture(strApplicationPath, "desert", &pTextureTmp);
+	PutMapToTexture(strApplicationPath + "Maps\\desert", &pTextureTmp);
 	pLblLRChoixMap->AjouterControl(1, pTextureTmp);
 	pTextureTmp = nullptr;
 
-	PutMapToTexture(strApplicationPath, "easterisland", &pTextureTmp);
+	PutMapToTexture(strApplicationPath + "Maps\\easterisland", &pTextureTmp);
 	pLblLRChoixMap->AjouterControl(1, pTextureTmp);
 	pTextureTmp = nullptr;
 
-	PutMapToTexture(strApplicationPath, "farm", &pTextureTmp);
+	PutMapToTexture(strApplicationPath + "Maps\\farm", &pTextureTmp);
 	pLblLRChoixMap->AjouterControl(1, pTextureTmp);
 	pTextureTmp = nullptr;
 
-	PutMapToTexture(strApplicationPath, "pirates", &pTextureTmp);
+	PutMapToTexture(strApplicationPath + "Maps\\pirates", &pTextureTmp);
 	pLblLRChoixMap->AjouterControl(1, pTextureTmp);
 	pTextureTmp = nullptr;
 
-	PutMapToTexture(strApplicationPath, "snow", &pTextureTmp);
+	PutMapToTexture(strApplicationPath + "Maps\\snow", &pTextureTmp);
 	pLblLRChoixMap->AjouterControl(1, pTextureTmp);
 	pTextureTmp = nullptr;
 	//......
@@ -198,7 +250,7 @@ void Start(char* _strApplicationFilename){
 
 	// Création des menus...
 	pMenuPrincipal = new CMenu(true, 2, pBtnNouvellePartie, pBtnQuitter); // Crée le menu principal.
-	pMenuNouvellePartie = new CMenu(false, 7, pBtnDebutPartie, pBtnRetour, pLblNombreJoueurEquipe, pLblNombreEquipe, pLblLRChoixNbrEquipe, pLblLRChoixNbrJoueurEquipe, pLblLRChoixMap); // Créé le menu nouvelle partie.
+	pMenuNouvellePartie = new CMenu(false, 8, pBtnDebutPartie, pBtnRetour, pLblDescriptionMap, pLblNombreJoueurEquipe, pLblNombreEquipe, pLblLRChoixNbrEquipe, pLblLRChoixNbrJoueurEquipe, pLblLRChoixMap); // Créé le menu nouvelle partie.
 
 	// Ajoue des menus dans la fenêtre.
 	pWindowJeu->AjouterMenu(2, pMenuPrincipal, pMenuNouvellePartie);

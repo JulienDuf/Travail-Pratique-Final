@@ -21,3 +21,11 @@ incapable de me servir de github, donc avec le laptop à Julien j'ai codé les fon
 petites modifs ici et là dans les classes de controle (CBouton, CLabelLeftRight).
 
 Création avec Julien du diagramme de classes du jeu sur GenMyModel (CPlayer, CMap, CSprite, CTimer).
+
+-----------------------------------------------------------------------------------------------------------------
+
+Jeudi 6 novembre 2014
+
+11:30 AM
+
+J'ai ajouté les classes CTimer et CSprite au projet. J'ai créé et codé les classes CPlayer et CMap et je les ai commenté.

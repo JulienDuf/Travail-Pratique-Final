@@ -1,3 +1,8 @@
 23 octobre: Travail sur analyse des besoins des fonctionalités du menu principal.
 28 octobre: Creation et travail sur le diagramme de classe des menus.
-30 octobre: Création de la classe LabelLeftRight, modification dans le diagramme de classes des menus (Attributs privés, constructeurs)
+30 octobre: creation et debut du code de la classe CLabelLeftRight, update du diagramme de classe des menus (maintenant obselete).
+4 novembre: finition de la branche menu et division des tache pour le jeu en tant que tel. Analyse des besoins pour les outils, 
+			et debut du diagramme de classes des outils.
+5 novembre: fin diagramme de classes des outils
+6 novembre: Merge l'analyse des outils avec l'analyse du jeu, Création du diagramme de cas d'utilisation des outils. 
+			Merge du diagramme de classe des outils avec le diagramme principal, Travail sur les classes.

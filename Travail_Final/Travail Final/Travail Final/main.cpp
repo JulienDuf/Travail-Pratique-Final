@@ -15,6 +15,11 @@ using namespace std;
 #include "CWindow.h"
 #include "CLabelLeftRight.h"
 #include "CEvenement.h"
+#include "CPlayer.h"
+#include "CMap.h"
+#include "CTeam.h"
+#include "CGame.h"
+
 
 // Variables...
 bool boExecution; // Variable de la boucle principale du programme.

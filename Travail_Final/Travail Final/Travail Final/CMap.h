@@ -8,9 +8,9 @@ class CMap {
 private:
 
 	SDL_Texture* m_pSDLTextureBackground;			// Pointeur de texture SDL qui pointe sur la texture qui représente l'arrière plan de la carte de jeu.
-	SDL_Texture* m_pSDLTextureMap;					// Pointeur de texture SDL qui pointe sur la texture qui représente l'avant plan de la carte de jeu.
+	SDL_Surface* m_pSDLSurfaceMap;					// Pointeur de Surface SDL qui pointe sur la surface qui représente l'avant plan de la carte de jeu.
 
-	CListeDC<CPlayer*>* m_pPlayerList;				// Pointeur de liste diublement chaînée qui pointe sur la liste de joueurs.
+	CArbreAVL<CControl*>* m_pArbreControl;
 
 public:
 
@@ -20,12 +20,26 @@ public:
 	// Paramètre: argc, Indique le nombre de joueur que l'utilisateur ajoute à la liste de joueurs dans le constructeur.
 	// Paramètre: ..., Joueurs que l'utilisateur veut ajouter à la liste de joueurs (Nombre indéfinis, CPlayer).
 	// Retour: rien (Constructeur).
-	CMap(SDL_Texture* _pSDLTextureBackground, SDL_Texture* _pSDLTextureMap, int argc, ...) {
-
+	CMap(SDL_Texture* _pSDLTextureBackground, SDL_Surface* _pSDLSurfaceMap, int argc, ...) {
+		CPlayer* pPlayerTmp;
 		m_pSDLTextureBackground = _pSDLTextureBackground;
-		m_pSDLTextureMap = _pSDLTextureMap;
+		m_pSDLSurfaceMap = _pSDLSurfaceMap;
 
-		m_pPlayerList = new CListeDC<CPlayer*>();
+		m_pArbreControl = new CArbreAVL<CControl*>();
+
+		if (argc > 0) {
+			va_list parametres;
+
+			va_start(parametres, argc);
+			m_pPlayerList->AllerDebut();
+			for (int i = 0; i < argc; i++) {
+				pPlayerTmp = va_arg(parametres, CPlayer*);
+				
+				m_pPlayerList->AjouterFin(pPlayerTmp);
+				m_pPlayerList->AllerSuivantCurseur();
+			}
+			va_end(parametres);
+		}
 
 	}
 	

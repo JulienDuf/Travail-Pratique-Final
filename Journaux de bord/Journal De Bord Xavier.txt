@@ -5,4 +5,5 @@ fonctionnalités du menu et comment il ressemblera.	Mardi 28 octobre 2014. 2h de 
 d'utilisation pour les menus. 10 min Aussi j'ai ajouter les classes CWindow, CLabel et CControl. Mercredi 29 octobre 2014. 30 min. J'ai fait le constructeur de
 la classe Cbutton. Jeudi 30 octobre 2014. 1h20. J'ai fini la classe CButton avec une petite pause de 15 minutes. Mardi 4 novembre 2014. ~2h. J'ai fait le sprite pour 
 notre "stickman" qui court. Jeudi 6 nobembre 2014 ~1h. Ajout de classe et revision de code. Finition du sprite de nos bonhomme et création d'un bonhomme qui 
-descend en parachute.
+descend en parachute. ~3h Création de l'inverse du sprite (annimation du bonhomme qui court vers la gauche). Résoudre des problèmes de code. Reconstruire la classe
+CSprite. Ajout des quelques classe restante comme CTool.

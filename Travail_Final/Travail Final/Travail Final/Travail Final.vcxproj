@@ -80,7 +80,10 @@
     <ClInclude Include="CMap.h" />
     <ClInclude Include="CMenu.h" />
     <ClInclude Include="CPlayer.h" />
+    <ClInclude Include="CSprite.h" />
     <ClInclude Include="CTeam.h" />
+    <ClInclude Include="CTimer.h" />
+    <ClInclude Include="CTool.h" />
     <ClInclude Include="CWindow.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

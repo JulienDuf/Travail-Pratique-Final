@@ -8,6 +8,7 @@
 using namespace std;
 #include "CArbreAVL.h"
 #include "CListeDC.h"
+#include "CTimer.h"
 #include "CControl.h"
 #include "CButton.h"
 #include "CLabel.h"
@@ -15,6 +16,8 @@ using namespace std;
 #include "CWindow.h"
 #include "CLabelLeftRight.h"
 #include "CEvenement.h"
+#include "CSprite.h"
+#include "CTool.h"
 #include "CPlayer.h"
 #include "CMap.h"
 #include "CTeam.h"

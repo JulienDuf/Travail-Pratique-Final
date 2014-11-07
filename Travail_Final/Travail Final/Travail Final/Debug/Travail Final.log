@@ -1,19 +1,20 @@
-﻿La génération a démarré 2014-11-05 21:58:03.
-     1>Projet "C:\Users\Julien\Documents\GitHub\Travail-Pratique-Final\Travail_Final\Travail Final\Travail Final\Travail Final.vcxproj" sur le nœud 2 (Build cible(s)).
+﻿La génération a démarré 2014-11-06 6:53:34 PM.
+     1>Projet "C:\Users\Xavier\Documents\GitHub\Travail-Pratique-Final\Travail_Final\Travail Final\Travail Final\Travail Final.vcxproj" sur le nœud 2 (Build cible(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
          main.cpp
-     1>c:\users\julien\documents\github\travail-pratique-final\travail_final\travail final\travail final\cbutton.h(48): warning C4018: '<' : incompatibilité signed/unsigned
-     1>c:\users\julien\documents\github\travail-pratique-final\travail_final\travail final\travail final\cmenu.h(27): warning C4018: '<' : incompatibilité signed/unsigned
-     1>c:\users\julien\documents\github\travail-pratique-final\travail_final\travail final\travail final\cwindow.h(43): warning C4018: '<' : incompatibilité signed/unsigned
-     1>c:\users\julien\documents\github\travail-pratique-final\travail_final\travail final\travail final\cwindow.h(57): warning C4018: '<' : incompatibilité signed/unsigned
-     1>c:\users\julien\documents\github\travail-pratique-final\travail_final\travail final\travail final\carbreavl.h(194): warning C4715: 'CArbreAVL<CMenu *>::Rechercher' : les chemins de contrôle ne retournent pas tous une valeur
-     1>c:\users\julien\documents\github\travail-pratique-final\travail_final\travail final\travail final\carbreavl.h(194): warning C4715: 'CArbreAVL<CControl *>::Rechercher' : les chemins de contrôle ne retournent pas tous une valeur
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail_final\travail final\travail final\cbutton.h(48): warning C4018: '<' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail_final\travail final\travail final\cmenu.h(27): warning C4018: '<' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail_final\travail final\travail final\cwindow.h(43): warning C4018: '<' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail_final\travail final\travail final\cwindow.h(57): warning C4018: '<' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail_final\travail final\travail final\carbreavl.h(194): warning C4715: 'CArbreAVL<CMenu *>::Rechercher' : les chemins de contrôle ne retournent pas tous une valeur
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail_final\travail final\travail final\carbreavl.h(194): warning C4715: 'CArbreAVL<CControl *>::Rechercher' : les chemins de contrôle ne retournent pas tous une valeur
        Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Julien\Documents\GitHub\Travail-Pratique-Final\Travail_Final\Travail Final\Debug\Travail Final.exe" /INCREMENTAL /NOLOGO SDL2.lib SDL2main.lib SDL2_ttf.lib SDL2_image.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Julien\Documents\GitHub\Travail-Pratique-Final\Travail_Final\Travail Final\Debug\Travail Final.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Julien\Documents\GitHub\Travail-Pratique-Final\Travail_Final\Travail Final\Debug\Travail Final.lib" /MACHINE:X86 Debug\main.obj
-         Travail Final.vcxproj -> C:\Users\Julien\Documents\GitHub\Travail-Pratique-Final\Travail_Final\Travail Final\Debug\Travail Final.exe
-     1>Génération du projet "C:\Users\Julien\Documents\GitHub\Travail-Pratique-Final\Travail_Final\Travail Final\Travail Final\Travail Final.vcxproj" terminée (Build cible(s)).
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Xavier\Documents\GitHub\Travail-Pratique-Final\Travail_Final\Travail Final\Debug\Travail Final.exe" /INCREMENTAL /NOLOGO SDL2.lib SDL2main.lib SDL2_ttf.lib SDL2_image.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Xavier\Documents\GitHub\Travail-Pratique-Final\Travail_Final\Travail Final\Debug\Travail Final.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Xavier\Documents\GitHub\Travail-Pratique-Final\Travail_Final\Travail Final\Debug\Travail Final.lib" /MACHINE:X86 Debug\main.obj
+     1>MSVCRTD.lib(cinitexe.obj) : warning LNK4098: conflit entre la bibliothèque par défaut 'msvcrt.lib' et les autres bibliothèques ; utilisez /NODEFAULTLIB:library
+         Travail Final.vcxproj -> C:\Users\Xavier\Documents\GitHub\Travail-Pratique-Final\Travail_Final\Travail Final\Debug\Travail Final.exe
+     1>Génération du projet "C:\Users\Xavier\Documents\GitHub\Travail-Pratique-Final\Travail_Final\Travail Final\Travail Final\Travail Final.vcxproj" terminée (Build cible(s)).
 
 La génération a réussi.
 
-Temps écoulé 00:00:02.68
+Temps écoulé 00:00:00.97

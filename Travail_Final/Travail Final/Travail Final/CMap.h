@@ -31,12 +31,12 @@ public:
 			va_list parametres;
 
 			va_start(parametres, argc);
-			m_pPlayerList->AllerDebut();
+			//m_pPlayerList->AllerDebut();
 			for (int i = 0; i < argc; i++) {
 				pPlayerTmp = va_arg(parametres, CPlayer*);
 				
-				m_pPlayerList->AjouterFin(pPlayerTmp);
-				m_pPlayerList->AllerSuivantCurseur();
+				//m_pPlayerList->AjouterFin(pPlayerTmp);
+				//m_pPlayerList->AllerSuivantCurseur();
 			}
 			va_end(parametres);
 		}

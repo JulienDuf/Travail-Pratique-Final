@@ -18,6 +18,7 @@ using namespace std;
 #include "CEvenement.h"
 #include "CSprite.h"
 #include "CTool.h"
+#include "CPack.h"
 #include "CPlayer.h"
 #include "CMap.h"
 #include "CTeam.h"

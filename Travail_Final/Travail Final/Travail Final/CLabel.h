@@ -51,7 +51,7 @@ private:
 
 public:
 
-	// Constructeurs de CLabel...
+	// Constructeurs de CLabel de text...
 	// En entrée:
 	// Param1: Le renderer de destination du Control.
 	// Param2: Le texte qui sera présent dans le label.
@@ -75,7 +75,7 @@ public:
 		m_RectPosition = _RectPosition;
 	}
 
-	// Constructeur de CLabel...
+	// Constructeur de CLabel de texture...
 	// En entrée:
 	// Param1: La texture qui sera présente dans le label.
 	// Param2: La position du label dans la fenêtre.
@@ -146,7 +146,7 @@ public:
 
 	// Procédure changeant le position du curseur.
 	// En entrée:
-	// Param1: Si c'est vers le droite ou vers le gauche.
+	// Param1: True(Aller Droite) False(Aller Gauche)
 	void ChangeTexture(bool _boDroite) {
 
 		if (_boDroite)
@@ -154,6 +154,16 @@ public:
 
 		else
 			m_pListeTextureLabel->AllerPrecedentCurseur();
+	}
+
+	// Procédure qui obtient la dimension d'une texture.
+	// En entrée:
+	// Param1: Position de la texture voulue(Ordre de création)
+	// Param2: Une variable Width à affecter
+	// Param3: Une variable Height à affecter
+	void GetTextureDimension(unsigned int _uiPosition, int* _iW, int* _iH) {
+		m_pListeTextureLabel->AllerACurseur(_uiPosition);
+		SDL_QueryTexture(m_pListeTextureLabel->ObtenirElementCurseur(), nullptr, nullptr, _iW, _iH);
 	}
 
 };

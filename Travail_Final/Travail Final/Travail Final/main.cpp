@@ -28,6 +28,8 @@ using namespace std;
 // Variables...
 bool boExecution; // Variable de la boucle principale du programme.
 
+string strEmplacementFichier; // L'emplacement de nos fichiers.
+
 SDL_Event* pEvent; // Les événemens du programme;
 
 CWindow* pWindowJeu; // La fenêtre de jeu.
@@ -38,6 +40,8 @@ SDL_Texture* pFlecheDroite;
 TTF_Font* pFontBouton; // La font du texte des boutons.
 
 SDL_Color CouleurTexte; // La couleur du texte.
+
+CGame* pGame; // La partie.
 
 CMenu* pMenuPrincipal; // Le menu principal du jeu.
 CMenu* pMenuNouvellePartie; // Le menu créant une nouvelle partie.
@@ -72,8 +76,47 @@ void ClickBoutonRetour(void) {
 // Procédure pour le click sur le bouton début partie...
 void ClickBoutonDebutPartie(void) {
 
+	string strTmp = strEmplacementFichier;
+	int _iNombreEquipe = 0;
+	int _iNombreJouer = 0;
+
 	pMenuNouvellePartie->DefinirboShow(false);
 	pMenuPrincipal->DefinirboShow(false);
+
+	strTmp.append("Maps\\");
+
+	switch (pLblLRChoixMap->ObtenirPositionLabel()) {
+
+	case 0:
+		strTmp.append("arcaderoom\\");
+		break;
+
+	case 1:
+		strTmp.append("country\\");
+		break;
+
+	case 2:
+		strTmp.append("desert\\");
+		break;
+
+	case 3:
+		strTmp.append("easterisland\\");
+		break;
+		
+	case 4:
+		strTmp.append("farm\\");
+		break;
+
+	case 5:
+		strTmp.append("pirates\\");
+		break;
+
+	case 6:
+		strTmp.append("snow\\");
+		break;
+	}
+
+	pGame = new CGame(strTmp, _iNombreEquipe, _iNombreJouer, NULL, pWindowJeu->ObtenirRenderer());
 }
 
 // Procédure pour le click sur le bouton quitter...
@@ -256,6 +299,7 @@ void Start(char* _strApplicationFilename){
 	pTextureTmp = nullptr;
 	//......
 
+	strEmplacementFichier = strApplicationPath;
 
 	// Création des menus...
 	pMenuPrincipal = new CMenu(true, 2, pBtnNouvellePartie, pBtnQuitter); // Crée le menu principal.

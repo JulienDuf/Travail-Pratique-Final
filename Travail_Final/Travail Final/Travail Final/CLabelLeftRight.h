@@ -11,6 +11,8 @@ private:
 	CButton* m_pButtonLeft; // Bouton de droite du controle.
 	CButton* m_pButtonRight; // Bouton de gauche du controle.
 
+	int m_uiPositionLabel; // La position dans la liste.
+
 public:
 
 	/*
@@ -44,6 +46,8 @@ public:
 
 		m_pButtonLeft = _pButtonLeft;
 		m_pButtonRight = _pButtonRight;
+
+		m_uiPositionLabel = 0;
 	}
 
 	/*
@@ -74,6 +78,8 @@ public:
 		m_SDLRectLabel = _SDLRectLabel;
 		m_pButtonLeft = _pButtonLeft;
 		m_pButtonRight = _pButtonRight;
+
+		m_uiPositionLabel = 0;
 	}
 	
 	~CLabelLeftRight() {
@@ -121,11 +127,20 @@ public:
 		m_pButtonLeft->ReactToEvent(_pSDLEvent);
 		m_pButtonRight->ReactToEvent(_pSDLEvent);
 
-		if (m_pButtonLeft->ObtenirButtonState() == 2)
+		if (m_pButtonLeft->ObtenirButtonState() == 2) {
 			m_pListeTexture->AllerPrecedentCurseur();
+			m_uiPositionLabel-- % (m_pListeTexture->ObtenirCompte() - 1);
+		}
 
-		else if (m_pButtonRight->ObtenirButtonState() == 2)
+		else if (m_pButtonRight->ObtenirButtonState() == 2) {
 			m_pListeTexture->AllerSuivantCurseur();
+			m_uiPositionLabel++ % (m_pListeTexture->ObtenirCompte() - 1);
+		}
+	}
+
+	unsigned int ObtenirPositionLabel(void) {
+
+		return m_uiPositionLabel;
 	}
 
 };

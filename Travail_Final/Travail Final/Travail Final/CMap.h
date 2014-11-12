@@ -16,38 +16,71 @@ private:
 	SDL_Surface* m_pSDLSurfaceMap;					// Pointeur de Surface SDL qui pointe sur la surface qui représente l'avant plan de la carte de jeu.
 	SDL_Rect m_RectPositionImages;					// Rect représentant la position de la map dans l'écran.
 	CListeDC<CPack*>* m_pPackList;					// Liste des packs présents dans la map.
+	SDL_Surface* m_pSurfaceGabarie;					// Surface ou est stocké les gabaries pour la destruction.
 	//CComboBox* m_pComboBoxChoixOutils;              // Le comboBox ou le joueur choisi son outils pour son tour.
+
+	int m_iGravite;									// La gravité de la map.
+	int m_iVentMax;									// Le vent max de la map.
 
 public:
 
 	// Constructeur...
-	// Paramètre: _pSDLTextureBackground, pointe sur la texture qui représente l'arrière plan de la carte de jeu.
 	// Paramètre: _pSDLTextureMap, pointe sur la texture qui représente l'avant plan de la carte de jeu.
 	// Paramètre: _RectPositionImages, la position de la map dans l'écran.
-	// Paramètre: argc, Indique le nombre de packs que l'utilisateur ajoute à la liste de packs dans le constructeur.
-	// Paramètre: ..., Pack que l'utilisateur veut ajouter à la liste de packs (Nombre indéfinis, CPack).
 	// Retour: rien (Constructeur).
-	CMap(SDL_Texture* _pSDLTextureBackground, SDL_Surface* _pSDLSurfaceMap, SDL_Rect _RectPositionImages, int argc, ...) {
-		m_pSDLTextureBackground = _pSDLTextureBackground;
-		m_pSDLSurfaceMap = _pSDLSurfaceMap;
+	CMap(string _strEmplacementMap, SDL_Rect _RectPositionImages, SDL_Surface* _pSurfaceGabarie, SDL_Renderer* _pRenderer) {
+		
+		// Variables temporaires...
+		string strTmp[5];
+		char chrTmp[50];
+		string strTampo;
+		ifstream FichierMap;
+		string strEmplacement;
+		int iNombreMines;
+		
+		m_pSurfaceGabarie = _pSurfaceGabarie;
 
 		m_RectPositionImages = _RectPositionImages;
 		
 		m_pPackList = new CListeDC<CPack*>();
 
-		if (argc > 0) {
+		strEmplacement = _strEmplacementMap;
+		strEmplacement.append("background");
+		m_pSDLTextureBackground = IMG_LoadTexture(_pRenderer, strEmplacement.c_str());
 
-			va_list parametres;
-			va_start(parametres, argc);
+		strEmplacement = _strEmplacementMap;
+		strEmplacement.append("map");
+		m_pSDLSurfaceMap = IMG_Load(strEmplacement.c_str());
 
-			for (int i = 0; i < argc; i++) 
-				m_pPackList->AjouterFin(va_arg(parametres, CPack*));
-			
-			va_end(parametres);
+		// Ouverture du fichier...
+		strEmplacement.append("\\map.txt");
+		FichierMap.open(strEmplacement);
 
-			m_pPackList->AllerDebut();
+		if (FichierMap.is_open()) {
+
+			FichierMap.getline(chrTmp, 50);
+			strTampo = chrTmp[21];
+			m_iGravite = SDL_atoi(strTampo.c_str());
+			FichierMap.getline(chrTmp, 50);
+
+			FichierMap.getline(chrTmp, 50);
+			strTampo = chrTmp[24];
+			strTampo += chrTmp[25];
+			strTampo += chrTmp[26];
+			m_iVentMax = SDL_atoi(strTampo.c_str());
+			FichierMap.getline(chrTmp, 50);
+
+			FichierMap.getline(chrTmp, 50);
+			strTampo = chrTmp[21];
+			iNombreMines = SDL_atoi(strTampo.c_str());
+
+			FichierMap.close();
 		}
 
+		for (int i = iNombreMines; i > 0; i--) {
+
+
+		}
 	}
 	
 
@@ -62,15 +95,24 @@ public:
 		int iX =_iX - _iRayon;
 		int iY = _iY - _iRayon;
 
-		// Surface du gabarie.
-		SDL_Surface* pSDLSurfaceGabarie = nullptr;
+		SDL_Rect RectSource; // Source du gabarie.
 
 		// Selon le rayon mis en paramètre...
 		switch (_iRayon) {
 
 		// Si le rayon est de 50 pixels.
-		case 50:
+		case 45:
+			RectSource = { 0, 0, m_pSurfaceGabarie->h, m_pSurfaceGabarie->h };
+			break;
 
+		// Si le rayon est de 50 pixels.
+		case 50:
+			RectSource = { 1 * m_pSurfaceGabarie->h, 0, m_pSurfaceGabarie->h, m_pSurfaceGabarie->h };
+			break;
+
+		// Si le rayon est de 60 pixels.
+		case 60:
+			RectSource = { 2 * m_pSurfaceGabarie->h, 0, m_pSurfaceGabarie->h, m_pSurfaceGabarie->h };
 			break;
 		}
 
@@ -82,7 +124,7 @@ public:
 				if (iX > 0 && iY > 0) {
 
 					// Si le pixel du gabarie n'est pas en blanc, remplace le pixel de la map en transparent.
-					if (((unsigned int*)pSDLSurfaceGabarie->pixels)[y * pSDLSurfaceGabarie->w + x] != BLANC32BIT)
+					if (((unsigned int*)m_pSurfaceGabarie->pixels)[y * m_pSurfaceGabarie->w + x] != BLANC32BIT)
 						((unsigned int*)m_pSDLSurfaceMap->pixels)[iY * m_pSDLSurfaceMap->w + iX] = TRANSPARENCE32BIT;
 
 					iX++; // Augmente la position en X.
@@ -90,7 +132,7 @@ public:
 			}
 
 			iY++; // Augmente la position en Y.
-			iX = _iX - 50; // Remet la position en X au départ.
+			iX = _iX - _iRayon; // Remet la position en X au départ.
 		}
 
 	}

@@ -9,20 +9,20 @@ using namespace std;
 #include "CArbreAVL.h"
 #include "CListeDC.h"
 #include "CTimer.h"
+#include "CSprite.h"
 #include "CControl.h"
 #include "CButton.h"
 #include "CLabel.h"
 #include "CMenu.h"
-#include "CWindow.h"
-#include "CLabelLeftRight.h"
-#include "CEvenement.h"
-#include "CSprite.h"
 #include "CTool.h"
 #include "CPack.h"
 #include "CPlayer.h"
-#include "CMap.h"
 #include "CTeam.h"
+#include "CMap.h"
 #include "CGame.h"
+#include "CWindow.h"
+#include "CLabelLeftRight.h"
+#include "CEvenement.h"
 
 
 // Variables...
@@ -116,7 +116,7 @@ void ClickBoutonDebutPartie(void) {
 		break;
 	}
 
-	pGame = new CGame(strTmp, _iNombreEquipe, _iNombreJouer, NULL, pWindowJeu->ObtenirRenderer());
+	pWindowJeu->CreateGame(strTmp, _iNombreEquipe, _iNombreJouer, NULL, pWindowJeu->ObtenirRenderer());
 }
 
 // Procédure pour le click sur le bouton quitter...
@@ -228,6 +228,8 @@ void Start(char* _strApplicationFilename){
 	// Initialistion des librairies
 	SDL_Init(SDL_INIT_VIDEO);
 	TTF_Init();
+
+	pGame = nullptr;
 
 	// Création de la fenêtre...
 	pWindowJeu = new CWindow(1366, 768);

@@ -5,12 +5,14 @@
 // Modifiée par Gabriel Beaudry (gabriel.bdry@gmail.com) le 28 octobre 2014.
 //
 
+
 class CWindow {
 private:
 
 	CArbreAVL<CMenu*>* m_pArbreMenu; // Liste des menus.
 	SDL_Window* m_pSDLWindow; // La fenetre.
 	SDL_Renderer* m_pSDLRenderer; // Renderer.
+	CGame* m_pGame; // La partie qui sera dans la febnêtre.
 
 public:
 
@@ -60,10 +62,18 @@ public:
 		va_end(parametres);
 	}
 
+	void CreateGame(string _strEmplacementMap, int _iNombreÉquipe, int _iNombreJoueur, SDL_Surface* _pSurfaceGabarie, SDL_Renderer* _pRenderer) {
+
+		m_pGame = new CGame(_strEmplacementMap, _iNombreÉquipe, _iNombreJoueur, _pSurfaceGabarie, m_pSDLRenderer);
+	}
+
 	// Procédure qui rendre l'image final.
 	// Paramètre : _Renderer : Le renderer.
 	void Rafraichir(void) {
 		SDL_RenderClear(m_pSDLRenderer);
+
+		if (m_pGame != nullptr)
+			m_pGame->AfficherGame(m_pSDLRenderer);
 
 		m_pArbreMenu->ParcoursMenu(m_pSDLRenderer);
 

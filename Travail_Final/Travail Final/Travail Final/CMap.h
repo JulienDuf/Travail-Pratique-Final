@@ -45,16 +45,19 @@ public:
 		m_pPackList = new CListeDC<CPack*>();
 
 		strEmplacement = _strEmplacementMap;
-		strEmplacement.append("background");
+		strEmplacement.append("background.jpg");
 		m_pSDLTextureBackground = IMG_LoadTexture(_pRenderer, strEmplacement.c_str());
 
 		strEmplacement = _strEmplacementMap;
-		strEmplacement.append("map");
+		strEmplacement.append("map.png");
 		m_pSDLSurfaceMap = IMG_Load(strEmplacement.c_str());
 
 		// Ouverture du fichier...
 		strEmplacement.append("\\map.txt");
 		FichierMap.open(strEmplacement);
+
+		m_RectPositionImages.w = m_pSDLSurfaceMap->w;
+		m_RectPositionImages.h = m_pSDLSurfaceMap->h;
 
 		if (FichierMap.is_open()) {
 

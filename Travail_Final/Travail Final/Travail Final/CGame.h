@@ -17,6 +17,7 @@ public:
 
 	void AfficherGame(SDL_Renderer* _pRenderer) {
 
+		m_pGameMap->ShowMap(_pRenderer);
 
 	}
 

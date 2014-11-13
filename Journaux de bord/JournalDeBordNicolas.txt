@@ -33,3 +33,19 @@ J'ai ajouté les classes CTimer et CSprite au projet. J'ai créé et codé les class
 3:00 PM
 
 Écriture de l'analyse du jeu avec Gab, travail sur le sprite du personnage pour le mouvement de gauche avec Xavier.
+
+------------------------------------------------------------------------------------------------------------------
+
+Jeudi 13 novembre 2014
+
+1:00 à 5:00
+
+Travail sur le programme, nous avons eu plusieurs discussions très éducative sur les collisions et les animations,
+c'était toutefois des sicussions très frustrantes. Petites modifs sur le diagramme de classe et un peu d'aide à
+Xavier pour les animations.
+
+Création d'une procédure pour vérifier les collisions ( que nous voulons maintenant modifier pour optimiser notre
+programme). C'est nécessaire pour pouvoir finir notre codage des animations. Travail plus approfondi prévu en fin
+de semaine. Bonne journée/soirée/nuit!
+
+-------------------------------------------------------------------------------------------------------------------

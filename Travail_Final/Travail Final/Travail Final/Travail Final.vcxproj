@@ -72,13 +72,14 @@
     <ClInclude Include="CArbreAVL.h" />
     <ClInclude Include="CButton.h" />
     <ClInclude Include="CControl.h" />
-    <ClInclude Include="CEvenement.h" />
     <ClInclude Include="CGame.h" />
+    <ClInclude Include="CGestionaire.h" />
     <ClInclude Include="CLabel.h" />
     <ClInclude Include="CLabelLeftRight.h" />
     <ClInclude Include="CListeDC.h" />
     <ClInclude Include="CMap.h" />
     <ClInclude Include="CMenu.h" />
+    <ClInclude Include="CNoeudArbreAVL.h" />
     <ClInclude Include="CPack.h" />
     <ClInclude Include="CPlayer.h" />
     <ClInclude Include="CSprite.h" />

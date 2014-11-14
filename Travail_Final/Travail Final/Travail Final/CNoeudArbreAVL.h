@@ -9,6 +9,7 @@ private:
 	// Données membres...
 
 	T m_Element; // Élément dans le noeud.
+	string m_strElementID; // L'ID de l'élément.
 	CNoeudArbreAVL<T>* m_pParent; // Pointeur sur le parent du noeud
 	CNoeudArbreAVL<T>* m_pEG; // Pointeur sur l'enfant plus petit du noeud.
 	CNoeudArbreAVL<T>* m_pED; // Pointeur sur l'enfant plus grand du noeud.
@@ -19,7 +20,8 @@ public:
 
 	// Constructeur...
 
-	CNoeudArbreAVL(T _Element, CNoeudArbreAVL<T>* _pParent, int _iIndiceEquilibre) {
+	CNoeudArbreAVL(T _Element, string _strID, CNoeudArbreAVL<T>* _pParent, int _iIndiceEquilibre) {
+		m_strElementID = _strID;
 		m_Element = _Element;
 		m_pParent = _pParent;
 		m_pEG = nullptr;
@@ -69,5 +71,10 @@ public:
 
 	T ObtenirElement() {
 		return m_Element;
+	}
+
+	string ObtenirID() {
+
+		return m_strElementID;
 	}
 };

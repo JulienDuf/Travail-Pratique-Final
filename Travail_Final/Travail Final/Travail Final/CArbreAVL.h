@@ -194,32 +194,89 @@ private:
 	}
 
 	/*
+	Fonction permettant de rechercher un élément dans l'arbre.
+	Prend un élément à rechercher et un pointeur de type Noeud pour la récursivité et retourne vrai si l'élément à été trouvé sinon elle retourne faux
+	*/
+	CNoeudArbreAVL<T>* ObtenirElement(string _strID, CNoeudArbreAVL<T>* _pNoeud) {
+		// Si l'élément dans le Noeud sur lequel pointe _pNoeud est égal à l'élément recherché...
+		if (_pNoeud->ObtenirID() == _strID) {
+			return _pNoeud;
+		}
+		else
+		{
+			// Si on doit passer par la gauche pour trouver l'élément...
+			if (_strID < _pNoeud->ObtenirID() && _pNoeud->ObtenirEG() != nullptr) {
+				return ObtenirElement(_strID, _pNoeud->ObtenirEG());
+			}
+			else
+				// Si on doit passer par la droite pour trouver l'élément...
+				if (_strID > _pNoeud->ObtenirID() && _pNoeud->ObtenirED() != nullptr) {
+					return ObtenirElement(_strID, _pNoeud->ObtenirED());
+				}
+				else
+					return NULL;
+		}
+	}
+
+	/*
 	Procédure permettant d'ajouter un Noeud dans l'arbre.
 	Prend un élément de n'importe quel type comparable à ajouter dans le nouveau noeud et un pointeur pour la récursivité.
 	*/
-	void Ajouter(T _ElementAjouter, CNoeudArbreAVL<T>* _pNoeud) {
-		// Si on doit passer par la gauche pour ajouter l'élément...
-		if (_ElementAjouter < _pNoeud->ObtenirElement()) {
-			// S'il n'y a pas de noeud à la gauche...
-			if (_pNoeud->ObtenirEG() != nullptr)
-				Ajouter(_ElementAjouter, _pNoeud->ObtenirEG());
-			else
-			{
-				_pNoeud->DefinirEG(new CNoeudArbreAVL<T>(_ElementAjouter, _pNoeud, 0)); // Création d'un objet en mémoire de tye Noeud et retour de son adresse mémoire dans un nouvel enfant gauche.
-				ModificationIndiceEquilibreGauche(_pNoeud, false);
+	void Ajouter(T _ElementAjouter, string _strID, CNoeudArbreAVL<T>* _pNoeud) {
+		
+		if (_strID == "") {
+
+			// Si on doit passer par la gauche pour ajouter l'élément...
+			if (_ElementAjouter < _pNoeud->ObtenirElement()) {
+				// S'il n'y a pas de noeud à la gauche...
+				if (_pNoeud->ObtenirEG() != nullptr)
+					Ajouter(_ElementAjouter, _strID, _pNoeud->ObtenirEG());
+				else
+				{
+					_pNoeud->DefinirEG(new CNoeudArbreAVL<T>(_ElementAjouter, _strID, _pNoeud, 0)); // Création d'un objet en mémoire de tye Noeud et retour de son adresse mémoire dans un nouvel enfant gauche.
+					ModificationIndiceEquilibreGauche(_pNoeud, false);
+				}
+			}
+			else {
+				// Si on doit passer par la gauche pour ajouter l'élément...
+				if (_ElementAjouter > _pNoeud->ObtenirElement()) {
+					// S'il n'y a pas de noeud à la gauche...
+					if (_pNoeud->ObtenirED() != nullptr)
+						Ajouter(_ElementAjouter, _strID, _pNoeud->ObtenirED());
+					else {
+						_pNoeud->DefinirED(new CNoeudArbreAVL<T>(_ElementAjouter, _strID, _pNoeud, 0)); // Création d'un objet en mémoire de type Noeud et retour de son adresse mémoire dans un nouvel enfant droit.
+						ModificationIndiceEquilibreDroit(_pNoeud, false);
+					}
+				}
 			}
 		}
-		else
-		// Si on doit passer par la gauche pour ajouter l'élément...
-		if (_ElementAjouter > _pNoeud->ObtenirElement()) {
-			// S'il n'y a pas de noeud à la gauche...
-			if (_pNoeud->ObtenirED() != nullptr)
-				Ajouter(_ElementAjouter, _pNoeud->ObtenirED());
-			else
-			{
-				_pNoeud->DefinirED(new CNoeudArbreAVL<T>(_ElementAjouter, _pNoeud, 0)); // Création d'un objet en mémoire de type Noeud et retour de son adresse mémoire dans un nouvel enfant droit.
-				ModificationIndiceEquilibreDroit(_pNoeud, false);
+
+		else {
+
+			// Si on doit passer par la gauche pour ajouter l'élément...
+			if (_strID < _pNoeud->ObtenirID()) {
+				// S'il n'y a pas de noeud à la gauche...
+				if (_pNoeud->ObtenirEG() != nullptr)
+					Ajouter(_ElementAjouter, _strID, _pNoeud->ObtenirEG());
+				else
+				{
+					_pNoeud->DefinirEG(new CNoeudArbreAVL<T>(_ElementAjouter, _strID, _pNoeud, 0)); // Création d'un objet en mémoire de tye Noeud et retour de son adresse mémoire dans un nouvel enfant gauche.
+					ModificationIndiceEquilibreGauche(_pNoeud, false);
+				}
 			}
+			else 
+				// Si on doit passer par la gauche pour ajouter l'élément...
+				if (_strID > _pNoeud->ObtenirID()) {
+					// S'il n'y a pas de noeud à la gauche...
+					if (_pNoeud->ObtenirED() != nullptr)
+						Ajouter(_ElementAjouter, _strID, _pNoeud->ObtenirED());
+					else {
+						_pNoeud->DefinirED(new CNoeudArbreAVL<T>(_ElementAjouter, _strID, _pNoeud, 0)); // Création d'un objet en mémoire de type Noeud et retour de son adresse mémoire dans un nouvel enfant droit.
+						ModificationIndiceEquilibreDroit(_pNoeud, false);
+					}
+				}
+			
+
 		}
 	}
 
@@ -419,15 +476,15 @@ public:
 	Procédure permettant d'ajouter un Noeud dans l'arbre.
 	Prend un élément de n'importe quel type comparable à ajouter dans le nouveau noeud.
 	*/
-	void Ajouter(T _ElementAjouter) {
+	void Ajouter(T _ElementAjouter, string _strID) {
 		// Vérifie si l'élément n'est pas déjà dans l'arbre...
 		if (!Rechercher(_ElementAjouter)) {
 			// Si le racine est nullptr...
 			if (m_pRacine == nullptr) {
-				m_pRacine = new CNoeudArbreAVL<T>(_ElementAjouter, nullptr, 0); // Création d'un objet en mémoire de tye Noeud et retour de son adresse mémoire dans m_pRacine.
+				m_pRacine = new CNoeudArbreAVL<T>(_ElementAjouter, _strID, nullptr, 0); // Création d'un objet en mémoire de tye Noeud et retour de son adresse mémoire dans m_pRacine.
 			}
 			else
-				Ajouter(_ElementAjouter, m_pRacine);
+				Ajouter(_ElementAjouter, _strID, m_pRacine);
 			m_uiCompte++; // Incrémentation du compte
 		}
 	}
@@ -447,6 +504,21 @@ public:
 		}
 		else
 			return false;
+
+	}
+
+	/*
+	Fonction permettant de rechercher un élément dans l'arbre.
+	Prend un élément à rechercher et retourne vrai si l'élément à été trouvé sinon elle retourne faux.
+	*/
+	T ObtenirElement(string _strID) {
+		// Si la racine n'est pas égale à nullptr...
+		if (m_pRacine != nullptr) {
+
+			return ObtenirElement(_strID, m_pRacine)->ObtenirElement();
+		}
+		else
+			return NULL;
 
 	}
 

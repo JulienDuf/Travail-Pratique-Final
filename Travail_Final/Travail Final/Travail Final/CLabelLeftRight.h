@@ -11,7 +11,7 @@ private:
 	CButton* m_pButtonLeft; // Bouton de droite du controle.
 	CButton* m_pButtonRight; // Bouton de gauche du controle.
 
-	int m_uiPositionLabel; // La position dans la liste.
+	int m_iPositionLabel; // La position dans la liste.
 
 public:
 
@@ -47,7 +47,7 @@ public:
 		m_pButtonLeft = _pButtonLeft;
 		m_pButtonRight = _pButtonRight;
 
-		m_uiPositionLabel = 0;
+		m_iPositionLabel = 0;
 	}
 
 	/*
@@ -79,7 +79,7 @@ public:
 		m_pButtonLeft = _pButtonLeft;
 		m_pButtonRight = _pButtonRight;
 
-		m_uiPositionLabel = 0;
+		m_iPositionLabel = 0;
 	}
 	
 	~CLabelLeftRight() {
@@ -92,7 +92,7 @@ public:
 	// En entrée:
 	// Param1; Nombre de textures à ajouter.
 	// Param2...; Texture à ajouter.
-	void AjouterControl(int argc, ...) {
+	void AjouterTexture(int argc, ...) {
 		
 		if (argc > 0) {
 			va_list parametres;
@@ -129,18 +129,31 @@ public:
 
 		if (m_pButtonLeft->ObtenirButtonState() == 2) {
 			m_pListeTexture->AllerPrecedentCurseur();
-			m_uiPositionLabel-- % (m_pListeTexture->ObtenirCompte() - 1);
+			m_iPositionLabel--;
+			if (m_iPositionLabel < 0)
+				m_iPositionLabel = m_pListeTexture->ObtenirCompte() - 1;
 		}
 
 		else if (m_pButtonRight->ObtenirButtonState() == 2) {
 			m_pListeTexture->AllerSuivantCurseur();
-			m_uiPositionLabel++ % (m_pListeTexture->ObtenirCompte() - 1);
+			m_iPositionLabel = (m_iPositionLabel + 1) % (m_pListeTexture->ObtenirCompte());
 		}
 	}
 
-	unsigned int ObtenirPositionLabel(void) {
+	void ChangeTexture(bool _boDroite) {
 
-		return m_uiPositionLabel;
+
+	}
+
+	int ObtenirElement(string _Element) {
+
+		if (_Element == "PositionLabel")
+			return m_iPositionLabel;
+	}
+
+	int ObtenirPositionLabel(void) {
+
+		return m_iPositionLabel;
 	}
 
 };

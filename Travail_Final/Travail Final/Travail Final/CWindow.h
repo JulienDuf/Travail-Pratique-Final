@@ -43,7 +43,7 @@ public:
 
 		va_start(parametres, argc);
 		for (int i = 0; i < argc; i++) {
-			m_pArbreMenu->Ajouter(va_arg(parametres, CMenu*));
+			m_pArbreMenu->Ajouter(va_arg(parametres, CMenu*), "");
 		}
 		va_end(parametres);
 	}

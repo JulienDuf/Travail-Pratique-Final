@@ -145,6 +145,19 @@ public:
 		//ModifyButtonState(0);		// Normal
 	}
 
+	void AjouterTexture(int argc, ...) {
+
+	}
+
+	void ChangeTexture(bool _boDroite) {
+
+
+	}
+
+	int ObtenirElement(string _Element) {
+
+		return 0;
+	}
 
 	// Accesseur pour l'état du bouton.
 	unsigned int ObtenirButtonState(void) {

@@ -136,12 +136,25 @@ public:
 	// Param3: Le nombre d'élément du tableau.
 	// Param4: La font du texte.
 	// Param5: La couleur du texte.
-	void AjouterTexture(SDL_Renderer* _pRenderer, string _strTexte[], int _iNombreElementTableau, TTF_Font* _Font, SDL_Color _Couleur) {
 
-		SDL_Surface* pSDLSurface = BlitTexte(_strTexte, _iNombreElementTableau, _Font, _Couleur);
-		m_pListeTextureLabel->AjouterFin(SDL_CreateTextureFromSurface(_pRenderer, pSDLSurface));
-		m_pListeTextureLabel->AllerDebut();
+	void AjouterTexture(int argc, ...) {
 
+		if (argc > 0) {
+			va_list parametres;
+
+			va_start(parametres, argc);
+			for (int i = 0; i < argc; i++) {
+				m_pListeTextureLabel->AjouterFin(va_arg(parametres, SDL_Texture*));
+			}
+			va_end(parametres);
+
+			m_pListeTextureLabel->AllerDebut();
+		}
+	}
+
+	int ObtenirElement(string _Element) {
+
+		return 0;
 	}
 
 	// Procédure changeant le position du curseur.

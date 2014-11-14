@@ -22,7 +22,8 @@ using namespace std;
 #include "CGame.h"
 #include "CWindow.h"
 #include "CLabelLeftRight.h"
-#include "CEvenement.h"
+#include "CGestionaire.h"
+
 
 
 // Variables...
@@ -34,43 +35,27 @@ SDL_Event* pEvent; // Les événemens du programme;
 
 CWindow* pWindowJeu; // La fenêtre de jeu.
 
-SDL_Texture* pFlecheGauche;
-SDL_Texture* pFlecheDroite;
-
-TTF_Font* pFontBouton; // La font du texte des boutons.
+CGestionaire<SDL_Texture*>* pGestionaireTexture; // Le gestionaire des textures.
+CGestionaire<TTF_Font*>* pGestionaireFont; // Le gestionaire des fonts.
+CGestionaire<CControl*>* pGestionaireControl; // Le gestionaire des controls.
+CGestionaire<CMenu*>* pGestionaireMenu; // Le gestionaire des menus.
 
 SDL_Color CouleurTexte; // La couleur du texte.
 
 CGame* pGame; // La partie.
 
-CMenu* pMenuPrincipal; // Le menu principal du jeu.
-CMenu* pMenuNouvellePartie; // Le menu créant une nouvelle partie.
-
-CButton* pBtnNouvellePartie; // Le bouton pour aller vers le menu Nouvelle partie.
-CButton* pBtnQuitter; // Le bouton pour quitter le jeu.
-CButton* pBtnDebutPartie; // Le bouton pour commencer la partie.
-CButton* pBtnRetour; // Le bouton pour retourn au menu principal.
-
-CLabel* pLblNombreEquipe; // Le label étant écrit le mot " Nombre d'équipe ".
-CLabel* pLblNombreJoueurEquipe; // Le label étant écrit le mot " Nombre de joueur par équipe ".
-CLabel* pLblDescriptionMap; // Le label ou est inscrit la description de la map.
-
-CLabelLeftRight* pLblLRChoixNbrEquipe; // Le labelLesftRight ou on choisi le nombre d'équipe.
-CLabelLeftRight* pLblLRChoixNbrJoueurEquipe; // Le labelLesftRight ou on choisi le nombre de joueur par équipe.
-CLabelLeftRight* pLblLRChoixMap; // Le labelLesftRight ou on choisi la map pour le jeu.
-
 // Procédure pour le click sur le bouton nouvelle partie...
 void ClickBoutonNouvellePartie(void) {
 
-	pMenuNouvellePartie->DefinirboShow(true);
-	pMenuPrincipal->DefinirboShow(false);
+	pGestionaireMenu->ObtenirDonnee("pMenuNouvellePartie")->DefinirboShow(true);
+	pGestionaireMenu->ObtenirDonnee("pMenuPrincipal")->DefinirboShow(false);
 }
 
 // Procédure pour le click sur le bouton retour dans le menu nouvelle partie...
 void ClickBoutonRetour(void) {
 
-	pMenuNouvellePartie->DefinirboShow(false);
-	pMenuPrincipal->DefinirboShow(true);
+	pGestionaireMenu->ObtenirDonnee("pMenuNouvellePartie")->DefinirboShow(false);
+	pGestionaireMenu->ObtenirDonnee("pMenuPrincipal")->DefinirboShow(true);
 }
 
 // Procédure pour le click sur le bouton début partie...
@@ -80,12 +65,12 @@ void ClickBoutonDebutPartie(void) {
 	int _iNombreEquipe = 0;
 	int _iNombreJouer = 0;
 
-	pMenuNouvellePartie->DefinirboShow(false);
-	pMenuPrincipal->DefinirboShow(false);
+	pGestionaireMenu->ObtenirDonnee("pMenuNouvellePartie")->DefinirboShow(false);
+	pGestionaireMenu->ObtenirDonnee("pMenuPrincipal")->DefinirboShow(false);
 
 	strTmp.append("Maps\\");
 
-	switch (pLblLRChoixMap->ObtenirPositionLabel()) {
+	switch (pGestionaireControl->ObtenirDonnee("pLblLRChoixMap")->ObtenirElement("PositionLabel")) {
 
 	case 0:
 		strTmp.append("arcaderoom\\");
@@ -128,17 +113,52 @@ void ClickBoutonQuitter(void) {
 // Procédure pour le click sur le bouton droit du labelLeftRight de choix de la map...
 void ClickBoutonDroitChoixMap(void) {
 
-	pLblDescriptionMap->ChangeTexture(true);
+	pGestionaireControl->ObtenirDonnee("pLblDescriptionMap")->ChangeTexture(true);
 
 }
 
 // Procédure pour le click sur le bouton gauche du labelLeftRight de choix de la map...
 void ClickBoutonGaucheChoixMap(void) {
 
-	pLblDescriptionMap->ChangeTexture(false);
+	pGestionaireControl->ObtenirDonnee("pLblDescriptionMap")->ChangeTexture(false);
 
 }
 
+// Fonction qui met le texte d'un tableau en une seule surface.
+// En entrée: 
+// Param1: Le tableau contenant le texte à mettre ensemble.
+// Param2: Le nombre d'élément du tableau.
+// Param3: La font du texte.
+// Param4: La couleur du texte.
+// En sortie:
+// La surface finale.
+SDL_Surface* BlitTexte(string _strTexte[], int _iNombreElementTableau, TTF_Font* _Font, SDL_Color _Couleur) {
+
+	SDL_Surface* pSDLSurface; // Variable temporaire...
+	SDL_Surface* pSDLSurfaceTmp;
+	SDL_Rect RectTmp = { 0, 0, 0, 0 };
+
+	if (_iNombreElementTableau > 0) {
+		pSDLSurface = TTF_RenderText_Blended(_Font, _strTexte[0].c_str(), _Couleur); // Créé la surface contenant le texte.
+		pSDLSurfaceTmp = SDL_CreateRGBSurface(pSDLSurface->flags, 500, pSDLSurface->h * _iNombreElementTableau, pSDLSurface->format->BitsPerPixel, pSDLSurface->format->Rmask, pSDLSurface->format->Gmask, pSDLSurface->format->Bmask, pSDLSurface->format->Amask);
+
+		SDL_BlitSurface(pSDLSurface, NULL, pSDLSurfaceTmp, &RectTmp);
+		RectTmp.y = pSDLSurface->h;
+		SDL_FreeSurface(pSDLSurface);
+
+		for (int i = 1; i < _iNombreElementTableau; i++) {
+
+			pSDLSurface = TTF_RenderText_Blended(_Font, _strTexte[i].c_str(), _Couleur); // Créé la surface contenant le texte.
+			SDL_BlitSurface(pSDLSurface, NULL, pSDLSurfaceTmp, &RectTmp);
+			RectTmp.y = pSDLSurface->h * (i + 1);
+			SDL_FreeSurface(pSDLSurface);
+		}
+
+		return pSDLSurfaceTmp;
+	}
+
+	return nullptr;
+}
 
 // Procédure qui lis les informations d'une map.
 // En entrée:
@@ -170,7 +190,8 @@ void ReadMapInfo(string _strEmplacement) {
 	}
 
 	// Ajoute ce qui a été lu dans le label.
-	pLblDescriptionMap->AjouterTexture(pWindowJeu->ObtenirRenderer(), strTmp, 5, pFontBouton, CouleurTexte);
+	SDL_Surface* pSDLSurface = BlitTexte(strTmp, 5, pGestionaireFont->ObtenirDonnee("pFontBouton"), CouleurTexte);
+	pGestionaireControl->ObtenirDonnee("pLblDescriptionMap")->AjouterTexture(1, SDL_CreateTextureFromSurface(pWindowJeu->ObtenirRenderer(), pSDLSurface));
 
 }
 
@@ -235,80 +256,87 @@ void Start(char* _strApplicationFilename){
 	pWindowJeu = new CWindow(1366, 768);
 	pWindowJeu->GetSize(&iW, &iH);
 	
+	pGestionaireTexture = new CGestionaire<SDL_Texture*>();
+	pGestionaireFont = new CGestionaire<TTF_Font*>();
+	pGestionaireControl = new CGestionaire<CControl*>();
+	pGestionaireMenu = new CGestionaire<CMenu*>();
+
 	// Chargement de font du texte des boutons...
 	strEmplacement = strApplicationPath;
 	strEmplacement.append("calibri.ttf");
-	pFontBouton = TTF_OpenFont(strEmplacement.c_str(), 30);
+	pGestionaireFont->AjouterDonnee(TTF_OpenFont(strEmplacement.c_str(), 30), "pFontBouton");
 
 	// Chargements de la texture pour le bouton droit d'un LabelLeftRight.
 	strEmplacement = strApplicationPath;
 	strEmplacement.append("Bouton\\FlecheDroite.png");
-	pFlecheDroite = IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str());
+	pGestionaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pFlecheDroite");
 
 	// Chargements de la texture pour le bouton gauche d'un LabelLeftRight.
 	strEmplacement = strApplicationPath;
 	strEmplacement.append("Bouton\\FlecheGauche.png");
-	pFlecheGauche = IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str());
+	pGestionaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pFlecheGauche");
 
 	CouleurTexte = { 0, 0, 0, 0 }; // Met la couleur noir.
 
 	// Créé les boutons avec l'emplacement de l'image des boutons...
 	strEmplacement = strApplicationPath;
 	strEmplacement.append("Bouton\\BoutonMettreTexte.png");
-	pBtnNouvellePartie = new CButton("Nouvelle    Partie", pFontBouton, CouleurTexte, strEmplacement.c_str(), { (iW - 500) / 2, 250, 500, 60 }, 3, 0, pWindowJeu->ObtenirRenderer(), ClickBoutonNouvellePartie);
-	pBtnQuitter = new CButton("Quitter", pFontBouton, CouleurTexte, strEmplacement.c_str(), { (iW - 500) / 2, 320, 500, 60 }, 3, 0, pWindowJeu->ObtenirRenderer(), ClickBoutonQuitter);
-	pBtnDebutPartie = new CButton("Debuter     la      partie", pFontBouton, CouleurTexte, strEmplacement.c_str(), { 790, 530, 500, 60 }, 3, 0, pWindowJeu->ObtenirRenderer(), ClickBoutonDebutPartie);
-	pBtnRetour = new CButton("Retour", pFontBouton, CouleurTexte, strEmplacement.c_str(), { 790, 600, 500, 60 }, 3, 0, pWindowJeu->ObtenirRenderer(), ClickBoutonRetour);
+	pGestionaireControl->AjouterDonnee(new CButton("Nouvelle Partie", pGestionaireFont->ObtenirDonnee("pFontBouton"), CouleurTexte, strEmplacement.c_str(), { (iW - 500) / 2, 250, 500, 60 }, 3, 0, pWindowJeu->ObtenirRenderer(), ClickBoutonNouvellePartie), "pBtnNouvellePartie");
+	pGestionaireControl->AjouterDonnee(new CButton("Quitter", pGestionaireFont->ObtenirDonnee("pFontBouton"), CouleurTexte, strEmplacement.c_str(), { (iW - 500) / 2, 320, 500, 60 }, 3, 0, pWindowJeu->ObtenirRenderer(), ClickBoutonQuitter), "pBtnQuitter");
+	pGestionaireControl->AjouterDonnee(new CButton("Debuter la partie", pGestionaireFont->ObtenirDonnee("pFontBouton"), CouleurTexte, strEmplacement.c_str(), { 790, 530, 500, 60 }, 3, 0, pWindowJeu->ObtenirRenderer(), ClickBoutonDebutPartie), "pBtnDebutPartie");
+	pGestionaireControl->AjouterDonnee(new CButton("Retour", pGestionaireFont->ObtenirDonnee("pFontBouton"), CouleurTexte, strEmplacement.c_str(), { 790, 600, 500, 60 }, 3, 0, pWindowJeu->ObtenirRenderer(), ClickBoutonRetour), "pBtnRetour");
 
 
 	// Création des labels...
-	pLblNombreEquipe = new CLabel(pWindowJeu->ObtenirRenderer(), "Nombre d equipes", pFontBouton, CouleurTexte, { 180, 520, 231, 32 });
-	pLblNombreJoueurEquipe = new CLabel(pWindowJeu->ObtenirRenderer(), "Nombre de joueurs par equipe", pFontBouton, CouleurTexte, { 100, 620, 407, 32 });
-	pLblDescriptionMap = new CLabel(pWindowJeu->ObtenirRenderer(), { 900, 130, 500, 32 * 5 });
+	pGestionaireControl->AjouterDonnee(new CLabel(pWindowJeu->ObtenirRenderer(), "Nombre d equipes", pGestionaireFont->ObtenirDonnee("pFontBouton"), CouleurTexte, { 180, 520, 231, 32 }), "pLblNombreEquipe");
+	pGestionaireControl->AjouterDonnee(new CLabel(pWindowJeu->ObtenirRenderer(), "Nombre de joueurs par equipe", pGestionaireFont->ObtenirDonnee("pFontBouton"), CouleurTexte, { 100, 620, 407, 32 }), "pLblNombreJoueurEquipe");
+	pGestionaireControl->AjouterDonnee(new CLabel(pWindowJeu->ObtenirRenderer(), { 900, 130, 500, 32 * 5 }), "pLblDescriptionMap");
 
 	// Créations des lableLeftRight...
-	pLblLRChoixNbrEquipe = new CLabelLeftRight(pFontBouton, CouleurTexte, { 270, 550, 50, 50 }, pWindowJeu->ObtenirRenderer(), new CButton(pFlecheGauche, {225, 554, 35, 35}, 4, 1, NULL), new CButton(pFlecheDroite, {325, 554, 35, 35}, 4, 1, NULL), 5, "2", "3", "4", "5", "6");
-	pLblLRChoixNbrJoueurEquipe = new CLabelLeftRight(pFontBouton, CouleurTexte, { 270, 650, 50, 50 }, pWindowJeu->ObtenirRenderer(), new CButton(pFlecheGauche, {225, 654, 35, 35 }, 4, 1, NULL), new CButton(pFlecheDroite, { 325, 654, 35, 35 }, 4, 1, NULL), 3, "4", "5", "6");
-	pLblLRChoixMap = new CLabelLeftRight({ 120, 50, 623, 367 }, new CButton(pFlecheGauche, { 20, 199, 80, 80 }, 4, 1, ClickBoutonGaucheChoixMap), new CButton(pFlecheDroite, { 760, 199, 80, 80 }, 4, 1, ClickBoutonDroitChoixMap), 0);
+	pGestionaireControl->AjouterDonnee(new CLabelLeftRight(pGestionaireFont->ObtenirDonnee("pFontBouton"), CouleurTexte, { 270, 550, 50, 50 }, pWindowJeu->ObtenirRenderer(), new CButton(pGestionaireTexture->ObtenirDonnee("pFlecheGauche"), { 225, 554, 35, 35 }, 4, 1, NULL), new CButton(pGestionaireTexture->ObtenirDonnee("pFlecheDroite"), { 325, 554, 35, 35 }, 4, 1, NULL), 5, "2", "3", "4", "5", "6"), "pLblLRChoixNbrEquipe");
+	pGestionaireControl->AjouterDonnee(new CLabelLeftRight(pGestionaireFont->ObtenirDonnee("pFontBouton"), CouleurTexte, { 270, 650, 50, 50 }, pWindowJeu->ObtenirRenderer(), new CButton(pGestionaireTexture->ObtenirDonnee("pFlecheGauche"), { 225, 654, 35, 35 }, 4, 1, NULL), new CButton(pGestionaireTexture->ObtenirDonnee("pFlecheDroite"), { 325, 654, 35, 35 }, 4, 1, NULL), 3, "4", "5", "6"), "pLblLRChoixNbrJoueurEquipe");
+	pGestionaireControl->AjouterDonnee(new CLabelLeftRight({ 120, 50, 623, 367 }, new CButton(pGestionaireTexture->ObtenirDonnee("pFlecheGauche"), { 20, 199, 80, 80 }, 4, 1, ClickBoutonGaucheChoixMap), new CButton(pGestionaireTexture->ObtenirDonnee("pFlecheDroite"), { 760, 199, 80, 80 }, 4, 1, ClickBoutonDroitChoixMap), 0), "pLblLRChoixMap");
 	 
 	// Met les map en une texture...
+
 	PutMapToTexture(strApplicationPath + "Maps\\arcaderoom", &pTextureTmp);
-	pLblLRChoixMap->AjouterControl(1, pTextureTmp);
+	pGestionaireControl->ObtenirDonnee("pLblLRChoixMap")->AjouterTexture(1, pTextureTmp);
 	pTextureTmp = nullptr;
 
 	PutMapToTexture(strApplicationPath + "Maps\\country", &pTextureTmp);
-	pLblLRChoixMap->AjouterControl(1, pTextureTmp);
+	pGestionaireControl->ObtenirDonnee("pLblLRChoixMap")->AjouterTexture(1, pTextureTmp);
 	pTextureTmp = nullptr;
 
 	PutMapToTexture(strApplicationPath + "Maps\\desert", &pTextureTmp);
-	pLblLRChoixMap->AjouterControl(1, pTextureTmp);
+	pGestionaireControl->ObtenirDonnee("pLblLRChoixMap")->AjouterTexture(1, pTextureTmp);
 	pTextureTmp = nullptr;
 
 	PutMapToTexture(strApplicationPath + "Maps\\easterisland", &pTextureTmp);
-	pLblLRChoixMap->AjouterControl(1, pTextureTmp);
+	pGestionaireControl->ObtenirDonnee("pLblLRChoixMap")->AjouterTexture(1, pTextureTmp);
 	pTextureTmp = nullptr;
 
 	PutMapToTexture(strApplicationPath + "Maps\\farm", &pTextureTmp);
-	pLblLRChoixMap->AjouterControl(1, pTextureTmp);
+	pGestionaireControl->ObtenirDonnee("pLblLRChoixMap")->AjouterTexture(1, pTextureTmp);
 	pTextureTmp = nullptr;
 
 	PutMapToTexture(strApplicationPath + "Maps\\pirates", &pTextureTmp);
-	pLblLRChoixMap->AjouterControl(1, pTextureTmp);
+	pGestionaireControl->ObtenirDonnee("pLblLRChoixMap")->AjouterTexture(1, pTextureTmp);
 	pTextureTmp = nullptr;
 
 	PutMapToTexture(strApplicationPath + "Maps\\snow", &pTextureTmp);
-	pLblLRChoixMap->AjouterControl(1, pTextureTmp);
+	pGestionaireControl->ObtenirDonnee("pLblLRChoixMap")->AjouterTexture(1, pTextureTmp);
 	pTextureTmp = nullptr;
 	//......
 
 	strEmplacementFichier = strApplicationPath;
 
 	// Création des menus...
-	pMenuPrincipal = new CMenu(true, 2, pBtnNouvellePartie, pBtnQuitter); // Crée le menu principal.
-	pMenuNouvellePartie = new CMenu(false, 8, pBtnDebutPartie, pBtnRetour, pLblDescriptionMap, pLblNombreJoueurEquipe, pLblNombreEquipe, pLblLRChoixNbrEquipe, pLblLRChoixNbrJoueurEquipe, pLblLRChoixMap); // Créé le menu nouvelle partie.
+	pGestionaireMenu->AjouterDonnee(new CMenu(true, { 0, 0, iW, iH }, pWindowJeu->ObtenirRenderer(), 2, pGestionaireControl->ObtenirDonnee("pBtnNouvellePartie"), pGestionaireControl->ObtenirDonnee("pBtnQuitter")), "pMenuPrincipal"); // Crée le menu principal.
+	pGestionaireMenu->AjouterDonnee(new CMenu(false, { 0, 0, iW, iH }, pWindowJeu->ObtenirRenderer(), 8, pGestionaireControl->ObtenirDonnee("pBtnDebutPartie"), pGestionaireControl->ObtenirDonnee("pBtnRetour"), pGestionaireControl->ObtenirDonnee("pLblDescriptionMap"), pGestionaireControl->ObtenirDonnee("pLblNombreJoueurEquipe"), pGestionaireControl->ObtenirDonnee("pLblNombreEquipe"), pGestionaireControl->ObtenirDonnee("pLblLRChoixNbrEquipe"), pGestionaireControl->ObtenirDonnee("pLblLRChoixNbrJoueurEquipe"), pGestionaireControl->ObtenirDonnee("pLblLRChoixMap")), "pMenuNouvellePartie"); // Créé le menu nouvelle partie.
+
 
 	// Ajoue des menus dans la fenêtre.
-	pWindowJeu->AjouterMenu(2, pMenuPrincipal, pMenuNouvellePartie);
+	pWindowJeu->AjouterMenu(2, pGestionaireMenu->ObtenirDonnee("pMenuPrincipal"), pGestionaireMenu->ObtenirDonnee("pMenuNouvellePartie"));
 
 	boExecution = true;
 	pEvent = new SDL_Event(); // Créé le pointeur.
@@ -341,13 +369,20 @@ int main(int argc, char* argv[]) {
 		// Tant qu'il y a des événements à gérer.
 		while (SDL_PollEvent(pEvent)) {
 
-			pMenuPrincipal->ReactToEvent(pEvent);
-			pMenuNouvellePartie->ReactToEvent(pEvent);
+			pGestionaireMenu->ObtenirDonnee("pMenuPrincipal")->ReactToEvent(pEvent);
+			pGestionaireMenu->ObtenirDonnee("pMenuNouvellePartie")->ReactToEvent(pEvent);
 
-			if (pEvent->type == SDL_QUIT) {
+			switch (pEvent->type) {
+
+			case SDL_QUIT:
 				boExecution = false;
-			}
+				break;
 
+			case SDL_KEYDOWN:
+				boExecution = !(pEvent->key.keysym.scancode == SDL_SCANCODE_ESCAPE);
+				break;
+			
+			}
 		}
 	}
 

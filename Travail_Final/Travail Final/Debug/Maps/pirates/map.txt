@@ -1,5 +1,0 @@
-Gravite de la map : 3.6
- 
-Facteur vent maximal : 225 km/h
- 
-Nombre de mines au depart : 4

@@ -12,7 +12,7 @@ private:
 	CArbreAVL<CMenu*>* m_pArbreMenu; // Liste des menus.
 	SDL_Window* m_pSDLWindow; // La fenetre.
 	SDL_Renderer* m_pSDLRenderer; // Renderer.
-	CGame* m_pGame; // La partie qui sera dans la febnêtre.
+	CGame* m_pGame; // La partie qui sera dans la fenêtre.
 
 public:
 

@@ -2,8 +2,9 @@
 // 420-202-RE : Travail final
 // Classe qui représente une carte du jeu.
 // 4 novembre 2014 par Nicolas Dean (Gody117@hotmail.com)
-// Fin de la classe le 9 novembre 2014 par Julien Dufresne (dufresne_julien@hotmail.ca)
-//
+// Fin de code le 9 novembre 2014 par Julien Dufresne (dufresne_julien@hotmail.ca)
+// Modifiée le 13 novembre 2014 par Gabriel Beaudry (gabriel.bdry@gmail.com) :
+// Ajout d'une boussole(Vent) et modification de comentaire
 
 #define BLANC32BIT 4294967295
 #define TRANSPARENCE32BIT 16777215
@@ -17,18 +18,21 @@ private:
 	SDL_Rect m_RectPositionImages;					// Rect représentant la position de la map dans l'écran.
 	CListeDC<CPack*>* m_pPackList;					// Liste des packs présents dans la map.
 	SDL_Surface* m_pSurfaceGabarie;					// Surface ou est stocké les gabaries pour la destruction.
-	//CComboBox* m_pComboBoxChoixOutils;              // Le comboBox ou le joueur choisi son outils pour son tour.
+	CVent* m_pVent;									// Classe qui donne la force et la direction du vent.
+	//CComboBox* m_pComboBoxChoixOutils;            // Le ComboBox où le joueur choisi son outils pour son tour.
 
 	int m_iGravite;									// La gravité de la map.
 	int m_iVentMax;									// Le vent max de la map.
 
 public:
 
-	// Constructeur...
-	// Paramètre: _pSDLTextureMap, pointe sur la texture qui représente l'avant plan de la carte de jeu.
-	// Paramètre: _RectPositionImages, la position de la map dans l'écran.
-	// Retour: rien (Constructeur).
-	CMap(string _strEmplacementMap, SDL_Rect _RectPositionImages, SDL_Surface* _pSurfaceGabarie, SDL_Renderer* _pRenderer) {
+	// Constructeur de CMap...
+	// Param1: _strEmplacementMap, emplacement de la map dans l'arborescence.
+	// Param2: _RectPositionImages, la position de la map dans l'écran.
+	// Param3: _pSDLTextureMap, pointe sur la texture qui représente l'avant plan de la carte de jeu.
+	// Param4: _pVent, Classe qui donne la force et la direction du vent.
+	// Param5: Renderer.
+	CMap(string _strEmplacementMap, SDL_Rect _RectPositionImages, SDL_Surface* _pSurfaceGabarie, CVent* _pVent, SDL_Renderer* _pRenderer) {
 		
 		// Variables temporaires...
 		string strTmp[5];
@@ -39,6 +43,8 @@ public:
 		int iNombreMines;
 		
 		m_pSurfaceGabarie = _pSurfaceGabarie;
+
+		m_pVent = _pVent;
 
 		m_RectPositionImages = _RectPositionImages;
 		
@@ -85,7 +91,6 @@ public:
 
 		}
 	}
-	
 
 	// Procédure qui détruit la carte de jeu à l'endroit approprié.
 	// Paramètre: _iRayon, variable entière qui contient la longueur du rayon du cercle dans lequel la carte de jeu sera détruite.
@@ -145,6 +150,9 @@ public:
 	// Paramètre: _pSDLRender, Rendeur de la fenêtre dans laquelle on veut afficher la carte de jeu.
 	// Retour: Rien.
 	void ShowMap(SDL_Renderer* _pSDLRenderer) {
+
+		// Affiche le vent
+		m_pVent->ShowVent(_pSDLRenderer);
 
 		// Créé une texture de la map.
 		SDL_Texture* pSDLTextureMap = SDL_CreateTextureFromSurface(_pSDLRenderer, m_pSDLSurfaceMap);

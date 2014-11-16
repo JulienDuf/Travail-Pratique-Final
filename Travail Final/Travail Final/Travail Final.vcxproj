@@ -70,6 +70,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CArbreAVL.h" />
+    <ClInclude Include="CBarrePuissance.h" />
     <ClInclude Include="CButton.h" />
     <ClInclude Include="CControl.h" />
     <ClInclude Include="CGame.h" />
@@ -79,6 +80,7 @@
     <ClInclude Include="CListeDC.h" />
     <ClInclude Include="CMap.h" />
     <ClInclude Include="CMenu.h" />
+    <ClInclude Include="CMissile.h" />
     <ClInclude Include="CNoeudArbreAVL.h" />
     <ClInclude Include="CPack.h" />
     <ClInclude Include="CPlayer.h" />

@@ -7,9 +7,15 @@ class CPlayer {
 
 private:
 
+	bool m_BoDeplacement;				// Si le joueur se déplace.
+
 	CSprite* m_pSpriteCourse;			// Pointeur de sprite qui pointe sur le sprite qui représente le joueur qui est en état de course.
 	CSprite* m_pSpriteSaut;				// pointeur de sprite qui pointe sur le sprite qui représente le joueur qui est en état de saut.
-	SDL_Surface* m_pSDLSurfaceParachute;		// Pointeur de sprite qui pointe sur le sprite qui représente le joueur qui est en état de chute.
+	CSprite* m_pSpriteParachute;		// Pointeur de sprite qui pointe sur le sprite qui représente le joueur qui est en état de chute.
+
+	SDL_Surface* m_pSDLPlayerSurface;   // Pointeur sur la texture du joueur immobile.
+	SDL_Rect m_RectPlayerDestination;   // La destination du joueur dans le fenêtre.
+	SDL_Rect m_RectSource;				// Affiche si le joueur est ves le gauche ou vers le droite.
 
 	string m_strName;					// Chaine de caractères qui contient le nom du joueur.
 
@@ -36,6 +42,39 @@ public:
 		m_pToolList = _pToolList;
 
 		m_pProcedureCollision = _ProcedureCollision;
+
+	}
+
+	CPlayer(string _strEmplacementFichier, SDL_Rect _RectDestiantion, void _ProcedureCollision(SDL_Surface* _pSDLSurfaceCollision, SDL_Rect _SDLRectCollision, SDL_Rect _SDLRectSource, unsigned int _uiXMap, unsigned int _uiYMap, unsigned int _uiXRectCollision, unsigned int _uiYRectCollision), void _MapDestruction(int _iRayon, int _iX, int _iY), SDL_Renderer* _pRenderer) {
+
+		string strEmplacementFichier = _strEmplacementFichier;
+		
+		strEmplacementFichier.append("Personnage\\Course.png");
+		m_pSpriteCourse = new CSprite(IMG_Load(strEmplacementFichier.c_str()), 12, 50);
+
+		strEmplacementFichier = _strEmplacementFichier;
+		strEmplacementFichier.append("Personnage\\Saut.png");
+		m_pSpriteSaut = new CSprite(IMG_Load(strEmplacementFichier.c_str()), 12, 50);
+
+		strEmplacementFichier = _strEmplacementFichier;
+		strEmplacementFichier.append("Personnage\\Parachute.png");
+		m_pSpriteParachute = new CSprite(IMG_Load(strEmplacementFichier.c_str()), 12, 50);
+
+		strEmplacementFichier = _strEmplacementFichier;
+		strEmplacementFichier.append("Personnage\\Personnage.png");
+		m_pSDLPlayerSurface = IMG_Load(strEmplacementFichier.c_str());
+
+		m_RectPlayerDestination = _RectDestiantion;
+		m_RectPlayerDestination.w = m_pSDLPlayerSurface->w;
+		m_RectPlayerDestination.h = m_pSDLPlayerSurface->h;
+
+		m_pToolList = new CListeDC<CTools*>();
+
+		m_pProcedureCollision = _ProcedureCollision;
+
+		m_pToolList->AjouterFin(new CMissile(_strEmplacementFichier, _pRenderer, _MapDestruction));
+
+		m_BoDeplacement = false;
 
 	}
 

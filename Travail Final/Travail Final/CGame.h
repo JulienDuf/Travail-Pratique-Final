@@ -7,11 +7,16 @@ private:
 
 public:
 
-	CGame(string _strEmplacementMap, int _iNombre…quipe, int _iNombreJoueur, SDL_Surface* _pSurfaceGabarie, CVent* _pVent, SDL_Renderer* _pRenderer) {
+	CGame(string _strEmplacementMap, string _strEmplacementFichier, int _iNombre…quipe, int _iNombreJoueur, SDL_Surface* _pSurfaceGabarie, CVent* _pVent, SDL_Renderer* _pRenderer) {
 
 		m_pTeamList = new CListeDC<CTeam*>();
 
 		m_pGameMap = new CMap(_strEmplacementMap, { 0, 0, 0, 0 }, _pSurfaceGabarie, _pVent, _pRenderer);
+
+		for (int i = _iNombre…quipe; i > 0; i--) {
+
+			m_pTeamList->AjouterFin(new CTeam(_strEmplacementFichier, _iNombreJoueur, m_pGameMap->VerifierCollisionMap, m_pGameMap->MapDestruction, _pRenderer));
+		}
 
 	}
 

@@ -62,9 +62,9 @@ public:
 		va_end(parametres);
 	}
 
-	void CreateGame(string _strEmplacementMap, int _iNombre…quipe, int _iNombreJoueur, SDL_Surface* _pSurfaceGabarie, CVent* _pVent,SDL_Renderer* _pRenderer) {
+	void CreateGame(string _strEmplacementMap, string _strEmplacement, int _iNombre…quipe, int _iNombreJoueur, SDL_Surface* _pSurfaceGabarie, CVent* _pVent,SDL_Renderer* _pRenderer) {
 
-		m_pGame = new CGame(_strEmplacementMap, _iNombre…quipe, _iNombreJoueur, _pSurfaceGabarie, _pVent, m_pSDLRenderer);
+		m_pGame = new CGame(_strEmplacementMap, strEmplacementFichier, _iNombre…quipe, _iNombreJoueur, _pSurfaceGabarie, _pVent, m_pSDLRenderer);
 	}
 
 	// ProcÈdure qui rendre l'image final.

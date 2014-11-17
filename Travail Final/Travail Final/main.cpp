@@ -3,6 +3,7 @@
 #include <SDL2\SDL.h>
 #include <SDL2\SDL_ttf.h>
 #include <SDL2\SDL_image.h>
+#include <time.h>
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -65,8 +66,8 @@ void ClickBoutonRetour(void) {
 void ClickBoutonDebutPartie(void) {
 
 	string strTmp = strEmplacementFichier;
-	int _iNombreEquipe = 0;
-	int _iNombreJouer = 0;
+	int iNombreEquipe = 0;
+	int iNombreJoueur = 0;
 
 	pGestionaireMenu->ObtenirDonnee("pMenuNouvellePartie")->DefinirboShow(false);
 	pGestionaireMenu->ObtenirDonnee("pMenuPrincipal")->DefinirboShow(false);
@@ -104,7 +105,10 @@ void ClickBoutonDebutPartie(void) {
 		break;
 	}
 
-	pWindowJeu->CreateGame(strTmp, _iNombreEquipe, _iNombreJouer, NULL, new CVent(pGestionaireFont->ObtenirDonnee("pFontBouton"), "250 km/h", CouleurTexte, pGestionaireTexture->ObtenirDonnee("pFlecheVent"), {1200, 30 , 117, 63}, 180, pWindowJeu->ObtenirRenderer()), pWindowJeu->ObtenirRenderer());
+	iNombreEquipe = pGestionaireControl->ObtenirDonnee("pLblLRChoixNbrEquipe")->ObtenirElement("PositionLabel") + 2;
+	iNombreJoueur = pGestionaireControl->ObtenirDonnee("pLblLRChoixNbrJoueurEquipe")->ObtenirElement("PositionLabel") + 4;
+
+	pWindowJeu->CreateGame(strTmp, strEmplacementFichier, iNombreEquipe, iNombreJoueur, NULL, new CVent(pGestionaireFont->ObtenirDonnee("pFontBouton"), "250 km/h", CouleurTexte, pGestionaireTexture->ObtenirDonnee("pFlecheVent"), {1200, 30 , 117, 63}, 180, pWindowJeu->ObtenirRenderer()), pWindowJeu->ObtenirRenderer());
 }
 
 // Procédure pour le click sur le bouton quitter...
@@ -368,6 +372,8 @@ void Close(void) {
 int main(int argc, char* argv[]) {
 
 	Start(argv[0]); // Initialisation
+
+	srand(time(NULL));
 
 	// Boucle principale de l'application.
 	while (boExecution) {

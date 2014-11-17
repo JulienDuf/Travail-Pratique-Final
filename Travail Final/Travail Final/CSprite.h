@@ -7,7 +7,7 @@ class CSprite {
 
 private:
 
-	SDL_Texture* m_pTextureSprite;		// pointeur de texture SDL qui pointe la texture qui contient l'image du sprite.
+	SDL_Surface* m_pSurfaceSprite;		// pointeur de surface SDL qui pointe la texture qui contient l'image du sprite.
 	
 	SDL_Rect m_RectSource;				// Rectangle qui représente la position et les dimensions du rectangle qui contiendra l'image que l'on veut afficher
 	SDL_Rect m_RectDestination;			// Rectangle qui représente la position et les dimensions du rectangle ou on veut afficher l'image.
@@ -26,9 +26,9 @@ public:
 
 
 	// Constructeur...
-	CSprite(SDL_Texture* _TextureSprite, unsigned int _uiNbrFrames, unsigned int _uiDelay) {
+	CSprite(SDL_Surface* _SurfaceSprite, unsigned int _uiNbrFrames, unsigned int _uiDelay) {
 
-		m_pTextureSprite = _TextureSprite;		// La texture de notre sprite est entrée en paramètre.
+		m_pSurfaceSprite = _SurfaceSprite;		// La texture de notre sprite est entrée en paramètre.
 
 		m_pTimerDelay = new CTimer(_uiDelay);		// Le délai de notre minuterie est entré en paramètre.
 		m_pTimerDelay->Start();						// On démarre la minuterie.
@@ -39,7 +39,8 @@ public:
 		m_boBoucle = false;						// Par défaut l'animation ne boucle pas. ( faux mais on ne sent sert pas dans l'atelier... )
 		m_boActif = false;						// Par défaut l'animation n'est pas active.  ( faux mais on ne s'en serts pas dans l'atelier... )
 
-		SDL_QueryTexture(_TextureSprite, NULL, NULL, &m_RectSource.w, &m_RectSource.h);		// On va chercher la largeur et la hauteur de notre image pour le mettre dans le rectangle source.
+		m_RectSource.w = m_pSurfaceSprite->w;
+		m_RectSource.h = m_pSurfaceSprite->h;
 		m_RectSource.w = m_RectSource.w / m_uiNbrFrames;									// On mets la largeur de notre rectangle source égale à la largeur d'un cadre.
 		m_RectSource.x = 0;								// On commence notre animation...
 		m_RectSource.y = 0;								// Au premier cadre.
@@ -64,9 +65,9 @@ public:
 			m_pTimerDelay->Start();			// on recommence la minuterie.
 
 		}
-
-		SDL_RenderCopy(_Renderer, m_pTextureSprite, &m_RectSource, &m_RectDestination);		// On rends le cadre actuel dans la fenêtre.
-
+		SDL_Texture* pTextureTmp = SDL_CreateTextureFromSurface(_Renderer, m_pSurfaceSprite);
+		SDL_RenderCopy(_Renderer, pTextureTmp, &m_RectSource, &m_RectDestination);		// On rends le cadre actuel dans la fenêtre.
+		SDL_DestroyTexture(pTextureTmp);
 
 	}
 

@@ -1,0 +1,3 @@
+class CMine : public CPack{
+
+};

@@ -49,3 +49,12 @@ programme). C'est nécessaire pour pouvoir finir notre codage des animations. Tra
 de semaine. Bonne journée/soirée/nuit!
 
 -------------------------------------------------------------------------------------------------------------------
+
+Mardi 18 novembre 2014
+
+10:00 AM
+
+J'ai fait la fonction pour la collision des joueurs avec la map. J'ai modifier un peu les classes CMap et CPlayer.
+J'ai ajouté des accesseurs dans les classes.
+
+--------------------------------------------------------------------------------------------------------------------

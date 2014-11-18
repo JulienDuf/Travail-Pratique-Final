@@ -19,6 +19,8 @@ using namespace std;
 #include "CTool.h"
 #include "CMissile.h"
 #include "CPack.h"
+#include "CHealthPack.h"
+#include "CMine.h"
 #include "CPlayer.h"
 #include "CTeam.h"
 #include "CVent.h"

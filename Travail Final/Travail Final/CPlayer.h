@@ -16,12 +16,13 @@ private:
 	SDL_Surface* m_pSDLPlayerSurface;   // Pointeur sur la texture du joueur immobile.
 	SDL_Rect m_RectPlayerDestination;   // La destination du joueur dans le fenêtre.
 	SDL_Rect m_RectSource;				// Affiche si le joueur est ves le gauche ou vers le droite.
+	SDL_Rect m_RectHitboxCorpsGauche;
+	SDL_Rect m_RectHitboxCorpsDroite;
+	SDL_Rect m_RectHitboxPieds;
 
 	string m_strName;					// Chaine de caractères qui contient le nom du joueur.
 
 	CListeDC<CTools*>* m_pToolList;		// pointeur de liste d'outils qui pointe sur la liste d'outils de combat que l'utilisateur peut utiliser.
-
-	void(*m_pProcedureCollision)(SDL_Surface* _pSDLSurfaceCollision, SDL_Rect _SDLRectCollision, SDL_Rect _SDLRectSource, unsigned int _uiXMap, unsigned int _uiYMap, unsigned int _uiXRectCollision, unsigned int _uiYRectCollision);
 	
 
 public:
@@ -45,7 +46,7 @@ public:
 
 	}
 
-	CPlayer(string _strEmplacementFichier, SDL_Rect _RectDestiantion, void _ProcedureCollision(SDL_Surface* _pSDLSurfaceCollision, SDL_Rect _SDLRectCollision, SDL_Rect _SDLRectSource, unsigned int _uiXMap, unsigned int _uiYMap, unsigned int _uiXRectCollision, unsigned int _uiYRectCollision), void _MapDestruction(int _iRayon, int _iX, int _iY), SDL_Renderer* _pRenderer) {
+	CPlayer(string _strEmplacementFichier, SDL_Rect _RectDestination, void _ProcedureCollision(SDL_Surface* _pSDLSurfaceCollision, SDL_Rect _SDLRectCollision, SDL_Rect _SDLRectSource, unsigned int _uiXMap, unsigned int _uiYMap, unsigned int _uiXRectCollision, unsigned int _uiYRectCollision), void _MapDestruction(int _iRayon, int _iX, int _iY), SDL_Renderer* _pRenderer) {
 
 		string strEmplacementFichier = _strEmplacementFichier;
 		
@@ -64,13 +65,26 @@ public:
 		strEmplacementFichier.append("Personnage\\Personnage.png");
 		m_pSDLPlayerSurface = IMG_Load(strEmplacementFichier.c_str());
 
-		m_RectPlayerDestination = _RectDestiantion;
+		m_RectPlayerDestination = _RectDestination;
 		m_RectPlayerDestination.w = m_pSDLPlayerSurface->w;
 		m_RectPlayerDestination.h = m_pSDLPlayerSurface->h;
 
-		m_pToolList = new CListeDC<CTools*>();
+		m_RectHitboxCorpsGauche.x = 79;
+		m_RectHitboxCorpsGauche.y = 3;
+		m_RectHitboxCorpsGauche.w = 52;
+		m_RectHitboxCorpsGauche.h = 74;
 
-		m_pProcedureCollision = _ProcedureCollision;
+		m_RectHitboxCorpsDroite.x = 119;
+		m_RectHitboxCorpsDroite.y = 3;
+		m_RectHitboxCorpsDroite.w = 52;
+		m_RectHitboxCorpsDroite.h = 74;
+
+		m_RectHitboxPieds.x = 80;
+		m_RectHitboxPieds.y = 78;
+		m_RectHitboxPieds.w = 95;
+		m_RectHitboxPieds.h = 84;
+
+		m_pToolList = new CListeDC<CTools*>();
 
 		m_pToolList->AjouterFin(new CMissile(_strEmplacementFichier, _pRenderer, _MapDestruction));
 

@@ -26,4 +26,16 @@ public:
 
 	}
 
+	CMap* ObtenirMap(void) {
+
+		return m_pGameMap;
+
+	}
+
+	CListeDC<CTeam*>* ObtenirListeTeam(void) {
+
+		return m_pTeamList;
+
+	}
+
 };

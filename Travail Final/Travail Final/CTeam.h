@@ -28,4 +28,10 @@ public:
 
 	}
 
+	CListeDC<CPlayer*>* obtenirListeTeam(void) {
+
+		return m_pPlayerList;
+
+	}
+
 };

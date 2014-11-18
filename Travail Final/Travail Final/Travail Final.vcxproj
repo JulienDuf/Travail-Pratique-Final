@@ -90,6 +90,7 @@
     <ClInclude Include="CTool.h" />
     <ClInclude Include="CVent.h" />
     <ClInclude Include="CWindow.h" />
+    <ClInclude Include="Pointeur Fonction.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

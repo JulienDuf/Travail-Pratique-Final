@@ -18,7 +18,7 @@ void CollisionMap(SDL_Surface* _pSDLSurfaceMap,SDL_Surface* _pSDLSurface, SDL_Re
 	}
 
 }
-
+/*
 // Fonction qui retourne la position d'une collision.
 // Paramètre: _pSDLSurfacecollision, pointe vers la surface avec laquelle on veut vérifier les collisions avec la map.
 // Paramètre: _SDLRectCollision, rectangle qui encadre l'endroit ou l'on veut vérifier les collisions sur la map. (ex: rectangle destination d'un sprite.)
@@ -28,7 +28,7 @@ void CollisionMap(SDL_Surface* _pSDLSurfaceMap,SDL_Surface* _pSDLSurface, SDL_Re
 // Paramètre: _uiXRectCollision, Position en x dans le rectangle de collision ou la collision a eu lieu.
 // Paramètre: _uiYRectCollision, position en y dans le rectangle de collision ou la collision a eu lieu.
 // Retour: Rien, mais les positions en x et en y de la collision seront stockés dans les 4 paramètres écrits plus haut.
-void VerifierCollisionMap(SDL_Surface* _pSDLSurfaceMap, SDL_Surface* _pSDLSurfaceCollision, SDL_Rect _SDLRectCollision, SDL_Rect _SDLRectSource, unsigned int* _uiXMap, unsigned int* _uiYMap, unsigned int* _uiXRectCollision, unsigned int* _uiYRectCollision) {
+void VerifierCollisionJoueurMap(SDL_Surface* _pSDLSurfaceMap, SDL_Surface* _pSDLSurfaceCollision, SDL_Rect _SDLRectCollision, SDL_Rect _SDLRectSource, unsigned int* _uiXMap, unsigned int* _uiYMap, unsigned int* _uiXRectCollision, unsigned int* _uiYRectCollision) {
 
 	_uiXMap = 0;
 	_uiYMap = 0;
@@ -53,7 +53,7 @@ void VerifierCollisionMap(SDL_Surface* _pSDLSurfaceMap, SDL_Surface* _pSDLSurfac
 	}
 
 
-}
+}*/
 
 // Procédure qui détruit la carte de jeu à l'endroit approprié.
 // Paramètre: _iRayon, variable entière qui contient la longueur du rayon du cercle dans lequel la carte de jeu sera détruite.

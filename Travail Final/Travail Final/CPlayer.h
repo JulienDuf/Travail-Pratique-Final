@@ -42,8 +42,6 @@ public:
 
 		m_pToolList = _pToolList;
 
-		m_pProcedureCollision = _ProcedureCollision;
-
 	}
 
 	CPlayer(string _strEmplacementFichier, SDL_Rect _RectDestination, void _ProcedureCollision(SDL_Surface* _pSDLSurfaceCollision, SDL_Rect _SDLRectCollision, SDL_Rect _SDLRectSource, unsigned int _uiXMap, unsigned int _uiYMap, unsigned int _uiXRectCollision, unsigned int _uiYRectCollision), void _MapDestruction(int _iRayon, int _iX, int _iY), SDL_Renderer* _pRenderer) {
@@ -98,6 +96,42 @@ public:
 	void ShowPlayer(SDL_Renderer* _pSDLRenderer) {
 
 
+
+	}
+
+	CSprite* ObtenirSpriteCourse(void) {
+
+		return m_pSpriteCourse;
+
+	}
+
+	CSprite* ObtenirSpriteSaut(void) {
+
+		return m_pSpriteSaut;
+
+	}
+
+	CSprite* ObtenirSpriteParachute(void) {
+
+		return m_pSpriteParachute;
+
+	}
+
+	SDL_Rect ObtenirHitboxCorpsDroite(void) {
+
+		return m_RectHitboxCorpsDroite
+
+	}
+
+	SDL_Rect ObtenirHitboxCorpsGauche(void) {
+
+		return m_RectHitboxCorpsGauche;
+
+	}
+
+	SDL_Rect ObtenirHitboxPieds(void) {
+
+		return m_RectHitboxPieds;
 
 	}
 

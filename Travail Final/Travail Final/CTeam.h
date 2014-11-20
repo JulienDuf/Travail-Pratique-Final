@@ -34,4 +34,10 @@ public:
 
 	}
 
+	CPlayer* ObtenirPlayerActif(void) {
+
+		return m_pPlayerList->ObtenirElementCurseur();
+
+	}
+
 };

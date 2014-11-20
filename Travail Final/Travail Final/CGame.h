@@ -38,4 +38,10 @@ public:
 
 	}
 
+	CTeam* ObtenirTeamActive(void) {
+
+		return m_pTeamList->ObtenirElementCurseur();
+
+	}
+
 };

@@ -12,6 +12,7 @@ private:
 	CSprite* m_pSpriteCourse;			// Pointeur de sprite qui pointe sur le sprite qui représente le joueur qui est en état de course.
 	CSprite* m_pSpriteSaut;				// pointeur de sprite qui pointe sur le sprite qui représente le joueur qui est en état de saut.
 	CSprite* m_pSpriteParachute;		// Pointeur de sprite qui pointe sur le sprite qui représente le joueur qui est en état de chute.
+	CSprite* m_pSpriteRepos;		    // Pointeur de sprite qui pointe sur le sprite qui représente le joueur qui est au repos.
 
 	SDL_Rect m_RectPlayerDestination;   // La destination du joueur dans le fenêtre.
 	SDL_Rect m_RectSource;				// Affiche si le joueur est ves le gauche ou vers le droite.
@@ -49,17 +50,20 @@ public:
 		string strEmplacementFichier = _strEmplacementFichier;
 
 		strEmplacementFichier.append("Personnage\\Course.png");
-		m_pSpriteCourse = new CSprite(IMG_Load(strEmplacementFichier.c_str()), 12, 50);
+		m_pSpriteCourse = new CSprite(IMG_Load(strEmplacementFichier.c_str()), 9, 50, true, false);
 
 		strEmplacementFichier = _strEmplacementFichier;
 		strEmplacementFichier.append("Personnage\\Saut.png");
-		m_pSpriteSaut = new CSprite(IMG_Load(strEmplacementFichier.c_str()), 12, 50);
+		m_pSpriteSaut = new CSprite(IMG_Load(strEmplacementFichier.c_str()), 9, 50, false, false);
 
 		strEmplacementFichier = _strEmplacementFichier;
 		strEmplacementFichier.append("Personnage\\Parachute.png");
-		m_pSpriteParachute = new CSprite(IMG_Load(strEmplacementFichier.c_str()), 12, 50);
+		m_pSpriteParachute = new CSprite(IMG_Load(strEmplacementFichier.c_str()), 9, 50, true, true);
 
-		m_pSpriteParachute->DefinirActif(true);
+		strEmplacementFichier = _strEmplacementFichier;
+		strEmplacementFichier.append("Personnage\\Repos.png");
+		m_pSpriteRepos = new CSprite(IMG_Load(strEmplacementFichier.c_str()), 1, 50, true, false);
+
 
 		m_RectPlayerDestination = _RectDestination;
 		m_RectPlayerDestination.w = m_pSpriteCourse->ObtenirRectSource().w;
@@ -79,7 +83,7 @@ public:
 	// Paramètre: _pSDLRenderer, Rendeur de la fenêtre dans laquelle on veut afficher le joueur.
 	// Retour: Rien.
 	void ReactToEvent(SDL_Event* _pSDLEvent) {
-
+		
 
 
 		switch (_pSDLEvent->type) {
@@ -87,43 +91,48 @@ public:
 			switch (_pSDLEvent->key.keysym.scancode) {
 			case SDL_SCANCODE_RIGHT:
 
-
-
-				m_pSpriteCourse->ModifierAnnimation('D', 0);
-				m_pSpriteCourse->DefinirEnMvt(true);
+				if (!m_pSpriteCourse->IsActif()) {
+					m_pSpriteCourse->DefinirAnimation(0);
+					m_pSpriteCourse->DefinirActif(true);
+				}
+				
 				break;
 			case SDL_SCANCODE_LEFT:
 
-
-
-				m_pSpriteCourse->ModifierAnnimation('G', 1);
-				m_pSpriteCourse->DefinirEnMvt(true);
+				if (!m_pSpriteCourse->IsActif()) {
+					m_pSpriteCourse->DefinirAnimation(1);
+					m_pSpriteCourse->DefinirActif(true);
+				}
 				break;
 
 			case SDL_SCANCODE_UP:
-				if (m_pSpriteCourse->ObtenirDirection() == 'D') // Si la course se fait vers la droite.
-					m_pSpriteSaut->ModifierAnnimation('H', 0); // Alors le saut se fait vers la droite. 0 = la premiere étage d'annimation.
-				else if (m_pSpriteCourse->ObtenirDirection() == 'G') // Si la course se fait vers la gauche.
-					m_pSpriteSaut->ModifierAnnimation('H', 1); // Alors le saut se fait vers la droite. 0 = la premiere étage d'annimation.
-				m_pSpriteSaut->DefinirEnMvt(true);
+				m_pSpriteRepos->DefinirActif(false);
+				m_pSpriteCourse->DefinirActif(false);
+				m_pSpriteSaut->DefinirActif(true);
+
+				
 				break;
 			}
 			break;
 		case SDL_KEYUP:
-			m_pSpriteSaut->DefinirActif(false);
-			m_pSpriteCourse->DefinirEnMvt(false);
-			if (m_pSpriteCourse->IsSteady()) {
-				if (m_pSpriteCourse->ObtenirDirection() == 'D')
-					m_pSpriteCourse->ModifierAnnimation('N', 2);
-				else if (m_pSpriteCourse->ObtenirDirection() == 'G')
-					m_pSpriteCourse->ModifierAnnimation('N', 3);
-			}
-
+			m_pSpriteCourse->DefinirActif(false);
+			if (!m_pSpriteSaut->IsActif())
+				m_pSpriteRepos->DefinirActif(true);
 
 			break;
 
 		}
 
+	}
+	// Procédure qui sert à afficher le joueur.
+	//Paramètre : _pRenderer : Le render de la fenetre.
+	//Retour : rien.
+	void ShowPlayer(SDL_Renderer* _pRenderer) {
+		m_pSpriteCourse->Render(_pRenderer);
+		if (m_pSpriteParachute->IsActif())
+			m_pSpriteParachute->ModifierAnnimation();
+		m_pSpriteParachute->Render(_pRenderer);
+		m_pSpriteSaut->Render(_pRenderer);
 	}
 
 

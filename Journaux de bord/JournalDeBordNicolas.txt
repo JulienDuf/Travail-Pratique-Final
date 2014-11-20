@@ -58,3 +58,12 @@ J'ai fait la fonction pour la collision des joueurs avec la map. J'ai modifier u
 J'ai ajouté des accesseurs dans les classes.
 
 --------------------------------------------------------------------------------------------------------------------
+
+Jeudi 20 novembre 2014
+
+2:00 PM
+
+Presque fini les collisions joueur/map, il restera à gérer les sortes de sprite différents.
+J'ai aidé Xavier avec le sprite.
+
+--------------------------------------------------------------------------------------------------------------------

@@ -174,39 +174,9 @@ public:
 			
 	}
 
-	// Fonction qui retourne la position d'une collision.
-	// Paramètre: _pSDLSurfacecollision, pointe vers la surface avec laquelle on veut vérifier les collisions avec la map.
-	// Paramètre: _SDLRectCollision, rectangle qui encadre l'endroit ou l'on veut vérifier les collisions sur la map. (ex: rectangle destination d'un sprite.)
-	// Paramètre: _SDLRectSource, rectangle qui encadre la position sur la surface ou l'on veut vérifier les collisions (ex : rectangle source d'un sprite.)
-	// Paramètre: _uiXMap, position en x dans la map ou la collision a lieu.
-	// Paramètre: _uiYMap, position en y dans la map ou la collision a lieu.
-	// Paramètre: _uiXRectCollision, Position en x dans le rectangle de collision ou la collision a eu lieu.
-	// Paramètre: _uiYRectCollision, position en y dans le rectangle de collision ou la collision a eu lieu.
-	// Retour: Rien, mais les positions en x et en y de la collision seront stockés dans les 4 paramètres écrits plus haut.
-	void VerifierCollisionMap(SDL_Surface* _pSDLSurfaceCollision, SDL_Rect _SDLRectCollision,SDL_Rect _SDLRectSource, unsigned int _uiXMap, unsigned int _uiYMap, unsigned int _uiXRectCollision, unsigned int _uiYRectCollision) {
+	SDL_Surface* ObtenirSurfaceMap(void) {
 
-		_uiXMap = 0;
-		_uiYMap = 0;
-		_uiXRectCollision = 0;
-		_uiYRectCollision = 0;
-
-		for (int y = _SDLRectCollision.h; y > 0; y--) {				// On parcours les pixels dans le rectangle collision en y à l'envers.
-
-			for (int x = _SDLRectCollision.w; x > 0; x--) {			// On parcours les pixels dans le rectangle collision en x à l'envers.
-
-				if ((((unsigned int*)m_pSDLSurfaceMap->pixels)[_SDLRectCollision.x + x * y] != TRANSPARENCE32BIT) && (((unsigned int*)_pSDLSurfaceCollision->pixels)[_SDLRectSource.x + x * y] != TRANSPARENCE32BIT)) {			// Si il y a une collision entre les pixels non-transparents de la map et les pixels non-transparents du joueur...
-
-					_uiXMap = _SDLRectCollision.x + x;		// On stocke la position de la collision dans les variables adéquates.
-					_uiYMap = _SDLRectCollision.y + y;
-					_uiXRectCollision = x;
-					_uiYRectCollision = y;
-
-				}
-
-			}
-
-		}
-
+		return m_pSDLSurfaceMap;
 
 	}
 

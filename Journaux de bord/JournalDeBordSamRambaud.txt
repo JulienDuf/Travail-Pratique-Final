@@ -7,3 +7,4 @@
 6 novembre: Merge l'analyse des outils avec l'analyse du jeu, Création du diagramme de cas d'utilisation des outils. 
 			Merge du diagramme de classe des outils avec le diagramme principal, Travail sur les classes.
 13 novembre: Creation des classes CPack, CMine et CHealthPack, ajout de variables et accesseurs dans CPlayer 
+18 novembre: probleme avec la brnache outil, transfer vers une nouvelle branche et travail sur les constructeurs de packs a terminer

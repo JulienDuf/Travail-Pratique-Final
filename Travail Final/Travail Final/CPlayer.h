@@ -13,7 +13,6 @@ private:
 	CSprite* m_pSpriteSaut;				// pointeur de sprite qui pointe sur le sprite qui représente le joueur qui est en état de saut.
 	CSprite* m_pSpriteParachute;		// Pointeur de sprite qui pointe sur le sprite qui représente le joueur qui est en état de chute.
 
-	SDL_Surface* m_pSDLPlayerSurface;   // Pointeur sur la texture du joueur immobile.
 	SDL_Rect m_RectPlayerDestination;   // La destination du joueur dans le fenêtre.
 	SDL_Rect m_RectSource;				// Affiche si le joueur est ves le gauche ou vers le droite.
 
@@ -22,10 +21,10 @@ private:
 	CListeDC<CTools*>* m_pToolList;		// pointeur de liste d'outils qui pointe sur la liste d'outils de combat que l'utilisateur peut utiliser.
 
 	void(*m_pProcedureCollision)(SDL_Surface* _pSDLSurfaceCollision, SDL_Rect _SDLRectCollision, SDL_Rect _SDLRectSource, unsigned int _uiXMap, unsigned int _uiYMap, unsigned int _uiXRectCollision, unsigned int _uiYRectCollision);
-	
+
 
 public:
-	
+
 	// Constructeur...
 	// Paramètre: _pSpriteCourse, pointe sur le sprite qui représente le joueur qui est en état de course.
 	// Paramètre: _pSpriteSaut, pointe sur le sprite qui représente le joueur qui est en état de saut.
@@ -45,10 +44,10 @@ public:
 
 	}
 
-	CPlayer(string _strEmplacementFichier, SDL_Rect _RectDestiantion, void _ProcedureCollision(SDL_Surface* _pSDLSurfaceCollision, SDL_Rect _SDLRectCollision, SDL_Rect _SDLRectSource, unsigned int _uiXMap, unsigned int _uiYMap, unsigned int _uiXRectCollision, unsigned int _uiYRectCollision), void _MapDestruction(int _iRayon, int _iX, int _iY), SDL_Renderer* _pRenderer) {
+	CPlayer(string _strEmplacementFichier, SDL_Rect _RectDestination, void _ProcedureCollision(SDL_Surface* _pSDLSurfaceCollision, SDL_Rect _SDLRectCollision, SDL_Rect _SDLRectSource, unsigned int _uiXMap, unsigned int _uiYMap, unsigned int _uiXRectCollision, unsigned int _uiYRectCollision), void _MapDestruction(int _iRayon, int _iX, int _iY), SDL_Renderer* _pRenderer) {
 
 		string strEmplacementFichier = _strEmplacementFichier;
-		
+
 		strEmplacementFichier.append("Personnage\\Course.png");
 		m_pSpriteCourse = new CSprite(IMG_Load(strEmplacementFichier.c_str()), 12, 50);
 
@@ -60,13 +59,11 @@ public:
 		strEmplacementFichier.append("Personnage\\Parachute.png");
 		m_pSpriteParachute = new CSprite(IMG_Load(strEmplacementFichier.c_str()), 12, 50);
 
-		strEmplacementFichier = _strEmplacementFichier;
-		strEmplacementFichier.append("Personnage\\Personnage.png");
-		m_pSDLPlayerSurface = IMG_Load(strEmplacementFichier.c_str());
+		m_pSpriteParachute->DefinirActif(true);
 
-		m_RectPlayerDestination = _RectDestiantion;
-		m_RectPlayerDestination.w = m_pSDLPlayerSurface->w;
-		m_RectPlayerDestination.h = m_pSDLPlayerSurface->h;
+		m_RectPlayerDestination = _RectDestination;
+		m_RectPlayerDestination.w = m_pSpriteCourse->ObtenirRectSource().w;
+		m_RectPlayerDestination.h = m_pSpriteCourse->ObtenirRectSource().h;
 
 		m_pToolList = new CListeDC<CTools*>();
 
@@ -81,11 +78,56 @@ public:
 	// Procédure qui affiche le joueur.
 	// Paramètre: _pSDLRenderer, Rendeur de la fenêtre dans laquelle on veut afficher le joueur.
 	// Retour: Rien.
-	void ShowPlayer(SDL_Renderer* _pSDLRenderer) {
+	void ReactToEvent(SDL_Event* _pSDLEvent) {
 
 
+
+		switch (_pSDLEvent->type) {
+		case SDL_KEYDOWN:
+			switch (_pSDLEvent->key.keysym.scancode) {
+			case SDL_SCANCODE_RIGHT:
+
+
+
+				m_pSpriteCourse->ModifierAnnimation('D', 0);
+				m_pSpriteCourse->DefinirEnMvt(true);
+				break;
+			case SDL_SCANCODE_LEFT:
+
+
+
+				m_pSpriteCourse->ModifierAnnimation('G', 1);
+				m_pSpriteCourse->DefinirEnMvt(true);
+				break;
+
+			case SDL_SCANCODE_UP:
+				if (m_pSpriteCourse->ObtenirDirection() == 'D') // Si la course se fait vers la droite.
+					m_pSpriteSaut->ModifierAnnimation('H', 0); // Alors le saut se fait vers la droite. 0 = la premiere étage d'annimation.
+				else if (m_pSpriteCourse->ObtenirDirection() == 'G') // Si la course se fait vers la gauche.
+					m_pSpriteSaut->ModifierAnnimation('H', 1); // Alors le saut se fait vers la droite. 0 = la premiere étage d'annimation.
+				m_pSpriteSaut->DefinirEnMvt(true);
+				break;
+			}
+			break;
+		case SDL_KEYUP:
+			m_pSpriteSaut->DefinirActif(false);
+			m_pSpriteCourse->DefinirEnMvt(false);
+			if (m_pSpriteCourse->IsSteady()) {
+				if (m_pSpriteCourse->ObtenirDirection() == 'D')
+					m_pSpriteCourse->ModifierAnnimation('N', 2);
+				else if (m_pSpriteCourse->ObtenirDirection() == 'G')
+					m_pSpriteCourse->ModifierAnnimation('N', 3);
+			}
+
+
+			break;
+
+		}
 
 	}
+
+
+	
 
 
 };

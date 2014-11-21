@@ -62,9 +62,9 @@ public:
 		va_end(parametres);
 	}
 
-	void CreateGame(string _strEmplacementMap, string _strEmplacement, int _iNombre…quipe, int _iNombreJoueur, SDL_Surface* _pSurfaceGabarie, CVent* _pVent,SDL_Renderer* _pRenderer) {
+	void CreateGame(string _strEmplacementMap, string _strEmplacement, int _iNombre…quipe, int _iNombreJoueur, CVent* _pVent, void _ProcedureCollision(SDL_Surface* _pSDLSurfaceCollision, SDL_Rect _SDLRectCollision, SDL_Rect _SDLRectSource, unsigned int* _uiXMap, unsigned int* _uiYMap, unsigned int* _uiXRectCollision, unsigned int* _uiYRectCollision), void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), double _Physique(CVecteur2D* _VitesseMissile, SDL_Rect* _DestinationMissile), SDL_Renderer* _pRenderer) {
 
-		m_pGame = new CGame(_strEmplacementMap, strEmplacementFichier, _iNombre…quipe, _iNombreJoueur, _pSurfaceGabarie, _pVent, m_pSDLRenderer);
+		m_pGame = new CGame(_strEmplacementMap, _strEmplacement, _iNombre…quipe, _iNombreJoueur, _pVent,_ProcedureCollision, _MapDestruction, _CollisionObjetMap, _Physique, m_pSDLRenderer);
 	}
 
 	// ProcÈdure qui rendre l'image final.
@@ -92,6 +92,11 @@ public:
 	// Aucun paramËtre.
 	SDL_Renderer* ObtenirRenderer(void){
 		return m_pSDLRenderer;
+	}
+
+	CGame* ObtenirGame(void) {
+
+		return m_pGame;
 	}
 
 	void GetSize(int* _iX, int* _iY) {

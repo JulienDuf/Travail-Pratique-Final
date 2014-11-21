@@ -7,9 +7,11 @@
 #include <iostream>
 #include <fstream>
 using namespace std;
+#include "Pointeur Fonction.h"
 #include "CArbreAVL.h"
 #include "CListeDC.h"
 #include "CTimer.h"
+#include "CVecteur2D.h"
 #include "CSprite.h"
 #include "CControl.h"
 #include "CButton.h"
@@ -28,8 +30,6 @@ using namespace std;
 #include "CLabelLeftRight.h"
 #include "CGestionaire.h"
 
-
-
 // Variables...
 bool boExecution; // Variable de la boucle principale du programme.
 
@@ -44,9 +44,159 @@ CGestionaire<TTF_Font*>* pGestionaireFont; // Le gestionaire des fonts.
 CGestionaire<CControl*>* pGestionaireControl; // Le gestionaire des controls.
 CGestionaire<CMenu*>* pGestionaireMenu; // Le gestionaire des menus.
 
+SDL_Surface* pSurfaceGabarie; // Le gabarie pour les destructions.
+
 SDL_Color CouleurTexte; // La couleur du texte.
 
 CGame* pGame; // La partie.
+
+CTimer* pTimerPhysique;
+
+
+// Fonction convertissant en angle de degré à radian.
+// En entrée:
+// Param1: L'angle à convertir.
+// En sortie: L'angle converti.
+float DegtoRad(float _fAngle) {
+
+	return (M_PI / 180) * _fAngle;
+}
+
+// Fontion effectuant un rotation sur une surface selon un angle.
+// En entrée: 
+// Param1: La surface qui doit être tourné.
+// Param2: L'angle de la rotation.
+// En sortie: La surface avec la rotaiton.
+SDL_Surface* Rotation(SDL_Surface* _pSurfaceRotation, float _fAngle) {
+
+	SDL_Surface * pNouvelleSurface = SDL_CreateRGBSurface(_pSurfaceRotation->flags, _pSurfaceRotation->w, _pSurfaceRotation->h, _pSurfaceRotation->format->BitsPerPixel, _pSurfaceRotation->format->Rmask, _pSurfaceRotation->format->Gmask, _pSurfaceRotation->format->Bmask, _pSurfaceRotation->format->Amask);
+
+	double sin = sinf(DegtoRad(_fAngle));
+	double cos = cosf(DegtoRad(_fAngle));
+
+	for (int y = 0; y < _pSurfaceRotation->h; y++)
+		for (int x = 0; x < _pSurfaceRotation->w; x++) {
+
+		int RotX = (x - _pSurfaceRotation->w / 2) * cos - (y - _pSurfaceRotation->h / 2) * sin + _pSurfaceRotation->w / 2;
+		int RotY = (x - _pSurfaceRotation->w / 2) * sin + (y - _pSurfaceRotation->h / 2) * cos + _pSurfaceRotation->w / 2;
+
+		if ((RotX >= 0 && RotY >= 0 && (RotX < _pSurfaceRotation->w && RotY < _pSurfaceRotation->h)))
+			((unsigned int*)pNouvelleSurface->pixels)[y * pNouvelleSurface->w + x] = ((unsigned int*)_pSurfaceRotation->pixels)[RotY * _pSurfaceRotation->w + RotX];
+		}
+
+	return pNouvelleSurface;
+}
+
+// Procédure détruisant une partie de la map selon un rayon.
+// En entrée:
+// Param1: Le rayon de la destruction.
+// Param2: La position en X de la destruction dans la map.
+// Param3: La position en Y de la destruction dans la map.
+void MapDestruction(int _iRayon, int _iX, int _iY) {
+
+	int iX, iY;
+	SDL_Rect RectSource = { 0, 0, 120, 120 };
+	SDL_Surface* pSurfaceMap = pWindowJeu->ObtenirGame()->ObtenirMap()->ObtenirMap();
+
+	iX = _iX - 60;
+	iY = _iY - 60;
+
+	switch (_iRayon) {
+
+	case 45:
+		RectSource.x = RectSource.w * 0;
+		break;
+
+	case 50:
+		RectSource.x = RectSource.w * 1;
+		break;
+
+	case 60:
+		RectSource.x = RectSource.w * 2;
+		break;
+	}
+
+	for (int y = 0; y < 120; y++) {
+
+		for (int x = 0; x < 120; x++) {
+
+			if ((iY >= 0 && iX >= 0) && (iY <= 768 & iX <= 1366)) {
+
+				if (((unsigned int*)pSurfaceGabarie->pixels)[y * pSurfaceGabarie->w + RectSource.x + x] != BLANC32BIT)
+					((unsigned int*)pSurfaceMap->pixels)[iY * pSurfaceMap->w + iX] = TRANSPARENCE32BIT;
+			}
+			iX++;
+
+		}
+		iY++;
+		iX = _iX - 60;
+
+	}
+
+}
+
+// Fonction effectuant la physique d'un missile.
+// En entrée:
+// Param1: Le vecteur de la vitesse du missile.
+// Param2: La destination du missile.
+// En sortie: Le nouvel angle du missile.
+double PhysiqueMissile(CVecteur2D* _VitesseMissile, SDL_Rect* _DestinationMissile) {
+
+	_DestinationMissile->x += _VitesseMissile->ObtenirComposanteX() / 35;
+	_DestinationMissile->y += (_VitesseMissile->ObtenirComposanteY()) / 35;
+
+	if (pTimerPhysique->IsDone()) {
+
+		*_VitesseMissile += *pWindowJeu->ObtenirGame()->ObtenirMap()->ObtenirGravite();
+
+		if (_VitesseMissile->ObtenirComposanteY() < 0 && _VitesseMissile->ObtenirComposanteX() >= 0)
+			return (180 / M_PI) * atanf(((-(float)_VitesseMissile->ObtenirComposanteY()) / ((float)_VitesseMissile->ObtenirComposanteX())));
+
+		if (_VitesseMissile->ObtenirComposanteY() >= 0 && _VitesseMissile->ObtenirComposanteX() < 0)
+			return 180 + (180 / M_PI) * atanf((((float)_VitesseMissile->ObtenirComposanteY()) / (-(float)_VitesseMissile->ObtenirComposanteX())));
+
+		if (_VitesseMissile->ObtenirComposanteY() < 0 && _VitesseMissile->ObtenirComposanteX() < 0)
+			return 180 - (180 / M_PI) * atanf(((-(float)_VitesseMissile->ObtenirComposanteY()) / (-(float)_VitesseMissile->ObtenirComposanteX())));
+
+		if (_VitesseMissile->ObtenirComposanteY() >= 0 && _VitesseMissile->ObtenirComposanteX() >= 0)
+			return 360 - (180 / M_PI) * atanf((((float)_VitesseMissile->ObtenirComposanteY()) / ((float)_VitesseMissile->ObtenirComposanteX())));
+
+		pTimerPhysique->Start();
+	}
+}
+
+// Procédure déterminant la position d'une collision entre un objet et la map, si il y en a une.
+// En entrée:
+// Param1: La surface de l'objet.
+// Param2: La destination de l'objet.
+// Param3: La position en X qui sera retourné.
+// Param4: La position en Y qui sera retourné.
+void CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY) {
+
+	*_iX = 0;
+	*_iY = 0;
+
+	unsigned int ix, iy;
+
+	SDL_Surface* pSDLSurfaceMap = pWindowJeu->ObtenirGame()->ObtenirMap()->ObtenirMap();
+
+	for (int y = _RectDestination.y; y < _RectDestination.y + _RectDestination.h; y++) {
+		for (int x = _RectDestination.x; x < _RectDestination.x + _RectDestination.w; x++) {
+
+			if (x >= 0 && x <= 1366 && y >= 0 && y <= 768) {
+
+				ix = ((unsigned int*)pSDLSurfaceMap->pixels)[y * pSDLSurfaceMap->w + x];
+
+				if ((((unsigned int*)pSDLSurfaceMap->pixels)[y * pSDLSurfaceMap->w + x] != TRANSPARENCE32BIT) && (((unsigned int*)_pSDLSurface->pixels)[(y - _RectDestination.y) * _pSDLSurface->w + (x - _RectDestination.x)] != TRANSPARENCE32BIT)) {
+
+					*_iX = x;
+					*_iY = y;
+				}
+			}
+		}
+	}
+
+}
 
 // Procédure pour le click sur le bouton nouvelle partie...
 void ClickBoutonNouvellePartie(void) {
@@ -108,7 +258,7 @@ void ClickBoutonDebutPartie(void) {
 	iNombreEquipe = pGestionaireControl->ObtenirDonnee("pLblLRChoixNbrEquipe")->ObtenirElement("PositionLabel") + 2;
 	iNombreJoueur = pGestionaireControl->ObtenirDonnee("pLblLRChoixNbrJoueurEquipe")->ObtenirElement("PositionLabel") + 4;
 
-	pWindowJeu->CreateGame(strTmp, strEmplacementFichier, iNombreEquipe, iNombreJoueur, NULL, new CVent(pGestionaireFont->ObtenirDonnee("pFontBouton"), "250 km/h", CouleurTexte, pGestionaireTexture->ObtenirDonnee("pFlecheVent"), {1200, 30 , 117, 63}, 180, pWindowJeu->ObtenirRenderer()), pWindowJeu->ObtenirRenderer());
+	pWindowJeu->CreateGame(strTmp, strEmplacementFichier, iNombreEquipe, iNombreJoueur, new CVent(pGestionaireFont->ObtenirDonnee("pFontBouton"), "250 km/h", CouleurTexte, pGestionaireTexture->ObtenirDonnee("pFlecheVent"), {1200, 30 , 117, 63}, 180, pWindowJeu->ObtenirRenderer()), VerifierCollisionMap, MapDestruction, CollisionObjetMap, PhysiqueMissile, pWindowJeu->ObtenirRenderer());
 }
 
 // Procédure pour le click sur le bouton quitter...
@@ -268,6 +418,13 @@ void Start(char* _strApplicationFilename){
 	pGestionaireControl = new CGestionaire<CControl*>();
 	pGestionaireMenu = new CGestionaire<CMenu*>();
 
+	pTimerPhysique = new CTimer(20);
+
+	// Chargement du gabarie...
+	strEmplacement = strApplicationPath;
+	strEmplacement.append("Gabarie.png");
+	pSurfaceGabarie = IMG_Load(strEmplacement.c_str());
+
 	// Chargement de font du texte des boutons...
 	strEmplacement = strApplicationPath;
 	strEmplacement.append("calibri.ttf");
@@ -355,7 +512,7 @@ void Start(char* _strApplicationFilename){
 
 }
 
-//étruisants les variables.
+// Procédure détruisant les variables.
 //
 void Close(void) {
 

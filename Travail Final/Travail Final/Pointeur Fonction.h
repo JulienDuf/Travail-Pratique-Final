@@ -28,11 +28,8 @@ void CollisionMap(SDL_Surface* _pSDLSurfaceMap,SDL_Surface* _pSDLSurface, SDL_Re
 // Paramètre: _uiXRectCollision, Position en x dans le rectangle de collision ou la collision a eu lieu.
 // Paramètre: _uiYRectCollision, position en y dans le rectangle de collision ou la collision a eu lieu.
 // Retour: Rien, mais les positions en x et en y de la collision seront stockés dans les 4 paramètres écrits plus haut.
-<<<<<<< HEAD
 void VerifierCollisionJoueurMap(SDL_Surface* _pSDLSurfaceMap, SDL_Surface* _pSDLSurfaceCollision, SDL_Rect _SDLRectCollision, SDL_Rect _SDLRectSource, unsigned int* _uiXMap, unsigned int* _uiYMap, unsigned int* _uiXRectCollision, unsigned int* _uiYRectCollision) {
-=======
 void VerifierCollisionMap(SDL_Surface* _pSDLSurfaceCollision, SDL_Rect _SDLRectCollision, SDL_Rect _SDLRectSource, unsigned int* _uiXMap, unsigned int* _uiYMap, unsigned int* _uiXRectCollision, unsigned int* _uiYRectCollision) {
->>>>>>> origin/Branche-Julien
 
 	_uiXMap = 0;
 	_uiYMap = 0;

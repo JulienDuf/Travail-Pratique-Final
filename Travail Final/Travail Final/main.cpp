@@ -17,6 +17,8 @@ using namespace std;
 #include "CButton.h"
 #include "CLabel.h"
 #include "CMenu.h"
+#include "CScrollBar.h"
+#include "CToolBar.h"
 #include "CBarrePuissance.h"
 #include "CTool.h"
 #include "CMissile.h"

@@ -12,7 +12,7 @@ private:
 		m_RectTrueTrack, // Rect de la vraie track dans laquelle glisse la barre.
 		m_RectBar; // Rect de la barre.
 
-	bool boClick;
+	bool m_boClick; // Booléen pour savoir si la souris est clickée.
 
 public:
 
@@ -23,7 +23,7 @@ public:
 	// Param3: Renderer d'affichage
 	CScrollBar(SDL_Rect _RectScrollBarDestination, unsigned int _uiScrollingSize, SDL_Renderer* _pRenderer) {
 
-		boClick = false;
+		m_boClick = false;
 
 		// Initialisation des rects...
 		m_RectDestinationTrack = _RectScrollBarDestination;
@@ -68,7 +68,7 @@ public:
 	// Param1: SDL_Event
 	// En sortie:
 	// La position du event click selon la vrai longueur de l'objet à laquelle la scrollbar est rattachée à partir du 0 de l'objet en question.
-	int ReactToEvent(SDL_Event *_pEvent) {
+	unsigned int ReactToEvent(SDL_Event *_pEvent) {
 
 		// Switch pour gérer les évenements de la scrollbar...
 		switch (_pEvent->type) {
@@ -86,7 +86,7 @@ public:
 			break;
 		case SDL_MOUSEMOTION: // Mouvement de la souris
 			// Si la souris est clickée...
-			if (boClick) {
+			if (m_boClick) {
 				// Limites de la barre...
 				if (((m_RectBar.x + _pEvent->motion.xrel) >= m_RectTrueTrack.x) && ((m_RectBar.x + _pEvent->motion.xrel + m_RectBar.w) <= (m_RectTrueTrack.x + m_RectTrueTrack.w)))
 					m_RectBar.x += _pEvent->motion.xrel;
@@ -95,15 +95,15 @@ public:
 		case SDL_MOUSEBUTTONDOWN: // Click de la souris
 			// Vérification si la position de la souris lors du click était sur la barre...
 			if ((_pEvent->motion.x >= m_RectBar.x) && (_pEvent->motion.y >= m_RectBar.y) && (_pEvent->motion.x <= (m_RectBar.x + m_RectBar.w)) && (_pEvent->motion.y <= (m_RectBar.y + m_RectBar.h))) {
-				boClick = true;
+				m_boClick = true;
 			}
 
 			break;
 		case SDL_MOUSEBUTTONUP: // Relachement de la souris
-			boClick = false;
+			m_boClick = false;
 			break;
 		}
 
-		return (m_RectBar.x - m_RectTrueTrack.x) * ((float)m_RectTrueTrack.w / (float)m_RectBar.w); // Retour de la position.
+		return (float)(m_RectBar.x - m_RectTrueTrack.x) * ((float)m_RectTrueTrack.w / (float)m_RectBar.w); // Retour de la position.
 	}
 };

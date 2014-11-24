@@ -84,10 +84,12 @@
     <ClInclude Include="CNoeudArbreAVL.h" />
     <ClInclude Include="CPack.h" />
     <ClInclude Include="CPlayer.h" />
+    <ClInclude Include="CScrollBar.h" />
     <ClInclude Include="CSprite.h" />
     <ClInclude Include="CTeam.h" />
     <ClInclude Include="CTimer.h" />
     <ClInclude Include="CTool.h" />
+    <ClInclude Include="CToolBar.h" />
     <ClInclude Include="CVent.h" />
     <ClInclude Include="CWindow.h" />
     <ClInclude Include="Pointeur Fonction.h" />

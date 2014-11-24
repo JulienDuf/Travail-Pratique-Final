@@ -136,24 +136,24 @@ public:
 
 	// Procédure permettant de réagir aux événement de la toolbar(selection)...
 	// Param1: Event de SDL.
-	void ReactToEvent(SDL_Event* pEvent) {
+	void ReactToEvent(SDL_Event* _pEvent) {
 
 		// Mise à jour de la position d'affichage et des events de la scrollingbar...
-		m_iPositionAffichage = (float)m_pScrollBar->ReactToEvent(pEvent);
+		m_iPositionAffichage = (float)m_pScrollBar->ReactToEvent(_pEvent);
 
 		// Switch pour gérer les événement de la toolbar...
-		switch (pEvent->type) {
+		switch (_pEvent->type) {
 		case SDL_MOUSEBUTTONDOWN: // Click droit souris.
 			// Vérification si le click de la souris est dans la toolbar...
-			if ((pEvent->motion.x >= m_RectToolBarDestination.x && pEvent->motion.x <= (m_RectToolBarDestination.x + m_RectToolBarDestination.w)) && (pEvent->motion.y >= m_RectToolBarDestination.y && pEvent->motion.y <= (m_RectToolBarDestination.y + m_RectToolBarDestination.h))) {
+			if ((_pEvent->motion.x >= m_RectToolBarDestination.x && _pEvent->motion.x <= (m_RectToolBarDestination.x + m_RectToolBarDestination.w)) && (_pEvent->motion.y >= m_RectToolBarDestination.y && _pEvent->motion.y <= (m_RectToolBarDestination.y + m_RectToolBarDestination.h))) {
 				unsigned int uiX, uiY; // Positions X,Y pour la position de l'event click par rapport à la toolbar non pas par rapport à la window.
 
 				// Ajustement du rectevent et de la position d'affichage si il y a une toolbar ou  non...
 				if (m_pScrollBar != nullptr)
-					uiX = pEvent->motion.x - m_RectToolBarDestination.x + m_iPositionAffichage;
+					uiX = _pEvent->motion.x - m_RectToolBarDestination.x + m_iPositionAffichage;
 				else
-					uiX = pEvent->motion.x - m_RectToolBarDestination.x;
-				uiY = pEvent->motion.y - m_RectToolBarDestination.y;
+					uiX = _pEvent->motion.x - m_RectToolBarDestination.x;
+				uiY = _pEvent->motion.y - m_RectToolBarDestination.y;
 
 				// Vérification si le click est à la hauteur des textures dans la toolbar...
 				if (uiY >= m_RectTextureDestination.y && uiY <= (m_RectTextureDestination.y + m_RectTextureDestination.h)) {

@@ -28,6 +28,8 @@ public:
 		m_pTextureBackGroundMenu = SDL_CreateTextureFromSurface(_pRenderer, pSDLSurface);
 		SDL_FreeSurface(pSDLSurface);
 
+		m_RectDestinationBackGround = _RectDestination;
+
 		if (argc > 0) {
 			va_list parametres;
 

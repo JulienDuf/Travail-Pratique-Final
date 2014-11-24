@@ -29,7 +29,6 @@ public:
 	CMap* ObtenirMap(void) {
 
 		return m_pGameMap;
-<<<<<<< HEAD
 
 	}
 
@@ -43,8 +42,6 @@ public:
 
 		return m_pTeamList->ObtenirElementCurseur();
 
-=======
->>>>>>> origin/Branche-Julien
 	}
 
 };

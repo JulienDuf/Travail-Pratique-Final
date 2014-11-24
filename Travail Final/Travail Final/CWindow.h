@@ -80,6 +80,11 @@ public:
 		SDL_RenderPresent(m_pSDLRenderer); // Renderer.
 	}
 
+	void FinDePartie(void) {
+		delete m_pGame;
+		m_pGame = nullptr;
+	}
+
 	// Le titre de la fenêtre.
 	// Paramètre : _Titre : le titre de l'image.
 	//

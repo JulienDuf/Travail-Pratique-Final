@@ -22,7 +22,7 @@ public:
 
 			iX = rand() % 1350;
 
-			m_pPlayerList->AjouterFin(new CPlayer(_strEmplacementFichier, {iX, 5, 0, 0}, _ProcedureCollision, _MapDestruction, _CollisionObjetMap, _Physique, _pRenderer));
+			//m_pPlayerList->AjouterFin(new CPlayer(_strEmplacementFichier, {iX, 5, 0, 0}, _ProcedureCollision, _MapDestruction, _CollisionObjetMap, _Physique, _pRenderer));
 
 		}
 

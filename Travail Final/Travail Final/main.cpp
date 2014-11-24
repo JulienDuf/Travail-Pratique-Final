@@ -50,8 +50,6 @@ SDL_Surface* pSurfaceGabarie; // Le gabarie pour les destructions.
 
 SDL_Color CouleurTexte; // La couleur du texte.
 
-CGame* pGame; // La partie.
-
 CTimer* pTimerPhysique;
 
 
@@ -290,7 +288,7 @@ void ClickBoutonResumer(void) {
 
 // Procédure qui quitter une partie en cours et la détruit...
 void ClickBoutonQuitterJeu(void) {
-	delete pGame;
+	pWindowJeu->FinDePartie();
 	pGestionaireMenu->ObtenirDonnee("pMenuPause")->DefinirboShow(false);
 	pGestionaireMenu->ObtenirDonnee("pMenuPrincipal")->DefinirboShow(true);
 }
@@ -420,8 +418,6 @@ void Start(char* _strApplicationFilename){
 	SDL_Init(SDL_INIT_VIDEO);
 	TTF_Init();
 
-	pGame = nullptr;
-
 	// Création de la fenêtre...
 	pWindowJeu = new CWindow(1366, 768);
 	pWindowJeu->GetSize(&iW, &iH);
@@ -516,10 +512,10 @@ void Start(char* _strApplicationFilename){
 	// Création des menus...
 	pGestionaireMenu->AjouterDonnee(new CMenu(true, { 0, 0, iW, iH }, pWindowJeu->ObtenirRenderer(), 2, pGestionaireControl->ObtenirDonnee("pBtnNouvellePartie"), pGestionaireControl->ObtenirDonnee("pBtnQuitter")), "pMenuPrincipal"); // Crée le menu principal.
 	pGestionaireMenu->AjouterDonnee(new CMenu(false, { 0, 0, iW, iH }, pWindowJeu->ObtenirRenderer(), 8, pGestionaireControl->ObtenirDonnee("pBtnDebutPartie"), pGestionaireControl->ObtenirDonnee("pBtnRetour"), pGestionaireControl->ObtenirDonnee("pLblDescriptionMap"), pGestionaireControl->ObtenirDonnee("pLblNombreJoueurEquipe"), pGestionaireControl->ObtenirDonnee("pLblNombreEquipe"), pGestionaireControl->ObtenirDonnee("pLblLRChoixNbrEquipe"), pGestionaireControl->ObtenirDonnee("pLblLRChoixNbrJoueurEquipe"), pGestionaireControl->ObtenirDonnee("pLblLRChoixMap")), "pMenuNouvellePartie"); // Créé le menu nouvelle partie.
-	pGestionaireMenu->AjouterDonnee(new CMenu(false, { 433, 134, 500, 500 }, pWindowJeu->ObtenirRenderer(), 2, pGestionaireControl->ObtenirDonnee("pBtnResumer"), pGestionaireControl->ObtenirDonnee("pBtnQuitterJeu")), "pMenuPause");
+	pGestionaireMenu->AjouterDonnee(new CMenu(false, { 433, 134, 500, 500 }, pWindowJeu->ObtenirRenderer(), 2, pGestionaireControl->ObtenirDonnee("pBtnResumer"), pGestionaireControl->ObtenirDonnee("pBtnQuitterGame")), "pMenuPause");
 
 	// Ajoue des menus dans la fenêtre.
-	pWindowJeu->AjouterMenu(2, pGestionaireMenu->ObtenirDonnee("pMenuPrincipal"), pGestionaireMenu->ObtenirDonnee("pMenuNouvellePartie"));
+	pWindowJeu->AjouterMenu(3, pGestionaireMenu->ObtenirDonnee("pMenuPrincipal"), pGestionaireMenu->ObtenirDonnee("pMenuNouvellePartie"), pGestionaireMenu->ObtenirDonnee("pMenuPause"));
 
 	boExecution = true;
 	pEvent = new SDL_Event(); // Créé le pointeur.
@@ -551,7 +547,7 @@ bool VerifierCollisionJoueurMap(CGame* _pGame, bool* _boCollisionCorps, bool* _b
 	SDL_Surface* pTmpSDLSurfaceMap = _pGame->ObtenirMap()->ObtenirSurfaceMap();
 	SDL_Surface* pTmpSDLSurfacePlayer = _pGame->ObtenirTeamActive()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirSurface();
 
-	SDL_Rect* pTmpSDLRectPlayerDestination = _pGame->ObtenirTeamActive()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirRectDestination();
+	SDL_Rect* pTmpSDLRectPlayerDestination = &_pGame->ObtenirTeamActive()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirRectDestination();
 	SDL_Rect TmpSDLRectPlayerSource = _pGame->ObtenirTeamActive()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirRectSource();
 	
 	SDL_Rect TmpSDLRectPlayerHitboxCorps;
@@ -620,8 +616,12 @@ int main(int argc, char* argv[]) {
 		// Tant qu'il y a des événements à gérer.
 		while (SDL_PollEvent(pEvent)) {
 
+			CMenu* pMenutmp = pGestionaireMenu->ObtenirDonnee("pMenuPrincipal");
+			CMenu* pMenutmp1 = pGestionaireMenu->ObtenirDonnee("pMenuNouvellePartie");
+			CMenu* pMenutmp2 = pGestionaireMenu->ObtenirDonnee("pMenuPause");
 			pGestionaireMenu->ObtenirDonnee("pMenuPrincipal")->ReactToEvent(pEvent);
 			pGestionaireMenu->ObtenirDonnee("pMenuNouvellePartie")->ReactToEvent(pEvent);
+			pGestionaireMenu->ObtenirDonnee("pMenuPause")->ReactToEvent(pEvent);
 
 			switch (pEvent->type) {
 
@@ -630,7 +630,7 @@ int main(int argc, char* argv[]) {
 				break;
 
 			case SDL_KEYDOWN:
-				if (pEvent->key.keysym.scancode == SDL_SCANCODE_ESCAPE && pGame != nullptr) {
+				if (pEvent->key.keysym.scancode == SDL_SCANCODE_ESCAPE && pWindowJeu->ObtenirGame() != nullptr) {
 					pGestionaireMenu->ObtenirDonnee("pMenuPause")->DefinirboShow(true);
 				}
 				else

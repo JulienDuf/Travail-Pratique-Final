@@ -8,3 +8,5 @@
 			Merge du diagramme de classe des outils avec le diagramme principal, Travail sur les classes.
 13 novembre: Creation des classes CPack, CMine et CHealthPack, ajout de variables et accesseurs dans CPlayer 
 18 novembre: probleme avec la brnache outil, transfer vers une nouvelle branche et travail sur les constructeurs de packs a terminer
+22 novembre: packs terminés
+25 novembre: debut et fin de CMelee, debut du constructeur de CGrenade

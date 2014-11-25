@@ -18,6 +18,8 @@ using namespace std;
 #include "CBarrePuissance.h"
 #include "CTool.h"
 #include "CMissile.h"
+#include "CGrenade.h"
+#include "CMelee.h"
 #include "CPack.h"
 #include "CHealthPack.h"
 #include "CMine.h"

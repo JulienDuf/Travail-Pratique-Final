@@ -1,22 +1,23 @@
-//Classe qui gere les packs de santé.
+//Classe qui gere les mines.
 //crée le 13 novembre par Samuel Rambaud (Sam.Rambaud@outlook.com)
 
 class CMine : public CPack{
 private:
-	SDL_Rect m_pPosition; //position de la mine sur la map
+	SDL_Rect m_pRectDestination; //position de la mine sur la map
 	SDL_Texture* m_pTexture; //Texture du pack
 
 public:
-	CMine(string* _SourceImage, SDL_Renderer* _Renderer){
+	CMine(string _strSourceImage, SDL_Renderer* _Renderer){
 		//initialisation de la texture.
-		_SourceImage->append("\\Armes et Packs\\Mine.png");
-		m_pTexture = IMG_LoadTexture(_Renderer, _SourceImage->c_str());
+		string strSourceImage = _strSourceImage;
+		strSourceImage.append("\\Armes et Packs\\Mine.png");
+		m_pTexture = IMG_LoadTexture(_Renderer, strSourceImage.c_str());
 
-		//creation de la position de la mine
-		m_pPosition.h = 59;
-		m_pPosition.w = 15;
-		m_pPosition.y = 0;
-		m_pPosition.x = rand() % 1366;
+		//initialisation de la position de la mine
+		m_pRectDestination.h = 59;
+		m_pRectDestination.w = 15;
+		m_pRectDestination.y = 0;
+		m_pRectDestination.x = rand() % 1366;
 	}
 
 	/*void Use(CPlayer* _Player){
@@ -25,17 +26,17 @@ public:
 
 
 	/*
-	Affiche la mine sur la  map a la postion m_pPosition
+	Affiche la mine sur la  map a la postion m_pRectDestination
 	*/
 	void Show(SDL_Renderer* _Renderer){
-		SDL_RenderCopy(_Renderer, m_pTexture, NULL, new SDL_Rect(m_pPosition));
+		SDL_RenderCopy(_Renderer, m_pTexture, NULL, &m_pRectDestination);
 	}
 
 	
 	/*
-	Calcule la physique gerant la chute de la mine lors de son apparition.
+	Calcule la chute de la mine lors de son apparition.
 	*/
-	void PhysiqueChutePack(){
-		m_pPosition.y += m_pPosition.y
+	void ChuteDebut(){
+		m_pRectDestination.y += 15;
 	}
 };

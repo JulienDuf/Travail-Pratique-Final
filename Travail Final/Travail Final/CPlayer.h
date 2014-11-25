@@ -144,15 +144,22 @@ public:
 	//Paramètre : _pRenderer : Le render de la fenetre.
 	//Retour : rien.
 	void ShowPlayer(SDL_Renderer* _pRenderer) {
-		m_pSpriteCourse->Render(_pRenderer);
+		m_pSpriteCourse->Render(_pRenderer, m_RectPlayerDestination);
 		if (m_pSpriteParachute->IsActif())
 			m_pSpriteParachute->ModifierAnnimation(0, 1);
-		m_pSpriteParachute->Render(_pRenderer);
-		m_pSpriteSaut->Render(_pRenderer);
+		m_pSpriteParachute->Render(_pRenderer, m_RectPlayerDestination);
+		m_pSpriteSaut->Render(_pRenderer, m_RectPlayerDestination);
 	}
 
+	void AjouterAPositionX(int _iX) {
 
+		m_RectPlayerDestination.x += _iX;
+	}
 	
+	void AjouterAPositionY(int _iY) {
+
+		m_RectPlayerDestination.x += _iY;
+	}
 
 	CSprite* ObtenirSpriteCourse(void) {
 
@@ -190,5 +197,9 @@ public:
 
 	}
 
+	SDL_Rect ObtenirRectDestination(void) {
+
+		return m_RectPlayerDestination;
+	}
 
 };

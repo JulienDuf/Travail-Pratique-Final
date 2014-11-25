@@ -60,10 +60,10 @@ public:
 
 	// Procédure qui rends le sprite dans la fenêtre.
 	// Prends en paramètre le rendeur de la fenêtre.
-	void Render(SDL_Renderer* _Renderer) {
+	void Render(SDL_Renderer* _Renderer, SDL_Rect _RectDestination) {
 		if (m_boActif) {
 			SDL_Texture* pTextureTmp = SDL_CreateTextureFromSurface(_Renderer, m_pSurfaceSprite);
-			SDL_RenderCopy(_Renderer, pTextureTmp, &m_RectSource, &m_RectDestination);		// On rends le cadre actuel dans la fenêtre.
+			SDL_RenderCopy(_Renderer, pTextureTmp, &m_RectSource, &_RectDestination);		// On rends le cadre actuel dans la fenêtre.
 			SDL_DestroyTexture(pTextureTmp);
 		}
 
@@ -88,9 +88,6 @@ public:
 
 				else
 					m_uiCurrentFrame--;
-
-				m_RectDestination.x += _iAjouterX;
-				m_RectDestination.y += _iAjouterY;
 
 				m_RectSource.x = (m_uiCurrentFrame % m_uiNbrFrames) * m_RectSource.w;		// La position de notre rectangle source se modifie pour englober le prochain cadre.
 

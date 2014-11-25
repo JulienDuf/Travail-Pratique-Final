@@ -36,7 +36,16 @@ public:
 
 	void ShowTeam(SDL_Renderer* _pRenderer) {
 
+		CPlayer* pPlayer;
+		SDL_Rect RectPlayer;
+
 		for (int i = 0; i < m_pPlayerList->ObtenirCompte(); i++) {
+
+			pPlayer = m_pPlayerList->ObtenirElementCurseur();
+			RectPlayer = pPlayer->ObtenirRectDestination();
+
+			if (pPlayer->ObtenirSpriteParachute()->IsActif())
+				RectPlayer.y += 1;
 
 			m_pPlayerList->ObtenirElementCurseur()->ShowPlayer(_pRenderer);
 			m_pPlayerList->AllerSuivantCurseur();

@@ -71,6 +71,7 @@
   <ItemGroup>
     <ClInclude Include="CArbreAVL.h" />
     <ClInclude Include="CBarrePuissance.h" />
+    <ClInclude Include="CBarreVie.h" />
     <ClInclude Include="CButton.h" />
     <ClInclude Include="CControl.h" />
     <ClInclude Include="CGame.h" />

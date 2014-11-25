@@ -23,6 +23,7 @@ using namespace std;
 #include "CTool.h"
 #include "CMissile.h"
 #include "CPack.h"
+#include "CBarreVie.h"
 #include "CPlayer.h"
 #include "CTeam.h"
 #include "CVent.h"
@@ -60,16 +61,16 @@ CTimer* pTimerPhysique;
 // Paramètre: _uiXMap, position en x dans la map ou la collision a lieu.
 // Paramètre: _uiYMap, position en y dans la map ou la collision a lieu.
 // Retour: Rien, mais les positions en x et en y de la collision seront stockés dans les 4 paramètres écrits plus haut.
-bool VerifierCollisionJoueurMap(CPlayer* _pPlayer, bool* _boCollisionCorps, bool* _boCollisionPieds, unsigned int* _uiXMap, unsigned int* _uiYMap) {
+bool VerifierCollisionJoueurMap(CPlayer* _pPlayer, SDL_Rect _RectPlayer, bool* _boCollisionCorps, bool* _boCollisionPieds, unsigned int* _uiXMap, unsigned int* _uiYMap) {
 
 	SDL_Surface* pTmpSDLSurfaceMap = pWindowJeu->ObtenirGame()->ObtenirMap()->ObtenirSurfaceMap();
 	SDL_Surface* pTmpSDLSurfacePlayer = nullptr;
 
-	SDL_Rect TmpSDLRectPlayerDestination = _pPlayer->ObtenirRectDestination();
+	SDL_Rect TmpSDLRectPlayerDestination = _RectPlayer;
 	SDL_Rect TmpSDLRectPlayerSource;
 
 	SDL_Rect TmpSDLRectPlayerHitboxCorps;
-	SDL_Rect TmpSDLRectPlayerHitboxPieds = _pPlayer->ObtenirHitboxPieds();
+	SDL_Rect TmpSDLRectPlayerHitboxPieds;
 
 	if (_pPlayer->ObtenirSpriteCourse()->IsActif()) {
 
@@ -77,6 +78,7 @@ bool VerifierCollisionJoueurMap(CPlayer* _pPlayer, bool* _boCollisionCorps, bool
 		
 		TmpSDLRectPlayerSource = _pPlayer->ObtenirSpriteCourse()->ObtenirRectSource();
 
+		TmpSDLRectPlayerHitboxPieds = _pPlayer->ObtenirHitboxPieds();
 	}
 
 	else if (_pPlayer->ObtenirSpriteSaut()->IsActif()) {
@@ -85,6 +87,7 @@ bool VerifierCollisionJoueurMap(CPlayer* _pPlayer, bool* _boCollisionCorps, bool
 
 		TmpSDLRectPlayerSource = _pPlayer->ObtenirSpriteSaut()->ObtenirRectSource();
 
+		TmpSDLRectPlayerHitboxPieds = _pPlayer->ObtenirHitboxPieds();
 	}
 
 	else if (_pPlayer->ObtenirSpriteParachute()->IsActif()) {
@@ -93,6 +96,7 @@ bool VerifierCollisionJoueurMap(CPlayer* _pPlayer, bool* _boCollisionCorps, bool
 
 		TmpSDLRectPlayerSource = _pPlayer->ObtenirSpriteParachute()->ObtenirRectSource();
 
+		TmpSDLRectPlayerHitboxPieds = _pPlayer->ObtenirHitboxPiedsParachute();
 	}
 
 	else if (_pPlayer->ObtenirSpriteRepos()->IsActif()) {
@@ -101,6 +105,7 @@ bool VerifierCollisionJoueurMap(CPlayer* _pPlayer, bool* _boCollisionCorps, bool
 
 		TmpSDLRectPlayerSource = _pPlayer->ObtenirSpriteRepos()->ObtenirRectSource();
 
+		TmpSDLRectPlayerHitboxPieds = _pPlayer->ObtenirHitboxPieds();
 	}
 
 	if (_pPlayer->ObtenirSpriteCourse()->ObtenirAnimation())
@@ -115,14 +120,17 @@ bool VerifierCollisionJoueurMap(CPlayer* _pPlayer, bool* _boCollisionCorps, bool
 	for (unsigned int y = TmpSDLRectPlayerHitboxPieds.h; y > 0; y--) {				// On parcours les pixels dans le rectangle collision en y à l'envers.
 
 		for (unsigned int x = TmpSDLRectPlayerHitboxPieds.w; x > 0; x--) {			// On parcours les pixels dans le rectangle collision en x à l'envers.
-			
-			if ((((unsigned int*)pTmpSDLSurfaceMap->pixels)[(TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerHitboxPieds.x + x) + (TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerHitboxPieds.y + y) * pTmpSDLSurfaceMap->w] != TRANSPARENCE32BIT) && (((unsigned int*)pTmpSDLSurfacePlayer->pixels)[(TmpSDLRectPlayerSource.x + TmpSDLRectPlayerHitboxPieds.x + x) + (TmpSDLRectPlayerSource.y + TmpSDLRectPlayerHitboxPieds.y + y) * pTmpSDLSurfacePlayer->w] != TRANSPARENCE32BIT)) {			// Si il y a une collision entre les pixels non-transparents de la map et les pixels non-transparents du joueur...
 
-				*_uiXMap = TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerHitboxPieds.x + x;		// On stocke la position de la collision dans les variables adéquates.
-				*_uiYMap = TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerHitboxPieds.y + y;
+				if ((((unsigned int*)pTmpSDLSurfaceMap->pixels)[(TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerHitboxPieds.x + x) + (TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerHitboxPieds.y + y) * pTmpSDLSurfaceMap->w] != 0) && (((unsigned int*)pTmpSDLSurfacePlayer->pixels)[(TmpSDLRectPlayerSource.x + TmpSDLRectPlayerHitboxPieds.x + x) + (TmpSDLRectPlayerSource.y + TmpSDLRectPlayerHitboxPieds.y + y) * pTmpSDLSurfacePlayer->w] != 0)) {			// Si il y a une collision entre les pixels non-transparents de la map et les pixels non-transparents du joueur...
+					unsigned int i = ((unsigned int*)pTmpSDLSurfaceMap->pixels)[(TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerHitboxPieds.x + x) + (TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerHitboxPieds.y + y) * pTmpSDLSurfaceMap->w];
+					unsigned int i2 = ((unsigned int*)pTmpSDLSurfacePlayer->pixels)[(TmpSDLRectPlayerSource.x + TmpSDLRectPlayerHitboxPieds.x + x) + (TmpSDLRectPlayerSource.y + TmpSDLRectPlayerHitboxPieds.y + y) * pTmpSDLSurfacePlayer->w];
 
-				*_boCollisionPieds = true;
+					*_uiXMap = TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerHitboxPieds.x + x;		// On stocke la position de la collision dans les variables adéquates.
+					*_uiYMap = TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerHitboxPieds.y + y;
 
+					*_boCollisionPieds = true;
+					return true;
+				
 			}
 
 		}
@@ -390,6 +398,7 @@ void ClickBoutonQuitterJeu(void) {
 	pGestionaireMenu->ObtenirDonnee("pMenuPause")->DefinirboShow(false);
 	pGestionaireMenu->ObtenirDonnee("pMenuPrincipal")->DefinirboShow(true);
 }
+
 // Fonction qui met le texte d'un tableau en une seule surface.
 // En entrée: 
 // Param1: Le tableau contenant le texte à mettre ensemble.

@@ -14,11 +14,15 @@ private:
 	CSprite* m_pSpriteParachute;		// Pointeur de sprite qui pointe sur le sprite qui représente le joueur qui est en état de chute.
 	CSprite* m_pSpriteRepos;		    // Pointeur de sprite qui pointe sur le sprite qui représente le joueur qui est au repos.
 
+	CBarreVie* m_pBarreVie;				// La barre de vie du personnage.
+
 	SDL_Rect m_RectPlayerDestination;   // La destination du joueur dans le fenêtre.
+	SDL_Rect m_RectParachuteDestination;   // La destination du joueur dans le fenêtre.
 	SDL_Rect m_RectSource;				// Affiche si le joueur est ves le gauche ou vers le droite.
 	SDL_Rect m_RectHitboxCorpsGauche;
 	SDL_Rect m_RectHitboxCorpsDroite;
 	SDL_Rect m_RectHitboxPieds;
+	SDL_Rect m_RectHitboxPiedsParachute;
 
 	string m_strName;					// Chaine de caractères qui contient le nom du joueur.
 
@@ -37,7 +41,7 @@ public:
 
 		string strEmplacementFichier = _strEmplacementFichier;
 
-		strEmplacementFichier.append("Personnage\\Course.png");
+		strEmplacementFichier.append("Personnage\\Courses.png");
 		m_pSpriteCourse = new CSprite(IMG_Load(strEmplacementFichier.c_str()), _RectDestination, 9, 50, true, false, 2);
 
 		strEmplacementFichier = _strEmplacementFichier;
@@ -49,13 +53,17 @@ public:
 		m_pSpriteParachute = new CSprite(IMG_Load(strEmplacementFichier.c_str()), _RectDestination, 24, 10, true, true, 1);
 
 		strEmplacementFichier = _strEmplacementFichier;
-		strEmplacementFichier.append("Personnage\\Repos.png");
+		strEmplacementFichier.append("Personnage\\Repo.png");
 		m_pSpriteRepos = new CSprite(IMG_Load(strEmplacementFichier.c_str()), _RectDestination, 1, 50, true, false, 2);
 
 
 		m_RectPlayerDestination = _RectDestination;
 		m_RectPlayerDestination.w = m_pSpriteCourse->ObtenirRectSource().w;
 		m_RectPlayerDestination.h = m_pSpriteCourse->ObtenirRectSource().h;
+
+		m_RectParachuteDestination = _RectDestination;
+		m_RectParachuteDestination.w = m_pSpriteParachute->ObtenirRectSource().w;
+		m_RectParachuteDestination.h = m_pSpriteParachute->ObtenirRectSource().h;
 
 
 		m_RectHitboxCorpsGauche.x = 79;
@@ -69,15 +77,22 @@ public:
 		m_RectHitboxCorpsDroite.h = 74;
 
 		m_RectHitboxPieds.x = 0;
-		m_RectHitboxPieds.y = 92;
-		m_RectHitboxPieds.w = 58;
-		m_RectHitboxPieds.h = 19;
+		m_RectHitboxPieds.y = 32;
+		m_RectHitboxPieds.w = 40;
+		m_RectHitboxPieds.h = 21;
+
+		m_RectHitboxPiedsParachute.x = 0;
+		m_RectHitboxPiedsParachute.y = 92;
+		m_RectHitboxPiedsParachute.w = 58;
+		m_RectHitboxPiedsParachute.h = 19;
 
 		m_pToolList = new CListeDC<CTools*>();
 
 		m_pToolList->AjouterFin(new CMissile(_strEmplacementFichier, _pRenderer, _MapDestruction, _CollisionObjetMap, _Physique, NULL));
 
 		m_BoDeplacement = false;
+
+		m_pBarreVie = new CBarreVie(_strEmplacementFichier, { _RectDestination.x, _RectDestination.y - 9, 0, 0 }, _pRenderer);
 
 	}
 
@@ -140,18 +155,29 @@ public:
 		m_pSpriteCourse->Render(_pRenderer, m_RectPlayerDestination);
 
 		m_pSpriteParachute->ModifierAnnimation();
-		m_pSpriteParachute->Render(_pRenderer, m_RectPlayerDestination);
+		m_pSpriteParachute->Render(_pRenderer, m_RectParachuteDestination);
 
 		m_pSpriteSaut->ModifierAnnimation();
 		m_pSpriteSaut->Render(_pRenderer, m_RectPlayerDestination);
 
 		m_pSpriteRepos->ModifierAnnimation();
 		m_pSpriteRepos->Render(_pRenderer, m_RectPlayerDestination);
+
+		if (!m_pSpriteParachute->IsActif())
+			m_pBarreVie->ShowBarre(_pRenderer);
 	}
 
 	void ModifierRectDestination(SDL_Rect _RectDestination) {
 
 		m_RectPlayerDestination = _RectDestination;
+
+		m_pBarreVie->ModifierPositionBarre(m_RectPlayerDestination.x, m_RectPlayerDestination.y - 9);
+
+	}
+
+	void ModifierRectDestinationParachute(SDL_Rect _RectDestination) {
+
+		m_RectParachuteDestination = _RectDestination;
 	}
 	
 	void AjouterAPositionY(int _iY) {
@@ -201,9 +227,20 @@ public:
 
 	}
 
+	SDL_Rect ObtenirHitboxPiedsParachute(void) {
+
+		return m_RectHitboxPiedsParachute;
+
+	}
+
 	SDL_Rect ObtenirRectDestination(void) {
 
 		return m_RectPlayerDestination;
+	}
+
+	SDL_Rect ObtenirRectDestinationParachute(void) {
+
+		return m_RectParachuteDestination;
 	}
 
 };

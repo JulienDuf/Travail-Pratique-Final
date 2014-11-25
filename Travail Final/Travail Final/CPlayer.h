@@ -51,19 +51,19 @@ public:
 		string strEmplacementFichier = _strEmplacementFichier;
 
 		strEmplacementFichier.append("Personnage\\Course.png");
-		m_pSpriteCourse = new CSprite(IMG_Load(strEmplacementFichier.c_str()), 9, 50, true, false);
+		m_pSpriteCourse = new CSprite(IMG_Load(strEmplacementFichier.c_str()), _RectDestination, 9, 50, true, false);
 
 		strEmplacementFichier = _strEmplacementFichier;
 		strEmplacementFichier.append("Personnage\\Saut.png");
-		m_pSpriteSaut = new CSprite(IMG_Load(strEmplacementFichier.c_str()), 9, 50, false, false);
+		m_pSpriteSaut = new CSprite(IMG_Load(strEmplacementFichier.c_str()), _RectDestination, 9, 50, false, false);
 
 		strEmplacementFichier = _strEmplacementFichier;
 		strEmplacementFichier.append("Personnage\\Parachute.png");
-		m_pSpriteParachute = new CSprite(IMG_Load(strEmplacementFichier.c_str()), 9, 50, true, true);
+		m_pSpriteParachute = new CSprite(IMG_Load(strEmplacementFichier.c_str()), _RectDestination, 24, 10, true, true);
 
 		strEmplacementFichier = _strEmplacementFichier;
 		strEmplacementFichier.append("Personnage\\Repos.png");
-		m_pSpriteRepos = new CSprite(IMG_Load(strEmplacementFichier.c_str()), 1, 50, true, false);
+		m_pSpriteRepos = new CSprite(IMG_Load(strEmplacementFichier.c_str()), _RectDestination, 1, 50, true, false);
 
 
 		m_RectPlayerDestination = _RectDestination;
@@ -146,7 +146,7 @@ public:
 	void ShowPlayer(SDL_Renderer* _pRenderer) {
 		m_pSpriteCourse->Render(_pRenderer);
 		if (m_pSpriteParachute->IsActif())
-			m_pSpriteParachute->ModifierAnnimation();
+			m_pSpriteParachute->ModifierAnnimation(0, 1);
 		m_pSpriteParachute->Render(_pRenderer);
 		m_pSpriteSaut->Render(_pRenderer);
 	}

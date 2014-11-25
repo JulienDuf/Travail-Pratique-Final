@@ -9,12 +9,15 @@ class CTeam {
 private:
 
 	CListeDC<CPlayer*>* m_pPlayerList; // Liste de joueur.
+	bool (*m_pVerifierCollisionJoueurMap)(CPlayer* _pPlayer, bool* _boCollisionCorps, bool* _boCollisionPieds, unsigned int* _uiXMap, unsigned int* _uiYMap);
 
 public:
 
-	CTeam(string _strEmplacementFichier, int _iNombreJoueur, void _ProcedureCollision(SDL_Surface* _pSDLSurfaceCollision, SDL_Rect _SDLRectCollision, SDL_Rect _SDLRectSource, unsigned int* _uiXMap, unsigned int* _uiYMap, unsigned int* _uiXRectCollision, unsigned int* _uiYRectCollision), void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), double _Physique(CVecteur2D* _VitesseMissile, SDL_Rect* _DestinationMissile), SDL_Renderer* _pRenderer) {
+	CTeam(string _strEmplacementFichier, int _iNombreJoueur, bool _VerifierCollisionJoueurMap(CPlayer* _pPlayer, bool* _boCollisionCorps, bool* _boCollisionPieds, unsigned int* _uiXMap, unsigned int* _uiYMap), void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), double _Physique(CVecteur2D* _VitesseMissile, SDL_Rect* _DestinationMissile), SDL_Renderer* _pRenderer) {
 
 		m_pPlayerList = new CListeDC<CPlayer*>();
+
+		m_pVerifierCollisionJoueurMap = _VerifierCollisionJoueurMap;
 
 		int iX;
 
@@ -22,7 +25,7 @@ public:
 
 			iX = rand() % 1350;
 
-			m_pPlayerList->AjouterFin(new CPlayer(_strEmplacementFichier, {iX, 5, 0, 0}, _ProcedureCollision, _MapDestruction, _CollisionObjetMap, _Physique, _pRenderer));
+			m_pPlayerList->AjouterFin(new CPlayer(_strEmplacementFichier, {iX, 5, 0, 0}, _MapDestruction, _CollisionObjetMap, _Physique, _pRenderer));
 
 		}
 		m_pPlayerList->AllerDebut();

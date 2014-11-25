@@ -5,9 +5,11 @@ private:
 	CMap* m_pGameMap; //La map.
 	CListeDC<CTeam*>* m_pTeamList; // Liste d'Èquipe.
 
+	bool m_boDebutPartie; // Si le jeu est en dÈbut de partie.
+
 public:
 
-	CGame(string _strEmplacementMap, string _strEmplacementFichier, int _iNombre…quipe, int _iNombreJoueur, CVent* _pVent, void _ProcedureCollision(SDL_Surface* _pSDLSurfaceCollision, SDL_Rect _SDLRectCollision, SDL_Rect _SDLRectSource, unsigned int* _uiXMap, unsigned int* _uiYMap, unsigned int* _uiXRectCollision, unsigned int* _uiYRectCollision), void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), double _Physique(CVecteur2D* _VitesseMissile, SDL_Rect* _DestinationMissile), SDL_Renderer* _pRenderer) {
+	CGame(string _strEmplacementMap, string _strEmplacementFichier, int _iNombre…quipe, int _iNombreJoueur, CVent* _pVent, bool _VerifierCollisionJoueurMap(CPlayer* _pPlayer, bool* _boCollisionCorps, bool* _boCollisionPieds, unsigned int* _uiXMap, unsigned int* _uiYMap), void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), double _Physique(CVecteur2D* _VitesseMissile, SDL_Rect* _DestinationMissile), SDL_Renderer* _pRenderer) {
 
 		m_pTeamList = new CListeDC<CTeam*>();
 
@@ -15,7 +17,7 @@ public:
 
 		for (int i = _iNombre…quipe; i > 0; i--) {
 
-			m_pTeamList->AjouterFin(new CTeam(_strEmplacementFichier, _iNombreJoueur, _ProcedureCollision, _MapDestruction, _CollisionObjetMap, _Physique, _pRenderer));
+			m_pTeamList->AjouterFin(new CTeam(_strEmplacementFichier, _iNombreJoueur, _VerifierCollisionJoueurMap, _MapDestruction, _CollisionObjetMap, _Physique, _pRenderer));
 		}
 		m_pTeamList->AllerDebut();
 	}

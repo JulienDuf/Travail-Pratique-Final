@@ -25,9 +25,6 @@ private:
 	bool m_boActif;						// Variable booléenne qui indique si le sprite est en animation ( si oui = true ).
 	
 
-	char m_chrD;						// Variable qui indique la direction du mouvement.
-	
-
 public:
 
 
@@ -111,6 +108,12 @@ public:
 		m_uiCurrentFrame = 0;
 	}
 
+	unsigned int ObtenirAnimation(void) {
+
+		return m_uiAnimation;
+
+	}
+
 	void DefinirAnimation(unsigned int _uiAnimation) {
 		m_uiAnimation = _uiAnimation;
 		if (!m_uiAnimation) {
@@ -123,9 +126,6 @@ public:
 		}
 	}
 
-	char ObtenirDirection(void) {
-		return m_chrD;
-	}
 	bool IsActif(void) {
 		if (m_boActif)
 			return true;

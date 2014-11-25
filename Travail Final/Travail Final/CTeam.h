@@ -22,16 +22,25 @@ public:
 
 			iX = rand() % 1350;
 
-			//m_pPlayerList->AjouterFin(new CPlayer(_strEmplacementFichier, {iX, 5, 0, 0}, _ProcedureCollision, _MapDestruction, _CollisionObjetMap, _Physique, _pRenderer));
+			m_pPlayerList->AjouterFin(new CPlayer(_strEmplacementFichier, {iX, 5, 0, 0}, _ProcedureCollision, _MapDestruction, _CollisionObjetMap, _Physique, _pRenderer));
 
 		}
-
+		m_pPlayerList->AllerDebut();
 	}
 
 	CListeDC<CPlayer*>* obtenirListeTeam(void) {
 
 		return m_pPlayerList;
 
+	}
+
+	void ShowTeam(SDL_Renderer* _pRenderer) {
+
+		for (int i = 0; i < m_pPlayerList->ObtenirCompte(); i++) {
+
+			m_pPlayerList->ObtenirElementCurseur()->ShowPlayer(_pRenderer);
+			m_pPlayerList->AllerSuivantCurseur();
+		}
 	}
 
 	CPlayer* ObtenirPlayerActif(void) {

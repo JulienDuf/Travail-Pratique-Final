@@ -32,7 +32,7 @@ public:
 
 
 	// Constructeur...
-	CSprite(SDL_Surface* _SurfaceSprite, unsigned int _uiNbrFrames, unsigned int _uiDelay, bool _boBoucle, bool _boActif) {
+	CSprite(SDL_Surface* _SurfaceSprite, SDL_Rect _RectDestination, unsigned int _uiNbrFrames, unsigned int _uiDelay, bool _boBoucle, bool _boActif) {
 
 		m_pSurfaceSprite = _SurfaceSprite;		// La texture de notre sprite est entrée en paramètre.
 
@@ -51,9 +51,8 @@ public:
 		m_RectSource.w = m_RectSource.w / m_uiNbrFrames;									// On mets la largeur de notre rectangle source égale à la largeur d'un cadre.
 		m_RectSource.x = 0;								// On commence notre animation...
 		m_RectSource.y = 0;								// Au premier cadre.
-
-		m_RectDestination.x = 0;						// On va afficher l'image à gauche...
-		m_RectDestination.y = 0;						// En haut de l'écran.
+		
+		m_RectDestination = _RectDestination;
 		m_RectDestination.w = m_RectSource.w;			// Les dimensions de ce que l'on affiche...
 		m_RectDestination.h = m_RectSource.h;			// Seront égales à ceux d'un cadre de notre sprite.
 
@@ -72,7 +71,7 @@ public:
 	// Procédure permettant de modifier l'annimation à afficher.
 	// Paramètre : chrD : La direction du mouvement de l'annimation. Option : 'G' : gauche, 'D': droite.
 	//			   _uiAnnimation: L'annimation qu'on veut qui joue.
-	void ModifierAnnimation(void) {
+	void ModifierAnnimation(int _iAjouterX, int _iAjouterY) {
 		if (m_uiCurrentFrame == m_uiNbrFrames - 1 && !m_boBoucle) {
 			m_boActif = false;
 		}
@@ -90,14 +89,14 @@ public:
 				else
 					m_uiCurrentFrame--;
 
+				m_RectDestination.x += _iAjouterX;
+				m_RectDestination.y += _iAjouterY;
 
+				m_RectSource.x = (m_uiCurrentFrame % m_uiNbrFrames) * m_RectSource.w;		// La position de notre rectangle source se modifie pour englober le prochain cadre.
+
+
+				m_pTimerDelay->Start();			// on recommence la minuterie.
 			}
-
-			m_RectSource.x = (m_uiCurrentFrame % m_uiNbrFrames) * m_RectSource.w;		// La position de notre rectangle source se modifie pour englober le prochain cadre.
-
-
-			m_pTimerDelay->Start();			// on recommence la minuterie.
-
 
 		}
 	}

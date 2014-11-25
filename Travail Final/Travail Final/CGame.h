@@ -17,12 +17,18 @@ public:
 
 			m_pTeamList->AjouterFin(new CTeam(_strEmplacementFichier, _iNombreJoueur, _ProcedureCollision, _MapDestruction, _CollisionObjetMap, _Physique, _pRenderer));
 		}
-
+		m_pTeamList->AllerDebut();
 	}
 
 	void AfficherGame(SDL_Renderer* _pRenderer) {
 
 		m_pGameMap->ShowMap(_pRenderer);
+
+		for (int i = 0; i < m_pTeamList->ObtenirCompte(); i++) {
+
+			m_pTeamList->ObtenirElementCurseur()->ShowTeam(_pRenderer);
+			m_pTeamList->AllerSuivantCurseur();
+		}
 
 	}
 

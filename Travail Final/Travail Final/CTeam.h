@@ -55,7 +55,7 @@ public:
 			if (pPlayer->ObtenirSpriteParachute()->IsActif())
 				RectPlayer.y += 1;
 
-			if (!m_pVerifierCollisionJoueurMap(pPlayer, &_boCorps, &_boPieds, &_uiXMap, &_uiYMap))
+			if (m_pVerifierCollisionJoueurMap(pPlayer, &_boCorps, &_boPieds, &_uiXMap, &_uiYMap))
 				pPlayer->ModifierRectDestination(RectPlayer);
 
 			m_pPlayerList->ObtenirElementCurseur()->ShowPlayer(_pRenderer);

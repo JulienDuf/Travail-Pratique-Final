@@ -109,14 +109,14 @@ bool VerifierCollisionJoueurMap(CPlayer* _pPlayer, bool* _boCollisionCorps, bool
 		TmpSDLRectPlayerHitboxCorps = _pPlayer->ObtenirHitboxCorpsGauche();
 
 
-	_boCollisionCorps = false;
-	_boCollisionPieds = false;
+	*_boCollisionCorps = false;
+	*_boCollisionPieds = false;
 
 	for (unsigned int y = TmpSDLRectPlayerHitboxPieds.h; y > 0; y--) {				// On parcours les pixels dans le rectangle collision en y à l'envers.
 
 		for (unsigned int x = TmpSDLRectPlayerHitboxPieds.w; x > 0; x--) {			// On parcours les pixels dans le rectangle collision en x à l'envers.
-
-			if ((((unsigned int*)pTmpSDLSurfaceMap->pixels)[(TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerHitboxPieds.x + x) * (TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerHitboxCorps.y + y)] != TRANSPARENCE32BIT) && (((unsigned int*)pTmpSDLSurfacePlayer->pixels)[(TmpSDLRectPlayerSource.x + TmpSDLRectPlayerHitboxCorps.x + x) * (TmpSDLRectPlayerSource.y + TmpSDLRectPlayerHitboxPieds.y + y)] != TRANSPARENCE32BIT)) {			// Si il y a une collision entre les pixels non-transparents de la map et les pixels non-transparents du joueur...
+			
+			if ((((unsigned int*)pTmpSDLSurfaceMap->pixels)[(TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerHitboxPieds.x + x) + (TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerHitboxCorps.y + y) * pTmpSDLSurfaceMap->w] != 0) && (((unsigned int*)pTmpSDLSurfacePlayer->pixels)[(TmpSDLRectPlayerSource.x + TmpSDLRectPlayerHitboxCorps.x + x) + (TmpSDLRectPlayerSource.y + TmpSDLRectPlayerHitboxPieds.y + y) * pTmpSDLSurfacePlayer->w] != 0)) {			// Si il y a une collision entre les pixels non-transparents de la map et les pixels non-transparents du joueur...
 
 				*_uiXMap = TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerHitboxPieds.x + x;		// On stocke la position de la collision dans les variables adéquates.
 				*_uiYMap = TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerHitboxPieds.y + y;
@@ -133,7 +133,7 @@ bool VerifierCollisionJoueurMap(CPlayer* _pPlayer, bool* _boCollisionCorps, bool
 
 		for (unsigned int x = TmpSDLRectPlayerHitboxCorps.w; x > 0; x--) {			// On parcours les pixels dans le rectangle collision en x à l'envers.
 
-			if ((((unsigned int*)pTmpSDLSurfaceMap->pixels)[(TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerHitboxCorps.x + x) * (TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerHitboxCorps.y + y)] != TRANSPARENCE32BIT) && (((unsigned int*)pTmpSDLSurfacePlayer->pixels)[(TmpSDLRectPlayerSource.x + TmpSDLRectPlayerHitboxCorps.x + x) * (TmpSDLRectPlayerSource.y + TmpSDLRectPlayerHitboxCorps.y + y)] != TRANSPARENCE32BIT)) {			// Si il y a une collision entre les pixels non-transparents de la map et les pixels non-transparents du joueur...
+			if ((((unsigned int*)pTmpSDLSurfaceMap->pixels)[(TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerHitboxCorps.x + x) + (TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerHitboxCorps.y + y) * pTmpSDLSurfaceMap->w] != 0) && (((unsigned int*)pTmpSDLSurfacePlayer->pixels)[(TmpSDLRectPlayerSource.x + TmpSDLRectPlayerHitboxCorps.x + x) + (TmpSDLRectPlayerSource.y + TmpSDLRectPlayerHitboxCorps.y + y) * pTmpSDLSurfacePlayer->w] != 0)) {			// Si il y a une collision entre les pixels non-transparents de la map et les pixels non-transparents du joueur...
 
 				*_uiXMap = TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerHitboxCorps.x + x;		// On stocke la position de la collision dans les variables adéquates.
 				*_uiYMap = TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerHitboxCorps.y + y;
@@ -194,7 +194,7 @@ void MapDestruction(int _iRayon, int _iX, int _iY) {
 
 	int iX, iY;
 	SDL_Rect RectSource = { 0, 0, 120, 120 };
-	SDL_Surface* pSurfaceMap = pWindowJeu->ObtenirGame()->ObtenirMap()->ObtenirMap();
+	SDL_Surface* pSurfaceMap = pWindowJeu->ObtenirGame()->ObtenirMap()->ObtenirSurfaceMap();
 
 	iX = _iX - 60;
 	iY = _iY - 60;
@@ -276,7 +276,7 @@ void CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int
 
 	unsigned int ix, iy;
 
-	SDL_Surface* pSDLSurfaceMap = pWindowJeu->ObtenirGame()->ObtenirMap()->ObtenirMap();
+	SDL_Surface* pSDLSurfaceMap = pWindowJeu->ObtenirGame()->ObtenirMap()->ObtenirSurfaceMap();
 
 	for (int y = _RectDestination.y; y < _RectDestination.y + _RectDestination.h; y++) {
 		for (int x = _RectDestination.x; x < _RectDestination.x + _RectDestination.w; x++) {

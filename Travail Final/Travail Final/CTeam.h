@@ -38,6 +38,11 @@ public:
 	}
 
 	void ShowTeam(SDL_Renderer* _pRenderer) {
+		bool _boCorps;
+		bool _boPieds;
+
+		unsigned int _uiXMap;
+		unsigned int _uiYMap;
 
 		CPlayer* pPlayer;
 		SDL_Rect RectPlayer;
@@ -49,6 +54,9 @@ public:
 
 			if (pPlayer->ObtenirSpriteParachute()->IsActif())
 				RectPlayer.y += 1;
+
+			if (!m_pVerifierCollisionJoueurMap(pPlayer, &_boCorps, &_boPieds, &_uiXMap, &_uiYMap))
+				pPlayer->ModifierRectDestination(RectPlayer);
 
 			m_pPlayerList->ObtenirElementCurseur()->ShowPlayer(_pRenderer);
 			m_pPlayerList->AllerSuivantCurseur();

@@ -29,7 +29,7 @@ public:
 
 
 	// Constructeur...
-	CSprite(SDL_Surface* _SurfaceSprite, SDL_Rect _RectDestination, unsigned int _uiNbrFrames, unsigned int _uiDelay, bool _boBoucle, bool _boActif) {
+	CSprite(SDL_Surface* _SurfaceSprite, SDL_Rect _RectDestination, unsigned int _uiNbrFrames, unsigned int _uiDelay, bool _boBoucle, bool _boActif, unsigned int _uiNbrEtage) {
 
 		m_pSurfaceSprite = _SurfaceSprite;		// La texture de notre sprite est entrée en paramètre.
 
@@ -38,13 +38,14 @@ public:
 
 		m_uiCurrentFrame = 0;					// On commence au premier cadre, donc à la position 0.
 		m_uiNbrFrames = _uiNbrFrames;			// Le nombre de cadres est entré en paramètre.
+		m_uiAnimation = 0;
 
 		m_boBoucle = _boBoucle;						// Par défaut l'animation ne boucle pas. ( faux mais on ne sent sert pas dans l'atelier... )
 		m_boActif = _boActif;						// Par défaut l'animation n'est pas active.  ( faux mais on ne s'en serts pas dans l'atelier... )
 
 
 		m_RectSource.w = m_pSurfaceSprite->w;
-		m_RectSource.h = m_pSurfaceSprite->h;
+		m_RectSource.h = m_pSurfaceSprite->h / _uiNbrEtage;
 		m_RectSource.w = m_RectSource.w / m_uiNbrFrames;									// On mets la largeur de notre rectangle source égale à la largeur d'un cadre.
 		m_RectSource.x = 0;								// On commence notre animation...
 		m_RectSource.y = 0;								// Au premier cadre.
@@ -68,29 +69,27 @@ public:
 	// Procédure permettant de modifier l'annimation à afficher.
 	// Paramètre : chrD : La direction du mouvement de l'annimation. Option : 'G' : gauche, 'D': droite.
 	//			   _uiAnnimation: L'annimation qu'on veut qui joue.
-	void ModifierAnnimation(int _iAjouterX, int _iAjouterY) {
-		if (m_uiCurrentFrame == m_uiNbrFrames - 1 && !m_boBoucle) {
+	void ModifierAnnimation(void) {
+		if ((m_uiCurrentFrame == m_uiNbrFrames - 1) && (!m_boBoucle)) {
 			m_boActif = false;
 		}
 
-		if (m_boActif) { // Si l'annimation est active.
+		if (m_boActif && m_pTimerDelay->IsDone()) { // Si l'annimation est active.// Si la minuterie du délai est terminée on peut passer au prochain cadre.
 
-			if (m_pTimerDelay->IsDone()) {			// Si la minuterie du délai est terminée on peut passer au prochain cadre.
-
-				m_RectSource.y = m_uiAnimation * m_RectSource.h;
+			m_RectSource.y = m_uiAnimation * m_RectSource.h;
 
 
-				if (m_uiAnimation)
-					m_uiCurrentFrame++;			// On va au prochain cadre.
+			if (m_uiAnimation == 0)
+				m_uiCurrentFrame++;			// On va au prochain cadre.
 
-				else
-					m_uiCurrentFrame--;
+			else
+				m_uiCurrentFrame--;
 
-				m_RectSource.x = (m_uiCurrentFrame % m_uiNbrFrames) * m_RectSource.w;		// La position de notre rectangle source se modifie pour englober le prochain cadre.
+			m_RectSource.x = (m_uiCurrentFrame % m_uiNbrFrames) * m_RectSource.w;		// La position de notre rectangle source se modifie pour englober le prochain cadre.
 
 
-				m_pTimerDelay->Start();			// on recommence la minuterie.
-			}
+			m_pTimerDelay->Start();			// on recommence la minuterie.
+
 
 		}
 	}
@@ -105,7 +104,7 @@ public:
 	}
 	void DefinirActif(bool _boActif) {
 		m_boActif = _boActif;
-		m_uiCurrentFrame = 0;
+		
 	}
 
 	unsigned int ObtenirAnimation(void) {
@@ -116,7 +115,7 @@ public:
 
 	void DefinirAnimation(unsigned int _uiAnimation) {
 		m_uiAnimation = _uiAnimation;
-		if (!m_uiAnimation) {
+		if (m_uiAnimation == 0) {
 			m_uiCurrentFrame = 0;
 			m_RectSource.x = 0;
 		}

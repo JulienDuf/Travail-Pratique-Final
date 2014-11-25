@@ -32,36 +32,25 @@ public:
 	// Paramètre: _pToolList, pointe sur la liste d'outils que l'on veut donner au joueur.
 	// Paramètre: _strName, contient le nom que l'on veut donner au joueur.
 	// Retour: Rien (constructeur).
-	CPlayer(CSprite* _pSpriteCourse, CSprite* _pSpriteSaut, CListeDC<CTools*>* _pToolList, string _strName) {
-
-		m_pSpriteCourse = _pSpriteCourse;
-		m_pSpriteSaut = _pSpriteSaut;
-
-		m_strName = _strName;
-
-		m_pToolList = _pToolList;
-
-	}
-
 	CPlayer(string _strEmplacementFichier, SDL_Rect _RectDestination, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), double _Physique(CVecteur2D* _VitesseMissile, SDL_Rect* _DestinationMissile), SDL_Renderer* _pRenderer) {
 
 
 		string strEmplacementFichier = _strEmplacementFichier;
 
 		strEmplacementFichier.append("Personnage\\Course.png");
-		m_pSpriteCourse = new CSprite(IMG_Load(strEmplacementFichier.c_str()), _RectDestination, 9, 50, true, false);
+		m_pSpriteCourse = new CSprite(IMG_Load(strEmplacementFichier.c_str()), _RectDestination, 9, 50, true, false, 2);
 
 		strEmplacementFichier = _strEmplacementFichier;
 		strEmplacementFichier.append("Personnage\\Saut.png");
-		m_pSpriteSaut = new CSprite(IMG_Load(strEmplacementFichier.c_str()), _RectDestination, 9, 50, false, false);
+		m_pSpriteSaut = new CSprite(IMG_Load(strEmplacementFichier.c_str()), _RectDestination, 9, 50, false, false, 2);
 
 		strEmplacementFichier = _strEmplacementFichier;
 		strEmplacementFichier.append("Personnage\\Parachute.png");
-		m_pSpriteParachute = new CSprite(IMG_Load(strEmplacementFichier.c_str()), _RectDestination, 24, 10, true, true);
+		m_pSpriteParachute = new CSprite(IMG_Load(strEmplacementFichier.c_str()), _RectDestination, 24, 10, true, true, 1);
 
 		strEmplacementFichier = _strEmplacementFichier;
 		strEmplacementFichier.append("Personnage\\Repos.png");
-		m_pSpriteRepos = new CSprite(IMG_Load(strEmplacementFichier.c_str()), _RectDestination, 1, 50, true, false);
+		m_pSpriteRepos = new CSprite(IMG_Load(strEmplacementFichier.c_str()), _RectDestination, 1, 50, true, false, 2);
 
 
 		m_RectPlayerDestination = _RectDestination;
@@ -107,7 +96,10 @@ public:
 				if (!m_pSpriteCourse->IsActif()) {
 					m_pSpriteCourse->DefinirAnimation(0);
 					m_pSpriteCourse->DefinirActif(true);
+					m_pSpriteRepos->DefinirAnimation(0);
+					m_pSpriteRepos->DefinirActif(false);
 				}
+
 				
 				break;
 			case SDL_SCANCODE_LEFT:
@@ -115,10 +107,12 @@ public:
 				if (!m_pSpriteCourse->IsActif()) {
 					m_pSpriteCourse->DefinirAnimation(1);
 					m_pSpriteCourse->DefinirActif(true);
+					m_pSpriteRepos->DefinirAnimation(1);
+					m_pSpriteRepos->DefinirActif(false);
 				}
 				break;
 
-			case SDL_SCANCODE_UP:
+			case SDL_SCANCODE_SPACE:
 				m_pSpriteRepos->DefinirActif(false);
 				m_pSpriteCourse->DefinirActif(false);
 				m_pSpriteSaut->DefinirActif(true);
@@ -142,16 +136,22 @@ public:
 	//Paramètre : _pRenderer : Le render de la fenetre.
 	//Retour : rien.
 	void ShowPlayer(SDL_Renderer* _pRenderer) {
+		m_pSpriteCourse->ModifierAnnimation();
 		m_pSpriteCourse->Render(_pRenderer, m_RectPlayerDestination);
-		if (m_pSpriteParachute->IsActif())
-			m_pSpriteParachute->ModifierAnnimation(0, 1);
+
+		m_pSpriteParachute->ModifierAnnimation();
 		m_pSpriteParachute->Render(_pRenderer, m_RectPlayerDestination);
+
+		m_pSpriteSaut->ModifierAnnimation();
 		m_pSpriteSaut->Render(_pRenderer, m_RectPlayerDestination);
+
+		m_pSpriteRepos->ModifierAnnimation();
+		m_pSpriteRepos->Render(_pRenderer, m_RectPlayerDestination);
 	}
 
-	void AjouterAPositionX(int _iX) {
+	void ModifierRectDestination(SDL_Rect _RectDestination) {
 
-		m_RectPlayerDestination.x += _iX;
+		m_RectPlayerDestination = _RectDestination;
 	}
 	
 	void AjouterAPositionY(int _iY) {

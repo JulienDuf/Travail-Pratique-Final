@@ -67,3 +67,10 @@ Presque fini les collisions joueur/map, il restera à gérer les sortes de sprite 
 J'ai aidé Xavier avec le sprite.
 
 --------------------------------------------------------------------------------------------------------------------
+
+Mardi 25 novembre 2014
+
+11:00 AM
+
+Ajustement des collisions avec Julien, travail du mouvement avec Xavier et travail sur les parachutes avec Julien.
+Les animations s'enlignent pour être assez bien!

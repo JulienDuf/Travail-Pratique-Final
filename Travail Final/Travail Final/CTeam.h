@@ -52,12 +52,15 @@ public:
 			pPlayer = m_pPlayerList->ObtenirElementCurseur();
 			RectPlayer = pPlayer->ObtenirRectDestination();
 
-			if (pPlayer->ObtenirSpriteParachute()->IsActif())
+			if (pPlayer->ObtenirSpriteParachute()->IsActif()) {
 				RectPlayer.y += 1;
-
-			if (m_pVerifierCollisionJoueurMap(pPlayer, &_boCorps, &_boPieds, &_uiXMap, &_uiYMap))
+				pPlayer->ModifierRectDestination(RectPlayer);
+			}
+			if (m_pVerifierCollisionJoueurMap(pPlayer, &_boCorps, &_boPieds, &_uiXMap, &_uiYMap)) {
+				RectPlayer.y += -1;
 				pPlayer->ModifierRectDestination(RectPlayer);
 
+			}
 			m_pPlayerList->ObtenirElementCurseur()->ShowPlayer(_pRenderer);
 			m_pPlayerList->AllerSuivantCurseur();
 		}

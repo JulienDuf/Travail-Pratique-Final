@@ -68,10 +68,10 @@ public:
 		m_RectHitboxCorpsDroite.w = 52;
 		m_RectHitboxCorpsDroite.h = 74;
 
-		m_RectHitboxPieds.x = 80;
-		m_RectHitboxPieds.y = 78;
-		m_RectHitboxPieds.w = 95;
-		m_RectHitboxPieds.h = 84;
+		m_RectHitboxPieds.x = 0;
+		m_RectHitboxPieds.y = 92;
+		m_RectHitboxPieds.w = 58;
+		m_RectHitboxPieds.h = 19;
 
 		m_pToolList = new CListeDC<CTools*>();
 

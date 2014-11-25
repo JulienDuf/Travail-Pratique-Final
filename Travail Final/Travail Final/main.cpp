@@ -542,21 +542,57 @@ void Close(void) {
 // Paramètre: _uiXMap, position en x dans la map ou la collision a lieu.
 // Paramètre: _uiYMap, position en y dans la map ou la collision a lieu.
 // Retour: Rien, mais les positions en x et en y de la collision seront stockés dans les 4 paramètres écrits plus haut.
-bool VerifierCollisionJoueurMap(CGame* _pGame, bool* _boCollisionCorps, bool* _boCollisionPieds, unsigned int* _uiXMap, unsigned int* _uiYMap) {
+bool VerifierCollisionJoueurMap(CPlayer* _pPlayer, bool* _boCollisionCorps, bool* _boCollisionPieds, unsigned int* _uiXMap, unsigned int* _uiYMap) {
 
-	SDL_Surface* pTmpSDLSurfaceMap = _pGame->ObtenirMap()->ObtenirSurfaceMap();
-	SDL_Surface* pTmpSDLSurfacePlayer = _pGame->ObtenirTeamActive()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirSurface();
+	SDL_Surface* pTmpSDLSurfaceMap = pWindowJeu->ObtenirGame()->ObtenirMap()->ObtenirSurfaceMap();
+	SDL_Surface* pTmpSDLSurfacePlayer;
 
-	SDL_Rect* pTmpSDLRectPlayerDestination = &_pGame->ObtenirTeamActive()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirRectDestination();
-	SDL_Rect TmpSDLRectPlayerSource = _pGame->ObtenirTeamActive()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirRectSource();
-	
+	SDL_Rect* pTmpSDLRectPlayerDestination;
+	SDL_Rect TmpSDLRectPlayerSource;
+
 	SDL_Rect TmpSDLRectPlayerHitboxCorps;
-	if (_pGame->ObtenirTeamActive()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirDirection() == 'D')
-		TmpSDLRectPlayerHitboxCorps = _pGame->ObtenirTeamActive()->ObtenirPlayerActif()->ObtenirHitboxCorpsDroite();
-	else
-		TmpSDLRectPlayerHitboxCorps = _pGame->ObtenirTeamActive()->ObtenirPlayerActif()->ObtenirHitboxCorpsGauche();
+	SDL_Rect TmpSDLRectPlayerHitboxPieds = _pPlayer->ObtenirHitboxPieds();
+	
+	if (_pPlayer->ObtenirSpriteCourse()->IsActif()) {
 
-	SDL_Rect TmpSDLRectPlayerHitboxPieds = _pGame->ObtenirTeamActive()->ObtenirPlayerActif()->ObtenirHitboxPieds();
+		pTmpSDLSurfacePlayer = _pPlayer->ObtenirSpriteCourse()->ObtenirSurface();
+
+		pTmpSDLRectPlayerDestination = _pPlayer->ObtenirSpriteCourse()->ObtenirRectDestination();
+		TmpSDLRectPlayerSource = _pPlayer->ObtenirSpriteCourse()->ObtenirRectSource();
+
+	}
+
+	else if (_pPlayer->ObtenirSpriteSaut()->IsActif()) {
+
+		pTmpSDLSurfacePlayer = _pPlayer->ObtenirSpriteSaut()->ObtenirSurface();
+
+		pTmpSDLRectPlayerDestination = _pPlayer->ObtenirSpriteSaut()->ObtenirRectDestination();
+		TmpSDLRectPlayerSource = _pPlayer->ObtenirSpriteSaut()->ObtenirRectSource();
+
+	}
+
+	else if (_pPlayer->ObtenirSpriteParachute()->IsActif()) {
+
+		pTmpSDLSurfacePlayer = _pPlayer->ObtenirSpriteParachute()->ObtenirSurface();
+
+		pTmpSDLRectPlayerDestination = _pPlayer->ObtenirSpriteParachute()->ObtenirRectDestination();
+		TmpSDLRectPlayerSource = _pPlayer->ObtenirSpriteParachute()->ObtenirRectSource();
+
+	}
+
+	else if (_pPlayer->ObtenirSpriteRepos()->IsActif()) {
+
+		pTmpSDLSurfacePlayer = _pPlayer->ObtenirSpriteRepos()->ObtenirSurface();
+
+		pTmpSDLRectPlayerDestination = _pPlayer->ObtenirSpriteRepos()->ObtenirRectDestination();
+		TmpSDLRectPlayerSource = _pPlayer->ObtenirSpriteRepos()->ObtenirRectSource();
+
+	}
+
+	if (_pPlayer->ObtenirSpriteCourse()->ObtenirAnimation())
+		TmpSDLRectPlayerHitboxCorps = _pPlayer->ObtenirHitboxCorpsDroite();
+	else
+		TmpSDLRectPlayerHitboxCorps = _pPlayer->ObtenirHitboxCorpsGauche();
 
 
 	_boCollisionCorps = false;

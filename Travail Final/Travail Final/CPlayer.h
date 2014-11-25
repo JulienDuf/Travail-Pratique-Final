@@ -166,6 +166,12 @@ public:
 
 	}
 
+	CSprite* ObtenirSpriteRepos(void) {
+
+		return m_pSpriteRepos;
+
+	}
+
 	CSprite* ObtenirSpriteParachute(void) {
 
 		return m_pSpriteParachute;

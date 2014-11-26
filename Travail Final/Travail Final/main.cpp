@@ -25,12 +25,9 @@ using namespace std;
 #include "CGrenade.h"
 #include "CMelee.h"
 #include "CPack.h"
-<<<<<<< HEAD
 #include "CBarreVie.h"
-=======
 #include "CHealthPack.h"
 #include "CMine.h"
->>>>>>> origin/Branche-outil-le-Retour
 #include "CPlayer.h"
 #include "CTeam.h"
 #include "CVent.h"
@@ -300,7 +297,7 @@ void CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int
 
 				ix = ((unsigned int*)pSDLSurfaceMap->pixels)[y * pSDLSurfaceMap->w + x];
 
-				if ((((unsigned int*)pSDLSurfaceMap->pixels)[y * pSDLSurfaceMap->w + x] != TRANSPARENCE32BIT) && (((unsigned int*)_pSDLSurface->pixels)[(y - _RectDestination.y) * _pSDLSurface->w + (x - _RectDestination.x)] != TRANSPARENCE32BIT)) {
+				if ((((unsigned int*)pSDLSurfaceMap->pixels)[y * pSDLSurfaceMap->w + x] != 0) && (((unsigned int*)_pSDLSurface->pixels)[(y - _RectDestination.y) * _pSDLSurface->w + (x - _RectDestination.x)] != 0)) {
 
 					*_iX = x;
 					*_iY = y;

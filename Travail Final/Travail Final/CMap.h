@@ -31,7 +31,7 @@ public:
 	// Param3: _pSDLTextureMap, pointe sur la texture qui représente l'avant plan de la carte de jeu.
 	// Param4: _pVent, Classe qui donne la force et la direction du vent.
 	// Param5: Renderer.
-	CMap(string _strEmplacementMap, SDL_Rect _RectPositionImages, CVent* _pVent, SDL_Renderer* _pRenderer) {
+	CMap(string _strEmplacementMap, string _strEmplacementFichier, SDL_Rect _RectPositionImages, CVent* _pVent, SDL_Renderer* _pRenderer, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY)) {
 		
 		// Variables temporaires...
 		string strTmp[5];
@@ -56,6 +56,7 @@ public:
 		m_pSDLSurfaceMap = IMG_Load(strEmplacement.c_str());
 
 		// Ouverture du fichier...
+		strEmplacement = _strEmplacementMap;
 		strEmplacement.append("\\map.txt");
 		FichierMap.open(strEmplacement);
 
@@ -77,7 +78,7 @@ public:
 			FichierMap.getline(chrTmp, 50);
 
 			FichierMap.getline(chrTmp, 50);
-			strTampo = chrTmp[21];
+			strTampo = chrTmp[28];
 			iNombreMines = SDL_atoi(strTampo.c_str());
 
 			FichierMap.close();
@@ -85,6 +86,7 @@ public:
 
 		for (int i = iNombreMines; i > 0; i--) {
 
+			m_pPackList->AjouterFin(new CMine(_strEmplacementFichier, _pRenderer, _MapDestruction, _CollisionObjetMap));
 
 		}
 	}

@@ -13,7 +13,7 @@ public:
 
 		m_pTeamList = new CListeDC<CTeam*>();
 
-		m_pGameMap = new CMap(_strEmplacementMap, { 0, 0, 0, 0 }, _pVent, _pRenderer);
+		m_pGameMap = new CMap(_strEmplacementMap, _strEmplacementFichier, { 0, 0, 0, 0 }, _pVent, _pRenderer, _MapDestruction, _CollisionObjetMap);
 
 		for (int i = _iNombreÉquipe; i > 0; i--) {
 

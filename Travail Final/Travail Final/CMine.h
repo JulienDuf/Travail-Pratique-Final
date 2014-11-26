@@ -4,20 +4,29 @@
 class CMine : public CPack{
 private:
 	SDL_Rect m_pRectDestination; //position de la mine sur la map
-	SDL_Texture* m_pTexture; //Texture du pack
+	SDL_Surface* m_pSurface; //Texture du pack
+	bool m_boCollision; // Si la mine touche par terre.
+
+	void(*m_pCollisionMap)(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY);
+	void(*m_pMapDestruction)(int _iRayon, int _iX, int _iY);
 
 public:
-	CMine(string _strSourceImage, SDL_Renderer* _Renderer){
+	CMine(string _strSourceImage, SDL_Renderer* _Renderer, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY)){
 		//initialisation de la texture.
 		string strSourceImage = _strSourceImage;
 		strSourceImage.append("\\Armes et Packs\\Mine.png");
-		m_pTexture = IMG_LoadTexture(_Renderer, strSourceImage.c_str());
+		m_pSurface = IMG_Load(strSourceImage.c_str());
 
 		//initialisation de la position de la mine
-		m_pRectDestination.h = 59;
-		m_pRectDestination.w = 15;
+		m_pRectDestination.h = 15;
+		m_pRectDestination.w = 59;
 		m_pRectDestination.y = 0;
 		m_pRectDestination.x = rand() % 1366;
+
+		m_pCollisionMap = _CollisionMap;
+		m_pMapDestruction = _MapDestruction;
+
+		m_boCollision = false;
 	}
 
 	/*void Use(CPlayer* _Player){
@@ -28,15 +37,31 @@ public:
 	/*
 	Affiche la mine sur la  map a la postion m_pRectDestination
 	*/
-	void Show(SDL_Renderer* _Renderer){
-		SDL_RenderCopy(_Renderer, m_pTexture, NULL, &m_pRectDestination);
+	void ShowPack(SDL_Renderer* _Renderer){
+		
+		if (!m_boCollision)
+			ModifierPosition();
+		SDL_Texture* pTexture = SDL_CreateTextureFromSurface(_Renderer, m_pSurface);
+		SDL_RenderCopy(_Renderer, pTexture, NULL, &m_pRectDestination);
+		SDL_DestroyTexture(pTexture);
 	}
 
-	
-	/*
-	Calcule la chute de la mine lors de son apparition.
-	*/
-	void ChuteDebut(){
-		m_pRectDestination.y += 15;
+	void ModifierPosition(void) {
+
+		int iX, iY;
+
+		SDL_Rect RectTmp = m_pRectDestination;
+		RectTmp.y += 9;
+		
+		m_pCollisionMap(m_pSurface, RectTmp, &iX, &iY);
+
+		if (iX != 0 && iY != 0) {
+
+			m_boCollision = true;
+		}
+
+		else
+			m_pRectDestination = RectTmp;
+
 	}
 };

@@ -124,11 +124,6 @@ public:
 
 	}
 
-	SDL_Surface* ObtenirMap(void) {
-
-		return m_pSDLSurfaceMap;
-	}
-
 	CVecteur2D* ObtenirGravite(void) {
 
 		return m_VecteurGravite;

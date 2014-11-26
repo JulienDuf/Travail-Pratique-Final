@@ -14,11 +14,15 @@ private:
 	CSprite* m_pSpriteParachute;		// Pointeur de sprite qui pointe sur le sprite qui représente le joueur qui est en état de chute.
 	CSprite* m_pSpriteRepos;		    // Pointeur de sprite qui pointe sur le sprite qui représente le joueur qui est au repos.
 
+	CBarreVie* m_pBarreVie;				// La barre de vie du personnage.
+
 	SDL_Rect m_RectPlayerDestination;   // La destination du joueur dans le fenêtre.
+	SDL_Rect m_RectParachuteDestination;   // La destination du joueur dans le fenêtre.
 	SDL_Rect m_RectSource;				// Affiche si le joueur est ves le gauche ou vers le droite.
 	SDL_Rect m_RectHitboxCorpsGauche;
 	SDL_Rect m_RectHitboxCorpsDroite;
 	SDL_Rect m_RectHitboxPieds;
+	SDL_Rect m_RectHitboxPiedsParachute;
 
 	string m_strName;					// Chaine de caractères qui contient le nom du joueur.
 
@@ -32,41 +36,34 @@ public:
 	// Paramètre: _pToolList, pointe sur la liste d'outils que l'on veut donner au joueur.
 	// Paramètre: _strName, contient le nom que l'on veut donner au joueur.
 	// Retour: Rien (constructeur).
-	CPlayer(CSprite* _pSpriteCourse, CSprite* _pSpriteSaut, CListeDC<CTools*>* _pToolList, string _strName) {
-
-		m_pSpriteCourse = _pSpriteCourse;
-		m_pSpriteSaut = _pSpriteSaut;
-
-		m_strName = _strName;
-
-		m_pToolList = _pToolList;
-
-	}
-
 	CPlayer(string _strEmplacementFichier, SDL_Rect _RectDestination, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), double _Physique(CVecteur2D* _VitesseMissile, SDL_Rect* _DestinationMissile), SDL_Renderer* _pRenderer) {
 
 
 		string strEmplacementFichier = _strEmplacementFichier;
 
-		strEmplacementFichier.append("Personnage\\Course.png");
-		m_pSpriteCourse = new CSprite(IMG_Load(strEmplacementFichier.c_str()), _RectDestination, 9, 50, true, false);
+		strEmplacementFichier.append("Personnage\\Courses.png");
+		m_pSpriteCourse = new CSprite(IMG_Load(strEmplacementFichier.c_str()), _RectDestination, 9, 50, true, false, 2);
 
 		strEmplacementFichier = _strEmplacementFichier;
 		strEmplacementFichier.append("Personnage\\Saut.png");
-		m_pSpriteSaut = new CSprite(IMG_Load(strEmplacementFichier.c_str()), _RectDestination, 9, 50, false, false);
+		m_pSpriteSaut = new CSprite(IMG_Load(strEmplacementFichier.c_str()), _RectDestination, 9, 50, false, false, 2);
 
 		strEmplacementFichier = _strEmplacementFichier;
 		strEmplacementFichier.append("Personnage\\Parachute.png");
-		m_pSpriteParachute = new CSprite(IMG_Load(strEmplacementFichier.c_str()), _RectDestination, 24, 10, true, true);
+		m_pSpriteParachute = new CSprite(IMG_Load(strEmplacementFichier.c_str()), _RectDestination, 24, 10, true, true, 1);
 
 		strEmplacementFichier = _strEmplacementFichier;
-		strEmplacementFichier.append("Personnage\\Repos.png");
-		m_pSpriteRepos = new CSprite(IMG_Load(strEmplacementFichier.c_str()), _RectDestination, 1, 50, true, false);
+		strEmplacementFichier.append("Personnage\\Repo.png");
+		m_pSpriteRepos = new CSprite(IMG_Load(strEmplacementFichier.c_str()), _RectDestination, 1, 50, true, false, 2);
 
 
 		m_RectPlayerDestination = _RectDestination;
 		m_RectPlayerDestination.w = m_pSpriteCourse->ObtenirRectSource().w;
 		m_RectPlayerDestination.h = m_pSpriteCourse->ObtenirRectSource().h;
+
+		m_RectParachuteDestination = _RectDestination;
+		m_RectParachuteDestination.w = m_pSpriteParachute->ObtenirRectSource().w;
+		m_RectParachuteDestination.h = m_pSpriteParachute->ObtenirRectSource().h;
 
 
 		m_RectHitboxCorpsGauche.x = 79;
@@ -79,16 +76,23 @@ public:
 		m_RectHitboxCorpsDroite.w = 52;
 		m_RectHitboxCorpsDroite.h = 74;
 
-		m_RectHitboxPieds.x = 80;
-		m_RectHitboxPieds.y = 78;
-		m_RectHitboxPieds.w = 95;
-		m_RectHitboxPieds.h = 84;
+		m_RectHitboxPieds.x = 0;
+		m_RectHitboxPieds.y = 32;
+		m_RectHitboxPieds.w = 40;
+		m_RectHitboxPieds.h = 21;
+
+		m_RectHitboxPiedsParachute.x = 0;
+		m_RectHitboxPiedsParachute.y = 92;
+		m_RectHitboxPiedsParachute.w = 58;
+		m_RectHitboxPiedsParachute.h = 19;
 
 		m_pToolList = new CListeDC<CTools*>();
 
 		m_pToolList->AjouterFin(new CMissile(_strEmplacementFichier, _pRenderer, _MapDestruction, _CollisionObjetMap, _Physique, NULL));
 
 		m_BoDeplacement = false;
+
+		m_pBarreVie = new CBarreVie(_strEmplacementFichier, { _RectDestination.x, _RectDestination.y - 9, 0, 0 }, _pRenderer);
 
 	}
 
@@ -107,7 +111,10 @@ public:
 				if (!m_pSpriteCourse->IsActif()) {
 					m_pSpriteCourse->DefinirAnimation(0);
 					m_pSpriteCourse->DefinirActif(true);
+					m_pSpriteRepos->DefinirAnimation(0);
+					m_pSpriteRepos->DefinirActif(false);
 				}
+
 				
 				break;
 			case SDL_SCANCODE_LEFT:
@@ -115,10 +122,12 @@ public:
 				if (!m_pSpriteCourse->IsActif()) {
 					m_pSpriteCourse->DefinirAnimation(1);
 					m_pSpriteCourse->DefinirActif(true);
+					m_pSpriteRepos->DefinirAnimation(1);
+					m_pSpriteRepos->DefinirActif(false);
 				}
 				break;
 
-			case SDL_SCANCODE_UP:
+			case SDL_SCANCODE_SPACE:
 				m_pSpriteRepos->DefinirActif(false);
 				m_pSpriteCourse->DefinirActif(false);
 				m_pSpriteSaut->DefinirActif(true);
@@ -142,16 +151,33 @@ public:
 	//Paramètre : _pRenderer : Le render de la fenetre.
 	//Retour : rien.
 	void ShowPlayer(SDL_Renderer* _pRenderer) {
+		m_pSpriteCourse->ModifierAnnimation();
 		m_pSpriteCourse->Render(_pRenderer, m_RectPlayerDestination);
-		if (m_pSpriteParachute->IsActif())
-			m_pSpriteParachute->ModifierAnnimation(0, 1);
-		m_pSpriteParachute->Render(_pRenderer, m_RectPlayerDestination);
+
+		m_pSpriteParachute->ModifierAnnimation();
+		m_pSpriteParachute->Render(_pRenderer, m_RectParachuteDestination);
+
+		m_pSpriteSaut->ModifierAnnimation();
 		m_pSpriteSaut->Render(_pRenderer, m_RectPlayerDestination);
+
+		m_pSpriteRepos->ModifierAnnimation();
+		m_pSpriteRepos->Render(_pRenderer, m_RectPlayerDestination);
+
+		if (!m_pSpriteParachute->IsActif())
+			m_pBarreVie->ShowBarre(_pRenderer);
 	}
 
-	void AjouterAPositionX(int _iX) {
+	void ModifierRectDestination(SDL_Rect _RectDestination) {
 
-		m_RectPlayerDestination.x += _iX;
+		m_RectPlayerDestination = _RectDestination;
+
+		m_pBarreVie->ModifierPositionBarre(m_RectPlayerDestination.x, m_RectPlayerDestination.y - 9);
+
+	}
+
+	void ModifierRectDestinationParachute(SDL_Rect _RectDestination) {
+
+		m_RectParachuteDestination = _RectDestination;
 	}
 	
 	void AjouterAPositionY(int _iY) {
@@ -201,9 +227,20 @@ public:
 
 	}
 
+	SDL_Rect ObtenirHitboxPiedsParachute(void) {
+
+		return m_RectHitboxPiedsParachute;
+
+	}
+
 	SDL_Rect ObtenirRectDestination(void) {
 
 		return m_RectPlayerDestination;
+	}
+
+	SDL_Rect ObtenirRectDestinationParachute(void) {
+
+		return m_RectParachuteDestination;
 	}
 
 };

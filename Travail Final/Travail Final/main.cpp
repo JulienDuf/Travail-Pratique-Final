@@ -22,8 +22,15 @@ using namespace std;
 #include "CBarrePuissance.h"
 #include "CTool.h"
 #include "CMissile.h"
+#include "CGrenade.h"
+#include "CMelee.h"
 #include "CPack.h"
+<<<<<<< HEAD
 #include "CBarreVie.h"
+=======
+#include "CHealthPack.h"
+#include "CMine.h"
+>>>>>>> origin/Branche-outil-le-Retour
 #include "CPlayer.h"
 #include "CTeam.h"
 #include "CVent.h"

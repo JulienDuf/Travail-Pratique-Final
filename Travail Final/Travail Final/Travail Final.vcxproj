@@ -76,11 +76,15 @@
     <ClInclude Include="CControl.h" />
     <ClInclude Include="CGame.h" />
     <ClInclude Include="CGestionaire.h" />
+    <ClInclude Include="CGrenade.h" />
+    <ClInclude Include="CHealthPack.h" />
     <ClInclude Include="CLabel.h" />
     <ClInclude Include="CLabelLeftRight.h" />
     <ClInclude Include="CListeDC.h" />
     <ClInclude Include="CMap.h" />
+    <ClInclude Include="CMelee.h" />
     <ClInclude Include="CMenu.h" />
+    <ClInclude Include="CMine.h" />
     <ClInclude Include="CMissile.h" />
     <ClInclude Include="CNoeudArbreAVL.h" />
     <ClInclude Include="CPack.h" />

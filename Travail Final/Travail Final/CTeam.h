@@ -57,6 +57,13 @@ public:
 				if (!m_pVerifierCollisionJoueurMap(pPlayer, RectPlayer, &_boCorps, &_boPieds, &_uiXMap, &_uiYMap))
 					pPlayer->ModifierRectDestination(RectPlayer);
 
+				else {
+
+					RectPlayer.y -= (RectPlayer.h - _uiYMap);
+					pPlayer->ModifierRectDestination(RectPlayer);
+				}
+
+
 			}
 
 

@@ -121,16 +121,16 @@ bool VerifierCollisionJoueurMap(CPlayer* _pPlayer, SDL_Rect _RectPlayer, bool* _
 	*_boCollisionCorps = false;
 	*_boCollisionPieds = false;
 
-	for (unsigned int y = TmpSDLRectPlayerHitboxPieds.h; y > 0; y--) {				// On parcours les pixels dans le rectangle collision en y à l'envers.
+	for (unsigned int y = 0; y < TmpSDLRectPlayerHitboxPieds.h; y++) {				// On parcours les pixels dans le rectangle collision en y à l'envers.
 
-		for (unsigned int x = TmpSDLRectPlayerHitboxPieds.w; x > 0; x--) {			// On parcours les pixels dans le rectangle collision en x à l'envers.
+		for (unsigned int x = 0; x < TmpSDLRectPlayerHitboxPieds.w; x++) {			// On parcours les pixels dans le rectangle collision en x à l'envers.
 
 				if ((((unsigned int*)pTmpSDLSurfaceMap->pixels)[(TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerHitboxPieds.x + x) + (TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerHitboxPieds.y + y) * pTmpSDLSurfaceMap->w] != 0) && (((unsigned int*)pTmpSDLSurfacePlayer->pixels)[(TmpSDLRectPlayerSource.x + TmpSDLRectPlayerHitboxPieds.x + x) + (TmpSDLRectPlayerSource.y + TmpSDLRectPlayerHitboxPieds.y + y) * pTmpSDLSurfacePlayer->w] != 0)) {			// Si il y a une collision entre les pixels non-transparents de la map et les pixels non-transparents du joueur...
 					unsigned int i = ((unsigned int*)pTmpSDLSurfaceMap->pixels)[(TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerHitboxPieds.x + x) + (TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerHitboxPieds.y + y) * pTmpSDLSurfaceMap->w];
 					unsigned int i2 = ((unsigned int*)pTmpSDLSurfacePlayer->pixels)[(TmpSDLRectPlayerSource.x + TmpSDLRectPlayerHitboxPieds.x + x) + (TmpSDLRectPlayerSource.y + TmpSDLRectPlayerHitboxPieds.y + y) * pTmpSDLSurfacePlayer->w];
 
-					*_uiXMap = TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerHitboxPieds.x + x;		// On stocke la position de la collision dans les variables adéquates.
-					*_uiYMap = TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerHitboxPieds.y + y;
+					*_uiXMap = TmpSDLRectPlayerHitboxPieds.x + x;		// On stocke la position de la collision dans les variables adéquates.
+					*_uiYMap = TmpSDLRectPlayerHitboxPieds.y + y;
 
 					*_boCollisionPieds = true;
 					return true;
@@ -299,8 +299,10 @@ void CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int
 
 				if ((((unsigned int*)pSDLSurfaceMap->pixels)[y * pSDLSurfaceMap->w + x] != 0) && (((unsigned int*)_pSDLSurface->pixels)[(y - _RectDestination.y) * _pSDLSurface->w + (x - _RectDestination.x)] != 0)) {
 
-					*_iX = x;
-					*_iY = y;
+					if (*_iX == 0) {
+						*_iX = x;
+						*_iY = y;
+					}
 				}
 			}
 		}

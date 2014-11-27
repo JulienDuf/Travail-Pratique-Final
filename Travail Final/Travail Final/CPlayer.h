@@ -77,9 +77,9 @@ public:
 		m_RectHitboxCorpsDroite.h = 74;
 
 		m_RectHitboxPieds.x = 0;
-		m_RectHitboxPieds.y = 32;
+		m_RectHitboxPieds.y = 40;
 		m_RectHitboxPieds.w = 40;
-		m_RectHitboxPieds.h = 21;
+		m_RectHitboxPieds.h = 15;
 
 		m_RectHitboxPiedsParachute.x = 0;
 		m_RectHitboxPiedsParachute.y = 92;
@@ -92,7 +92,7 @@ public:
 
 		m_BoDeplacement = false;
 
-		m_pBarreVie = new CBarreVie(_strEmplacementFichier, { _RectDestination.x, _RectDestination.y - 9, 0, 0 }, _pRenderer);
+		m_pBarreVie = new CBarreVie(_strEmplacementFichier, { _RectDestination.x, _RectDestination.y - 2, 0, 0 }, _pRenderer);
 
 	}
 
@@ -171,7 +171,7 @@ public:
 
 		m_RectPlayerDestination = _RectDestination;
 
-		m_pBarreVie->ModifierPositionBarre(m_RectPlayerDestination.x, m_RectPlayerDestination.y - 9);
+		m_pBarreVie->ModifierPositionBarre(m_RectPlayerDestination.x, m_RectPlayerDestination.y - 2);
 
 	}
 

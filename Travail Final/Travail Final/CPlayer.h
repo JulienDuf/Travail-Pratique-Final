@@ -3,6 +3,9 @@
 // Classe qui représente un joueur du jeu.
 // 4 novembre 2014 par Nicolas Dean (Gody117@hotmail.com)
 //
+// Modifier le 25 novembre par Xavier St-Georges (xavierst-georges@hotmail.com)
+// Modification : -Finalisation des mouvements.
+//Fin des modifications.
 class CPlayer {
 
 private:
@@ -42,19 +45,19 @@ public:
 		string strEmplacementFichier = _strEmplacementFichier;
 
 		strEmplacementFichier.append("Personnage\\Courses.png");
-		m_pSpriteCourse = new CSprite(IMG_Load(strEmplacementFichier.c_str()), _RectDestination, 9, 50, true, false, 2);
+		m_pSpriteCourse = new CSprite(IMG_Load(strEmplacementFichier.c_str()), IMG_LoadTexture(_pRenderer, strEmplacementFichier.c_str()), _RectDestination, 9, 50, true, false, 2);
 
 		strEmplacementFichier = _strEmplacementFichier;
 		strEmplacementFichier.append("Personnage\\Saut.png");
-		m_pSpriteSaut = new CSprite(IMG_Load(strEmplacementFichier.c_str()), _RectDestination, 9, 50, false, false, 2);
+		m_pSpriteSaut = new CSprite(IMG_Load(strEmplacementFichier.c_str()), IMG_LoadTexture(_pRenderer, strEmplacementFichier.c_str()), _RectDestination, 9, 50, false, false, 2);
 
 		strEmplacementFichier = _strEmplacementFichier;
 		strEmplacementFichier.append("Personnage\\Parachute.png");
-		m_pSpriteParachute = new CSprite(IMG_Load(strEmplacementFichier.c_str()), _RectDestination, 24, 10, true, true, 1);
+		m_pSpriteParachute = new CSprite(IMG_Load(strEmplacementFichier.c_str()), IMG_LoadTexture(_pRenderer, strEmplacementFichier.c_str()), _RectDestination, 24, 10, true, true, 1);
 
 		strEmplacementFichier = _strEmplacementFichier;
 		strEmplacementFichier.append("Personnage\\Repo.png");
-		m_pSpriteRepos = new CSprite(IMG_Load(strEmplacementFichier.c_str()), _RectDestination, 1, 50, true, false, 2);
+		m_pSpriteRepos = new CSprite(IMG_Load(strEmplacementFichier.c_str()), IMG_LoadTexture(_pRenderer, strEmplacementFichier.c_str()), _RectDestination, 1, 50, true, false, 2);
 
 
 		m_RectPlayerDestination = _RectDestination;
@@ -108,26 +111,26 @@ public:
 			switch (_pSDLEvent->key.keysym.scancode) {
 			case SDL_SCANCODE_RIGHT:
 
-				if (!m_pSpriteCourse->IsActif()) {
+				if (!m_pSpriteCourse->IsActif()) {					// S'il était au repos et que la flèche droite est appuyer.
 					m_pSpriteCourse->DefinirAnimation(0);
 					m_pSpriteCourse->DefinirActif(true);
 					m_pSpriteRepos->DefinirAnimation(0);
-					m_pSpriteRepos->DefinirActif(false);
+					m_pSpriteRepos->DefinirActif(false);			// Il n'est plus au repos.
 				}
 
 				
 				break;
 			case SDL_SCANCODE_LEFT:
 
-				if (!m_pSpriteCourse->IsActif()) {
+				if (!m_pSpriteCourse->IsActif()) {					// S'il était au repos et que la flèche gauche est appuyer.
 					m_pSpriteCourse->DefinirAnimation(1);
 					m_pSpriteCourse->DefinirActif(true);
 					m_pSpriteRepos->DefinirAnimation(1);
-					m_pSpriteRepos->DefinirActif(false);
+					m_pSpriteRepos->DefinirActif(false);			// Il n'est plus au repos.
 				}
 				break;
 
-			case SDL_SCANCODE_SPACE:
+			case SDL_SCANCODE_SPACE:								// Saut = Espace
 				m_pSpriteRepos->DefinirActif(false);
 				m_pSpriteCourse->DefinirActif(false);
 				m_pSpriteSaut->DefinirActif(true);
@@ -137,7 +140,7 @@ public:
 			}
 			break;
 		case SDL_KEYUP:
-			m_pSpriteCourse->DefinirActif(false);
+			m_pSpriteCourse->DefinirActif(false);					// Le sprite ne court plus.
 			if (!m_pSpriteSaut->IsActif())
 				m_pSpriteRepos->DefinirActif(true);
 
@@ -166,6 +169,9 @@ public:
 		if (!m_pSpriteParachute->IsActif())
 			m_pBarreVie->ShowBarre(_pRenderer);
 	}
+															// Accesseur ... 
+
+
 
 	void ModifierRectDestination(SDL_Rect _RectDestination) {
 

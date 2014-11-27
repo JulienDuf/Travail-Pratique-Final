@@ -74,3 +74,17 @@ Mardi 25 novembre 2014
 
 Ajustement des collisions avec Julien, travail du mouvement avec Xavier et travail sur les parachutes avec Julien.
 Les animations s'enlignent pour être assez bien!
+
+--------------------------------------------------------------------------------------------------------------------
+
+Jeudi 27 novembre 2014
+
+2:00 PM
+
+J'ai fait le diagramme d'état du player qui a vraiment beaucoup de liens :(
+J'ai aussi fait des petites modifs bs sur MES collisions joueur/map parce que Julien a
+modifié MES collisions en essayant de réparer un problème ce qui en a causé d'autres.
+J'ai jasé beaucoup avec le monde comme d'habitude :)
+
+---------------------------------------------------------------------------------------------------------------------
+

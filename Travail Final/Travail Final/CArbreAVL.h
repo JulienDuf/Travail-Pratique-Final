@@ -442,10 +442,10 @@ private:
 
 						else {
 							// Si l'élément est plus grand que son parent...
-							if (_pNoeud->ObtenirElement() > _pNoeud->ObtenirParent()->ObtenirID())
+							if (_pNoeud->ObtenirID() > _pNoeud->ObtenirParent()->ObtenirID())
 								ModificationIndiceEquilibreDroit(_pNoeud->ObtenirParent(), _boRetirerEnCours);
 							else
-								if (_pNoeud->ObtenirElement() < _pNoeud->ObtenirParent()->ObtenirID())
+								if (_pNoeud->ObtenirID() < _pNoeud->ObtenirParent()->ObtenirID())
 									ModificationIndiceEquilibreGauche(_pNoeud->ObtenirParent(), _boRetirerEnCours);
 
 						}
@@ -473,12 +473,24 @@ private:
 				{
 					// Validation jusqu'à un débalencement...
 					if (_pNoeud->ObtenirIE() == 0 && _pNoeud != m_pRacine) {
-						// Si l'élément est plus grand que son parent...
-						if (_pNoeud->ObtenirElement() > _pNoeud->ObtenirParent()->ObtenirElement())
-							ModificationIndiceEquilibreDroit(_pNoeud->ObtenirParent(), _boRetirerEnCours);
-						else
-						if (_pNoeud->ObtenirElement() < _pNoeud->ObtenirParent()->ObtenirElement())
-							ModificationIndiceEquilibreGauche(_pNoeud->ObtenirParent(), _boRetirerEnCours);
+						if (_pNoeud->ObtenirID() == "") {
+							// Si l'élément est plus grand que son parent...
+							if (_pNoeud->ObtenirElement() > _pNoeud->ObtenirParent()->ObtenirElement())
+								ModificationIndiceEquilibreDroit(_pNoeud->ObtenirParent(), _boRetirerEnCours);
+							else
+								if (_pNoeud->ObtenirElement() < _pNoeud->ObtenirParent()->ObtenirElement())
+									ModificationIndiceEquilibreGauche(_pNoeud->ObtenirParent(), _boRetirerEnCours);
+						}
+
+						else {
+							// Si l'élément est plus grand que son parent...
+							if (_pNoeud->ObtenirID() > _pNoeud->ObtenirParent()->ObtenirID())
+								ModificationIndiceEquilibreDroit(_pNoeud->ObtenirParent(), _boRetirerEnCours);
+							else
+								if (_pNoeud->ObtenirID() < _pNoeud->ObtenirParent()->ObtenirID())
+									ModificationIndiceEquilibreGauche(_pNoeud->ObtenirParent(), _boRetirerEnCours);
+
+						}
 					}
 				}
 			}

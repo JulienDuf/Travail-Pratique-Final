@@ -1,4 +1,4 @@
-﻿La génération a démarré 2014-11-27 13:45:07.
+﻿La génération a démarré 2014-11-27 15:29:03.
      1>Projet "C:\Users\Julien\Documents\GitHub\Travail-Pratique-Final\Travail Final\Travail Final\Travail Final.vcxproj" sur le nœud 2 (Build cible(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
@@ -33,8 +33,8 @@
      1>c:\users\julien\documents\github\travail-pratique-final\travail final\travail final\cmap.h(70): warning C4244: 'argument' : conversion de 'double' en 'int', perte possible de données
      1>c:\users\julien\documents\github\travail-pratique-final\travail final\travail final\cmap.h(115): warning C4018: '<' : incompatibilité signed/unsigned
      1>c:\users\julien\documents\github\travail-pratique-final\travail final\travail final\cgame.h(29): warning C4018: '<' : incompatibilité signed/unsigned
-     1>c:\users\julien\documents\github\travail-pratique-final\travail final\travail final\cwindow.h(45): warning C4018: '<' : incompatibilité signed/unsigned
-     1>c:\users\julien\documents\github\travail-pratique-final\travail final\travail final\cwindow.h(59): warning C4018: '<' : incompatibilité signed/unsigned
+     1>c:\users\julien\documents\github\travail-pratique-final\travail final\travail final\cwindow.h(51): warning C4018: '<' : incompatibilité signed/unsigned
+     1>c:\users\julien\documents\github\travail-pratique-final\travail final\travail final\cwindow.h(65): warning C4018: '<' : incompatibilité signed/unsigned
      1>c:\users\julien\documents\github\travail-pratique-final\travail final\travail final\main.cpp(124): warning C4018: '<' : incompatibilité signed/unsigned
      1>c:\users\julien\documents\github\travail-pratique-final\travail final\travail final\main.cpp(126): warning C4018: '<' : incompatibilité signed/unsigned
      1>c:\users\julien\documents\github\travail-pratique-final\travail final\travail final\main.cpp(172): warning C4244: 'return' : conversion de 'double' en 'float', perte possible de données
@@ -56,8 +56,8 @@
      1>c:\users\julien\documents\github\travail-pratique-final\travail final\travail final\clistedc.h(219): warning C4552: '-' : opérateur sans effet ; opérateur avec effet secondaire attendu
      1>c:\users\julien\documents\github\travail-pratique-final\travail final\travail final\main.cpp(276): warning C4715: 'PhysiqueMissile' : les chemins de contrôle ne retournent pas tous une valeur
      1>c:\users\julien\documents\github\travail-pratique-final\travail final\travail final\clabelleftright.h(152): warning C4715: 'CLabelLeftRight::ObtenirElement' : les chemins de contrôle ne retournent pas tous une valeur
-     1>c:\users\julien\documents\github\travail-pratique-final\travail final\travail final\carbreavl.h(226): warning C4715: 'CArbreAVL<CControl *>::Rechercher' : les chemins de contrôle ne retournent pas tous une valeur
      1>c:\users\julien\documents\github\travail-pratique-final\travail final\travail final\carbreavl.h(226): warning C4715: 'CArbreAVL<SDL_Texture *>::Rechercher' : les chemins de contrôle ne retournent pas tous une valeur
+     1>c:\users\julien\documents\github\travail-pratique-final\travail final\travail final\carbreavl.h(226): warning C4715: 'CArbreAVL<CControl *>::Rechercher' : les chemins de contrôle ne retournent pas tous une valeur
      1>c:\users\julien\documents\github\travail-pratique-final\travail final\travail final\carbreavl.h(226): warning C4715: 'CArbreAVL<_TTF_Font *>::Rechercher' : les chemins de contrôle ne retournent pas tous une valeur
      1>c:\users\julien\documents\github\travail-pratique-final\travail final\travail final\carbreavl.h(226): warning C4715: 'CArbreAVL<CMenu *>::Rechercher' : les chemins de contrôle ne retournent pas tous une valeur
        Link:
@@ -67,4 +67,4 @@
 
 La génération a réussi.
 
-Temps écoulé 00:00:00.71
+Temps écoulé 00:00:00.70

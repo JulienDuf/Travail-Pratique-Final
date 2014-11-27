@@ -90,6 +90,11 @@ public:
 		}
 	}
 
+	// Procédure permettant de changer de joueur...
+	void ChangerPlayerActif() {
+		m_pPlayerList->AllerSuivantCurseur();
+	}
+
 	CPlayer* ObtenirPlayerActif(void) {
 
 		return m_pPlayerList->ObtenirElementCurseur();

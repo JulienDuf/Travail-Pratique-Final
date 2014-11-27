@@ -17,6 +17,7 @@ using namespace std;
 #include "CButton.h"
 #include "CLabel.h"
 #include "CMenu.h"
+#include "CGestionaire.h"
 #include "CScrollBar.h"
 #include "CToolBar.h"
 #include "CBarrePuissance.h"
@@ -35,7 +36,6 @@ using namespace std;
 #include "CGame.h"
 #include "CWindow.h"
 #include "CLabelLeftRight.h"
-#include "CGestionaire.h"
 
 // Variables...
 bool boExecution; // Variable de la boucle principale du programme.
@@ -57,6 +57,17 @@ SDL_Color CouleurTexte; // La couleur du texte.
 
 CTimer* pTimerPhysique;
 
+// Fonction convertissant en angle de degré à radian.
+// En entrée:
+// Param1: L'angle à convertir.
+// En sortie: L'angle converti.
+float DegtoRad(float _fAngle) {
+
+	return (M_PI / 180) * _fAngle;
+}
+
+
+// Pointeurs de fonctions pour les classes [
 
 // Fonction qui retourne la position d'une collision.
 // Paramètre: _pSDLSurfacecollision, pointe vers la surface avec laquelle on veut vérifier les collisions avec la map.
@@ -163,14 +174,6 @@ bool VerifierCollisionJoueurMap(CPlayer* _pPlayer, SDL_Rect _RectPlayer, bool* _
 
 }
 
-// Fonction convertissant en angle de degré à radian.
-// En entrée:
-// Param1: L'angle à convertir.
-// En sortie: L'angle converti.
-float DegtoRad(float _fAngle) {
-
-	return (M_PI / 180) * _fAngle;
-}
 
 // Fontion effectuant un rotation sur une surface selon un angle.
 // En entrée: 
@@ -331,6 +334,23 @@ void ClickBoutonDebutPartie(void) {
 	int iNombreEquipe = 0;
 	int iNombreJoueur = 0;
 
+	// Load des texture pour la toolbar...
+	string strBazookaToolPath = strEmplacementFichier;
+	strBazookaToolPath.append("Armes et Packs\\bazookatool.png");
+	pGestionaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strBazookaToolPath.c_str()), "BazookaTool");
+
+	string strGrenadaToolPath = strEmplacementFichier;
+	strGrenadaToolPath.append("Armes et Packs\\grenadetool.png");
+	pGestionaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strGrenadaToolPath.c_str()), "GrenadaTool");
+
+	string strSwordToolPath = strEmplacementFichier;
+	strSwordToolPath.append("Armes et Packs\\swordtool.png");
+	pGestionaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strSwordToolPath.c_str()), "SwordTool");
+
+	string strJetPackToolPath = strEmplacementFichier;
+	strJetPackToolPath.append("Armes et Packs\\jetpacktool.png");
+	pGestionaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strJetPackToolPath.c_str()), "JetPackTool");
+
 	pGestionaireMenu->ObtenirDonnee("pMenuNouvellePartie")->DefinirboShow(false);
 	pGestionaireMenu->ObtenirDonnee("pMenuPrincipal")->DefinirboShow(false);
 
@@ -370,7 +390,7 @@ void ClickBoutonDebutPartie(void) {
 	iNombreEquipe = pGestionaireControl->ObtenirDonnee("pLblLRChoixNbrEquipe")->ObtenirElement("PositionLabel") + 2;
 	iNombreJoueur = pGestionaireControl->ObtenirDonnee("pLblLRChoixNbrJoueurEquipe")->ObtenirElement("PositionLabel") + 4;
 
-	pWindowJeu->CreateGame(strTmp, strEmplacementFichier, iNombreEquipe, iNombreJoueur, new CVent(pGestionaireFont->ObtenirDonnee("pFontBouton"), "250 km/h", CouleurTexte, pGestionaireTexture->ObtenirDonnee("pFlecheVent"), { 1200, 30, 117, 63 }, 180, pWindowJeu->ObtenirRenderer()),  VerifierCollisionJoueurMap, MapDestruction, CollisionObjetMap, PhysiqueMissile, pWindowJeu->ObtenirRenderer());
+	pWindowJeu->CreateGame(strTmp, strEmplacementFichier, pGestionaireTexture, iNombreEquipe, iNombreJoueur, new CVent(pGestionaireFont->ObtenirDonnee("pFontBouton"), "250 km/h", CouleurTexte, pGestionaireTexture->ObtenirDonnee("pFlecheVent"), { 1200, 30, 117, 63 }, 180, pWindowJeu->ObtenirRenderer()),  VerifierCollisionJoueurMap, MapDestruction, CollisionObjetMap, PhysiqueMissile, pWindowJeu->ObtenirRenderer());
 }
 
 // Procédure pour le click sur le bouton quitter...
@@ -404,6 +424,9 @@ void ClickBoutonQuitterJeu(void) {
 	pGestionaireMenu->ObtenirDonnee("pMenuPause")->DefinirboShow(false);
 	pGestionaireMenu->ObtenirDonnee("pMenuPrincipal")->DefinirboShow(true);
 }
+
+// ]
+
 
 // Fonction qui met le texte d'un tableau en une seule surface.
 // En entrée: 
@@ -665,12 +688,13 @@ int main(int argc, char* argv[]) {
 		// Tant qu'il y a des événements à gérer.
 		while (SDL_PollEvent(pEvent)) {
 
-			CMenu* pMenutmp = pGestionaireMenu->ObtenirDonnee("pMenuPrincipal");
-			CMenu* pMenutmp1 = pGestionaireMenu->ObtenirDonnee("pMenuNouvellePartie");
-			CMenu* pMenutmp2 = pGestionaireMenu->ObtenirDonnee("pMenuPause");
 			pGestionaireMenu->ObtenirDonnee("pMenuPrincipal")->ReactToEvent(pEvent);
 			pGestionaireMenu->ObtenirDonnee("pMenuNouvellePartie")->ReactToEvent(pEvent);
 			pGestionaireMenu->ObtenirDonnee("pMenuPause")->ReactToEvent(pEvent);
+			if (pWindowJeu->ObtenirGame() != nullptr) {
+				pWindowJeu->ObtenirGame()->ReactToEvent(pEvent);
+			}
+
 
 			switch (pEvent->type) {
 
@@ -679,12 +703,17 @@ int main(int argc, char* argv[]) {
 				break;
 
 			case SDL_KEYDOWN:
-				if (pEvent->key.keysym.scancode == SDL_SCANCODE_ESCAPE && pWindowJeu->ObtenirGame() != nullptr) {
-					pGestionaireMenu->ObtenirDonnee("pMenuPause")->DefinirboShow(true);
-				}
-				else
-				{
-					boExecution = !(pEvent->key.keysym.scancode == SDL_SCANCODE_ESCAPE);
+				switch (pEvent->key.keysym.scancode) {
+				case SDL_SCANCODE_ESCAPE:
+					if (pWindowJeu->ObtenirGame() != nullptr) {
+						pGestionaireMenu->ObtenirDonnee("pMenuPause")->DefinirboShow(true);
+					}
+					else
+						boExecution = !(pEvent->key.keysym.scancode == SDL_SCANCODE_ESCAPE);
+					break;
+				case SDL_SCANCODE_T:
+					pWindowJeu->ObtenirGame()->ReverseShowToolBar();
+					break;
 				}
 				break;
 

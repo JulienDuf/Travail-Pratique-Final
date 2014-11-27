@@ -18,7 +18,6 @@ private:
 	SDL_Rect m_RectPositionImages;					// Rect représentant la position de la map dans l'écran.
 	CListeDC<CPack*>* m_pPackList;					// Liste des packs présents dans la map.
 	CVent* m_pVent;									// Classe qui donne la force et la direction du vent.
-	//CComboBox* m_pComboBoxChoixOutils;            // Le ComboBox où le joueur choisi son outils pour son tour.
 
 	CVecteur2D* m_VecteurGravite;					// La gravité de la map.
 	int m_iVentMax;									// Le vent max de la map.
@@ -89,6 +88,7 @@ public:
 			m_pPackList->AjouterFin(new CMine(_strEmplacementFichier, _pRenderer, _MapDestruction, _CollisionObjetMap));
 
 		}
+
 	}
 
 

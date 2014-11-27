@@ -10,7 +10,9 @@ class CSprite {
 
 private:
 
-	SDL_Surface* m_pSurfaceSprite;		// pointeur de surface SDL qui pointe la texture qui contient l'image du sprite.
+	SDL_Surface* m_pSurfaceSprite;		// pointeur de surface SDL qui pointe la surface qui contient l'image du sprite.
+
+	SDL_Texture* m_pTextureSprite;		// pointeur de texture SDL qui pointe sur la texture qui contient l'image du sprite.
 	
 	SDL_Rect m_RectSource;				// Rectangle qui représente la position et les dimensions du rectangle qui contiendra l'image que l'on veut afficher
 	SDL_Rect m_RectDestination;			// Rectangle qui représente la position et les dimensions du rectangle ou on veut afficher l'image.
@@ -29,9 +31,22 @@ public:
 
 
 	// Constructeur...
-	CSprite(SDL_Surface* _SurfaceSprite, SDL_Rect _RectDestination, unsigned int _uiNbrFrames, unsigned int _uiDelay, bool _boBoucle, bool _boActif, unsigned int _uiNbrEtage) {
+	// Paramètre :  _SurfaceSprite : Surface du sprite.
+	//				_Texture : Texture du sprite.
+	//			    _RectDestination : Destination du sprite.
+	//			    _uiNbrFrames : Le nombre de frames qu'à le sprite.
+	//			    _uiDelay : Le delai avant de changer de frames donc la vitesse de l'annimation.
+	//			    _boBoucle : Si le sprite est en boucle donc qu'il ne recommence pas l'animation.
+	//				_uiNbrEtage : Le nombre d'étage que comporte le sprite.
+	//				_Renderer : Le renderer de la fenetre.
+	// Retour : Rien.
+	CSprite(SDL_Surface* _SurfaceSprite, SDL_Texture* _Texture, SDL_Rect _RectDestination, unsigned int _uiNbrFrames, unsigned int _uiDelay, bool _boBoucle, bool _boActif, unsigned int _uiNbrEtage) {
 
 		m_pSurfaceSprite = _SurfaceSprite;		// La texture de notre sprite est entrée en paramètre.
+
+		
+
+		m_pTextureSprite = _Texture;
 
 		m_pTimerDelay = new CTimer(_uiDelay);		// Le délai de notre minuterie est entré en paramètre.
 		m_pTimerDelay->Start();						// On démarre la minuterie.
@@ -60,9 +75,9 @@ public:
 	// Prends en paramètre le rendeur de la fenêtre.
 	void Render(SDL_Renderer* _Renderer, SDL_Rect _RectDestination) {
 		if (m_boActif) {
-			SDL_Texture* pTextureTmp = SDL_CreateTextureFromSurface(_Renderer, m_pSurfaceSprite);
-			SDL_RenderCopy(_Renderer, pTextureTmp, &m_RectSource, &_RectDestination);		// On rends le cadre actuel dans la fenêtre.
-			SDL_DestroyTexture(pTextureTmp);
+			
+			SDL_RenderCopy(_Renderer, m_pTextureSprite, &m_RectSource, &_RectDestination);		// On rends le cadre actuel dans la fenêtre.
+			
 		}
 
 	}
@@ -70,6 +85,7 @@ public:
 	// Paramètre : chrD : La direction du mouvement de l'annimation. Option : 'G' : gauche, 'D': droite.
 	//			   _uiAnnimation: L'annimation qu'on veut qui joue.
 	void ModifierAnnimation(void) {
+		//Dans ce cas c'est pour le saut.
 		if ((m_uiCurrentFrame == m_uiNbrFrames - 1) && (!m_boBoucle)) {
 			m_boActif = false;
 		}
@@ -79,11 +95,11 @@ public:
 			m_RectSource.y = m_uiAnimation * m_RectSource.h;
 
 
-			if (m_uiAnimation == 0)
+			if (m_uiAnimation == 0)			// Si c'est une animation qui va de gauche à droite.
 				m_uiCurrentFrame++;			// On va au prochain cadre.
 
-			else
-				m_uiCurrentFrame--;
+			else                            // Si c'est une animation qui va de droite à gauche.
+				m_uiCurrentFrame--;				
 
 			m_RectSource.x = (m_uiCurrentFrame % m_uiNbrFrames) * m_RectSource.w;		// La position de notre rectangle source se modifie pour englober le prochain cadre.
 
@@ -112,7 +128,8 @@ public:
 		return m_uiAnimation;
 
 	}
-
+	// Sert a definir quel annimation dans le sprite.
+	// _uiAnimation c'est sois 0 ou 1.
 	void DefinirAnimation(unsigned int _uiAnimation) {
 		m_uiAnimation = _uiAnimation;
 		if (m_uiAnimation == 0) {

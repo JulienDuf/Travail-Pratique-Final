@@ -1,5 +1,8 @@
-//Classe qui gere les packs de santé.
-//crée le 13 novembre par SAmuel Rambaud (Sam.Rambaud@outlook.com)
+/*
+420-202-RE : Travail final
+Classe qui gere les packs de santé.
+crée le 13 novembre par SAmuel Rambaud (Sam.Rambaud@outlook.com)
+*/
 
 
 class CHealthPack: public CPack{
@@ -40,8 +43,13 @@ public:
 
 	/*
 	calcul de la chute du pack au debut de partie
+	parametres:
+		_Y: composante y du vecteur du vent
+		_X: Composante x du vecteur du vent
 	*/
-	void ChuteDebut(){
-		m_pRectDestination.y += 15;
+	void ChuteDebut(int _Y, int _X){
+		m_pRectDestination.y += 35;
+		m_pRectDestination.y += _Y;
+		m_pRectDestination.x += _X;
 	}
 };

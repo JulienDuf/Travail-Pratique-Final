@@ -8,4 +8,5 @@ notre "stickman" qui court. Jeudi 6 nobembre 2014 ~1h. Ajout de classe et revisi
 descend en parachute. ~3h Création de l'inverse du sprite (annimation du bonhomme qui court vers la gauche). Résoudre des problèmes de code. Reconstruire la classe
 CSprite. Ajout des quelques classe restante comme CTool.Jeudi 13 novembre ~4h. J'ai travailler sur le sprite et sur la classe CSpite. À l'aide mon atelier 6 j'ai
 tester mes annimations. Mardi 18 novembre ~4h Travail sur la classe CSprite et ajout de la branche Mouvement afin de pouvoir ajouter mes modifications sur le 
-travail final.
+travail final. Mardi25 Novembre ~2h30 Travail sur le CSprite et CPlayer. Merge dans notre branche jeu. Test des collisions et réglage de bugs des collison avec
+les joueurs et la map.

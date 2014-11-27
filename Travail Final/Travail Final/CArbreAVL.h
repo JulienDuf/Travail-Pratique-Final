@@ -442,10 +442,10 @@ private:
 
 						else {
 							// Si l'élément est plus grand que son parent...
-							if (_pNoeud->ObtenirElement() > _pNoeud->ObtenirParent()->ObtenirID())
+							if (_pNoeud->ObtenirID() > _pNoeud->ObtenirParent()->ObtenirID())
 								ModificationIndiceEquilibreDroit(_pNoeud->ObtenirParent(), _boRetirerEnCours);
 							else
-								if (_pNoeud->ObtenirElement() < _pNoeud->ObtenirParent()->ObtenirID())
+								if (_pNoeud->ObtenirID() < _pNoeud->ObtenirParent()->ObtenirID())
 									ModificationIndiceEquilibreGauche(_pNoeud->ObtenirParent(), _boRetirerEnCours);
 
 						}

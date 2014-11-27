@@ -15,6 +15,8 @@ private:
 		m_iPositionAffichage, // Position de l'affichage lors qu'il y a une scrollbar par rapport à la vraie taille de la toolbar et non celle affichée.
 		m_uiMinimumSpace; // Espace minimum entre deux objets
 
+	bool m_boShow; // Booléen qui dit si la toolbar s'affiche.
+
 public:
 
 	// Constructeur de ToolBar...
@@ -28,6 +30,8 @@ public:
 	// Param7: Nombre de texture(objet) de la ToolBar.
 	// Param8: Textures des objets de la ToolBar.
 	CToolBar(SDL_Rect _RectDestination, SDL_Color _Color, SDL_Renderer* _pRenderer, unsigned int _uiObjectWidth, unsigned int _uiObjectHeight, unsigned int _uiMinimumSpace, unsigned int argc, ...) {
+
+		m_boShow = false;
 
 		m_RectToolBarDestination = _RectDestination;
 
@@ -50,14 +54,14 @@ public:
 		}
 		va_end(parametres);
 		
-		m_iPositionListe = argc + 1;
+		m_iPositionListe = argc;
 		m_pListeObjet->AllerATrieur(0);
 
 		// Initialisation de mon rect pour les textures individuelles...
 		// Si la ToolBar est pleine il y a ajout d'une barre de défilement...
 		if ((_uiObjectWidth + _uiMinimumSpace) * m_pListeObjet->ObtenirCompte() + _uiMinimumSpace > m_RectToolBarDestination.w) {
 			m_pScrollBar = new CScrollBar({ m_RectToolBarDestination.x, m_RectToolBarDestination.y + m_RectToolBarDestination.h - 18, m_RectToolBarDestination.w, 18 }, (_uiObjectWidth + _uiMinimumSpace) * m_pListeObjet->ObtenirCompte(), _pRenderer);
-			m_RectTextureDestination.y = (m_RectToolBarDestination.h / 2 - _uiObjectHeight / 2) - 9;
+			m_RectTextureDestination.y = (m_RectToolBarDestination.h / 2 - _uiObjectHeight / 2) - ((m_RectToolBarDestination.h - _uiObjectHeight) / 2);
 		}
 		else
 			m_RectTextureDestination.y = (m_RectToolBarDestination.h / 2 - _uiObjectHeight / 2);
@@ -76,95 +80,103 @@ public:
 	// Procédure permettant d'afficher la toolbar...
 	// Param1: Renderer pour afficher.
 	void ShowToolBar(SDL_Renderer* _pRenderer) {
-		
-		// Ajustement couleur sélection.
-		SDL_SetRenderDrawBlendMode(_pRenderer, SDL_BLENDMODE_BLEND);
-		SDL_SetRenderDrawColor(_pRenderer, 51, 153, 255, 100);
 
-		// Affichage de la ToolBar...
-		SDL_RenderCopy(_pRenderer, m_pTextureToolBar, nullptr, &m_RectToolBarDestination);
-		
-		SDL_Rect Recttmp; // Rect de destination.
-		// Boucle qui affiche toutes les textures représentant les objet de la toolbar...
-		for (int i = 0; i < m_pListeObjet->ObtenirCompte(); i++) {
-			// Affichage avec la scrollbar différent...
-			if (m_pScrollBar != nullptr) {
-				// Si la texture de la liste où je suis rendu à afficher est dans la position d'affichage... 
-				if ((m_RectTextureDestination.x >= m_iPositionAffichage) && (m_RectTextureDestination.x + m_RectTextureDestination.w) <= (m_iPositionAffichage + m_RectToolBarDestination.w)) {
-					Recttmp = { m_RectTextureDestination.x - m_iPositionAffichage + m_RectToolBarDestination.x, m_RectTextureDestination.y + m_RectToolBarDestination.y, m_RectTextureDestination.w, m_RectTextureDestination.h };
-					SDL_RenderCopy(_pRenderer, m_pListeObjet->ObtenirElementTrieur(), nullptr, &Recttmp);
+		if (m_boShow) {
+			// Ajustement couleur sélection.
+			SDL_SetRenderDrawBlendMode(_pRenderer, SDL_BLENDMODE_BLEND);
+			SDL_SetRenderDrawColor(_pRenderer, 51, 153, 255, 100);
+
+			// Affichage de la ToolBar...
+			SDL_RenderCopy(_pRenderer, m_pTextureToolBar, nullptr, &m_RectToolBarDestination);
+
+			SDL_Rect Recttmp; // Rect de destination.
+			// Boucle qui affiche toutes les textures représentant les objet de la toolbar...
+			for (int i = 0; i < m_pListeObjet->ObtenirCompte(); i++) {
+				// Affichage avec la scrollbar différent...
+				if (m_pScrollBar != nullptr) {
+					// Si la texture de la liste où je suis rendu à afficher est dans la position d'affichage... 
+					if ((m_RectTextureDestination.x >= m_iPositionAffichage) && (m_RectTextureDestination.x + m_RectTextureDestination.w) <= (m_iPositionAffichage + m_RectToolBarDestination.w)) {
+						Recttmp = { m_RectTextureDestination.x - m_iPositionAffichage + m_RectToolBarDestination.x, m_RectTextureDestination.y + m_RectToolBarDestination.y, m_RectTextureDestination.w, m_RectTextureDestination.h };
+						SDL_RenderCopy(_pRenderer, m_pListeObjet->ObtenirElementTrieur(), nullptr, &Recttmp);
+					}
+					else
+					{
+						int iW, iH;
+						SDL_QueryTexture(m_pListeObjet->ObtenirElementTrieur(), nullptr, nullptr, &iW, &iH);
+						SDL_Rect Recttmp2; // Rect source pour le cropage.
+						// Vérification si l'objet dépasse en partie à droite...
+						if ((m_RectTextureDestination.x <= m_iPositionAffichage + m_RectToolBarDestination.w) && (m_RectTextureDestination.x + m_RectTextureDestination.w > m_iPositionAffichage + m_RectToolBarDestination.w)) {
+							Recttmp = { m_RectTextureDestination.x - m_iPositionAffichage + m_RectToolBarDestination.x, m_RectTextureDestination.y + m_RectToolBarDestination.y, m_iPositionAffichage + m_RectToolBarDestination.w - m_RectTextureDestination.x, m_RectTextureDestination.h };
+							Recttmp2 = { 0, 0, Recttmp.w * iW / m_RectTextureDestination.w, iH };
+							SDL_RenderCopy(_pRenderer, m_pListeObjet->ObtenirElementTrieur(), &Recttmp2, &Recttmp);
+						}
+						else
+							// Vérification si l'objet dépasse en partie à gauche...
+						if ((m_RectTextureDestination.x + m_RectTextureDestination.w) >= m_iPositionAffichage && (m_RectTextureDestination.x < m_iPositionAffichage)) {
+							Recttmp = { m_RectToolBarDestination.x, m_RectToolBarDestination.y + m_RectTextureDestination.y, m_RectTextureDestination.x + m_RectTextureDestination.w - m_iPositionAffichage, m_RectTextureDestination.h };
+							Recttmp2 = { (m_RectTextureDestination.w - Recttmp.w)* iW / m_RectTextureDestination.w, 0, Recttmp.w * iW / m_RectTextureDestination.w, iH };
+							SDL_RenderCopy(_pRenderer, m_pListeObjet->ObtenirElementTrieur(), &Recttmp2, &Recttmp);
+						}
+					}
 				}
 				else
 				{
-					int iW, iH;
-					SDL_QueryTexture(m_pListeObjet->ObtenirElementTrieur(), nullptr, nullptr, &iW, &iH);
-					SDL_Rect Recttmp2; // Rect source pour le cropage.
-					// Vérification si l'objet dépasse en partie à droite...
-					if ((m_RectTextureDestination.x <= m_iPositionAffichage + m_RectToolBarDestination.w) && (m_RectTextureDestination.x + m_RectTextureDestination.w > m_iPositionAffichage + m_RectToolBarDestination.w)) {
-						Recttmp = { m_RectTextureDestination.x - m_iPositionAffichage + m_RectToolBarDestination.x, m_RectTextureDestination.y + m_RectToolBarDestination.y, m_iPositionAffichage + m_RectToolBarDestination.w - m_RectTextureDestination.x, m_RectTextureDestination.h };
-						Recttmp2 = { 0, 0, Recttmp.w * iW / m_RectTextureDestination.w, iH };
-						SDL_RenderCopy(_pRenderer, m_pListeObjet->ObtenirElementTrieur(), &Recttmp2, &Recttmp);
-					}
-					else
-					// Vérification si l'objet dépasse en partie à gauche...
-					if ((m_RectTextureDestination.x + m_RectTextureDestination.w) >= m_iPositionAffichage && (m_RectTextureDestination.x < m_iPositionAffichage)) {
-						Recttmp = { m_RectToolBarDestination.x, m_RectToolBarDestination.y + m_RectTextureDestination.y, m_RectTextureDestination.x + m_RectTextureDestination.w - m_iPositionAffichage, m_RectTextureDestination.h };
-						Recttmp2 = { (m_RectTextureDestination.w - Recttmp.w)* iW / m_RectTextureDestination.w, 0, Recttmp.w * iW / m_RectTextureDestination.w, iH };
-						SDL_RenderCopy(_pRenderer, m_pListeObjet->ObtenirElementTrieur(), &Recttmp2, &Recttmp);
-					}
+					Recttmp = { m_RectTextureDestination.x + m_RectToolBarDestination.x, m_RectTextureDestination.y + m_RectToolBarDestination.y, m_RectTextureDestination.w, m_RectTextureDestination.h };
+					SDL_RenderCopy(_pRenderer, m_pListeObjet->ObtenirElementTrieur(), nullptr, &Recttmp);
 				}
+				// Si l'objet est sélectionné...
+				if (i == m_iPositionListe) {
+					SDL_RenderFillRect(_pRenderer, &Recttmp);
+				}
+				// Prochaine image
+				m_pListeObjet->AllerSuivantTrieur();
+				m_RectTextureDestination.x += m_RectTextureDestination.w + m_uiMinimumSpace;
 			}
-			else
-			{
-				Recttmp = { m_RectTextureDestination.x + m_RectToolBarDestination.x, m_RectTextureDestination.y + m_RectToolBarDestination.y, m_RectTextureDestination.w, m_RectTextureDestination.h };
-				SDL_RenderCopy(_pRenderer, m_pListeObjet->ObtenirElementTrieur(), nullptr, &Recttmp);
-			}
-			// Si l'objet est sélectionné...
-			if (i == m_iPositionListe) {
-				SDL_RenderFillRect(_pRenderer, &Recttmp);
-			}
-			// Prochaine image
-			m_pListeObjet->AllerSuivantTrieur();
-			m_RectTextureDestination.x += m_RectTextureDestination.w + m_uiMinimumSpace;
-		}
-		m_RectTextureDestination.x = m_uiMinimumSpace; // Retour au début
+			m_RectTextureDestination.x = m_uiMinimumSpace; // Retour au début
 
-		// Affichage de la scrollbar...
-		if (m_pScrollBar != nullptr)
-			m_pScrollBar->ShowScrollBar(_pRenderer);
+			// Affichage de la scrollbar...
+			if (m_pScrollBar != nullptr)
+				m_pScrollBar->ShowScrollBar(_pRenderer);
+		}
 	}
 
 	// Procédure permettant de réagir aux événement de la toolbar(selection)...
 	// Param1: Event de SDL.
 	void ReactToEvent(SDL_Event* _pEvent) {
+		
+		if (m_boShow) {
+			// Mise à jour de la position d'affichage et des events de la scrollingbar...
+			m_iPositionAffichage = (float)m_pScrollBar->ReactToEvent(_pEvent);
 
-		// Mise à jour de la position d'affichage et des events de la scrollingbar...
-		m_iPositionAffichage = (float)m_pScrollBar->ReactToEvent(_pEvent);
+			// Switch pour gérer les événement de la toolbar...
+			switch (_pEvent->type) {
+			case SDL_MOUSEBUTTONDOWN: // Click droit souris.
+				// Vérification si le click de la souris est dans la toolbar...
+				if ((_pEvent->motion.x >= m_RectToolBarDestination.x && _pEvent->motion.x <= (m_RectToolBarDestination.x + m_RectToolBarDestination.w)) && (_pEvent->motion.y >= m_RectToolBarDestination.y && _pEvent->motion.y <= (m_RectToolBarDestination.y + m_RectToolBarDestination.h))) {
+					unsigned int uiX, uiY; // Positions X,Y pour la position de l'event click par rapport à la toolbar non pas par rapport à la window.
 
-		// Switch pour gérer les événement de la toolbar...
-		switch (_pEvent->type) {
-		case SDL_MOUSEBUTTONDOWN: // Click droit souris.
-			// Vérification si le click de la souris est dans la toolbar...
-			if ((_pEvent->motion.x >= m_RectToolBarDestination.x && _pEvent->motion.x <= (m_RectToolBarDestination.x + m_RectToolBarDestination.w)) && (_pEvent->motion.y >= m_RectToolBarDestination.y && _pEvent->motion.y <= (m_RectToolBarDestination.y + m_RectToolBarDestination.h))) {
-				unsigned int uiX, uiY; // Positions X,Y pour la position de l'event click par rapport à la toolbar non pas par rapport à la window.
+					// Ajustement du rectevent et de la position d'affichage si il y a une toolbar ou  non...
+					if (m_pScrollBar != nullptr)
+						uiX = _pEvent->motion.x - m_RectToolBarDestination.x + m_iPositionAffichage;
+					else
+						uiX = _pEvent->motion.x - m_RectToolBarDestination.x;
+					uiY = _pEvent->motion.y - m_RectToolBarDestination.y;
 
-				// Ajustement du rectevent et de la position d'affichage si il y a une toolbar ou  non...
-				if (m_pScrollBar != nullptr)
-					uiX = _pEvent->motion.x - m_RectToolBarDestination.x + m_iPositionAffichage;
-				else
-					uiX = _pEvent->motion.x - m_RectToolBarDestination.x;
-				uiY = _pEvent->motion.y - m_RectToolBarDestination.y;
-
-				// Vérification si le click est à la hauteur des textures dans la toolbar...
-				if (uiY >= m_RectTextureDestination.y && uiY <= (m_RectTextureDestination.y + m_RectTextureDestination.h)) {
-					m_iPositionListe = 0;
-					// Boucle d'incrémentation de la position de sélection dans la liste jusqu'à ce qu'il n'y ait plus de modulo à faire...
-					while (uiX >= (m_uiMinimumSpace + m_RectTextureDestination.w)) {
-						m_iPositionListe++;
-						uiX -= (m_uiMinimumSpace + m_RectTextureDestination.w);
+					// Vérification si le click est à la hauteur des textures dans la toolbar...
+					if (uiY >= m_RectTextureDestination.y && uiY <= (m_RectTextureDestination.y + m_RectTextureDestination.h)) {
+						m_iPositionListe = 0;
+						// Boucle d'incrémentation de la position de sélection dans la liste jusqu'à ce qu'il n'y ait plus de modulo à faire...
+						while (uiX >= (m_uiMinimumSpace + m_RectTextureDestination.w)) {
+							m_iPositionListe++;
+							uiX -= (m_uiMinimumSpace + m_RectTextureDestination.w);
+						}
+						// Si le click était entre des objets...
+						if (uiX <= m_uiMinimumSpace) {
+							m_iPositionListe = m_pListeObjet->ObtenirCompte() + 1; // Déselection
+						}
 					}
-					// Si le click était entre des objets...
-					if (uiX <= m_uiMinimumSpace) {
+					else
+					{
 						m_iPositionListe = m_pListeObjet->ObtenirCompte() + 1; // Déselection
 					}
 				}
@@ -172,12 +184,12 @@ public:
 				{
 					m_iPositionListe = m_pListeObjet->ObtenirCompte() + 1; // Déselection
 				}
+				break;
 			}
-			else
-			{
-				m_iPositionListe = m_pListeObjet->ObtenirCompte() + 1; // Déselection
-			}
-			break;
-		}	
+		}
+	}
+
+	void ReverseboShow() {
+		m_boShow = !m_boShow;
 	}
 };

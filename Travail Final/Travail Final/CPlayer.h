@@ -31,6 +31,8 @@ private:
 
 	CListeDC<CTools*>* m_pToolList;		// pointeur de liste d'outils qui pointe sur la liste d'outils de combat que l'utilisateur peut utiliser.
 
+	bool m_boStable;					// Si le joueur est stable
+
 public:
 
 	// Constructeur...
@@ -41,6 +43,7 @@ public:
 	// Retour: Rien (constructeur).
 	CPlayer(string _strEmplacementFichier, SDL_Rect _RectDestination, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), double _Physique(CVecteur2D* _VitesseMissile, SDL_Rect* _DestinationMissile), SDL_Renderer* _pRenderer) {
 
+		m_boStable = false;
 
 		string strEmplacementFichier = _strEmplacementFichier;
 
@@ -191,6 +194,11 @@ public:
 		m_RectPlayerDestination.x += _iY;
 	}
 
+	void ModifierStabiliteJoueur(bool _boStable) {
+
+		m_boStable = _boStable;
+	}
+
 	CSprite* ObtenirSpriteCourse(void) {
 
 		return m_pSpriteCourse;
@@ -249,4 +257,8 @@ public:
 		return m_RectParachuteDestination;
 	}
 
+	bool IsStable(void) {
+
+		return m_boStable;
+	}
 };

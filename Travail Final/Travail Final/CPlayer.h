@@ -243,4 +243,8 @@ public:
 		return m_RectParachuteDestination;
 	}
 
+	void DiminuerBarreVie(float _Diminution){
+		m_pBarreVie->DiminuerPourcentageVie(_Diminution);
+	}
+
 };

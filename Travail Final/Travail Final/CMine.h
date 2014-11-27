@@ -29,9 +29,8 @@ public:
 		m_boCollision = false;
 	}
 
-	/*void Use(CPlayer* _Player){
-		_Player->SetHealth((_Player->GetHealth())*0.25);
-	}*/
+	void Use(){
+	}
 
 
 	/*

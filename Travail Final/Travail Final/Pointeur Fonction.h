@@ -110,3 +110,42 @@ void MapDestruction(SDL_Surface* _pSDLSurfaceMap, SDL_Surface* _pSurfaceGabarie,
 	}
 
 }
+
+/*
+Fonction qui detecte si un personnage marche sur une mine ou un pack
+parametres:
+	_pTeamList = liste d'equipes pour obtenir les joueurs
+	_RectDestinationPack = position du pack sur la map
+	¸retour: true = une collision a lieu
+*/
+bool DetectionCollisionPack(CListeDC<CTeam*>* _pTeamList, SDL_Rect _RectDestinationPack){
+	_pTeamList->AllerDebut;
+	for (int i = 0; i < _pTeamList->ObtenirCompte(); i++){ //Parcours des equipes
+		CTeam* tempTeam = _pTeamList->ObtenirElementCurseur();
+		CListeDC<CPlayer*>* tempPlayerList = tempTeam->obtenirListeTeam();
+
+		for (int j = 0; j < tempPlayerList->ObtenirCompte(); j++){ //Parcours des personnages dans l'equipe
+			CPlayer* tempPlayer = tempPlayerList->ObtenirElementCurseur();
+			SDL_Rect tempPositionPlayer = tempPlayer->ObtenirRectDestination();
+
+			for (int y = tempPositionPlayer.y; y < tempPositionPlayer.y + tempPositionPlayer.h; y++) { //Verification des collisions
+				for (int x = tempPositionPlayer.x; x < tempPositionPlayer.x + tempPositionPlayer.w; x++) {
+					for (int y2 = _RectDestinationPack.y; y2 < _RectDestinationPack.y + _RectDestinationPack.h; y2++) {
+						for (int x2 = _RectDestinationPack.x; x2 < _RectDestinationPack.x + _RectDestinationPack.w; x2++) {
+							if ((x2 == x) && (y2 == y)){
+								return true;
+							}
+						}
+					}
+				}
+			}
+			tempPlayerList->AllerSuivantCurseur();
+		}
+		_pTeamList->AllerSuivantCurseur();
+	}
+}
+
+
+void DetectionRayonExplosion(){
+
+}

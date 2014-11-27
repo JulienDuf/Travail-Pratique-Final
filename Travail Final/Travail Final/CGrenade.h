@@ -1,5 +1,4 @@
 /*
-420-202-RE : Travail final
 Classe qui gere les grenades et leur rebondissement
 Crée par Samuel Rambaud le 25 novembre 2014
 */

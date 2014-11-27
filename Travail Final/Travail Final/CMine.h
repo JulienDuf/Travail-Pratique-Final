@@ -1,8 +1,5 @@
-/*
-420-202-RE : Travail final
-Classe qui gere les mines.
-crée le 13 novembre par Samuel Rambaud (Sam.Rambaud@outlook.com)
-*/
+//Classe qui gere les mines.
+//crée le 13 novembre par Samuel Rambaud (Sam.Rambaud@outlook.com)
 
 class CMine : public CPack{
 private:
@@ -38,13 +35,8 @@ public:
 	
 	/*
 	Calcule la chute de la mine lors de son apparition.
-	parametres:
-		_Y: composante y du vecteur du vent
-		_X: Composante x du vecteur du vent
 	*/
-	void ChuteDebut(int _Y, int _X){
-		m_pRectDestination.y += 35;
-		m_pRectDestination.y += _Y;
-		m_pRectDestination.x += _X;
+	void ChuteDebut(){
+		m_pRectDestination.y += 15;
 	}
 };

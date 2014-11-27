@@ -1,5 +1,4 @@
 /*
-420-202-RE : Travail final
 Classe qui gere les armes de melee
 Crée par Samuel Rambaud le 25 novembre 2014
 */

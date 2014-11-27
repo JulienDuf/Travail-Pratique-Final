@@ -429,12 +429,26 @@ private:
 				{
 					// Voir si l'indice d'équilibre s'est rééquilibré...
 					if (_pNoeud->ObtenirIE() != 0 && _pNoeud->ObtenirParent() != nullptr) {
-						// Si l'élément est plus grand que son parent...
-						if (_pNoeud->ObtenirElement() > _pNoeud->ObtenirParent()->ObtenirElement())
-							ModificationIndiceEquilibreDroit(_pNoeud->ObtenirParent(), _boRetirerEnCours);
-						else
-						if (_pNoeud->ObtenirElement() < _pNoeud->ObtenirParent()->ObtenirElement())
-							ModificationIndiceEquilibreGauche(_pNoeud->ObtenirParent(), _boRetirerEnCours);
+
+						if (_pNoeud->ObtenirID() == "") {
+							// Si l'élément est plus grand que son parent...
+							if (_pNoeud->ObtenirElement() > _pNoeud->ObtenirParent()->ObtenirElement())
+								ModificationIndiceEquilibreDroit(_pNoeud->ObtenirParent(), _boRetirerEnCours);
+							else
+								if (_pNoeud->ObtenirElement() < _pNoeud->ObtenirParent()->ObtenirElement())
+									ModificationIndiceEquilibreGauche(_pNoeud->ObtenirParent(), _boRetirerEnCours);
+
+						}
+
+						else {
+							// Si l'élément est plus grand que son parent...
+							if (_pNoeud->ObtenirElement() > _pNoeud->ObtenirParent()->ObtenirID())
+								ModificationIndiceEquilibreDroit(_pNoeud->ObtenirParent(), _boRetirerEnCours);
+							else
+								if (_pNoeud->ObtenirElement() < _pNoeud->ObtenirParent()->ObtenirID())
+									ModificationIndiceEquilibreGauche(_pNoeud->ObtenirParent(), _boRetirerEnCours);
+
+						}
 					}
 				}
 			}

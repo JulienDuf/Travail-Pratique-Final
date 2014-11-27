@@ -34,12 +34,15 @@ public:
 		m_pRectDestination.y = 0;
 		m_pRectDestination.x = 0;
 	}
-	/*
-	Utilisation de l'arme de melee
-	parametre:
-	_User = pointeur sur le lanceur de grenade
-	*/
-	void Use(CPlayer* _User){
+	
+	void ShowTools(SDL_Renderer* _pRenderer) {
+
 
 	}
+
+	void ReactToEvent(SDL_Event* _pEvent) {
+
+
+	}
+
 };

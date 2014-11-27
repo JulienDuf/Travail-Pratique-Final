@@ -83,6 +83,18 @@
     <ClInclude Include="CBarrePuissance.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+<<<<<<< HEAD
+    <ClInclude Include="Pointeur Fonction.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="CToolBar.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="CScrollBar.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="CBarreVie.h">
+=======
     <ClInclude Include="CHealthPack.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
@@ -93,6 +105,7 @@
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="CMelee.h">
+>>>>>>> origin/Branche-outil-le-Retour
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>

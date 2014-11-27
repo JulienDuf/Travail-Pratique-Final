@@ -71,6 +71,7 @@
   <ItemGroup>
     <ClInclude Include="CArbreAVL.h" />
     <ClInclude Include="CBarrePuissance.h" />
+    <ClInclude Include="CBarreVie.h" />
     <ClInclude Include="CButton.h" />
     <ClInclude Include="CControl.h" />
     <ClInclude Include="CGame.h" />
@@ -88,12 +89,15 @@
     <ClInclude Include="CNoeudArbreAVL.h" />
     <ClInclude Include="CPack.h" />
     <ClInclude Include="CPlayer.h" />
+    <ClInclude Include="CScrollBar.h" />
     <ClInclude Include="CSprite.h" />
     <ClInclude Include="CTeam.h" />
     <ClInclude Include="CTimer.h" />
     <ClInclude Include="CTool.h" />
+    <ClInclude Include="CToolBar.h" />
     <ClInclude Include="CVent.h" />
     <ClInclude Include="CWindow.h" />
+    <ClInclude Include="Pointeur Fonction.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -17,11 +17,10 @@ private:
 	SDL_Surface* m_pSDLSurfaceMap;					// Pointeur de Surface SDL qui pointe sur la surface qui représente l'avant plan de la carte de jeu.
 	SDL_Rect m_RectPositionImages;					// Rect représentant la position de la map dans l'écran.
 	CListeDC<CPack*>* m_pPackList;					// Liste des packs présents dans la map.
-	SDL_Surface* m_pSurfaceGabarie;					// Surface ou est stocké les gabaries pour la destruction.
 	CVent* m_pVent;									// Classe qui donne la force et la direction du vent.
 	//CComboBox* m_pComboBoxChoixOutils;            // Le ComboBox où le joueur choisi son outils pour son tour.
 
-	int m_iGravite;									// La gravité de la map.
+	CVecteur2D* m_VecteurGravite;					// La gravité de la map.
 	int m_iVentMax;									// Le vent max de la map.
 
 public:
@@ -32,7 +31,7 @@ public:
 	// Param3: _pSDLTextureMap, pointe sur la texture qui représente l'avant plan de la carte de jeu.
 	// Param4: _pVent, Classe qui donne la force et la direction du vent.
 	// Param5: Renderer.
-	CMap(string _strEmplacementMap, SDL_Rect _RectPositionImages, SDL_Surface* _pSurfaceGabarie, CVent* _pVent, SDL_Renderer* _pRenderer) {
+	CMap(string _strEmplacementMap, string _strEmplacementFichier, SDL_Rect _RectPositionImages, CVent* _pVent, SDL_Renderer* _pRenderer, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY)) {
 		
 		// Variables temporaires...
 		string strTmp[5];
@@ -41,8 +40,6 @@ public:
 		ifstream FichierMap;
 		string strEmplacement;
 		int iNombreMines;
-		
-		m_pSurfaceGabarie = _pSurfaceGabarie;
 
 		m_pVent = _pVent;
 
@@ -59,6 +56,7 @@ public:
 		m_pSDLSurfaceMap = IMG_Load(strEmplacement.c_str());
 
 		// Ouverture du fichier...
+		strEmplacement = _strEmplacementMap;
 		strEmplacement.append("\\map.txt");
 		FichierMap.open(strEmplacement);
 
@@ -69,7 +67,7 @@ public:
 
 			FichierMap.getline(chrTmp, 50);
 			strTampo = chrTmp[21];
-			m_iGravite = SDL_atoi(strTampo.c_str());
+			m_VecteurGravite = new CVecteur2D(SDL_atof(strTampo.c_str()), 90);
 			FichierMap.getline(chrTmp, 50);
 
 			FichierMap.getline(chrTmp, 50);
@@ -80,7 +78,7 @@ public:
 			FichierMap.getline(chrTmp, 50);
 
 			FichierMap.getline(chrTmp, 50);
-			strTampo = chrTmp[21];
+			strTampo = chrTmp[28];
 			iNombreMines = SDL_atoi(strTampo.c_str());
 
 			FichierMap.close();
@@ -88,61 +86,9 @@ public:
 
 		for (int i = iNombreMines; i > 0; i--) {
 
+			m_pPackList->AjouterFin(new CMine(_strEmplacementFichier, _pRenderer, _MapDestruction, _CollisionObjetMap));
 
 		}
-	}
-
-	// Procédure qui détruit la carte de jeu à l'endroit approprié.
-	// Paramètre: _iRayon, variable entière qui contient la longueur du rayon du cercle dans lequel la carte de jeu sera détruite.
-	// Paramètre: _iX, La position en X ou la carte sera détruite.
-	// Paramètre: _iY, La position en Y ou la carte sera détruite.
-	// Retour: Rien.
-	void MapDestruction(int _iRayon, int _iX, int _iY) {
-
-		// Variables représentant la position dans la map.
-		int iX =_iX - _iRayon;
-		int iY = _iY - _iRayon;
-
-		SDL_Rect RectSource; // Source du gabarie.
-
-		// Selon le rayon mis en paramètre...
-		switch (_iRayon) {
-
-		// Si le rayon est de 50 pixels.
-		case 45:
-			RectSource = { 0, 0, m_pSurfaceGabarie->h, m_pSurfaceGabarie->h };
-			break;
-
-		// Si le rayon est de 50 pixels.
-		case 50:
-			RectSource = { 1 * m_pSurfaceGabarie->h, 0, m_pSurfaceGabarie->h, m_pSurfaceGabarie->h };
-			break;
-
-		// Si le rayon est de 60 pixels.
-		case 60:
-			RectSource = { 2 * m_pSurfaceGabarie->h, 0, m_pSurfaceGabarie->h, m_pSurfaceGabarie->h };
-			break;
-		}
-
-		// Pour toute la grandeur du gabarie...
-		for (int y = 0; y < _iRayon * 2; y++) {
-			for (int x = 0; x < _iRayon * 2; x++) {
-
-				// Si le point est dans la map...
-				if (iX > 0 && iY > 0) {
-
-					// Si le pixel du gabarie n'est pas en blanc, remplace le pixel de la map en transparent.
-					if (((unsigned int*)m_pSurfaceGabarie->pixels)[y * m_pSurfaceGabarie->w + x] != BLANC32BIT)
-						((unsigned int*)m_pSDLSurfaceMap->pixels)[iY * m_pSDLSurfaceMap->w + iX] = TRANSPARENCE32BIT;
-
-					iX++; // Augmente la position en X.
-				}
-			}
-
-			iY++; // Augmente la position en Y.
-			iX = _iX - _iRayon; // Remet la position en X au départ.
-		}
-
 	}
 
 
@@ -174,41 +120,14 @@ public:
 			
 	}
 
-	// Fonction qui retourne la position d'une collision.
-	// Paramètre: _pSDLSurfacecollision, pointe vers la surface avec laquelle on veut vérifier les collisions avec la map.
-	// Paramètre: _SDLRectCollision, rectangle qui encadre l'endroit ou l'on veut vérifier les collisions sur la map. (ex: rectangle destination d'un sprite.)
-	// Paramètre: _SDLRectSource, rectangle qui encadre la position sur la surface ou l'on veut vérifier les collisions (ex : rectangle source d'un sprite.)
-	// Paramètre: _uiXMap, position en x dans la map ou la collision a lieu.
-	// Paramètre: _uiYMap, position en y dans la map ou la collision a lieu.
-	// Paramètre: _uiXRectCollision, Position en x dans le rectangle de collision ou la collision a eu lieu.
-	// Paramètre: _uiYRectCollision, position en y dans le rectangle de collision ou la collision a eu lieu.
-	// Retour: Rien, mais les positions en x et en y de la collision seront stockés dans les 4 paramètres écrits plus haut.
-	void VerifierCollisionMap(SDL_Surface* _pSDLSurfaceCollision, SDL_Rect _SDLRectCollision,SDL_Rect _SDLRectSource, unsigned int _uiXMap, unsigned int _uiYMap, unsigned int _uiXRectCollision, unsigned int _uiYRectCollision) {
+	SDL_Surface* ObtenirSurfaceMap(void) {
 
-		_uiXMap = 0;
-		_uiYMap = 0;
-		_uiXRectCollision = 0;
-		_uiYRectCollision = 0;
-
-		for (int y = _SDLRectCollision.h; y > 0; y--) {				// On parcours les pixels dans le rectangle collision en y à l'envers.
-
-			for (int x = _SDLRectCollision.w; x > 0; x--) {			// On parcours les pixels dans le rectangle collision en x à l'envers.
-
-				if ((((unsigned int*)m_pSDLSurfaceMap->pixels)[_SDLRectCollision.x + x * y] != TRANSPARENCE32BIT) && (((unsigned int*)_pSDLSurfaceCollision->pixels)[_SDLRectSource.x + x * y] != TRANSPARENCE32BIT)) {			// Si il y a une collision entre les pixels non-transparents de la map et les pixels non-transparents du joueur...
-
-					_uiXMap = _SDLRectCollision.x + x;		// On stocke la position de la collision dans les variables adéquates.
-					_uiYMap = _SDLRectCollision.y + y;
-					_uiXRectCollision = x;
-					_uiYRectCollision = y;
-
-				}
-
-			}
-
-		}
-
+		return m_pSDLSurfaceMap;
 
 	}
 
+	CVecteur2D* ObtenirGravite(void) {
 
+		return m_VecteurGravite;
+	}
 };

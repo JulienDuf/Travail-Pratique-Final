@@ -51,7 +51,7 @@ public:
 
 			pPlayer = m_pPlayerList->ObtenirElementCurseur();
 
-			if (pPlayer->ObtenirSpriteRepos()->IsActif()) {
+			if (pPlayer->ObtenirSpriteRepos()->IsActif() && !pPlayer->IsStable()) {
 				RectPlayer = pPlayer->ObtenirRectDestination();
 				RectPlayer.y += 9.8;
 				if (!m_pVerifierCollisionJoueurMap(pPlayer, RectPlayer, &_boCorps, &_boPieds, &_uiXMap, &_uiYMap))
@@ -59,8 +59,10 @@ public:
 
 				else {
 
-					RectPlayer.y -= (RectPlayer.h - _uiYMap);
-					pPlayer->ModifierRectDestination(RectPlayer);
+						RectPlayer.y -= (RectPlayer.h - _uiYMap);
+						pPlayer->ModifierRectDestination(RectPlayer);
+						pPlayer->ModifierStabiliteJoueur(true);
+					
 				}
 
 

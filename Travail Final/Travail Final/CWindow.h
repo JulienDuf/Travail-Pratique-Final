@@ -13,6 +13,8 @@ private:
 	SDL_Window* m_pSDLWindow; // La fenetre.
 	SDL_Renderer* m_pSDLRenderer; // Renderer.
 	CGame* m_pGame; // La partie qui sera dans la fenêtre.
+	int m_iFrame; // Frame.
+	CTimer* pTimerFrame;
 
 public:
 
@@ -25,6 +27,10 @@ public:
 		m_pArbreMenu = new CArbreAVL<CMenu*>();
 
 		SDL_SetRenderDrawColor(m_pSDLRenderer, 255,255,255,255);
+
+		pTimerFrame = new CTimer(1000);
+		m_iFrame = 0;
+		pTimerFrame->Start();
 	}
 
 	// Destructeur ...
@@ -72,12 +78,21 @@ public:
 	void Rafraichir(void) {
 		SDL_RenderClear(m_pSDLRenderer);
 
+		if (pTimerFrame->IsDone()) {
+
+			char chr[50];
+			SDL_SetWindowTitle(m_pSDLWindow, SDL_itoa(m_iFrame, chr, 10));
+			m_iFrame = 0;
+			pTimerFrame->Start();
+		}
+
 		if (m_pGame != nullptr)
 			m_pGame->AfficherGame(m_pSDLRenderer);
 
 		m_pArbreMenu->ParcoursMenu(m_pSDLRenderer);
 
 		SDL_RenderPresent(m_pSDLRenderer); // Renderer.
+		m_iFrame++;
 	}
 
 	void FinDePartie(void) {

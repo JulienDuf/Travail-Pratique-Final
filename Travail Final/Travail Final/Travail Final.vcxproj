@@ -95,6 +95,7 @@
     <ClInclude Include="CTimer.h" />
     <ClInclude Include="CTool.h" />
     <ClInclude Include="CToolBar.h" />
+    <ClInclude Include="CVecteur2D.h" />
     <ClInclude Include="CVent.h" />
     <ClInclude Include="CWindow.h" />
     <ClInclude Include="Pointeur Fonction.h" />

@@ -28,8 +28,7 @@ public:
 	// Param2: L'orientation du vecteur.
 	CVecteur2D(float _fNorme, float _fOrientation) {
 
-		m_iComposanteX = _fNorme * cosf((M_PI / 180) * _fOrientation);
-		m_iComposanteY = _fNorme * sinf((M_PI / 180) * _fOrientation);
+		ModifierVecteur(_fNorme, _fOrientation);
 	}
 
 	// Redéfinition de l'opérateur += d'un vecteur.
@@ -41,6 +40,12 @@ public:
 		m_iComposanteY += _VecteurB.m_iComposanteY;
 
 	}
+	void ModifierVecteur(float _fNorme, float _fOrientation) {
+
+		m_iComposanteX = _fNorme * cosf((M_PI / 180) * _fOrientation);
+		m_iComposanteY = _fNorme * sinf((M_PI / 180) * _fOrientation);
+	}
+
 
 	int ObtenirComposanteX(void) {
 

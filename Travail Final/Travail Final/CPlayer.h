@@ -33,6 +33,8 @@ private:
 
 	bool m_boStable;					// Si le joueur est stable
 
+	CVecteur2D* VecteurVitesse;			// Vitesse.
+
 public:
 
 	// Constructeur...
@@ -100,6 +102,8 @@ public:
 
 		m_pBarreVie = new CBarreVie(_strEmplacementFichier, { _RectDestination.x, _RectDestination.y - 2, 0, 0 }, _pRenderer);
 
+		VecteurVitesse = 0;
+
 	}
 
 	// Procédure qui affiche le joueur.
@@ -119,6 +123,7 @@ public:
 					m_pSpriteCourse->DefinirActif(true);
 					m_pSpriteRepos->DefinirAnimation(0);
 					m_pSpriteRepos->DefinirActif(false);			// Il n'est plus au repos.
+					VecteurVitesse->ModifierVecteur(20, 0);
 				}
 
 				
@@ -130,6 +135,7 @@ public:
 					m_pSpriteCourse->DefinirActif(true);
 					m_pSpriteRepos->DefinirAnimation(1);
 					m_pSpriteRepos->DefinirActif(false);			// Il n'est plus au repos.
+					VecteurVitesse->ModifierVecteur(20, 180);
 				}
 				break;
 
@@ -137,12 +143,15 @@ public:
 				m_pSpriteRepos->DefinirActif(false);
 				m_pSpriteCourse->DefinirActif(false);
 				m_pSpriteSaut->DefinirActif(true);
+				VecteurVitesse->ModifierVecteur(20, 90);
 
 				
 				break;
 			}
 			break;
 		case SDL_KEYUP:
+			VecteurVitesse->ModifierVecteur(0, 0);
+			m_boStable = true;
 			m_pSpriteCourse->DefinirActif(false);					// Le sprite ne court plus.
 			if (!m_pSpriteSaut->IsActif())
 				m_pSpriteRepos->DefinirActif(true);
@@ -260,5 +269,9 @@ public:
 	bool IsStable(void) {
 
 		return m_boStable;
+	}
+
+	CVecteur2D* ObtenirVecteurVitesse(void) {
+		return VecteurVitesse;
 	}
 };

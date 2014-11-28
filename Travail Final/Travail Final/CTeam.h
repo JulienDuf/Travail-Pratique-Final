@@ -98,4 +98,7 @@ public:
 
 	}
 
+	bool _VerifierCollisionJoueurMap(CPlayer* _pPlayer, SDL_Rect _RectPlayer, bool* _boCollisionCorps, bool* _boCollisionPieds, unsigned int* _uiXMap, unsigned int* _uiYMap) {
+		return m_pVerifierCollisionJoueurMap;
+	}
 };

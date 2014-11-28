@@ -34,6 +34,18 @@ public:
 
 	}
 
+	void PhysiquePlayer(void) {
+		CPlayer* pPlayerActif = m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif();
+		SDL_Rect Recttmp = pPlayerActif->ObtenirRectDestination();
+		bool boCorps;
+		bool boPied;
+		if (!pPlayerActif->IsStable()) {
+			Recttmp.x += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX();
+			Recttmp.y += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY();
+			//m_pTeamList->ObtenirElementCurseur()->_VerifierCollisionJoueurMap(pPlayerActif,Recttmp,&boCorps,&boPied,)
+			//pPlayerActif->ModifierRectDestination(
+		}
+	}
 	CMap* ObtenirMap(void) {
 
 		return m_pGameMap;

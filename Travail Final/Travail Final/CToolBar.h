@@ -145,8 +145,6 @@ public:
 	void ReactToEvent(SDL_Event* _pEvent) {
 		
 		if (m_boShow) {
-			// Mise à jour de la position d'affichage et des events de la scrollingbar...
-			m_iPositionAffichage = (float)m_pScrollBar->ReactToEvent(_pEvent);
 
 			// Switch pour gérer les événement de la toolbar...
 			switch (_pEvent->type) {
@@ -156,8 +154,11 @@ public:
 					unsigned int uiX, uiY; // Positions X,Y pour la position de l'event click par rapport à la toolbar non pas par rapport à la window.
 
 					// Ajustement du rectevent et de la position d'affichage si il y a une toolbar ou  non...
-					if (m_pScrollBar != nullptr)
+					if (m_pScrollBar != nullptr) {
+						// Mise à jour de la position d'affichage et des events de la scrollingbar...
+						m_iPositionAffichage = (float)m_pScrollBar->ReactToEvent(_pEvent);
 						uiX = _pEvent->motion.x - m_RectToolBarDestination.x + m_iPositionAffichage;
+					}
 					else
 						uiX = _pEvent->motion.x - m_RectToolBarDestination.x;
 					uiY = _pEvent->motion.y - m_RectToolBarDestination.y;

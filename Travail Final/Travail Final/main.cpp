@@ -132,17 +132,20 @@ bool VerifierCollisionJoueurMap(CPlayer* _pPlayer, SDL_Rect _RectPlayer, bool* _
 	*_pboCollisionCorps = false;
 	*_pboCollisionPieds = false;
 
-	for (unsigned int y = 0; y < TmpSDLRectPlayerHitboxPieds.h && !_pboCollisionPieds; y++) {				// On parcours les pixels dans le rectangle collision en y à l'envers.
+	for (unsigned int y = 0; y < TmpSDLRectPlayerHitboxPieds.h && !*_pboCollisionPieds; y++) {				// On parcours les pixels dans le rectangle collision en y à l'envers.
 
-		for (unsigned int x = 0; x < TmpSDLRectPlayerHitboxPieds.w && !_pboCollisionPieds; x++) {			// On parcours les pixels dans le rectangle collision en x à l'envers.
+		for (unsigned int x = 0; x < TmpSDLRectPlayerHitboxPieds.w && !*_pboCollisionPieds; x++) {			// On parcours les pixels dans le rectangle collision en x à l'envers.
 
 				if ((((unsigned int*)pTmpSDLSurfaceMap->pixels)[(TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerHitboxPieds.x + x) + (TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerHitboxPieds.y + y) * pTmpSDLSurfaceMap->w] != 0) && (((unsigned int*)pTmpSDLSurfacePlayer->pixels)[(TmpSDLRectPlayerSource.x + TmpSDLRectPlayerHitboxPieds.x + x) + (TmpSDLRectPlayerSource.y + TmpSDLRectPlayerHitboxPieds.y + y) * pTmpSDLSurfacePlayer->w] != 0)) {			// Si il y a une collision entre les pixels non-transparents de la map et les pixels non-transparents du joueur...
 
-					*_puiXMap = TmpSDLRectPlayerHitboxPieds.x + x;		// On stocke la position de la collision dans les variables adéquates.
-					*_puiYMap = TmpSDLRectPlayerHitboxPieds.y + y;
+					if (!*_pboCollisionPieds) {
 
-					*_pboCollisionPieds = true;
-					return true;
+						*_puiXMap = TmpSDLRectPlayerHitboxPieds.x + x;		// On stocke la position de la collision dans les variables adéquates.
+						*_puiYMap = TmpSDLRectPlayerHitboxPieds.y + y;
+
+						*_pboCollisionPieds = true;
+
+					}
 				
 			}
 
@@ -156,8 +159,8 @@ bool VerifierCollisionJoueurMap(CPlayer* _pPlayer, SDL_Rect _RectPlayer, bool* _
 
 			if ((((unsigned int*)pTmpSDLSurfaceMap->pixels)[(TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerHitboxCorps.x + x) + (TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerHitboxCorps.y + y) * pTmpSDLSurfaceMap->w] != TRANSPARENCE32BIT) && (((unsigned int*)pTmpSDLSurfacePlayer->pixels)[(TmpSDLRectPlayerSource.x + TmpSDLRectPlayerHitboxCorps.x + x) + (TmpSDLRectPlayerSource.y + TmpSDLRectPlayerHitboxCorps.y + y) * pTmpSDLSurfacePlayer->w] != TRANSPARENCE32BIT )) {			// Si il y a une collision entre les pixels non-transparents de la map et les pixels non-transparents du joueur...
 
-				*_puiXMap = TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerHitboxCorps.x + x;		// On stocke la position de la collision dans les variables adéquates.
-				*_puiYMap = TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerHitboxCorps.y + y;
+				//*_puiXMap = TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerHitboxCorps.x + x;		// On stocke la position de la collision dans les variables adéquates.
+				//*_puiYMap = TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerHitboxCorps.y + y;
 
 				*_pboCollisionCorps = true;
 

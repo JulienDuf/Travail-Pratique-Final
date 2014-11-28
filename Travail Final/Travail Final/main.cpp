@@ -17,6 +17,7 @@ using namespace std;
 #include "CButton.h"
 #include "CLabel.h"
 #include "CMenu.h"
+#include "CGestionaire.h"
 #include "CScrollBar.h"
 #include "CToolBar.h"
 #include "CBarrePuissance.h"
@@ -35,7 +36,6 @@ using namespace std;
 #include "CGame.h"
 #include "CWindow.h"
 #include "CLabelLeftRight.h"
-#include "CGestionaire.h"
 
 // Variables...
 bool boExecution; // Variable de la boucle principale du programme.
@@ -57,15 +57,26 @@ SDL_Color CouleurTexte; // La couleur du texte.
 
 CTimer* pTimerPhysique;
 
+// Fonction convertissant en angle de degré à radian.
+// En entrée:
+// Param1: L'angle à convertir.
+// En sortie: L'angle converti.
+float DegtoRad(float _fAngle) {
+
+	return (M_PI / 180) * _fAngle;
+}
+
+
+// Pointeurs de fonctions pour les classes [
 
 // Fonction qui retourne la position d'une collision.
-// Paramètre: _pSDLSurfacecollision, pointe vers la surface avec laquelle on veut vérifier les collisions avec la map.
-// Paramètre: _SDLRectCollision, rectangle qui encadre l'endroit ou l'on veut vérifier les collisions sur la map. (ex: rectangle destination d'un sprite.)
-// Paramètre: _SDLRectSource, rectangle qui encadre la position sur la surface ou l'on veut vérifier les collisions (ex : rectangle source d'un sprite.)
+// Paramètre: _pPlayer, joueur pour lequel on vérifie les collisions avec la carte de jeu
+// Paramètre: _RectPlayer, rectangle qui encadre l'endroit ou l'on veut vérifier les collisions sur la map. (ex: Prochain rectangle destination d'un player.)
+// Paramètre: _pboCollisionCorps, rectangle qui encadre la position sur la surface ou l'on veut vérifier les collisions (ex : rectangle source d'un sprite.)
 // Paramètre: _uiXMap, position en x dans la map ou la collision a lieu.
 // Paramètre: _uiYMap, position en y dans la map ou la collision a lieu.
 // Retour: Rien, mais les positions en x et en y de la collision seront stockés dans les 4 paramètres écrits plus haut.
-bool VerifierCollisionJoueurMap(CPlayer* _pPlayer, SDL_Rect _RectPlayer, bool* _boCollisionCorps, bool* _boCollisionPieds, unsigned int* _uiXMap, unsigned int* _uiYMap) {
+bool VerifierCollisionJoueurMap(CPlayer* _pPlayer, SDL_Rect _RectPlayer, bool* _pboCollisionCorps, bool* _pboCollisionPieds, unsigned int* _puiXMap, unsigned int* _puiYMap) {
 
 	SDL_Surface* pTmpSDLSurfaceMap = pWindowJeu->ObtenirGame()->ObtenirMap()->ObtenirSurfaceMap();
 	SDL_Surface* pTmpSDLSurfacePlayer = nullptr;
@@ -118,23 +129,23 @@ bool VerifierCollisionJoueurMap(CPlayer* _pPlayer, SDL_Rect _RectPlayer, bool* _
 		TmpSDLRectPlayerHitboxCorps = _pPlayer->ObtenirHitboxCorpsGauche();
 
 
-	*_boCollisionCorps = false;
-	*_boCollisionPieds = false;
+	*_pboCollisionCorps = false;
+	*_pboCollisionPieds = false;
 
-	for (unsigned int y = 0; y < TmpSDLRectPlayerHitboxPieds.h; y++) {				// On parcours les pixels dans le rectangle collision en y à l'envers.
+	for (unsigned int y = 0; y < TmpSDLRectPlayerHitboxPieds.h && !*_pboCollisionPieds; y++) {				// On parcours les pixels dans le rectangle collision en y à l'envers.
 
-		for (unsigned int x = 0; x < TmpSDLRectPlayerHitboxPieds.w; x++) {			// On parcours les pixels dans le rectangle collision en x à l'envers.
+		for (unsigned int x = 0; x < TmpSDLRectPlayerHitboxPieds.w && !*_pboCollisionPieds; x++) {			// On parcours les pixels dans le rectangle collision en x à l'envers.
 
 				if ((((unsigned int*)pTmpSDLSurfaceMap->pixels)[(TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerHitboxPieds.x + x) + (TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerHitboxPieds.y + y) * pTmpSDLSurfaceMap->w] != 0) && (((unsigned int*)pTmpSDLSurfacePlayer->pixels)[(TmpSDLRectPlayerSource.x + TmpSDLRectPlayerHitboxPieds.x + x) + (TmpSDLRectPlayerSource.y + TmpSDLRectPlayerHitboxPieds.y + y) * pTmpSDLSurfacePlayer->w] != 0)) {			// Si il y a une collision entre les pixels non-transparents de la map et les pixels non-transparents du joueur...
-					unsigned int i = ((unsigned int*)pTmpSDLSurfaceMap->pixels)[(TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerHitboxPieds.x + x) + (TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerHitboxPieds.y + y) * pTmpSDLSurfaceMap->w];
-					unsigned int i2 = ((unsigned int*)pTmpSDLSurfacePlayer->pixels)[(TmpSDLRectPlayerSource.x + TmpSDLRectPlayerHitboxPieds.x + x) + (TmpSDLRectPlayerSource.y + TmpSDLRectPlayerHitboxPieds.y + y) * pTmpSDLSurfacePlayer->w];
 
+					if (!*_pboCollisionPieds) {
 
-					*_uiXMap = TmpSDLRectPlayerHitboxPieds.x + x;		// On stocke la position de la collision dans les variables adéquates.
-					*_uiYMap = TmpSDLRectPlayerHitboxPieds.y + y;
+						*_puiXMap = TmpSDLRectPlayerHitboxPieds.x + x;		// On stocke la position de la collision dans les variables adéquates.
+						*_puiYMap = TmpSDLRectPlayerHitboxPieds.y + y;
 
-					*_boCollisionPieds = true;
-					return true;
+						*_pboCollisionPieds = true;
+
+					}
 				
 			}
 
@@ -148,10 +159,10 @@ bool VerifierCollisionJoueurMap(CPlayer* _pPlayer, SDL_Rect _RectPlayer, bool* _
 
 			if ((((unsigned int*)pTmpSDLSurfaceMap->pixels)[(TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerHitboxCorps.x + x) + (TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerHitboxCorps.y + y) * pTmpSDLSurfaceMap->w] != TRANSPARENCE32BIT) && (((unsigned int*)pTmpSDLSurfacePlayer->pixels)[(TmpSDLRectPlayerSource.x + TmpSDLRectPlayerHitboxCorps.x + x) + (TmpSDLRectPlayerSource.y + TmpSDLRectPlayerHitboxCorps.y + y) * pTmpSDLSurfacePlayer->w] != TRANSPARENCE32BIT )) {			// Si il y a une collision entre les pixels non-transparents de la map et les pixels non-transparents du joueur...
 
-				*_uiXMap = TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerHitboxCorps.x + x;		// On stocke la position de la collision dans les variables adéquates.
-				*_uiYMap = TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerHitboxCorps.y + y;
+				//*_puiXMap = TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerHitboxCorps.x + x;		// On stocke la position de la collision dans les variables adéquates.
+				//*_puiYMap = TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerHitboxCorps.y + y;
 
-				*_boCollisionCorps = true;
+				*_pboCollisionCorps = true;
 
 			}
 
@@ -159,19 +170,11 @@ bool VerifierCollisionJoueurMap(CPlayer* _pPlayer, SDL_Rect _RectPlayer, bool* _
 
 	}
 
-	return *_boCollisionPieds;
+	return *_pboCollisionPieds;
 
 
 }
 
-// Fonction convertissant en angle de degré à radian.
-// En entrée:
-// Param1: L'angle à convertir.
-// En sortie: L'angle converti.
-float DegtoRad(float _fAngle) {
-
-	return (M_PI / 180) * _fAngle;
-}
 
 // Fontion effectuant un rotation sur une surface selon un angle.
 // En entrée: 
@@ -332,6 +335,23 @@ void ClickBoutonDebutPartie(void) {
 	int iNombreEquipe = 0;
 	int iNombreJoueur = 0;
 
+	// Load des texture pour la toolbar...
+	string strBazookaToolPath = strEmplacementFichier;
+	strBazookaToolPath.append("Armes et Packs\\bazookatool.png");
+	pGestionaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strBazookaToolPath.c_str()), "BazookaTool");
+
+	string strGrenadaToolPath = strEmplacementFichier;
+	strGrenadaToolPath.append("Armes et Packs\\grenadetool.png");
+	pGestionaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strGrenadaToolPath.c_str()), "GrenadaTool");
+
+	string strSwordToolPath = strEmplacementFichier;
+	strSwordToolPath.append("Armes et Packs\\swordtool.png");
+	pGestionaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strSwordToolPath.c_str()), "SwordTool");
+
+	string strJetPackToolPath = strEmplacementFichier;
+	strJetPackToolPath.append("Armes et Packs\\jetpacktool.png");
+	pGestionaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strJetPackToolPath.c_str()), "JetPackTool");
+
 	pGestionaireMenu->ObtenirDonnee("pMenuNouvellePartie")->DefinirboShow(false);
 	pGestionaireMenu->ObtenirDonnee("pMenuPrincipal")->DefinirboShow(false);
 
@@ -371,7 +391,7 @@ void ClickBoutonDebutPartie(void) {
 	iNombreEquipe = pGestionaireControl->ObtenirDonnee("pLblLRChoixNbrEquipe")->ObtenirElement("PositionLabel") + 2;
 	iNombreJoueur = pGestionaireControl->ObtenirDonnee("pLblLRChoixNbrJoueurEquipe")->ObtenirElement("PositionLabel") + 4;
 
-	pWindowJeu->CreateGame(strTmp, strEmplacementFichier, iNombreEquipe, iNombreJoueur, new CVent(pGestionaireFont->ObtenirDonnee("pFontBouton"), "250 km/h", CouleurTexte, pGestionaireTexture->ObtenirDonnee("pFlecheVent"), { 1200, 30, 117, 63 }, 180, pWindowJeu->ObtenirRenderer()),  VerifierCollisionJoueurMap, MapDestruction, CollisionObjetMap, PhysiqueMissile, pWindowJeu->ObtenirRenderer());
+	pWindowJeu->CreateGame(strTmp, strEmplacementFichier, pGestionaireTexture, iNombreEquipe, iNombreJoueur, new CVent(pGestionaireFont->ObtenirDonnee("pFontBouton"), "250 km/h", CouleurTexte, pGestionaireTexture->ObtenirDonnee("pFlecheVent"), { 1200, 30, 117, 63 }, 180, pWindowJeu->ObtenirRenderer()),  VerifierCollisionJoueurMap, MapDestruction, CollisionObjetMap, PhysiqueMissile, pWindowJeu->ObtenirRenderer());
 }
 
 // Procédure pour le click sur le bouton quitter...
@@ -405,6 +425,9 @@ void ClickBoutonQuitterJeu(void) {
 	pGestionaireMenu->ObtenirDonnee("pMenuPause")->DefinirboShow(false);
 	pGestionaireMenu->ObtenirDonnee("pMenuPrincipal")->DefinirboShow(true);
 }
+
+// ]
+
 
 // Fonction qui met le texte d'un tableau en une seule surface.
 // En entrée: 
@@ -666,12 +689,13 @@ int main(int argc, char* argv[]) {
 		// Tant qu'il y a des événements à gérer.
 		while (SDL_PollEvent(pEvent)) {
 
-			CMenu* pMenutmp = pGestionaireMenu->ObtenirDonnee("pMenuPrincipal");
-			CMenu* pMenutmp1 = pGestionaireMenu->ObtenirDonnee("pMenuNouvellePartie");
-			CMenu* pMenutmp2 = pGestionaireMenu->ObtenirDonnee("pMenuPause");
 			pGestionaireMenu->ObtenirDonnee("pMenuPrincipal")->ReactToEvent(pEvent);
 			pGestionaireMenu->ObtenirDonnee("pMenuNouvellePartie")->ReactToEvent(pEvent);
 			pGestionaireMenu->ObtenirDonnee("pMenuPause")->ReactToEvent(pEvent);
+			if (pWindowJeu->ObtenirGame() != nullptr) {
+				pWindowJeu->ObtenirGame()->ReactToEvent(pEvent);
+			}
+
 
 			switch (pEvent->type) {
 
@@ -680,12 +704,17 @@ int main(int argc, char* argv[]) {
 				break;
 
 			case SDL_KEYDOWN:
-				if (pEvent->key.keysym.scancode == SDL_SCANCODE_ESCAPE && pWindowJeu->ObtenirGame() != nullptr) {
-					pGestionaireMenu->ObtenirDonnee("pMenuPause")->DefinirboShow(true);
-				}
-				else
-				{
-					boExecution = !(pEvent->key.keysym.scancode == SDL_SCANCODE_ESCAPE);
+				switch (pEvent->key.keysym.scancode) {
+				case SDL_SCANCODE_ESCAPE:
+					if (pWindowJeu->ObtenirGame() != nullptr) {
+						pGestionaireMenu->ObtenirDonnee("pMenuPause")->DefinirboShow(true);
+					}
+					else
+						boExecution = !(pEvent->key.keysym.scancode == SDL_SCANCODE_ESCAPE);
+					break;
+				case SDL_SCANCODE_T:
+					pWindowJeu->ObtenirGame()->ReverseShowToolBar();
+					break;
 				}
 				break;
 

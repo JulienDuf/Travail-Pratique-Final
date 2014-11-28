@@ -93,7 +93,7 @@ public:
 
 		m_pBarreVie = new CBarreVie(_pGestionnaireTexture, { _RectDestination.x, _RectDestination.y - 2, 0, 0 });
 
-		VecteurVitesse = 0;
+		VecteurVitesse = new CVecteur2D(0, 0);
 
 	}
 
@@ -109,19 +109,19 @@ public:
 			switch (_pSDLEvent->key.keysym.scancode) {
 			case SDL_SCANCODE_RIGHT:
 
-				if (!m_pSpriteCourse->IsActif()) {					// S'il était au repos et que la flèche droite est appuyer.
+				if (!m_pSpriteCourse->IsActif() && !m_pSpriteParachute->IsActif()) {					// S'il était au repos et que la flèche droite est appuyer.
 					m_pSpriteCourse->DefinirAnimation(0);
 					m_pSpriteCourse->DefinirActif(true);
 					m_pSpriteRepos->DefinirAnimation(0);
 					m_pSpriteRepos->DefinirActif(false);			// Il n'est plus au repos.
-					VecteurVitesse->ModifierVecteur(20, 0);
+					VecteurVitesse->ModifierVecteur(20.0, 0.0000);
 				}
 
 				
 				break;
 			case SDL_SCANCODE_LEFT:
 
-				if (!m_pSpriteCourse->IsActif()) {					// S'il était au repos et que la flèche gauche est appuyer.
+				if (!m_pSpriteCourse->IsActif() && !m_pSpriteParachute->IsActif()) {					// S'il était au repos et que la flèche gauche est appuyer.
 					m_pSpriteCourse->DefinirAnimation(1);
 					m_pSpriteCourse->DefinirActif(true);
 					m_pSpriteRepos->DefinirAnimation(1);
@@ -131,21 +131,27 @@ public:
 				break;
 
 			case SDL_SCANCODE_SPACE:								// Saut = Espace
-				m_pSpriteRepos->DefinirActif(false);
-				m_pSpriteCourse->DefinirActif(false);
-				m_pSpriteSaut->DefinirActif(true);
-				VecteurVitesse->ModifierVecteur(20, 90);
+				if (!m_pSpriteParachute->IsActif()) {
+					if (!m_pSpriteSaut->IsActif()) {
+						m_pSpriteRepos->DefinirActif(false);
+						m_pSpriteSaut->DefinirAnimation(m_pSpriteCourse->ObtenirAnimation()); // Pour que le saut sois du même bord que la course.
+						m_pSpriteCourse->DefinirActif(false);
+						m_pSpriteSaut->DefinirActif(true);
+						VecteurVitesse->ModifierVecteur(20, 90);
+					}
+				}
 
 				
 				break;
 			}
 			break;
 		case SDL_KEYUP:
-			VecteurVitesse->ModifierVecteur(0, 0);
-			m_boStable = true;
-			m_pSpriteCourse->DefinirActif(false);					// Le sprite ne court plus.
-			if (!m_pSpriteSaut->IsActif())
+			if (!m_pSpriteParachute->IsActif()) {
+				VecteurVitesse->ModifierVecteur(0, 0);
+				m_boStable = true;
+				m_pSpriteCourse->DefinirActif(false);					// Le sprite ne court plus.
 				m_pSpriteRepos->DefinirActif(true);
+			}
 
 			break;
 
@@ -165,9 +171,10 @@ public:
 
 		m_pSpriteSaut->ModifierAnnimation();
 		m_pSpriteSaut->Render(_pRenderer, m_RectPlayerDestination);
-
-		m_pSpriteRepos->ModifierAnnimation();
-		m_pSpriteRepos->Render(_pRenderer, m_RectPlayerDestination);
+		if (!m_pSpriteSaut->IsActif()) {
+			m_pSpriteRepos->ModifierAnnimation();
+			m_pSpriteRepos->Render(_pRenderer, m_RectPlayerDestination);
+		}
 
 		if (!m_pSpriteParachute->IsActif())
 			m_pBarreVie->ShowBarre(_pRenderer);

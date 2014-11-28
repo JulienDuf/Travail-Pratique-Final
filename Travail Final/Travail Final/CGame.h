@@ -73,11 +73,21 @@ public:
 			SDL_Rect Recttmp = pPlayerActif->ObtenirRectDestination();
 			bool boCorps;
 			bool boPied;
+			unsigned int _uiX;
+			unsigned int _uiY;
 			if (!pPlayerActif->IsStable()) {
 				Recttmp.x += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX();
 				Recttmp.y += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY();
-				//m_pTeamList->ObtenirElementCurseur()->_VerifierCollisionJoueurMap(pPlayerActif,Recttmp,&boCorps,&boPied,)
-				//pPlayerActif->ModifierRectDestination(
+				if (!m_pVerifierCollisionJoueurMap(pPlayerActif, Recttmp, &boCorps, &boPied, &_uiX, &_uiY)) {
+					pPlayerActif->ModifierRectDestination(Recttmp);
+				}
+				else {
+					Recttmp.y -= (Recttmp.h - _uiY);
+					pPlayerActif->ModifierRectDestination(Recttmp);
+				}
+
+				
+				
 			}
 		}
 

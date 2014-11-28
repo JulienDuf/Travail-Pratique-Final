@@ -84,7 +84,7 @@ public:
 	//			   _uiAnnimation: L'annimation qu'on veut qui joue.
 	void ModifierAnnimation(void) {
 		//Dans ce cas c'est pour le saut.
-		if ((m_uiCurrentFrame == m_uiNbrFrames - 1) && (!m_boBoucle)) {
+		if (((m_uiCurrentFrame == m_uiNbrFrames - 1) && (!m_boBoucle) && m_uiAnimation == 0) || (m_RectSource.x == 0 && (!m_boBoucle) && m_uiAnimation == 1)) {
 			m_boActif = false;
 		}
 
@@ -136,7 +136,7 @@ public:
 		}
 		else {
 			m_RectSource.x = m_RectSource.w * (m_uiNbrFrames - 1);
-			m_uiCurrentFrame = ((m_uiNbrFrames * 10000) - 1);
+			m_uiCurrentFrame = ((m_uiNbrFrames * 10000));
 		}
 	}
 

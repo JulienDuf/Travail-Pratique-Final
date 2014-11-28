@@ -42,8 +42,8 @@ public:
 	}
 	void ModifierVecteur(float _fNorme, float _fOrientation) {
 
-		m_iComposanteX = _fNorme * cosf((M_PI / 180) * _fOrientation);
-		m_iComposanteY = _fNorme * sinf((M_PI / 180) * _fOrientation);
+		m_iComposanteX = _fNorme * (cosf((M_PI / 180) * _fOrientation));
+		m_iComposanteY = _fNorme * (sinf((M_PI / 180) * _fOrientation));
 	}
 
 

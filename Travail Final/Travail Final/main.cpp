@@ -541,7 +541,7 @@ void PutMapToTexture(string _strEmplacement, SDL_Texture** _SDLTextureStockage) 
 //
 // Procédure initialisant les librairies et variables.
 //
-void Start(char* _strApplicationFilename){
+void Start(char* _strApplicationFilename) {
 
 	// Variables temporaires...
 	string strEmplacement;

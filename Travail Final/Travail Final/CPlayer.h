@@ -49,7 +49,7 @@ public:
 
 		m_pSpriteCourse = new CSprite(_pGestionnaireSurface->ObtenirDonnee("pSurfaceCourse"), _pGestionnaireTexture->ObtenirDonnee("pTextureCourse"), _RectDestination, 9, 50, true, false, 2);
 
-		m_pSpriteSaut = new CSprite(_pGestionnaireSurface->ObtenirDonnee("pSurfaceSaut"), _pGestionnaireTexture->ObtenirDonnee("pTextureSaut"), _RectDestination, 9, 50, false, false, 2);
+		m_pSpriteSaut = new CSprite(_pGestionnaireSurface->ObtenirDonnee("pSurfaceSaut"), _pGestionnaireTexture->ObtenirDonnee("pTextureSaut"), _RectDestination, 9, 100, false, false, 2);
 
 		m_pSpriteParachute = new CSprite(_pGestionnaireSurface->ObtenirDonnee("pSurfaceParachute"), _pGestionnaireTexture->ObtenirDonnee("pTextureParachute"), _RectDestination, 24, 20, true, true, 1);
 
@@ -114,7 +114,8 @@ public:
 					m_pSpriteCourse->DefinirActif(true);
 					m_pSpriteRepos->DefinirAnimation(0);
 					m_pSpriteRepos->DefinirActif(false);			// Il n'est plus au repos.
-					VecteurVitesse->ModifierVecteur(20.0, 0.0000);
+					VecteurVitesse->ModifierVecteur(35, 0.0000);
+					m_boStable = false;
 				}
 
 				
@@ -126,7 +127,8 @@ public:
 					m_pSpriteCourse->DefinirActif(true);
 					m_pSpriteRepos->DefinirAnimation(1);
 					m_pSpriteRepos->DefinirActif(false);			// Il n'est plus au repos.
-					VecteurVitesse->ModifierVecteur(20, 180);
+					VecteurVitesse->ModifierVecteur(35, 180);
+					m_boStable = false;
 				}
 				break;
 
@@ -137,7 +139,8 @@ public:
 						m_pSpriteSaut->DefinirAnimation(m_pSpriteCourse->ObtenirAnimation()); // Pour que le saut sois du même bord que la course.
 						m_pSpriteCourse->DefinirActif(false);
 						m_pSpriteSaut->DefinirActif(true);
-						VecteurVitesse->ModifierVecteur(20, 90);
+						VecteurVitesse->ModifierVecteur(35, 90);
+						m_boStable = false;
 					}
 				}
 
@@ -151,6 +154,8 @@ public:
 				m_boStable = true;
 				m_pSpriteCourse->DefinirActif(false);					// Le sprite ne court plus.
 				m_pSpriteRepos->DefinirActif(true);
+				if (!m_pSpriteSaut->IsActif())
+					m_boStable = true;
 			}
 
 			break;

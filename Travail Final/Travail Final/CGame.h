@@ -44,6 +44,9 @@ public:
 
 	void AfficherGame(SDL_Renderer* _pRenderer) {
 
+		if (m_boDebutPartie)
+			m_boDebutPartie = !IsAllTeamStable();
+
 		m_pGameMap->ShowMap(_pRenderer);
 
 		PhysiquePlayer();
@@ -69,25 +72,31 @@ public:
 	void PhysiquePlayer(void) {
 
 		if (!m_boDebutPartie) {
-			CPlayer* pPlayerActif = m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif();
-			SDL_Rect Recttmp = pPlayerActif->ObtenirRectDestination();
-			bool boCorps;
-			bool boPied;
-			unsigned int _uiX;
-			unsigned int _uiY;
-			if (!pPlayerActif->IsStable()) {
-				Recttmp.x += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX();
-				Recttmp.y += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY();
-				if (!m_pVerifierCollisionJoueurMap(pPlayerActif, Recttmp, &boCorps, &boPied, &_uiX, &_uiY)) {
-					pPlayerActif->ModifierRectDestination(Recttmp);
-				}
-				else {
-					Recttmp.y -= (Recttmp.h - _uiY);
-					pPlayerActif->ModifierRectDestination(Recttmp);
+
+			if (m_pTimerPhysique->IsDone()) {
+
+				CPlayer* pPlayerActif = m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif();
+				SDL_Rect Recttmp = pPlayerActif->ObtenirRectDestination();
+				bool boCorps;
+				bool boPied;
+				unsigned int _uiX;
+				unsigned int _uiY;
+				if (!pPlayerActif->IsStable()) {
+					Recttmp.x += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35;
+					Recttmp.y += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35;
+					if (!m_pVerifierCollisionJoueurMap(pPlayerActif, Recttmp, &boCorps, &boPied, &_uiX, &_uiY)) {
+						pPlayerActif->ModifierRectDestination(Recttmp);
+					}
+					else {
+						Recttmp.y -= (Recttmp.h - _uiY);
+						pPlayerActif->ModifierRectDestination(Recttmp);
+					}
+
+
+
 				}
 
-				
-				
+				m_pTimerPhysique->Start();
 			}
 		}
 
@@ -172,6 +181,19 @@ public:
 
 	void ReverseShowToolBar() {
 		m_pToolBar->ReverseboShow();
+	}
+
+	bool IsAllTeamStable(void) {
+
+		for (int i = 0; i < m_pTeamList->ObtenirCompte(); i++) {
+
+			if (!m_pTeamList->ObtenirElementCurseur()->IsAllPlayerStable())
+				return false;
+
+			m_pTeamList->AllerSuivantCurseur();
+		}
+
+		return true;
 	}
 
 };

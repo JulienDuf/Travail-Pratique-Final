@@ -53,4 +53,17 @@ public:
 		return m_pPlayerList->ObtenirElementCurseur();
 
 	}
+
+	bool IsAllPlayerStable(void) {
+
+		for (int i = 0; i < m_pPlayerList->ObtenirCompte(); i++) {
+
+			if (!m_pPlayerList->ObtenirElementCurseur()->IsStable())
+				return false;
+
+			m_pPlayerList->AllerSuivantCurseur();
+		}
+
+		return true;
+	}
 };

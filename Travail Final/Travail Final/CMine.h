@@ -5,17 +5,17 @@ class CMine : public CPack{
 private:
 	SDL_Rect m_pRectDestination; //position de la mine sur la map
 	SDL_Surface* m_pSurface; //Texture du pack
+	SDL_Texture* m_pTexture; // Texture du pack
 	bool m_boCollision; // Si la mine touche par terre.
 
 	void(*m_pCollisionMap)(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY);
 	void(*m_pMapDestruction)(int _iRayon, int _iX, int _iY);
 
 public:
-	CMine(string _strSourceImage, SDL_Renderer* _Renderer, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY)){
+	CMine(CGestionaire<SDL_Surface*>* _pGestionaireSurface, SDL_Renderer* _Renderer, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY)){
 		//initialisation de la texture.
-		string strSourceImage = _strSourceImage;
-		strSourceImage.append("\\Armes et Packs\\mine.png");
-		m_pSurface = IMG_Load(strSourceImage.c_str());
+		m_pSurface = _pGestionaireSurface->ObtenirDonnee("pSurfaceMine");
+		m_pTexture = SDL_CreateTextureFromSurface(_Renderer, m_pSurface);
 
 		//initialisation de la position de la mine
 		m_pRectDestination.h = m_pSurface->h;
@@ -41,9 +41,7 @@ public:
 		
 		if (!m_boCollision)
 			ModifierPosition();
-		SDL_Texture* pTexture = SDL_CreateTextureFromSurface(_Renderer, m_pSurface);
-		SDL_RenderCopy(_Renderer, pTexture, NULL, &m_pRectDestination);
-		SDL_DestroyTexture(pTexture);
+		SDL_RenderCopy(_Renderer, m_pTexture, NULL, &m_pRectDestination);
 	}
 
 	void ModifierPosition(void) {

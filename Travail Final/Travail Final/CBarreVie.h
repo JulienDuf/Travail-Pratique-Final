@@ -15,15 +15,11 @@ private:
 
 public:
 
-	CBarreVie(string _strEmplacement, SDL_Rect _RectDestination, SDL_Renderer* _pRenderer) {
+	CBarreVie(CGestionaire<SDL_Texture*>* _pGestionnaireTexture, SDL_Rect _RectDestination) {
 
-		string strEmplacement = _strEmplacement;
-		strEmplacement.append("Personnage\\Barre.png");
-		m_pTextureInterieurBarre = IMG_LoadTexture(_pRenderer, strEmplacement.c_str());
+		m_pTextureInterieurBarre = _pGestionnaireTexture->ObtenirDonnee("pTextureBarreVie");
 
-		strEmplacement = _strEmplacement;
-		strEmplacement.append("Personnage\\ContourBarre.png");
-		m_pTextureContourBarre = IMG_LoadTexture(_pRenderer, strEmplacement.c_str());
+		m_pTextureContourBarre = _pGestionnaireTexture->ObtenirDonnee("pTextureContourBarreVie");
 
 		m_RectDestinationContour = _RectDestination;
 		SDL_QueryTexture(m_pTextureContourBarre, NULL, NULL, &m_RectDestinationContour.w, &m_RectDestinationContour.h);

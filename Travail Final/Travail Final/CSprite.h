@@ -44,8 +44,6 @@ public:
 
 		m_pSurfaceSprite = _SurfaceSprite;		// La texture de notre sprite est entrée en paramètre.
 
-		
-
 		m_pTextureSprite = _Texture;
 
 		m_pTimerDelay = new CTimer(_uiDelay);		// Le délai de notre minuterie est entré en paramètre.

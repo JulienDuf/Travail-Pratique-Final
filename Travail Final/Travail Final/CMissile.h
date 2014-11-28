@@ -15,7 +15,7 @@ private:
 
 	SDL_Point  m_PointRotation; // Le poitn de rotation.
 	SDL_Surface* m_pSDLSurfaceMissile; // La surface du missile.
-	SDL_Surface* m_pSDLSurfaceMissile2; // La surface du missile.
+	SDL_Surface* m_pSDLSurfaceMissileRotation; // La surface du missile.
 	SDL_Rect m_RectDestinationMissile; // La destination du missile dans la fenêtre.
 	CBarrePuissance* m_pBarrePuissance; // La barre déterminant l'angle et la puissance du missile.
 
@@ -28,21 +28,17 @@ private:
 
 public:
 
-	CMissile(string _strEmplacement, SDL_Renderer* _pRenderer, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), double _PhysiqueMissile(CVecteur2D* _VitesseMissile, SDL_Rect* _DestinationMissile), SDL_Surface* _Rotation(SDL_Surface* _pSurfaceRotation, float _fAngle)) {
-
-		string strEmplacement = _strEmplacement;
+	CMissile(CGestionaire<SDL_Surface*>* _pGestionnaireSurface, CGestionaire<SDL_Texture*>* _pGestionnaireTexture, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), double _PhysiqueMissile(CVecteur2D* _VitesseMissile, SDL_Rect* _DestinationMissile), SDL_Surface* _Rotation(SDL_Surface* _pSurfaceRotation, float _fAngle)) {
 
 		m_dAngle = 0;
 		m_iForce = 0;
 
-		strEmplacement.append("Armes et Packs\\missile.png");
-		m_pSDLSurfaceMissile = IMG_Load(strEmplacement.c_str());
-		m_pSDLSurfaceMissile = IMG_Load(strEmplacement.c_str());
+		m_pSDLSurfaceMissile = _pGestionnaireSurface->ObtenirDonnee("pSurfaceMissile");
 
 		m_RectDestinationMissile = { 0, 0, 0, 0 };
 		m_RectDestinationMissile.w = m_pSDLSurfaceMissile->w;
 		m_RectDestinationMissile.h = m_pSDLSurfaceMissile->h;
-		m_pBarrePuissance = new CBarrePuissance(_strEmplacement, _pRenderer);
+		m_pBarrePuissance = new CBarrePuissance(_pGestionnaireTexture);
 
 		m_pMapDestruction = _MapDestruction;
 		m_pCollisionMap = _CollisionMap;
@@ -61,11 +57,11 @@ public:
 			int iX, iY;
 
 			m_pPhysiqueMissile(VecteurVitesse, &m_RectDestinationMissile);
-			SDL_Texture* pTextureTMP = SDL_CreateTextureFromSurface(_pRenderer, m_pSDLSurfaceMissile2);
+			SDL_Texture* pTextureTMP = SDL_CreateTextureFromSurface(_pRenderer, m_pSDLSurfaceMissileRotation);
 			SDL_RenderCopy(_pRenderer, pTextureTMP, NULL, &m_RectDestinationMissile);
 			SDL_DestroyTexture(pTextureTMP);
 
-			m_pCollisionMap(m_pSDLSurfaceMissile2, m_RectDestinationMissile, &iX, &iY);
+			m_pCollisionMap(m_pSDLSurfaceMissileRotation, m_RectDestinationMissile, &iX, &iY);
 
 			if (iX != 0 && iY != 0) {
 
@@ -109,7 +105,7 @@ public:
 
 		m_dAngle = _fAngle;
 
-		m_pSDLSurfaceMissile2 = m_pRotation(m_pSDLSurfaceMissile, m_dAngle);
+		m_pSDLSurfaceMissileRotation = m_pRotation(m_pSDLSurfaceMissile, m_dAngle);
 
 	}
 

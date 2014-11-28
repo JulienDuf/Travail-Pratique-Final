@@ -43,26 +43,17 @@ public:
 	// Paramètre: _pToolList, pointe sur la liste d'outils que l'on veut donner au joueur.
 	// Paramètre: _strName, contient le nom que l'on veut donner au joueur.
 	// Retour: Rien (constructeur).
-	CPlayer(string _strEmplacementFichier, SDL_Rect _RectDestination, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), double _Physique(CVecteur2D* _VitesseMissile, SDL_Rect* _DestinationMissile), SDL_Renderer* _pRenderer) {
+	CPlayer(CGestionaire<SDL_Surface*>* _pGestionnaireSurface, CGestionaire<SDL_Texture*>* _pGestionnaireTexture, SDL_Rect _RectDestination, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), double _Physique(CVecteur2D* _VitesseMissile, SDL_Rect* _DestinationMissile)) {
 
 		m_boStable = false;
 
-		string strEmplacementFichier = _strEmplacementFichier;
+		m_pSpriteCourse = new CSprite(_pGestionnaireSurface->ObtenirDonnee("pSurfaceCourse"), _pGestionnaireTexture->ObtenirDonnee("pTextureCourse"), _RectDestination, 9, 50, true, false, 2);
 
-		strEmplacementFichier.append("Personnage\\Courses.png");
-		m_pSpriteCourse = new CSprite(IMG_Load(strEmplacementFichier.c_str()), IMG_LoadTexture(_pRenderer, strEmplacementFichier.c_str()), _RectDestination, 9, 50, true, false, 2);
+		m_pSpriteSaut = new CSprite(_pGestionnaireSurface->ObtenirDonnee("pSurfaceSaut"), _pGestionnaireTexture->ObtenirDonnee("pTextureSaut"), _RectDestination, 9, 50, false, false, 2);
 
-		strEmplacementFichier = _strEmplacementFichier;
-		strEmplacementFichier.append("Personnage\\Saut.png");
-		m_pSpriteSaut = new CSprite(IMG_Load(strEmplacementFichier.c_str()), IMG_LoadTexture(_pRenderer, strEmplacementFichier.c_str()), _RectDestination, 9, 50, false, false, 2);
+		m_pSpriteParachute = new CSprite(_pGestionnaireSurface->ObtenirDonnee("pSurfaceParachute"), _pGestionnaireTexture->ObtenirDonnee("pTextureParachute"), _RectDestination, 24, 20, true, true, 1);
 
-		strEmplacementFichier = _strEmplacementFichier;
-		strEmplacementFichier.append("Personnage\\Parachute.png");
-		m_pSpriteParachute = new CSprite(IMG_Load(strEmplacementFichier.c_str()), IMG_LoadTexture(_pRenderer, strEmplacementFichier.c_str()), _RectDestination, 24, 10, true, true, 1);
-
-		strEmplacementFichier = _strEmplacementFichier;
-		strEmplacementFichier.append("Personnage\\Repo.png");
-		m_pSpriteRepos = new CSprite(IMG_Load(strEmplacementFichier.c_str()), IMG_LoadTexture(_pRenderer, strEmplacementFichier.c_str()), _RectDestination, 1, 50, true, false, 2);
+		m_pSpriteRepos = new CSprite(_pGestionnaireSurface->ObtenirDonnee("pSurfaceRepos"), _pGestionnaireTexture->ObtenirDonnee("pTextureRepos"), _RectDestination, 1, 50, true, false, 2);
 
 
 		m_RectPlayerDestination = _RectDestination;
@@ -96,11 +87,11 @@ public:
 
 		m_pToolList = new CListeDC<CTools*>();
 
-		m_pToolList->AjouterFin(new CMissile(_strEmplacementFichier, _pRenderer, _MapDestruction, _CollisionObjetMap, _Physique, NULL));
+		m_pToolList->AjouterFin(new CMissile(_pGestionnaireSurface, _pGestionnaireTexture, _MapDestruction, _CollisionObjetMap, _Physique, NULL));
 
 		m_BoDeplacement = false;
 
-		m_pBarreVie = new CBarreVie(_strEmplacementFichier, { _RectDestination.x, _RectDestination.y - 2, 0, 0 }, _pRenderer);
+		m_pBarreVie = new CBarreVie(_pGestionnaireTexture, { _RectDestination.x, _RectDestination.y - 2, 0, 0 });
 
 		VecteurVitesse = 0;
 

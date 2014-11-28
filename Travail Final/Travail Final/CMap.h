@@ -14,6 +14,7 @@ class CMap {
 private:
 
 	SDL_Texture* m_pSDLTextureBackground;			// Pointeur de texture SDL qui pointe sur la texture qui représente l'arrière plan de la carte de jeu.
+	SDL_Texture* m_pSDLTextureMap;
 	SDL_Surface* m_pSDLSurfaceMap;					// Pointeur de Surface SDL qui pointe sur la surface qui représente l'avant plan de la carte de jeu.
 	SDL_Rect m_RectPositionImages;					// Rect représentant la position de la map dans l'écran.
 	CListeDC<CPack*>* m_pPackList;					// Liste des packs présents dans la map.
@@ -30,7 +31,7 @@ public:
 	// Param3: _pSDLTextureMap, pointe sur la texture qui représente l'avant plan de la carte de jeu.
 	// Param4: _pVent, Classe qui donne la force et la direction du vent.
 	// Param5: Renderer.
-	CMap(string _strEmplacementMap, string _strEmplacementFichier, SDL_Rect _RectPositionImages, CVent* _pVent, SDL_Renderer* _pRenderer, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY)) {
+	CMap(string _strEmplacementMap, CGestionaire<SDL_Surface*>* _pGestionnaireSurface, SDL_Rect _RectPositionImages, CVent* _pVent, SDL_Renderer* _pRenderer, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY)) {
 		
 		// Variables temporaires...
 		string strTmp[5];
@@ -53,6 +54,8 @@ public:
 		strEmplacement = _strEmplacementMap;
 		strEmplacement.append("map.png");
 		m_pSDLSurfaceMap = IMG_Load(strEmplacement.c_str());
+
+		m_pSDLTextureMap = SDL_CreateTextureFromSurface(_pRenderer, m_pSDLSurfaceMap);
 
 		// Ouverture du fichier...
 		strEmplacement = _strEmplacementMap;
@@ -85,7 +88,7 @@ public:
 
 		for (int i = iNombreMines; i > 0; i--) {
 
-			m_pPackList->AjouterFin(new CMine(_strEmplacementFichier, _pRenderer, _MapDestruction, _CollisionObjetMap));
+			m_pPackList->AjouterFin(new CMine(_pGestionnaireSurface, _pRenderer, _MapDestruction, _CollisionObjetMap));
 
 		}
 
@@ -97,15 +100,9 @@ public:
 	// Retour: Rien.
 	void ShowMap(SDL_Renderer* _pSDLRenderer) {
 
-		// Créé une texture de la map.
-		SDL_Texture* pSDLTextureMap = SDL_CreateTextureFromSurface(_pSDLRenderer, m_pSDLSurfaceMap);
-
 		// Affiche les maps.
 		SDL_RenderCopy(_pSDLRenderer, m_pSDLTextureBackground, NULL, &m_RectPositionImages);
-		SDL_RenderCopy(_pSDLRenderer, pSDLTextureMap, NULL, &m_RectPositionImages);
-
-		//Détruits la texture créée
-		SDL_DestroyTexture(pSDLTextureMap);
+		SDL_RenderCopy(_pSDLRenderer, m_pSDLTextureMap, NULL, &m_RectPositionImages);
 
 		// Affiche le vent
 		m_pVent->ShowVent(_pSDLRenderer);
@@ -118,6 +115,13 @@ public:
 			m_pPackList->AllerSuivantCurseur();
 		}
 			
+		
+	}
+
+	void PutMapInTexture(SDL_Renderer* _pRenderer) {
+
+		SDL_DestroyTexture(m_pSDLTextureMap);
+		m_pSDLTextureMap = SDL_CreateTextureFromSurface(_pRenderer, m_pSDLSurfaceMap);
 	}
 
 	SDL_Surface* ObtenirSurfaceMap(void) {

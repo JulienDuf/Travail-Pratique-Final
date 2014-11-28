@@ -47,6 +47,7 @@ SDL_Event* pEvent; // Les événemens du programme;
 CWindow* pWindowJeu; // La fenêtre de jeu.
 
 CGestionaire<SDL_Texture*>* pGestionaireTexture; // Le gestionaire des textures.
+CGestionaire<SDL_Surface*>* pGestionaireSurface; // Le gestionaire des surfaces.
 CGestionaire<TTF_Font*>* pGestionaireFont; // Le gestionaire des fonts.
 CGestionaire<CControl*>* pGestionaireControl; // Le gestionaire des controls.
 CGestionaire<CMenu*>* pGestionaireMenu; // Le gestionaire des menus.
@@ -247,6 +248,8 @@ void MapDestruction(int _iRayon, int _iX, int _iY) {
 
 	}
 
+	pWindowJeu->ObtenirGame()->ObtenirMap()->PutMapInTexture(pWindowJeu->ObtenirRenderer());
+
 }
 
 // Fonction effectuant la physique d'un missile.
@@ -391,7 +394,7 @@ void ClickBoutonDebutPartie(void) {
 	iNombreEquipe = pGestionaireControl->ObtenirDonnee("pLblLRChoixNbrEquipe")->ObtenirElement("PositionLabel") + 2;
 	iNombreJoueur = pGestionaireControl->ObtenirDonnee("pLblLRChoixNbrJoueurEquipe")->ObtenirElement("PositionLabel") + 4;
 
-	pWindowJeu->CreateGame(strTmp, strEmplacementFichier, pGestionaireTexture, iNombreEquipe, iNombreJoueur, new CVent(pGestionaireFont->ObtenirDonnee("pFontBouton"), "250 km/h", CouleurTexte, pGestionaireTexture->ObtenirDonnee("pFlecheVent"), { 1200, 30, 117, 63 }, 180, pWindowJeu->ObtenirRenderer()),  VerifierCollisionJoueurMap, MapDestruction, CollisionObjetMap, PhysiqueMissile, pWindowJeu->ObtenirRenderer());
+	pWindowJeu->CreateGame(strTmp, pGestionaireSurface, pGestionaireTexture, iNombreEquipe, iNombreJoueur, new CVent(pGestionaireFont->ObtenirDonnee("pFontBouton"), "250 km/h", CouleurTexte, pGestionaireTexture->ObtenirDonnee("pFlecheVent"), { 1200, 30, 117, 63 }, 180, pWindowJeu->ObtenirRenderer()),  VerifierCollisionJoueurMap, MapDestruction, CollisionObjetMap, PhysiqueMissile, pWindowJeu->ObtenirRenderer());
 }
 
 // Procédure pour le click sur le bouton quitter...
@@ -560,6 +563,7 @@ void Start(char* _strApplicationFilename){
 	pWindowJeu->GetSize(&iW, &iH);
 	
 	pGestionaireTexture = new CGestionaire<SDL_Texture*>();
+	pGestionaireSurface = new CGestionaire<SDL_Surface*>();
 	pGestionaireFont = new CGestionaire<TTF_Font*>();
 	pGestionaireControl = new CGestionaire<CControl*>();
 	pGestionaireMenu = new CGestionaire<CMenu*>();
@@ -571,10 +575,83 @@ void Start(char* _strApplicationFilename){
 	strEmplacement.append("Gabarie.png");
 	pSurfaceGabarie = IMG_Load(strEmplacement.c_str());
 
+	// Chargement des surfaces des personnages...
+	
+	// La course...
+	strEmplacement = strApplicationPath;
+	strEmplacement.append("Personnage\\Course.png");
+	pGestionaireSurface->AjouterDonnee(IMG_Load(strEmplacement.c_str()), "pSurfaceCourse");
+
+	// Le saut...
+	strEmplacement = strApplicationPath;
+	strEmplacement.append("Personnage\\Saut.png");
+	pGestionaireSurface->AjouterDonnee(IMG_Load(strEmplacement.c_str()), "pSurfaceSaut");
+
+	// Le parachute...
+	strEmplacement = strApplicationPath;
+	strEmplacement.append("Personnage\\Parachute.png");
+	pGestionaireSurface->AjouterDonnee(IMG_Load(strEmplacement.c_str()), "pSurfaceParachute");
+
+	// Au repos...
+	strEmplacement = strApplicationPath;
+	strEmplacement.append("Personnage\\Repos.png");
+	pGestionaireSurface->AjouterDonnee(IMG_Load(strEmplacement.c_str()), "pSurfaceRepos");
+
+
+	// Chargement de la surface du missile...
+	strEmplacement = strApplicationPath;
+	strEmplacement.append("Armes et Packs\\Missile.png");
+	pGestionaireSurface->AjouterDonnee(IMG_Load(strEmplacement.c_str()), "pSurfaceMissile");
+
+	// Chargement de la surface des mines...
+	strEmplacement = strApplicationPath;
+	strEmplacement.append("Armes et Packs\\Mine.png");
+	pGestionaireSurface->AjouterDonnee(IMG_Load(strEmplacement.c_str()), "pSurfaceMine");
+
+
 	// Chargement de font du texte des boutons...
 	strEmplacement = strApplicationPath;
 	strEmplacement.append("calibri.ttf");
 	pGestionaireFont->AjouterDonnee(TTF_OpenFont(strEmplacement.c_str(), 30), "pFontBouton");
+
+
+	// Chargement des surfaces des personnages...
+
+	// La course...
+	strEmplacement = strApplicationPath;
+	strEmplacement.append("Personnage\\Course.png");
+	pGestionaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTextureCourse");
+
+	// Le saut...
+	strEmplacement = strApplicationPath;
+	strEmplacement.append("Personnage\\Saut.png");
+	pGestionaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTextureSaut");
+
+	// Le parachute...
+	strEmplacement = strApplicationPath;
+	strEmplacement.append("Personnage\\Parachute.png");
+	pGestionaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTextureParachute");
+
+	// Au repos...
+	strEmplacement = strApplicationPath;
+	strEmplacement.append("Personnage\\Repos.png");
+	pGestionaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTextureRepos");
+
+
+	// Chargement de la texture de la barre de puissance
+	strEmplacement = strApplicationPath;
+	strEmplacement.append("Armes et Packs\\BarrePuissance.png");
+	pGestionaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTextureBarrePuissance");
+
+	// Chargement des textures de la barre de vie...
+	strEmplacement = strApplicationPath;
+	strEmplacement.append("Personnage\\Barre.png");
+	pGestionaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTextureBarreVie");
+
+	strEmplacement = strApplicationPath;
+	strEmplacement.append("Personnage\\ContourBarre.png");
+	pGestionaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTextureContourBarreVie");
+
 
 	// Chargements de la texture pour le bouton droit d'un LabelLeftRight.
 	strEmplacement = strApplicationPath;

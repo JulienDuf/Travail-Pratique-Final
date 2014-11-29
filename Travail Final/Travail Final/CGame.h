@@ -1,3 +1,6 @@
+// 29 novembre 2014 par Gabriel Beaudry(gabriel.bdry@gmail.com)
+// Ajout de la procédure changertour().
+
 class CGame {
 
 private:
@@ -26,12 +29,18 @@ public:
 
 		for (int i = _iNombreÉquipe; i > 0; i--) {
 
-			m_pTeamList->AjouterFin(new CTeam(_pGestionnaireSurface, _pGestionnaireTexture, _iNombreJoueur, _MapDestruction, _CollisionObjetMap, _Physique));
+			m_pTeamList->AjouterFin(new CTeam(_pGestionnaireSurface, _pGestionnaireTexture, i, _iNombreJoueur, _MapDestruction, _CollisionObjetMap, _Physique));
 		}
 		m_pTeamList->AllerDebut();
 
 		m_pToolBar = new CToolBar({ 0, 600, 1366, 168 }, { 0, 0, 0 }, _pRenderer, 265, 120, 60, 4, _pGestionnaireTexture->ObtenirDonnee("BazookaTool"), _pGestionnaireTexture->ObtenirDonnee("GrenadaTool"), _pGestionnaireTexture->ObtenirDonnee("SwordTool"), _pGestionnaireTexture->ObtenirDonnee("JetPackTool"));
 		m_pTimerPhysique->Start();
+	}
+
+	void ChangerTour(TTF_Font* _pFont, SDL_Renderer* _pRenderer) {
+		m_pTeamList->ObtenirElementCurseur()->ChangerPlayerActif();
+		m_pTeamList->AllerSuivantCurseur();
+		m_pGameMap->NouveauVent(_pFont, _pRenderer);
 	}
 
 	void ChangerTeamActive() {

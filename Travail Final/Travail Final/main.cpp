@@ -773,7 +773,6 @@ int main(int argc, char* argv[]) {
 				pWindowJeu->ObtenirGame()->ReactToEvent(pEvent);
 			}
 
-
 			switch (pEvent->type) {
 
 			case SDL_QUIT:
@@ -790,6 +789,7 @@ int main(int argc, char* argv[]) {
 						boExecution = !(pEvent->key.keysym.scancode == SDL_SCANCODE_ESCAPE);
 					break;
 				case SDL_SCANCODE_T:
+					pWindowJeu->ObtenirGame()->ChangerTour(pGestionaireFont->ObtenirDonnee("pFontBouton"), pWindowJeu->ObtenirRenderer());
 					pWindowJeu->ObtenirGame()->ReverseShowToolBar();
 					break;
 				}

@@ -5,6 +5,8 @@
 // Fin de code le 9 novembre 2014 par Julien Dufresne (dufresne_julien@hotmail.ca)
 // Modifiée le 13 novembre 2014 par Gabriel Beaudry (gabriel.bdry@gmail.com) :
 // Ajout d'une boussole(Vent) et modification de comentaire
+// Modifiée le 29 novembre par Gabriel Beaudry (gabriel.bdry@gmail.com)
+// Ajout de la procédure NouveauVent() et réglage de problèmes lors de la lecture du fichier texte
 
 #define BLANC32BIT 4294967295
 #define TRANSPARENCE32BIT 16777215
@@ -59,7 +61,7 @@ public:
 
 		// Ouverture du fichier...
 		strEmplacement = _strEmplacementMap;
-		strEmplacement.append("\\map.txt");
+		strEmplacement.append("map.txt");
 		FichierMap.open(strEmplacement);
 
 		m_RectPositionImages.w = m_pSDLSurfaceMap->w;
@@ -68,14 +70,14 @@ public:
 		if (FichierMap.is_open()) {
 
 			FichierMap.getline(chrTmp, 50);
-			strTampo = chrTmp[21];
+			strTampo = chrTmp[20];
 			m_VecteurGravite = new CVecteur2D(SDL_atof(strTampo.c_str()), 90);
 			FichierMap.getline(chrTmp, 50);
 
 			FichierMap.getline(chrTmp, 50);
-			strTampo = chrTmp[24];
+			strTampo = chrTmp[23];
+			strTampo += chrTmp[24];
 			strTampo += chrTmp[25];
-			strTampo += chrTmp[26];
 			m_iVentMax = SDL_atoi(strTampo.c_str());
 			FichierMap.getline(chrTmp, 50);
 
@@ -116,6 +118,16 @@ public:
 		}
 			
 		
+	}
+
+	void NouveauVent(TTF_Font* _pFont, SDL_Renderer* _pRenderer) {
+		m_pVent->ModifierAngle(rand() % 360);
+		char chr[4];
+		int i = rand() % m_iVentMax;
+		SDL_itoa(i, chr, 10);
+		string str = chr;
+		str.append(" km/h");
+		m_pVent->ModifierForce(_pFont, str.c_str(), { 0, 0, 0 }, _pRenderer);
 	}
 
 	void PutMapInTexture(SDL_Renderer* _pRenderer) {

@@ -43,7 +43,7 @@ public:
 	// Paramètre: _pToolList, pointe sur la liste d'outils que l'on veut donner au joueur.
 	// Paramètre: _strName, contient le nom que l'on veut donner au joueur.
 	// Retour: Rien (constructeur).
-	CPlayer(CGestionaire<SDL_Surface*>* _pGestionnaireSurface, CGestionaire<SDL_Texture*>* _pGestionnaireTexture, SDL_Rect _RectDestination, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), double _Physique(CVecteur2D* _VitesseMissile, SDL_Rect* _DestinationMissile)) {
+	CPlayer(CGestionaire<SDL_Surface*>* _pGestionnaireSurface, CGestionaire<SDL_Texture*>* _pGestionnaireTexture, unsigned int _uiIDTeam, SDL_Rect _RectDestination, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), double _Physique(CVecteur2D* _VitesseMissile, SDL_Rect* _DestinationMissile)) {
 
 		m_boStable = false;
 
@@ -91,7 +91,7 @@ public:
 
 		m_BoDeplacement = false;
 
-		m_pBarreVie = new CBarreVie(_pGestionnaireTexture, { _RectDestination.x, _RectDestination.y - 2, 0, 0 });
+		m_pBarreVie = new CBarreVie(_pGestionnaireTexture, { _RectDestination.x, _RectDestination.y - 2, 0, 0 }, _uiIDTeam);
 
 		VecteurVitesse = new CVecteur2D(0, 0);
 

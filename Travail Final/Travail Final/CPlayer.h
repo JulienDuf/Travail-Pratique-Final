@@ -65,15 +65,15 @@ public:
 		m_RectParachuteDestination.h = m_pSpriteParachute->ObtenirRectSource().h;
 
 
-		m_RectHitboxCorpsGauche.x = 79;
-		m_RectHitboxCorpsGauche.y = 3;
-		m_RectHitboxCorpsGauche.w = 52;
-		m_RectHitboxCorpsGauche.h = 74;
+		m_RectHitboxCorpsGauche.x = 0;
+		m_RectHitboxCorpsGauche.y = 0;
+		m_RectHitboxCorpsGauche.w = 20;
+		m_RectHitboxCorpsGauche.h = 40;
 
-		m_RectHitboxCorpsDroite.x = 119;
-		m_RectHitboxCorpsDroite.y = 3;
-		m_RectHitboxCorpsDroite.w = 52;
-		m_RectHitboxCorpsDroite.h = 74;
+		m_RectHitboxCorpsDroite.x = 20;
+		m_RectHitboxCorpsDroite.y = 0;
+		m_RectHitboxCorpsDroite.w = 20;
+		m_RectHitboxCorpsDroite.h = 40;
 
 		m_RectHitboxPieds.x = 0;
 		m_RectHitboxPieds.y = 40;

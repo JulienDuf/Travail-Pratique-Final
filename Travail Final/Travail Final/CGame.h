@@ -102,7 +102,6 @@ public:
 
 						Recttmp.y -= (Recttmp.h - _uiY);
 						pPlayerActif->ModifierRectDestination(Recttmp);
-						
 						pPlayerActif->ObtenirVecteurVitesse()->ModifierComposantY(0);
 					}
 				

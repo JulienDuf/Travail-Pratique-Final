@@ -15,7 +15,7 @@ public:
 	CTimer(unsigned int _uiTimer) {
 
 		m_uiTimer = _uiTimer;
-
+		m_uiTicks = 0;
 
 	}
 
@@ -32,9 +32,12 @@ public:
 	// Fonction qui indique quand la minuterie est terminée.
 	// retourne une booléenne qui indique true si la minuterie est terminée.
 	bool IsDone(void) {
-
-		return (SDL_GetTicks() - m_uiTicks) > m_uiTimer;
-
+		if (m_uiTicks != 0) {
+			int i = SDL_GetTicks();
+			return (SDL_GetTicks() - m_uiTicks >= m_uiTimer);
+		}
+		else
+			return false;
 	}
 
 

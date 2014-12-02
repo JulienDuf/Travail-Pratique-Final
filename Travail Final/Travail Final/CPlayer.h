@@ -5,6 +5,8 @@
 //
 // Modifier le 25 novembre par Xavier St-Georges (xavierst-georges@hotmail.com)
 // Modification : -Finalisation des mouvements.
+// 02 décembre 2014, gabriel beaudry (gabriel.bdry@gmail.com)
+// -Modification du reacttoevent pour la gestion des objets de la toolbar, début du jetpack, ajout de la classe jetpack
 //Fin des modifications.
 class CPlayer {
 
@@ -16,6 +18,8 @@ private:
 	CSprite* m_pSpriteSaut;				// pointeur de sprite qui pointe sur le sprite qui représente le joueur qui est en état de saut.
 	CSprite* m_pSpriteParachute;		// Pointeur de sprite qui pointe sur le sprite qui représente le joueur qui est en état de chute.
 	CSprite* m_pSpriteRepos;		    // Pointeur de sprite qui pointe sur le sprite qui représente le joueur qui est au repos.
+
+	CJetPack* m_pJetPack;
 
 	CBarreVie* m_pBarreVie;				// La barre de vie du personnage.
 
@@ -55,6 +59,7 @@ public:
 
 		m_pSpriteRepos = new CSprite(_pGestionnaireSurface->ObtenirDonnee("pSurfaceRepos"), _pGestionnaireTexture->ObtenirDonnee("pTextureRepos"), _RectDestination, 1, 50, true, false, 2);
 
+		m_pJetPack = new CJetPack(new CSprite(_pGestionnaireSurface->ObtenirDonnee("pSurfaceJetPack"), _pGestionnaireTexture->ObtenirDonnee("pTextureJetPack"), _RectDestination, 6, 80, true, false, 2));
 
 		m_RectPlayerDestination = _RectDestination;
 		m_RectPlayerDestination.w = m_pSpriteCourse->ObtenirRectSource().w;
@@ -100,74 +105,95 @@ public:
 	// Procédure qui affiche le joueur.
 	// Paramètre: _pSDLRenderer, Rendeur de la fenêtre dans laquelle on veut afficher le joueur.
 	// Retour: Rien.
-	void ReactToEvent(SDL_Event* _pSDLEvent) {
+	void ReactToEvent(SDL_Event* _pSDLEvent, unsigned int _uiObjetSelectionner) {
 		
+		if (!m_pSpriteParachute->IsActif() && _uiObjetSelectionner > 3) {
 
+			switch (_pSDLEvent->type) {
+			case SDL_KEYDOWN:
+				switch (_pSDLEvent->key.keysym.scancode) {
+				case SDL_SCANCODE_RIGHT:	// Flèche de droite appuyée...
 
-		switch (_pSDLEvent->type) {
-		case SDL_KEYDOWN:
-			switch (_pSDLEvent->key.keysym.scancode) {
-			case SDL_SCANCODE_RIGHT:
+					if (!m_pSpriteCourse->IsActif()) {	// S'il était au repos
+						m_pSpriteRepos->DefinirAnimation(0);  // Il n'est plus au repos.
+						m_pSpriteRepos->DefinirActif(false);
+						m_pSpriteCourse->DefinirAnimation(0);
+						m_pSpriteCourse->DefinirActif(true);
+						VecteurVitesse->ModifierVecteur(35, 0);
+						m_boStable = false;
+					}
 
-				if (!m_pSpriteCourse->IsActif() && !m_pSpriteParachute->IsActif()) {					// S'il était au repos et que la flèche droite est appuyer.
-					m_pSpriteCourse->DefinirAnimation(0);
-					m_pSpriteCourse->DefinirActif(true);
-					m_pSpriteRepos->DefinirAnimation(0);
-					m_pSpriteRepos->DefinirActif(false);			// Il n'est plus au repos.
-					VecteurVitesse->ModifierVecteur(35, 0.0000);
-					m_boStable = false;
-				}
+					break;
+				case SDL_SCANCODE_LEFT:
 
-				
-				break;
-			case SDL_SCANCODE_LEFT:
+					if (!m_pSpriteCourse->IsActif()) {	// S'il était au repos
+						m_pSpriteRepos->DefinirAnimation(1);  // Il n'est plus au repos.
+						m_pSpriteRepos->DefinirActif(false);
+						m_pSpriteCourse->DefinirAnimation(1);
+						m_pSpriteCourse->DefinirActif(true);
+						VecteurVitesse->ModifierVecteur(35, 180);
+						m_boStable = false;
+					}
 
-				if (!m_pSpriteCourse->IsActif() && !m_pSpriteParachute->IsActif()) {					// S'il était au repos et que la flèche gauche est appuyer.
-					m_pSpriteCourse->DefinirAnimation(1);
-					m_pSpriteCourse->DefinirActif(true);
-					m_pSpriteRepos->DefinirAnimation(1);
-					m_pSpriteRepos->DefinirActif(false);			// Il n'est plus au repos.
-					VecteurVitesse->ModifierVecteur(35, 180);
-					m_boStable = false;
-				}
-				break;
+					break;
 
-			case SDL_SCANCODE_SPACE:								// Saut = Espace
-				if (!m_pSpriteParachute->IsActif()) {
+				case SDL_SCANCODE_SPACE:								// Saut = Espace
+
 					if (!m_pSpriteSaut->IsActif()) {
 						m_pSpriteRepos->DefinirActif(false);
-						m_pSpriteSaut->DefinirAnimation(m_pSpriteCourse->ObtenirAnimation()); // Pour que le saut sois du même bord que la course.
 						m_pSpriteCourse->DefinirActif(false);
+						m_pSpriteSaut->DefinirAnimation(m_pSpriteCourse->ObtenirAnimation()); // Pour que le saut sois du même bord que la course.
 						m_pSpriteSaut->DefinirActif(true);
 						VecteurVitesse->ModifierVecteur(35, 90);
 						m_boStable = false;
 					}
+
+					break;
 				}
 
-				
 				break;
-			}
-			break;
-		case SDL_KEYUP:
-			if (!m_pSpriteParachute->IsActif()) {
+			case SDL_KEYUP:
 				VecteurVitesse->ModifierVecteur(0, 0);
-				m_boStable = true;
 				m_pSpriteCourse->DefinirActif(false);					// Le sprite ne court plus.
 				m_pSpriteRepos->DefinirActif(true);
 				if (!m_pSpriteSaut->IsActif())
 					m_boStable = true;
+
+				break;
+
 			}
-
-			break;
-
 		}
+		else
+		{
+			switch (_uiObjetSelectionner) {
+			case 0: // Bazooka
 
+				break;
+			case 1: // Grenada
+
+				break;
+			case 2: // Épée
+
+				break;
+			case 3: // JetPack
+
+				m_pJetPack->DefinirActif(true);
+				m_pSpriteCourse->DefinirActif(false);
+				m_pSpriteParachute->DefinirActif(false);
+				m_pSpriteRepos->DefinirActif(false);
+				m_pSpriteSaut->DefinirActif(false);
+				m_boStable = m_pJetPack->ReactToEvent(_pSDLEvent, VecteurVitesse);
+
+				break;
+			}
+		}
 	}
 
 	// Procédure qui sert à afficher le joueur.
 	//Paramètre : _pRenderer : Le render de la fenetre.
 	//Retour : rien.
 	void ShowPlayer(SDL_Renderer* _pRenderer) {
+
 		m_pSpriteCourse->ModifierAnnimation();
 		m_pSpriteCourse->Render(_pRenderer, m_RectPlayerDestination);
 
@@ -176,15 +202,17 @@ public:
 
 		m_pSpriteSaut->ModifierAnnimation();
 		m_pSpriteSaut->Render(_pRenderer, m_RectPlayerDestination);
-		if (!m_pSpriteSaut->IsActif()) {
-			m_pSpriteRepos->ModifierAnnimation();
-			m_pSpriteRepos->Render(_pRenderer, m_RectPlayerDestination);
-		}
+
+		m_pJetPack->ShowJetPack(_pRenderer, m_RectPlayerDestination);
+		
+		m_pSpriteRepos->ModifierAnnimation();
+		m_pSpriteRepos->Render(_pRenderer, m_RectPlayerDestination);
 
 		if (!m_pSpriteParachute->IsActif())
 			m_pBarreVie->ShowBarre(_pRenderer);
 	}
-															// Accesseur ... 
+
+	// Accesseur ... 
 
 
 
@@ -232,6 +260,12 @@ public:
 	CSprite* ObtenirSpriteParachute(void) {
 
 		return m_pSpriteParachute;
+
+	}
+
+	CSprite* ObtenirSpriteJetPack(void) {
+
+		return m_pJetPack->ObtenirSprite();
 
 	}
 

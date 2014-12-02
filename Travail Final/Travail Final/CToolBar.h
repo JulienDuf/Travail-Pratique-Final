@@ -1,6 +1,8 @@
 // 420-202-RE : Travail final
 // Classe d'une boîte qui contient plusieurs objets sélectionnables(un à la fois)
 // Créée par Gabriel Beaudry le 18 novembre 2014(gabriel.bdry@gmail.com)
+// 02 décembre 2014, Gabriel Beaudry
+// -Ajout d'une variable m_uiPositionListe pour le double-click.
 
 class CToolBar {
 private:
@@ -10,12 +12,15 @@ private:
 	SDL_Rect m_RectToolBarDestination, // Rect de destination de la toolbar.
 		m_RectTextureDestination; // Rect de destination de la ToolBar pour chaque texture.
 	CScrollBar *m_pScrollBar; // Barre de défilement permettant de manipuler l'affichage.
+	CTimer *m_pTimerClick; // Timer pour le double click.
 
-	unsigned int m_iPositionListe, // Position dans la liste de l'objet en sélection.
-		m_iPositionAffichage, // Position de l'affichage lors qu'il y a une scrollbar par rapport à la vraie taille de la toolbar et non celle affichée.
+	unsigned int m_uiPositionSelection, // Position dans la liste de l'objet en sélection.
+		m_uiPositionListe, // Position dans la liste du double-click.
+		m_uiPositionAffichage, // Position de l'affichage lors qu'il y a une scrollbar par rapport à la vraie taille de la toolbar et non celle affichée.
 		m_uiMinimumSpace; // Espace minimum entre deux objets
 
 	bool m_boShow; // Booléen qui dit si la toolbar s'affiche.
+	bool m_boClick;
 
 public:
 
@@ -31,7 +36,10 @@ public:
 	// Param8: Textures des objets de la ToolBar.
 	CToolBar(SDL_Rect _RectDestination, SDL_Color _Color, SDL_Renderer* _pRenderer, unsigned int _uiObjectWidth, unsigned int _uiObjectHeight, unsigned int _uiMinimumSpace, unsigned int argc, ...) {
 
+		m_pTimerClick = new CTimer(500);
+
 		m_boShow = false;
+		m_boClick = false;
 
 		m_RectToolBarDestination = _RectDestination;
 
@@ -54,7 +62,8 @@ public:
 		}
 		va_end(parametres);
 		
-		m_iPositionListe = argc;
+		m_uiPositionSelection = argc;
+		m_uiPositionListe = argc;
 		m_pListeObjet->AllerATrieur(0);
 
 		// Initialisation de mon rect pour les textures individuelles...
@@ -74,7 +83,7 @@ public:
 	// En sortie:
 	// La position de l'objet sélectionné.
 	unsigned int ObtenirPositionObjetSelection() {
-		return m_iPositionListe;
+		return m_uiPositionListe;
 	}
 
 	// Procédure permettant d'afficher la toolbar...
@@ -95,8 +104,8 @@ public:
 				// Affichage avec la scrollbar différent...
 				if (m_pScrollBar != nullptr) {
 					// Si la texture de la liste où je suis rendu à afficher est dans la position d'affichage... 
-					if ((m_RectTextureDestination.x >= m_iPositionAffichage) && (m_RectTextureDestination.x + m_RectTextureDestination.w) <= (m_iPositionAffichage + m_RectToolBarDestination.w)) {
-						Recttmp = { m_RectTextureDestination.x - m_iPositionAffichage + m_RectToolBarDestination.x, m_RectTextureDestination.y + m_RectToolBarDestination.y, m_RectTextureDestination.w, m_RectTextureDestination.h };
+					if ((m_RectTextureDestination.x >= m_uiPositionAffichage) && (m_RectTextureDestination.x + m_RectTextureDestination.w) <= (m_uiPositionAffichage + m_RectToolBarDestination.w)) {
+						Recttmp = { m_RectTextureDestination.x - m_uiPositionAffichage + m_RectToolBarDestination.x, m_RectTextureDestination.y + m_RectToolBarDestination.y, m_RectTextureDestination.w, m_RectTextureDestination.h };
 						SDL_RenderCopy(_pRenderer, m_pListeObjet->ObtenirElementTrieur(), nullptr, &Recttmp);
 					}
 					else
@@ -105,15 +114,15 @@ public:
 						SDL_QueryTexture(m_pListeObjet->ObtenirElementTrieur(), nullptr, nullptr, &iW, &iH);
 						SDL_Rect Recttmp2; // Rect source pour le cropage.
 						// Vérification si l'objet dépasse en partie à droite...
-						if ((m_RectTextureDestination.x <= m_iPositionAffichage + m_RectToolBarDestination.w) && (m_RectTextureDestination.x + m_RectTextureDestination.w > m_iPositionAffichage + m_RectToolBarDestination.w)) {
-							Recttmp = { m_RectTextureDestination.x - m_iPositionAffichage + m_RectToolBarDestination.x, m_RectTextureDestination.y + m_RectToolBarDestination.y, m_iPositionAffichage + m_RectToolBarDestination.w - m_RectTextureDestination.x, m_RectTextureDestination.h };
+						if ((m_RectTextureDestination.x <= m_uiPositionAffichage + m_RectToolBarDestination.w) && (m_RectTextureDestination.x + m_RectTextureDestination.w > m_uiPositionAffichage + m_RectToolBarDestination.w)) {
+							Recttmp = { m_RectTextureDestination.x - m_uiPositionAffichage + m_RectToolBarDestination.x, m_RectTextureDestination.y + m_RectToolBarDestination.y, m_uiPositionAffichage + m_RectToolBarDestination.w - m_RectTextureDestination.x, m_RectTextureDestination.h };
 							Recttmp2 = { 0, 0, Recttmp.w * iW / m_RectTextureDestination.w, iH };
 							SDL_RenderCopy(_pRenderer, m_pListeObjet->ObtenirElementTrieur(), &Recttmp2, &Recttmp);
 						}
 						else
 							// Vérification si l'objet dépasse en partie à gauche...
-						if ((m_RectTextureDestination.x + m_RectTextureDestination.w) >= m_iPositionAffichage && (m_RectTextureDestination.x < m_iPositionAffichage)) {
-							Recttmp = { m_RectToolBarDestination.x, m_RectToolBarDestination.y + m_RectTextureDestination.y, m_RectTextureDestination.x + m_RectTextureDestination.w - m_iPositionAffichage, m_RectTextureDestination.h };
+						if ((m_RectTextureDestination.x + m_RectTextureDestination.w) >= m_uiPositionAffichage && (m_RectTextureDestination.x < m_uiPositionAffichage)) {
+							Recttmp = { m_RectToolBarDestination.x, m_RectToolBarDestination.y + m_RectTextureDestination.y, m_RectTextureDestination.x + m_RectTextureDestination.w - m_uiPositionAffichage, m_RectTextureDestination.h };
 							Recttmp2 = { (m_RectTextureDestination.w - Recttmp.w)* iW / m_RectTextureDestination.w, 0, Recttmp.w * iW / m_RectTextureDestination.w, iH };
 							SDL_RenderCopy(_pRenderer, m_pListeObjet->ObtenirElementTrieur(), &Recttmp2, &Recttmp);
 						}
@@ -125,7 +134,7 @@ public:
 					SDL_RenderCopy(_pRenderer, m_pListeObjet->ObtenirElementTrieur(), nullptr, &Recttmp);
 				}
 				// Si l'objet est sélectionné...
-				if (i == m_iPositionListe) {
+				if (i == m_uiPositionSelection) {
 					SDL_RenderFillRect(_pRenderer, &Recttmp);
 				}
 				// Prochaine image
@@ -156,8 +165,8 @@ public:
 					// Ajustement du rectevent et de la position d'affichage si il y a une toolbar ou  non...
 					if (m_pScrollBar != nullptr) {
 						// Mise à jour de la position d'affichage et des events de la scrollingbar...
-						m_iPositionAffichage = (float)m_pScrollBar->ReactToEvent(_pEvent);
-						uiX = _pEvent->motion.x - m_RectToolBarDestination.x + m_iPositionAffichage;
+						m_uiPositionAffichage = (float)m_pScrollBar->ReactToEvent(_pEvent);
+						uiX = _pEvent->motion.x - m_RectToolBarDestination.x + m_uiPositionAffichage;
 					}
 					else
 						uiX = _pEvent->motion.x - m_RectToolBarDestination.x;
@@ -165,25 +174,37 @@ public:
 
 					// Vérification si le click est à la hauteur des textures dans la toolbar...
 					if (uiY >= m_RectTextureDestination.y && uiY <= (m_RectTextureDestination.y + m_RectTextureDestination.h)) {
-						m_iPositionListe = 0;
+						m_uiPositionSelection = 0;
 						// Boucle d'incrémentation de la position de sélection dans la liste jusqu'à ce qu'il n'y ait plus de modulo à faire...
 						while (uiX >= (m_uiMinimumSpace + m_RectTextureDestination.w)) {
-							m_iPositionListe++;
+							m_uiPositionSelection++;
 							uiX -= (m_uiMinimumSpace + m_RectTextureDestination.w);
 						}
 						// Si le click était entre des objets...
 						if (uiX <= m_uiMinimumSpace) {
-							m_iPositionListe = m_pListeObjet->ObtenirCompte() + 1; // Déselection
+							m_uiPositionSelection = m_pListeObjet->ObtenirCompte() + 1; // Déselection
+						}
+						else
+						{
+							if (!m_pTimerClick->IsDone() && m_boClick) {
+								m_boShow = false;
+								m_uiPositionListe = m_uiPositionSelection;
+							}
+							else
+							{
+								m_pTimerClick->Start();
+								m_boClick = true;
+							}
 						}
 					}
 					else
 					{
-						m_iPositionListe = m_pListeObjet->ObtenirCompte() + 1; // Déselection
+						m_uiPositionSelection = m_pListeObjet->ObtenirCompte() + 1; // Déselection
 					}
 				}
 				else
 				{
-					m_iPositionListe = m_pListeObjet->ObtenirCompte() + 1; // Déselection
+					m_uiPositionSelection = m_pListeObjet->ObtenirCompte() + 1; // Déselection
 				}
 				break;
 			}
@@ -192,5 +213,6 @@ public:
 
 	void ReverseboShow() {
 		m_boShow = !m_boShow;
+		m_uiPositionSelection = m_pListeObjet->ObtenirCompte();
 	}
 };

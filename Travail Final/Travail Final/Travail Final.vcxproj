@@ -78,6 +78,7 @@
     <ClInclude Include="CGestionaire.h" />
     <ClInclude Include="CGrenade.h" />
     <ClInclude Include="CHealthPack.h" />
+    <ClInclude Include="CJetPack.h" />
     <ClInclude Include="CLabel.h" />
     <ClInclude Include="CLabelLeftRight.h" />
     <ClInclude Include="CListeDC.h" />

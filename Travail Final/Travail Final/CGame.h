@@ -72,9 +72,9 @@ public:
 
 	void ReactToEvent(SDL_Event* _pEvent) {
 
-		m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ReactToEvent(_pEvent);
-
 		m_pToolBar->ReactToEvent(_pEvent);
+
+		m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ReactToEvent(_pEvent, m_pToolBar->ObtenirPositionObjetSelection());
 
 	}
 

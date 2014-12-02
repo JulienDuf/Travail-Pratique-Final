@@ -26,6 +26,7 @@ using namespace std;
 #include "CMissile.h"
 #include "CGrenade.h"
 #include "CMelee.h"
+#include "CJetPack.h"
 #include "CPack.h"
 #include "CBarreVie.h"
 #include "CHealthPack.h"
@@ -124,6 +125,14 @@ bool VerifierCollisionJoueurMap(CPlayer* _pPlayer, SDL_Rect _RectPlayer, bool* _
 		TmpSDLRectPlayerSource = _pPlayer->ObtenirSpriteRepos()->ObtenirRectSource();		// On se sert du Rect source du sprite de repos.
 
 		TmpSDLRectPlayerHitboxPieds = _pPlayer->ObtenirHitboxPieds();						// On se sert du hitbox des pieds approprié pour le sprite de repos.
+	}
+	else if (_pPlayer->ObtenirSpriteJetPack()->IsActif()) {
+
+		pTmpSDLSurfacePlayer = _pPlayer->ObtenirSpriteJetPack()->ObtenirSurface();
+
+		TmpSDLRectPlayerSource = _pPlayer->ObtenirSpriteJetPack()->ObtenirRectSource();
+
+		TmpSDLRectPlayerHitboxPieds = _pPlayer->ObtenirHitboxPieds();
 	}
 
 	if (_pPlayer->ObtenirSpriteCourse()->ObtenirAnimation())					// Si le jueur est orienté vers la droite...
@@ -601,6 +610,10 @@ void Start(char* _strApplicationFilename) {
 	strEmplacement.append("Personnage\\Repos.png");
 	pGestionaireSurface->AjouterDonnee(IMG_Load(strEmplacement.c_str()), "pSurfaceRepos");
 
+	// Le jetpack...
+	strEmplacement = strApplicationPath;
+	strEmplacement.append("Personnage\\jetpack.png");
+	pGestionaireSurface->AjouterDonnee(IMG_Load(strEmplacement.c_str()), "pSurfaceJetPack");
 
 	// Chargement de la surface du missile...
 	strEmplacement = strApplicationPath;
@@ -619,7 +632,7 @@ void Start(char* _strApplicationFilename) {
 	pGestionaireFont->AjouterDonnee(TTF_OpenFont(strEmplacement.c_str(), 30), "pFontBouton");
 
 
-	// Chargement des surfaces des personnages...
+	// Chargement des textures des personnages...
 
 	// La course...
 	strEmplacement = strApplicationPath;
@@ -641,6 +654,11 @@ void Start(char* _strApplicationFilename) {
 	strEmplacement.append("Personnage\\Repos.png");
 	pGestionaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTextureRepos");
 
+	// Le jetpack...
+	strEmplacement = strApplicationPath;
+	strEmplacement.append("Personnage\\jetpack.png");
+	pGestionaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTextureJetPack");
+	
 
 	// Chargement de la texture de la barre de puissance
 	strEmplacement = strApplicationPath;
@@ -793,7 +811,7 @@ int main(int argc, char* argv[]) {
 						boExecution = !(pEvent->key.keysym.scancode == SDL_SCANCODE_ESCAPE);
 					break;
 				case SDL_SCANCODE_T:
-					pWindowJeu->ObtenirGame()->ChangerTour(pGestionaireFont->ObtenirDonnee("pFontBouton"), pWindowJeu->ObtenirRenderer());
+					//pWindowJeu->ObtenirGame()->ChangerTour(pGestionaireFont->ObtenirDonnee("pFontBouton"), pWindowJeu->ObtenirRenderer());
 					pWindowJeu->ObtenirGame()->ReverseShowToolBar();
 					break;
 				}

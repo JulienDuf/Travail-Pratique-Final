@@ -5,6 +5,9 @@
 // Modifier le 18 novembre par Xavier St-Georges (xavierst-georges@hotmail.com)
 // Modification : -Ajout de la procédure ModifierAnnimation.
 //				  -Ajout d'accesseur.
+// Modifier le 02 décembre 2014 pas Gabriel Beaudry (gabriel.bdry@gmail.com)
+// -Ajout d'une variable et d'une méthode pour gérer la position sur laquelle le sprite boucle.
+// -Modification à la fonction IsActif().
 //Fin des modifications.
 class CSprite {
 
@@ -21,7 +24,8 @@ private:
 
 	unsigned int m_uiCurrentFrame;			// Variable entière positive qui indique le cadre ou l'on est rendu dans l'affichage du sprite.
 	unsigned int m_uiNbrFrames;			// Variable Entière positive qui indique le nombre de cadres dans le sprite.
-	unsigned int m_uiAnimation;		// Quel annimation on veut afficher.
+	unsigned int m_uiAnimation;		    // Quel annimation on veut afficher.
+	unsigned int m_uiPositionBoucle;    // Entier non signé qui représente la position de bouclage du sprite.
 
 	bool m_boBoucle;					// Variable booléenne qui indique si le sprite doit continuer à boucler ( Si oui = true ).
 	bool m_boActif;						// Variable booléenne qui indique si le sprite est en animation ( si oui = true ).
@@ -52,6 +56,7 @@ public:
 		m_uiCurrentFrame = 0;					// On commence au premier cadre, donc à la position 0.
 		m_uiNbrFrames = _uiNbrFrames;			// Le nombre de cadres est entré en paramètre.
 		m_uiAnimation = 0;
+		m_uiPositionBoucle = 0;
 
 		m_boBoucle = _boBoucle;						// Par défaut l'animation ne boucle pas. ( faux mais on ne sent sert pas dans l'atelier... )
 		m_boActif = _boActif;						// Par défaut l'animation n'est pas active.  ( faux mais on ne s'en serts pas dans l'atelier... )
@@ -97,10 +102,13 @@ public:
 				m_uiCurrentFrame++;			// On va au prochain cadre.
 
 			else                            // Si c'est une animation qui va de droite à gauche.
-				m_uiCurrentFrame--;				
+				m_uiCurrentFrame--;
 
-			m_RectSource.x = (m_uiCurrentFrame % m_uiNbrFrames) * m_RectSource.w;		// La position de notre rectangle source se modifie pour englober le prochain cadre.
-
+			if (m_uiAnimation == 0) 
+				m_RectSource.x = (m_uiCurrentFrame % m_uiNbrFrames) * m_RectSource.w; // La position de notre rectangle source se modifie pour englober le prochain cadre.
+			else 
+				m_RectSource.x = (m_uiCurrentFrame % m_uiNbrFrames) * m_RectSource.w;
+			
 
 			m_pTimerDelay->Start();			// on recommence la minuterie.
 
@@ -140,11 +148,12 @@ public:
 		}
 	}
 
+	void DefinirPositionBouclage(unsigned int _uiPositionBoucle) {
+		m_uiPositionBoucle = _uiPositionBoucle;
+	}
+
 	bool IsActif(void) {
-		if (m_boActif)
-			return true;
-		else
-			return false;
+		return m_boActif;
 	}
 
 	SDL_Surface* ObtenirSurface(void) {

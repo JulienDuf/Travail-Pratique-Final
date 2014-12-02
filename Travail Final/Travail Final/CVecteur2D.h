@@ -46,6 +46,15 @@ public:
 		m_iComposanteY = _fNorme * (sinf((M_PI / 180) * _fOrientation));
 	}
 
+	void ModifierComposantX(int _iX) {
+
+		m_iComposanteX = _iX;
+	}
+
+	void ModifierComposantY(int _iY) {
+
+		m_iComposanteY = _iY;
+	}
 
 	int ObtenirComposanteX(void) {
 

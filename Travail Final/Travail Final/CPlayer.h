@@ -114,7 +114,7 @@ public:
 					m_pSpriteCourse->DefinirActif(true);
 					m_pSpriteRepos->DefinirAnimation(0);
 					m_pSpriteRepos->DefinirActif(false);			// Il n'est plus au repos.
-					VecteurVitesse->ModifierVecteur(35, 0.0000);
+					VecteurVitesse->ModifierComposantX(35);
 					m_boStable = false;
 				}
 
@@ -127,7 +127,7 @@ public:
 					m_pSpriteCourse->DefinirActif(true);
 					m_pSpriteRepos->DefinirAnimation(1);
 					m_pSpriteRepos->DefinirActif(false);			// Il n'est plus au repos.
-					VecteurVitesse->ModifierVecteur(35, 180);
+					VecteurVitesse->ModifierComposantX(-35);
 					m_boStable = false;
 				}
 				break;
@@ -150,12 +150,9 @@ public:
 			break;
 		case SDL_KEYUP:
 			if (!m_pSpriteParachute->IsActif()) {
-				VecteurVitesse->ModifierVecteur(0, 0);
-				m_boStable = true;
+				VecteurVitesse->ModifierComposantX(0);
 				m_pSpriteCourse->DefinirActif(false);					// Le sprite ne court plus.
 				m_pSpriteRepos->DefinirActif(true);
-				if (!m_pSpriteSaut->IsActif())
-					m_boStable = true;
 			}
 
 			break;

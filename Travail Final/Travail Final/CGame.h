@@ -90,7 +90,8 @@ public:
 				bool boPied;
 				unsigned int _uiX;
 				unsigned int _uiY;
-				if (!pPlayerActif->IsStable()) {
+				if (!pPlayerActif->IsStable()) 
+					*pPlayerActif->ObtenirVecteurVitesse() += *m_pGameMap->ObtenirGravite();
 					Recttmp.x += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35;
 					Recttmp.y += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35;
 					if (!m_pVerifierCollisionJoueurMap(pPlayerActif, Recttmp, &boCorps, &boPied, &_uiX, &_uiY)) {
@@ -99,11 +100,9 @@ public:
 					else {
 						Recttmp.y -= (Recttmp.h - _uiY);
 						pPlayerActif->ModifierRectDestination(Recttmp);
+						pPlayerActif->ModifierStabiliteJoueur(true);
 					}
-
-
-
-				}
+				
 
 				m_pTimerPhysique->Start();
 			}

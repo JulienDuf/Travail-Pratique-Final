@@ -153,6 +153,7 @@ public:
 				VecteurVitesse->ModifierComposantX(0);
 				m_pSpriteCourse->DefinirActif(false);					// Le sprite ne court plus.
 				m_pSpriteRepos->DefinirActif(true);
+				m_boStable = true;
 			}
 
 			break;

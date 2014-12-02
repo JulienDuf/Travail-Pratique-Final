@@ -67,5 +67,11 @@ public:
 		return m_iComposanteY;
 	}
 
+	void ModifierOrientation(float _fOrientation) {
+		float fNorme = sqrt(pow(m_iComposanteX, 2) + pow(m_iComposanteY, 2)); // Pythagore
+		m_iComposanteX = fNorme * (cosf((M_PI / 180) * _fOrientation));
+		m_iComposanteY = fNorme * (sinf((M_PI / 180) * _fOrientation));
+	}
+
 
 };

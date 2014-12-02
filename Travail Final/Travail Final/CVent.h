@@ -54,7 +54,7 @@ public:
 	}
 
 	
-	void ModifierForce(TTF_Font* _pFont, char* _chrForceVent, SDL_Color _ColorText, SDL_Renderer* _pRenderer) {
+	void ModifierForce(TTF_Font* _pFont, const char* _chrForceVent, SDL_Color _ColorText, SDL_Renderer* _pRenderer) {
 
    		SDL_DestroyTexture(m_pForceVent);
 

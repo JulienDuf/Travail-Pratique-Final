@@ -33,6 +33,8 @@ private:
 
 	bool m_boStable;					// Si le joueur est stable
 
+	CVecteur2D* VecteurVitesse;			// Vitesse.
+
 public:
 
 	// Constructeur...
@@ -41,26 +43,17 @@ public:
 	// Paramètre: _pToolList, pointe sur la liste d'outils que l'on veut donner au joueur.
 	// Paramètre: _strName, contient le nom que l'on veut donner au joueur.
 	// Retour: Rien (constructeur).
-	CPlayer(string _strEmplacementFichier, SDL_Rect _RectDestination, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), double _Physique(CVecteur2D* _VitesseMissile, SDL_Rect* _DestinationMissile), SDL_Renderer* _pRenderer) {
+	CPlayer(CGestionaire<SDL_Surface*>* _pGestionnaireSurface, CGestionaire<SDL_Texture*>* _pGestionnaireTexture, unsigned int _uiIDTeam, SDL_Rect _RectDestination, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), double _Physique(CVecteur2D* _VitesseMissile, SDL_Rect* _DestinationMissile)) {
 
 		m_boStable = false;
 
-		string strEmplacementFichier = _strEmplacementFichier;
+		m_pSpriteCourse = new CSprite(_pGestionnaireSurface->ObtenirDonnee("pSurfaceCourse"), _pGestionnaireTexture->ObtenirDonnee("pTextureCourse"), _RectDestination, 9, 50, true, false, 2);
 
-		strEmplacementFichier.append("Personnage\\Courses.png");
-		m_pSpriteCourse = new CSprite(IMG_Load(strEmplacementFichier.c_str()), IMG_LoadTexture(_pRenderer, strEmplacementFichier.c_str()), _RectDestination, 9, 50, true, false, 2);
+		m_pSpriteSaut = new CSprite(_pGestionnaireSurface->ObtenirDonnee("pSurfaceSaut"), _pGestionnaireTexture->ObtenirDonnee("pTextureSaut"), _RectDestination, 9, 100, false, false, 2);
 
-		strEmplacementFichier = _strEmplacementFichier;
-		strEmplacementFichier.append("Personnage\\Saut.png");
-		m_pSpriteSaut = new CSprite(IMG_Load(strEmplacementFichier.c_str()), IMG_LoadTexture(_pRenderer, strEmplacementFichier.c_str()), _RectDestination, 9, 50, false, false, 2);
+		m_pSpriteParachute = new CSprite(_pGestionnaireSurface->ObtenirDonnee("pSurfaceParachute"), _pGestionnaireTexture->ObtenirDonnee("pTextureParachute"), _RectDestination, 24, 20, true, true, 1);
 
-		strEmplacementFichier = _strEmplacementFichier;
-		strEmplacementFichier.append("Personnage\\Parachute.png");
-		m_pSpriteParachute = new CSprite(IMG_Load(strEmplacementFichier.c_str()), IMG_LoadTexture(_pRenderer, strEmplacementFichier.c_str()), _RectDestination, 24, 10, true, true, 1);
-
-		strEmplacementFichier = _strEmplacementFichier;
-		strEmplacementFichier.append("Personnage\\Repo.png");
-		m_pSpriteRepos = new CSprite(IMG_Load(strEmplacementFichier.c_str()), IMG_LoadTexture(_pRenderer, strEmplacementFichier.c_str()), _RectDestination, 1, 50, true, false, 2);
+		m_pSpriteRepos = new CSprite(_pGestionnaireSurface->ObtenirDonnee("pSurfaceRepos"), _pGestionnaireTexture->ObtenirDonnee("pTextureRepos"), _RectDestination, 1, 50, true, false, 2);
 
 
 		m_RectPlayerDestination = _RectDestination;
@@ -94,11 +87,13 @@ public:
 
 		m_pToolList = new CListeDC<CTools*>();
 
-		m_pToolList->AjouterFin(new CMissile(_strEmplacementFichier, _pRenderer, _MapDestruction, _CollisionObjetMap, _Physique, NULL));
+		m_pToolList->AjouterFin(new CMissile(_pGestionnaireSurface, _pGestionnaireTexture, _MapDestruction, _CollisionObjetMap, _Physique, NULL));
 
 		m_BoDeplacement = false;
 
-		m_pBarreVie = new CBarreVie(_strEmplacementFichier, { _RectDestination.x, _RectDestination.y - 2, 0, 0 }, _pRenderer);
+		m_pBarreVie = new CBarreVie(_pGestionnaireTexture, { _RectDestination.x, _RectDestination.y - 2, 0, 0 }, _uiIDTeam);
+
+		VecteurVitesse = new CVecteur2D(0, 0);
 
 	}
 
@@ -114,38 +109,54 @@ public:
 			switch (_pSDLEvent->key.keysym.scancode) {
 			case SDL_SCANCODE_RIGHT:
 
-				if (!m_pSpriteCourse->IsActif()) {					// S'il était au repos et que la flèche droite est appuyer.
+				if (!m_pSpriteCourse->IsActif() && !m_pSpriteParachute->IsActif()) {					// S'il était au repos et que la flèche droite est appuyer.
 					m_pSpriteCourse->DefinirAnimation(0);
 					m_pSpriteCourse->DefinirActif(true);
 					m_pSpriteRepos->DefinirAnimation(0);
 					m_pSpriteRepos->DefinirActif(false);			// Il n'est plus au repos.
+					VecteurVitesse->ModifierVecteur(35, 0.0000);
+					m_boStable = false;
 				}
 
 				
 				break;
 			case SDL_SCANCODE_LEFT:
 
-				if (!m_pSpriteCourse->IsActif()) {					// S'il était au repos et que la flèche gauche est appuyer.
+				if (!m_pSpriteCourse->IsActif() && !m_pSpriteParachute->IsActif()) {					// S'il était au repos et que la flèche gauche est appuyer.
 					m_pSpriteCourse->DefinirAnimation(1);
 					m_pSpriteCourse->DefinirActif(true);
 					m_pSpriteRepos->DefinirAnimation(1);
 					m_pSpriteRepos->DefinirActif(false);			// Il n'est plus au repos.
+					VecteurVitesse->ModifierVecteur(35, 180);
+					m_boStable = false;
 				}
 				break;
 
 			case SDL_SCANCODE_SPACE:								// Saut = Espace
-				m_pSpriteRepos->DefinirActif(false);
-				m_pSpriteCourse->DefinirActif(false);
-				m_pSpriteSaut->DefinirActif(true);
+				if (!m_pSpriteParachute->IsActif()) {
+					if (!m_pSpriteSaut->IsActif()) {
+						m_pSpriteRepos->DefinirActif(false);
+						m_pSpriteSaut->DefinirAnimation(m_pSpriteCourse->ObtenirAnimation()); // Pour que le saut sois du même bord que la course.
+						m_pSpriteCourse->DefinirActif(false);
+						m_pSpriteSaut->DefinirActif(true);
+						VecteurVitesse->ModifierVecteur(35, 90);
+						m_boStable = false;
+					}
+				}
 
 				
 				break;
 			}
 			break;
 		case SDL_KEYUP:
-			m_pSpriteCourse->DefinirActif(false);					// Le sprite ne court plus.
-			if (!m_pSpriteSaut->IsActif())
+			if (!m_pSpriteParachute->IsActif()) {
+				VecteurVitesse->ModifierVecteur(0, 0);
+				m_boStable = true;
+				m_pSpriteCourse->DefinirActif(false);					// Le sprite ne court plus.
 				m_pSpriteRepos->DefinirActif(true);
+				if (!m_pSpriteSaut->IsActif())
+					m_boStable = true;
+			}
 
 			break;
 
@@ -165,9 +176,10 @@ public:
 
 		m_pSpriteSaut->ModifierAnnimation();
 		m_pSpriteSaut->Render(_pRenderer, m_RectPlayerDestination);
-
-		m_pSpriteRepos->ModifierAnnimation();
-		m_pSpriteRepos->Render(_pRenderer, m_RectPlayerDestination);
+		if (!m_pSpriteSaut->IsActif()) {
+			m_pSpriteRepos->ModifierAnnimation();
+			m_pSpriteRepos->Render(_pRenderer, m_RectPlayerDestination);
+		}
 
 		if (!m_pSpriteParachute->IsActif())
 			m_pBarreVie->ShowBarre(_pRenderer);
@@ -260,5 +272,9 @@ public:
 	bool IsStable(void) {
 
 		return m_boStable;
+	}
+
+	CVecteur2D* ObtenirVecteurVitesse(void) {
+		return VecteurVitesse;
 	}
 };

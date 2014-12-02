@@ -5,6 +5,8 @@
 // Fin de code le 9 novembre 2014 par Julien Dufresne (dufresne_julien@hotmail.ca)
 // Modifiée le 13 novembre 2014 par Gabriel Beaudry (gabriel.bdry@gmail.com) :
 // Ajout d'une boussole(Vent) et modification de comentaire
+// Modifiée le 29 novembre par Gabriel Beaudry (gabriel.bdry@gmail.com)
+// Ajout de la procédure NouveauVent() et réglage de problèmes lors de la lecture du fichier texte
 
 #define BLANC32BIT 4294967295
 #define TRANSPARENCE32BIT 16777215
@@ -14,11 +16,11 @@ class CMap {
 private:
 
 	SDL_Texture* m_pSDLTextureBackground;			// Pointeur de texture SDL qui pointe sur la texture qui représente l'arrière plan de la carte de jeu.
+	SDL_Texture* m_pSDLTextureMap;
 	SDL_Surface* m_pSDLSurfaceMap;					// Pointeur de Surface SDL qui pointe sur la surface qui représente l'avant plan de la carte de jeu.
 	SDL_Rect m_RectPositionImages;					// Rect représentant la position de la map dans l'écran.
 	CListeDC<CPack*>* m_pPackList;					// Liste des packs présents dans la map.
 	CVent* m_pVent;									// Classe qui donne la force et la direction du vent.
-	//CComboBox* m_pComboBoxChoixOutils;            // Le ComboBox où le joueur choisi son outils pour son tour.
 
 	CVecteur2D* m_VecteurGravite;					// La gravité de la map.
 	int m_iVentMax;									// Le vent max de la map.
@@ -31,7 +33,7 @@ public:
 	// Param3: _pSDLTextureMap, pointe sur la texture qui représente l'avant plan de la carte de jeu.
 	// Param4: _pVent, Classe qui donne la force et la direction du vent.
 	// Param5: Renderer.
-	CMap(string _strEmplacementMap, string _strEmplacementFichier, SDL_Rect _RectPositionImages, CVent* _pVent, SDL_Renderer* _pRenderer, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY)) {
+	CMap(string _strEmplacementMap, CGestionaire<SDL_Surface*>* _pGestionnaireSurface, SDL_Rect _RectPositionImages, CVent* _pVent, SDL_Renderer* _pRenderer, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY)) {
 		
 		// Variables temporaires...
 		string strTmp[5];
@@ -55,9 +57,11 @@ public:
 		strEmplacement.append("map.png");
 		m_pSDLSurfaceMap = IMG_Load(strEmplacement.c_str());
 
+		m_pSDLTextureMap = SDL_CreateTextureFromSurface(_pRenderer, m_pSDLSurfaceMap);
+
 		// Ouverture du fichier...
 		strEmplacement = _strEmplacementMap;
-		strEmplacement.append("\\map.txt");
+		strEmplacement.append("map.txt");
 		FichierMap.open(strEmplacement);
 
 		m_RectPositionImages.w = m_pSDLSurfaceMap->w;
@@ -66,14 +70,14 @@ public:
 		if (FichierMap.is_open()) {
 
 			FichierMap.getline(chrTmp, 50);
-			strTampo = chrTmp[21];
+			strTampo = chrTmp[20];
 			m_VecteurGravite = new CVecteur2D(SDL_atof(strTampo.c_str()), 90);
 			FichierMap.getline(chrTmp, 50);
 
 			FichierMap.getline(chrTmp, 50);
-			strTampo = chrTmp[24];
+			strTampo = chrTmp[23];
+			strTampo += chrTmp[24];
 			strTampo += chrTmp[25];
-			strTampo += chrTmp[26];
 			m_iVentMax = SDL_atoi(strTampo.c_str());
 			FichierMap.getline(chrTmp, 50);
 
@@ -86,9 +90,10 @@ public:
 
 		for (int i = iNombreMines; i > 0; i--) {
 
-			m_pPackList->AjouterFin(new CMine(_strEmplacementFichier, _pRenderer, _MapDestruction, _CollisionObjetMap));
+			m_pPackList->AjouterFin(new CMine(_pGestionnaireSurface, _pRenderer, _MapDestruction, _CollisionObjetMap));
 
 		}
+
 	}
 
 
@@ -97,15 +102,9 @@ public:
 	// Retour: Rien.
 	void ShowMap(SDL_Renderer* _pSDLRenderer) {
 
-		// Créé une texture de la map.
-		SDL_Texture* pSDLTextureMap = SDL_CreateTextureFromSurface(_pSDLRenderer, m_pSDLSurfaceMap);
-
 		// Affiche les maps.
 		SDL_RenderCopy(_pSDLRenderer, m_pSDLTextureBackground, NULL, &m_RectPositionImages);
-		SDL_RenderCopy(_pSDLRenderer, pSDLTextureMap, NULL, &m_RectPositionImages);
-
-		//Détruits la texture créée
-		SDL_DestroyTexture(pSDLTextureMap);
+		SDL_RenderCopy(_pSDLRenderer, m_pSDLTextureMap, NULL, &m_RectPositionImages);
 
 		// Affiche le vent
 		m_pVent->ShowVent(_pSDLRenderer);
@@ -118,6 +117,23 @@ public:
 			m_pPackList->AllerSuivantCurseur();
 		}
 			
+		
+	}
+
+	void NouveauVent(TTF_Font* _pFont, SDL_Renderer* _pRenderer) {
+		m_pVent->ModifierAngle(rand() % 360);
+		char chr[4];
+		int i = rand() % m_iVentMax;
+		SDL_itoa(i, chr, 10);
+		string str = chr;
+		str.append(" km/h");
+		m_pVent->ModifierForce(_pFont, str.c_str(), { 0, 0, 0 }, _pRenderer);
+	}
+
+	void PutMapInTexture(SDL_Renderer* _pRenderer) {
+
+		SDL_DestroyTexture(m_pSDLTextureMap);
+		m_pSDLTextureMap = SDL_CreateTextureFromSurface(_pRenderer, m_pSDLSurfaceMap);
 	}
 
 	SDL_Surface* ObtenirSurfaceMap(void) {

@@ -1,112 +1,38 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Fichiers sources">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Fichiers d%27en-tête">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
-    <Filter Include="Fichiers de ressources">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="CWindow.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="CControl.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="CLabel.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="CMenu.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="CButton.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="CLabelLeftRight.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="CArbreAVL.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="CListeDC.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="CMap.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="CPlayer.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="CGame.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="CTeam.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="CSprite.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="CTimer.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="CTool.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="CPack.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="CGestionaire.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="CNoeudArbreAVL.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="CVent.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="CMissile.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="CBarrePuissance.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-<<<<<<< HEAD
-    <ClInclude Include="Pointeur Fonction.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="CToolBar.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="CScrollBar.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="CBarreVie.h">
-=======
-    <ClInclude Include="CHealthPack.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="CMine.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="CGrenade.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="CMelee.h">
->>>>>>> origin/Branche-outil-le-Retour
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
+    <ClInclude Include="CArbreAVL.h" />
+    <ClInclude Include="CBarrePuissance.h" />
+    <ClInclude Include="CBarreVie.h" />
+    <ClInclude Include="CButton.h" />
+    <ClInclude Include="CControl.h" />
+    <ClInclude Include="CGame.h" />
+    <ClInclude Include="CGestionaire.h" />
+    <ClInclude Include="CGrenade.h" />
+    <ClInclude Include="CHealthPack.h" />
+    <ClInclude Include="CLabel.h" />
+    <ClInclude Include="CLabelLeftRight.h" />
+    <ClInclude Include="CListeDC.h" />
+    <ClInclude Include="CMap.h" />
+    <ClInclude Include="CMelee.h" />
+    <ClInclude Include="CMenu.h" />
+    <ClInclude Include="CMine.h" />
+    <ClInclude Include="CMissile.h" />
+    <ClInclude Include="CNoeudArbreAVL.h" />
+    <ClInclude Include="CPack.h" />
+    <ClInclude Include="CPlayer.h" />
+    <ClInclude Include="CScrollBar.h" />
+    <ClInclude Include="CSprite.h" />
+    <ClInclude Include="CTeam.h" />
+    <ClInclude Include="CTimer.h" />
+    <ClInclude Include="CTool.h" />
+    <ClInclude Include="CToolBar.h" />
+    <ClInclude Include="CVent.h" />
+    <ClInclude Include="CWindow.h" />
+    <ClInclude Include="Pointeur Fonction.h" />
+    <ClInclude Include="CVecteur2D.h" />
   </ItemGroup>
 </Project>

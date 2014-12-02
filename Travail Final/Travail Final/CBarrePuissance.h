@@ -21,14 +21,13 @@ public:
 	// En entrée:
 	// Param1: L'emplacement des fichiers.
 	// Param2: Le renderer de la fenêtre.
-	CBarrePuissance(string _strEmplacement, SDL_Renderer* _pRenderer) {
+	CBarrePuissance(CGestionaire<SDL_Texture*>* _pGestionnaireTexture) {
 
 		m_BoBarreActive = false;
 
 		m_iForce = 0;
 
-		_strEmplacement.append("BarrePuissance.png");
-		m_pSDLTextureBarrre = IMG_LoadTexture(_pRenderer, _strEmplacement.c_str());
+		m_pSDLTextureBarrre = _pGestionnaireTexture->ObtenirDonnee("pTextureBarrePuissance");
 
 		m_RectDestinationBarre = { 0, 0, 0, 0 };
 		SDL_QueryTexture(m_pSDLTextureBarrre, NULL, NULL, &m_RectDestinationBarre.w, &m_RectDestinationBarre.h);

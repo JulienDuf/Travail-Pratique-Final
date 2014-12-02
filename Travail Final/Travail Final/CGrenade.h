@@ -26,7 +26,7 @@ public:
 		//initialisation des vecteurs de la grenade
 		m_iAngle = 0;
 		m_iForce = 0;
-		m_pBarrePuissance = new CBarrePuissance(_strSourceImage, _Renderer);
+		//m_pBarrePuissance = new CBarrePuissance(_strSourceImage);
 
 		//initialisation de la position de la grenade
 		m_pRectDestination.h = 24;

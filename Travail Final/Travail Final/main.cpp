@@ -6,6 +6,7 @@
 #include <time.h>
 #include <iostream>
 #include <fstream>
+#include <math.h>
 using namespace std;
 #include "Pointeur Fonction.h"
 #include "CArbreAVL.h"

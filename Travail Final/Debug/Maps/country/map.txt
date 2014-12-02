@@ -1,4 +1,4 @@
-Gravite de la map : 1.8
+Gravite de la map : 6.3
  
 Facteur vent maximal : 120 km/h
  

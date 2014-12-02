@@ -75,7 +75,7 @@ public:
 			strTampo += chrTmp[22];
 			m_VecteurGravite = new CVecteur2D((float)SDL_atof(strTampo.c_str()), 90.0);
 			FichierMap.getline(chrTmp, 50);
-
+			
 			FichierMap.getline(chrTmp, 50);
 			strTampo = chrTmp[23];
 			strTampo += chrTmp[24];

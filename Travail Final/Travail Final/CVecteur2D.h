@@ -28,7 +28,8 @@ public:
 	// Param2: L'orientation du vecteur.
 	CVecteur2D(float _fNorme, float _fOrientation) {
 
-		ModifierVecteur(_fNorme, _fOrientation);
+		ModifierVecteur(_fNorme, _fOrientation);		// L'orientation commence à l'angle 0 et va dans le sens horaire au lieu du sens antihoraire.  
+														// 90 degré pointera donc vers le bas et 270 degrés vers le haut. Ça fait chier. -Nico
 	}
 
 	// Redéfinition de l'opérateur += d'un vecteur.
@@ -46,6 +47,15 @@ public:
 		m_iComposanteY = _fNorme * (sinf((M_PI / 180) * _fOrientation));
 	}
 
+	void ModifierComposantX(int _iX) {
+
+		m_iComposanteX = _iX;
+	}
+
+	void ModifierComposantY(int _iY) {
+
+		m_iComposanteY = _iY;
+	}
 
 	int ObtenirComposanteX(void) {
 

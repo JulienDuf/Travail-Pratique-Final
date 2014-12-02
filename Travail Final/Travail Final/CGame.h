@@ -205,4 +205,49 @@ public:
 		return true;
 	}
 
+	 int RegressionLineaire(SDL_Rect _RectPiedJoueur) {
+		 int iAngle;
+		 float iCov; // Variable en y moyenne.
+		 float iVar; // Variable en x moyen.
+		 float fX = 0; // Valeur en x pour la régression.
+		 float fY = 0; // Valeur en y pour la régression.
+		 int iN = 0; // Le nombre de fois qu'il y a des "différent de transparent" Sert a savoir le milieu de la régressuion
+		 int* iTableau = new int[_RectPiedJoueur.w, _RectPiedJoueur.h];
+		for (int i = 0; i <  _RectPiedJoueur.w; i++) {
+			for (int j = 0; i < _RectPiedJoueur.h; i++) {
+				if (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(i + _RectPiedJoueur.x) + (j + _RectPiedJoueur.y) * m_pGameMap->ObtenirSurfaceMap()->w] != 0) {
+					iTableau[i, j] = 1;
+					fX += i;
+					fY += j;
+					iN += 1;
+				}
+			}
+		}
+		fX = fX / iN;
+		fY = fY / iN;
+		for (int i = 0; i < _RectPiedJoueur.w; i++) {
+			for (int j = 0; i < _RectPiedJoueur.h; i++) {
+				if (iTableau[i, j] == 1) {
+					iCov += ((i - fX) * (j - fY));
+					iVar += pow ((i - fX), 2);
+				}
+			}
+		}
+		
+		
+		iCov = (iCov / iN);
+		iVar = (iVar / iN);
+		if (iCov < 0 && iVar >= 0) // Cadran 4.
+			return (180 / M_PI) * atanf(((-(float)iCov) / ((float)iVar)));
+
+		if (iCov >= 0 && iVar < 0)
+			return 180 + (180 / M_PI) * atanf((((float)iCov) / (-(float)iVar)));
+
+		if ( iCov < 0 && iVar < 0)
+			return 180 - (180 / M_PI) * atanf(((-(float)iCov) / (-(float)iVar)));
+
+		if (iCov >= 0 && iVar >= 0)
+			return 360 - (180 / M_PI) * atanf((((float)iCov) / ((float)iVar)));
+	}
+
 };

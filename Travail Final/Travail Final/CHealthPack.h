@@ -12,7 +12,7 @@ public:
 		//initialisation de la texture
 		string strSourceImage = _strSourceImage;
 		strSourceImage.append("\\Armes et Packs\\HealthPack.png");
-		m_pSurface = IMG_LoadTexture(_Renderer, strSourceImage.c_str());
+		m_pSurface = IMG_Load(strSourceImage.c_str());
 
 		//initialisation de la position du pack
 		m_pRectDestination.h = 40;
@@ -33,9 +33,9 @@ public:
 	/*
 	Affichage du pack de vie sur la map a la position m_pRectDestination
 	*/
-	void Show(SDL_Renderer* _Renderer){
+	/*void Show(SDL_Renderer* _Renderer){
 		SDL_RenderCopy(_Renderer, m_pTexture, NULL, &m_pRectDestination);
-	}
+	}*/
 
 
 	/*

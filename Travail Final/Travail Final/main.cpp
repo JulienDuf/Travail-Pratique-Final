@@ -7,9 +7,10 @@
 #include <iostream>
 #include <fstream>
 using namespace std;
-#include "Pointeur Fonction.h"
+
 #include "CArbreAVL.h"
 #include "CListeDC.h"
+#include "Pointeur Fonction.h"
 #include "CTimer.h"
 #include "CVecteur2D.h"
 #include "CSprite.h"
@@ -57,59 +58,7 @@ SDL_Color CouleurTexte; // La couleur du texte.
 
 CTimer* pTimerPhysique;
 
-/*
-Fonction qui detecte si un personnage marche sur une mine ou un pack
-parametres:
-_pTeamList = liste d'equipes pour obtenir les joueurs
-_Pack = Pack sur lequel la collision sera verifiée
-¸retour: true = une collision a lieu
-*/
-bool DetectionCollisionPack(CListeDC<CTeam*>* _pTeamList, CPack* _Pack){
-	SDL_Surface* pTempSurfacePlayer;
-	SDL_Surface* pTempSurfacePack = _Pack->GetSurface();
-	_pTeamList->AllerDebut;
-	SDL_Rect TempRectDestinationPack = _Pack->GetRectDestination();
-	for (int i = 0; i < _pTeamList->ObtenirCompte(); i++){ //Parcours des equipes
-		CTeam* tempTeam = _pTeamList->ObtenirElementCurseur();
-		CListeDC<CPlayer*>* tempPlayerList = tempTeam->obtenirListeTeam();
 
-		for (int j = 0; j < tempPlayerList->ObtenirCompte(); j++){ //Parcours des personnages dans l'equipe
-			CPlayer* tempPlayer = tempPlayerList->ObtenirElementCurseur();
-			SDL_Rect tempPositionPlayer = tempPlayer->ObtenirRectDestination();
-			
-			//Obtention de la bonne surface du joueur
-			if (tempPlayer->ObtenirSpriteCourse()->IsActif()){
-				pTempSurfacePlayer = tempPlayer->ObtenirSpriteCourse()->ObtenirSurface();
-			}
-			else if (tempPlayer->ObtenirSpriteSaut()->IsActif()){
-				pTempSurfacePlayer = tempPlayer->ObtenirSpriteSaut()->ObtenirSurface();
-			}
-			else if (tempPlayer->ObtenirSpriteParachute()->IsActif()){
-				pTempSurfacePlayer = tempPlayer->ObtenirSpriteParachute()->ObtenirSurface();
-			}
-			else if (tempPlayer->ObtenirSpriteRepos()->IsActif()){
-				pTempSurfacePlayer = tempPlayer->ObtenirSpriteRepos()->ObtenirSurface();
-			}
-
-			for (int y = tempPositionPlayer.y; y < tempPositionPlayer.y + tempPositionPlayer.h; y++) { //Verification des collisions
-				for (int x = tempPositionPlayer.x; x < tempPositionPlayer.x + tempPositionPlayer.w; x++) {
-					for (int y2 = TempRectDestinationPack.y; y2 < TempRectDestinationPack.y + TempRectDestinationPack.h; y2++) {
-						for (int x2 = TempRectDestinationPack.x; x2 < TempRectDestinationPack.x + TempRectDestinationPack.w; x2++) {
-							if ((((unsigned int*)pTempSurfacePlayer->pixels)[(tempPositionPlayer.x + x) + (tempPositionPlayer.y + y) * pTempSurfacePlayer->w] != 0) && (((unsigned int*)pTempSurfacePack->pixels)[(TempRectDestinationPack.x + x) + (TempRectDestinationPack.y + y) * pTempSurfacePack->w] != 0)){ //Verification des pixels transparents
-								if ((x2 == x) && (y2 == y)){
-									//pPlayerUser = tempPlayer;
-									return true;
-								}
-							}
-						}
-					}
-				}
-			}
-			tempPlayerList->AllerSuivantCurseur();
-		}
-		_pTeamList->AllerSuivantCurseur();
-	}
-}
 
 
 // Fonction qui retourne la position d'une collision.

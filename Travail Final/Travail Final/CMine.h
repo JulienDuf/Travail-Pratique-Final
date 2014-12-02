@@ -10,10 +10,10 @@ private:
 
 	void(*m_pCollisionMap)(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY);
 	void(*m_pMapDestruction)(int _iRayon, int _iX, int _iY);
-	void(*m_pDetectionCollisionJoueur)(CListeDC<CTeam*>* _pTeamList, CPack* _Pack);
+	//void(*m_pDetectionCollisionJoueur)(CListeDC<CTeam*>* _pTeamList, CPack* _Pack);
 
 public:
-	CMine(string _strSourceImage, SDL_Renderer* _Renderer, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), void _pDetectionCollisionJoueur(CListeDC<CTeam*>* _pTeamList, CPack* _Pack)){
+	CMine(string _strSourceImage, SDL_Renderer* _Renderer, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY)){
 		//initialisation de la texture.
 		string strSourceImage = _strSourceImage;
 		strSourceImage.append("\\Armes et Packs\\mine.png");
@@ -27,7 +27,6 @@ public:
 
 		m_pCollisionMap = _CollisionMap;
 		m_pMapDestruction = _MapDestruction;
-		m_pDetectionCollisionJoueur = _pDetectionCollisionJoueur;
 
 		m_boCollision = false;
 		m_boActivation = false;
@@ -45,9 +44,10 @@ public:
 		SDL_RenderCopy(_Renderer, pTexture, NULL, &m_pRectDestination);
 		SDL_DestroyTexture(pTexture);
 
-		if (m_pDetectionCollisionJoueur){
+	}
 
-		}
+	void Use(){
+
 	}
 
 	void ModifierPosition(void) {

@@ -88,3 +88,13 @@ J'ai jasé beaucoup avec le monde comme d'habitude :)
 
 ---------------------------------------------------------------------------------------------------------------------
 
+Mardi 2 décembre 2014
+
+10:00 AM
+
+Ajout de commentaires qui n'étaient pas là. J'ai fini les collisions du corps avec la carte de jeu
+que Julien avait enlevé pour faire les déplacements. Il restera à ajuster le code pur qu'il différencie
+les collisions corps-pieds Puisque ce n'est pas géré par le code de Julien.
+Mais pour l'instant je vais manger un cookie!
+
+---------------------------------------------------------------------------------------------------------------------

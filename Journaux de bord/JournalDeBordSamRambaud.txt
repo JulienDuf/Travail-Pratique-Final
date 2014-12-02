@@ -11,3 +11,4 @@
 22 novembre: constructeurs packs terminés (utilisation a faire avec collisions)
 25 novembre: debut et fin de CMelee, debut du constructeur de CGrenade
 27 novemnbre: codage de verification de collision de packs avec des joueurs
+02 Décembre: fin du codage des verifications de collisions des packs avec les joueurs (A TESTER)

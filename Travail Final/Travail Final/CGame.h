@@ -95,7 +95,7 @@ public:
 					*pPlayerActif->ObtenirVecteurVitesse() += *m_pGameMap->ObtenirGravite();
 				Recttmp.x += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35;
 				Recttmp.y += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35;
-				pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(RegressionLineaire(pPlayerActif->ObtenirHitboxPieds()));
+				pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination()));
 					if (!m_pVerifierCollisionJoueurMap(pPlayerActif, Recttmp, &boCorps, &boPied, &_uiX, &_uiY)) {
 						pPlayerActif->ModifierRectDestination(Recttmp);
 					}
@@ -151,7 +151,7 @@ public:
 
 						if (pPlayer->ObtenirSpriteParachute()->IsActif()) {
 							RectPlayer = pPlayer->ObtenirRectDestinationParachute();
-							RectPlayer.y += 11;
+							RectPlayer.y += 1;
 							if (!m_pVerifierCollisionJoueurMap(pPlayer, RectPlayer, &_boCorps, &_boPieds, &_uiXMap, &_uiYMap))
 								pPlayer->ModifierRectDestinationParachute(RectPlayer);
 
@@ -178,6 +178,7 @@ public:
 			}
 		}
 	}
+
 	CMap* ObtenirMap(void) {
 
 		return m_pGameMap;
@@ -209,7 +210,7 @@ public:
 	// Procédure qui retourne la pente 
 	// Paramètre : _RectPiedJoueur : Le rect pied du joueur acitf.
 	// Retour : integer double qui représente l'angle de la pente.
-	 double RegressionLineaire(SDL_Rect _RectPiedJoueur) {
+	double RegressionLineaire(SDL_Rect _RectPiedJoueur, SDL_Rect _RectJoueur) {
 		 int iAngle;
 		 float iCov = 0; // Variable en y moyenne.
 		 float iVar = 0; // Variable en x moyen.
@@ -219,7 +220,7 @@ public:
 		 int* iTableau = new int[_RectPiedJoueur.w, _RectPiedJoueur.h]; // Tableau.
 		for (int j = 0; j <  _RectPiedJoueur.w; j++) { // Boucler sur toute le rect du pied dans la position de la map.
 			for (int i = 0; i < _RectPiedJoueur.h; i++) {
-				if (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(i + _RectPiedJoueur.x) + ((j + _RectPiedJoueur.y) * m_pGameMap->ObtenirSurfaceMap()->w)] != 0) { // Si le pixel est différent de transparent.
+				if (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(i + _RectPiedJoueur.x + _RectJoueur.x) + ((j + _RectPiedJoueur.y + _RectJoueur.y) * m_pGameMap->ObtenirSurfaceMap()->w)] != 0) { // Si le pixel est différent de transparent.
 					iTableau[i, j] = 1; // Mettre 1 dans mon tableau.
 					fX += i; // fX va servir a faire la moyenne des X.
 					fY += j; // fX va servir a faire la moyenne des Y.
@@ -257,6 +258,8 @@ public:
 			if (iCov >= 0 && iVar >= 0)
 				return 360 - (180 / M_PI) * atanf((((float)iCov) / ((float)iVar)));
 		}
+
+		return 0;
 		
 	}
 

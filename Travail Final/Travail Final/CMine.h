@@ -6,12 +6,14 @@ private:
 	SDL_Rect m_pRectDestination; //position de la mine sur la map
 	SDL_Surface* m_pSurface; //Texture du pack
 	bool m_boCollision; // Si la mine touche par terre.
+	bool m_boActivation; // Si la mine doit exploser
 
 	void(*m_pCollisionMap)(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY);
 	void(*m_pMapDestruction)(int _iRayon, int _iX, int _iY);
+	void(*m_pDetectionCollisionJoueur)(CListeDC<CTeam*>* _pTeamList, CPack* _Pack);
 
 public:
-	CMine(string _strSourceImage, SDL_Renderer* _Renderer, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY)){
+	CMine(string _strSourceImage, SDL_Renderer* _Renderer, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), void _pDetectionCollisionJoueur(CListeDC<CTeam*>* _pTeamList, CPack* _Pack)){
 		//initialisation de la texture.
 		string strSourceImage = _strSourceImage;
 		strSourceImage.append("\\Armes et Packs\\mine.png");
@@ -25,11 +27,10 @@ public:
 
 		m_pCollisionMap = _CollisionMap;
 		m_pMapDestruction = _MapDestruction;
+		m_pDetectionCollisionJoueur = _pDetectionCollisionJoueur;
 
 		m_boCollision = false;
-	}
-
-	void Use(){
+		m_boActivation = false;
 	}
 
 
@@ -43,6 +44,10 @@ public:
 		SDL_Texture* pTexture = SDL_CreateTextureFromSurface(_Renderer, m_pSurface);
 		SDL_RenderCopy(_Renderer, pTexture, NULL, &m_pRectDestination);
 		SDL_DestroyTexture(pTexture);
+
+		if (m_pDetectionCollisionJoueur){
+
+		}
 	}
 
 	void ModifierPosition(void) {
@@ -64,5 +69,13 @@ public:
 		else
 			m_pRectDestination = RectTmp;
 
+	}
+
+	SDL_Surface* GetSurface(){
+		return m_pSurface;
+	}
+
+	SDL_Rect GetRectDestination(){
+		return m_pRectDestination;
 	}
 };

@@ -5,14 +5,14 @@
 class CHealthPack: public CPack{
 private:
 	SDL_Rect m_pRectDestination; //Position du pack sur la map
-	SDL_Texture* m_pTexture; //Texture du pack
+	SDL_Surface* m_pSurface; //Texture du pack
 public:
 	//constructeur
 	CHealthPack(string _strSourceImage, SDL_Renderer* _Renderer){
 		//initialisation de la texture
 		string strSourceImage = _strSourceImage;
 		strSourceImage.append("\\Armes et Packs\\HealthPack.png");
-		m_pTexture = IMG_LoadTexture(_Renderer, strSourceImage.c_str());
+		m_pSurface = IMG_LoadTexture(_Renderer, strSourceImage.c_str());
 
 		//initialisation de la position du pack
 		m_pRectDestination.h = 40;
@@ -43,5 +43,13 @@ public:
 	*/
 	void ChuteDebut(){
 		m_pRectDestination.y += 15;
+	}
+
+	SDL_Surface* GetSurface(){
+		return m_pSurface;
+	}
+
+	SDL_Rect GetRectDestination(){
+		return m_pRectDestination;
 	}
 };

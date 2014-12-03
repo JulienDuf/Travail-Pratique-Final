@@ -218,8 +218,8 @@ public:
 		 float fY = 0; // Valeur en y pour la régression.
 		 int iN = 0; // Le nombre de fois qu'il y a des "différent de transparent" Sert a savoir le milieu de la régressuion
 		 int* iTableau = new int[_RectPiedJoueur.w, _RectPiedJoueur.h]; // Tableau.
-		for (int j = 0; j <  _RectPiedJoueur.w; j++) { // Boucler sur toute le rect du pied dans la position de la map.
-			for (int i = 0; i < _RectPiedJoueur.h; i++) {
+		for (int j = 0; j <  _RectPiedJoueur.h; j++) { // Boucler sur toute le rect du pied dans la position de la map.
+			for (int i = 0; i < _RectPiedJoueur.w; i++) {
 				if (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(i + _RectPiedJoueur.x + _RectJoueur.x) + ((j + _RectPiedJoueur.y + _RectJoueur.y) * m_pGameMap->ObtenirSurfaceMap()->w)] != 0) { // Si le pixel est différent de transparent.
 					iTableau[i, j] = 1; // Mettre 1 dans mon tableau.
 					fX += i; // fX va servir a faire la moyenne des X.
@@ -245,6 +245,9 @@ public:
 			iCov = (iCov / iN); //moyenne
 			iVar = (iVar / iN); //moyenne
 		}
+
+		delete[] iTableau;
+
 		if (iCov != 0 && iVar != 0) {
 			if (iCov < 0 && iVar >= 0)
 				return (180 / M_PI) * atanf(((-(float)iCov) / ((float)iVar)));

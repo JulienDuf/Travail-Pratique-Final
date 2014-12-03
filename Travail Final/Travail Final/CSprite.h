@@ -162,6 +162,9 @@ public:
 
 	}
 	
+	void DefinirCurrentFrame(unsigned int _uiFrame) {
+		m_uiCurrentFrame = _uiFrame;
+	}
 
 	//Destructeur...
 	~CSprite(void) {

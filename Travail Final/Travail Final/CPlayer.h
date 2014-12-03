@@ -146,7 +146,7 @@ public:
 						m_pSpriteSaut->DefinirAnimation(m_pSpriteCourse->ObtenirAnimation()); // Pour que le saut sois du même bord que la course.
 						m_pSpriteSaut->DefinirActif(true);
 						VecteurVitesse->ModifierComposantX(0);
-						VecteurVitesse->ModifierComposantY(20);
+						VecteurVitesse->ModifierComposantY(-150);
 						m_boStable = false;
 					}
 
@@ -186,7 +186,7 @@ public:
 				m_pSpriteParachute->DefinirActif(false);
 				m_pSpriteRepos->DefinirActif(false);
 				m_pSpriteSaut->DefinirActif(false);
-				m_boStable = m_pJetPack->ReactToEvent(_pSDLEvent, VecteurVitesse);
+   				m_boStable = m_pJetPack->ReactToEvent(_pSDLEvent, VecteurVitesse);
 
 				break;
 			}

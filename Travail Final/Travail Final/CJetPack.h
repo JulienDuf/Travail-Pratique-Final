@@ -22,7 +22,7 @@ public:
 
 				if (m_boSpace) {
 					m_pSpriteJetPack->DefinirAnimation(0);
-					_pVecteurVitesse->ModifierVecteur(35, 315);
+					_pVecteurVitesse->ModifierComposantX(25);
 					return false;
 				}
 
@@ -31,14 +31,16 @@ public:
 
 				if (m_boSpace) {
 					m_pSpriteJetPack->DefinirAnimation(0);
-					_pVecteurVitesse->ModifierVecteur(35, 225);
+					_pVecteurVitesse->ModifierComposantX(-25);
 					return false;
 				}
 
 				break;
 			case SDL_SCANCODE_SPACE:
 
+				_pVecteurVitesse->ModifierComposantY(-50);
 				m_boSpace = true;
+				return false;
 
 				break;
 			}
@@ -47,7 +49,11 @@ public:
 		case SDL_KEYUP:
 
 			m_boSpace = false;
-
+			if (!m_pSpriteJetPack->IsActif()) {
+				return true;
+			}
+			else
+				return false;
 			break;
 		}
 	}

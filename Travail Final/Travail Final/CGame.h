@@ -104,6 +104,7 @@ public:
 						Recttmp.y -= (Recttmp.h - _uiY);
 						pPlayerActif->ModifierRectDestination(Recttmp);
 						pPlayerActif->ObtenirVecteurVitesse()->ModifierComposantY(0);
+
 					}
 				
 
@@ -262,7 +263,7 @@ public:
 				return 360 - (180 / M_PI) * atanf((((float)iCov) / ((float)iVar)));
 		}
 
-		return 0;
+		return 362;
 		
 	}
 

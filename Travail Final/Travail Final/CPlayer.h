@@ -11,6 +11,9 @@ class CPlayer {
 private:
 
 	bool m_BoDeplacement;				// Si le joueur se déplace.
+	bool m_boStable;					// Si le joueur est stable
+	bool n_boChuteLibre;
+
 
 	CSprite* m_pSpriteCourse;			// Pointeur de sprite qui pointe sur le sprite qui représente le joueur qui est en état de course.
 	CSprite* m_pSpriteSaut;				// pointeur de sprite qui pointe sur le sprite qui représente le joueur qui est en état de saut.
@@ -30,8 +33,6 @@ private:
 	string m_strName;					// Chaine de caractères qui contient le nom du joueur.
 
 	CListeDC<CTools*>* m_pToolList;		// pointeur de liste d'outils qui pointe sur la liste d'outils de combat que l'utilisateur peut utiliser.
-
-	bool m_boStable;					// Si le joueur est stable
 
 	CVecteur2D* VecteurVitesse;			// Vitesse.
 
@@ -116,6 +117,7 @@ public:
 					m_pSpriteRepos->DefinirActif(false);			// Il n'est plus au repos.
 					VecteurVitesse->ModifierComposantX(35);
 					m_boStable = false;
+					m_BoDeplacement = true;
 				}
 
 				
@@ -129,6 +131,7 @@ public:
 					m_pSpriteRepos->DefinirActif(false);			// Il n'est plus au repos.
 					VecteurVitesse->ModifierComposantX(-35);
 					m_boStable = false;
+					m_BoDeplacement = true;
 				}
 				break;
 
@@ -154,6 +157,7 @@ public:
 				m_pSpriteCourse->DefinirActif(false);					// Le sprite ne court plus.
 				m_pSpriteRepos->DefinirActif(true);
 				m_boStable = true;
+				m_BoDeplacement = false;
 			}
 
 			break;
@@ -270,6 +274,11 @@ public:
 	bool IsStable(void) {
 
 		return m_boStable;
+	}
+
+	bool IsMoving(void) {
+
+		return m_BoDeplacement;
 	}
 
 	CVecteur2D* ObtenirVecteurVitesse(void) {

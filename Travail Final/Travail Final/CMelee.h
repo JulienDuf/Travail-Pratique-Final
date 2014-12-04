@@ -13,8 +13,9 @@ private:
 public:
 
 	//constructeur
-	CMelee(){
-		iDamage = 20;
+	CMelee(string _strEmplacement){
+
+		iDamage = 0.2;
 		//m_pSprite = new CSprite(0, 0,0 ,300);
 	}
 

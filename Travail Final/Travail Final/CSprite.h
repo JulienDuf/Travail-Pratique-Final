@@ -80,6 +80,7 @@ public:
 			SDL_RenderCopy(_Renderer, m_pTextureSprite, &m_RectSource, &_RectDestination);		// On rends le cadre actuel dans la fenêtre.
 		}
 	}
+
 	// Procédure permettant de déplacer le cadre d'affichage de un vers la droit où le retourne au départ voulue...
 	void ModifierAnnimation(void) {
 

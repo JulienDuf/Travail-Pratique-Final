@@ -1,0 +1,8 @@
+Dommage: 20
+ 
+Range : 100
+ 
+Munition : illimité
+ 
+Attaque perçante, empalé vos enemis et
+regardez les succomber à leurs blessures.

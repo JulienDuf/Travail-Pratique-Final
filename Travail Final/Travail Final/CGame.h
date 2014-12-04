@@ -15,7 +15,7 @@ private:
 
 public:
 
-	CGame(string _strEmplacementMap, CGestionaire<SDL_Surface*>* _pGestionnaireSurface, CGestionaire<SDL_Texture*>* _pGestionnaireTexture, int _iNombre…quipe, int _iNombreJoueur, CVent* _pVent, bool _VerifierCollisionJoueurMap(CPlayer* _pPlayer, SDL_Rect _RectPlayer, bool* _boCollisionCorps, bool* _boCollisionPieds, unsigned int* _uiXMap, unsigned int* _uiYMap), void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), double _Physique(CVecteur2D* _VitesseMissile, SDL_Rect* _DestinationMissile), SDL_Renderer* _pRenderer) {
+	CGame(string _strEmplacementMap, CGestionaire<TTF_Font*>* _pGestionnaireFont, CGestionaire<SDL_Surface*>* _pGestionnaireSurface, CGestionaire<SDL_Texture*>* _pGestionnaireTexture, int _iNombre…quipe, int _iNombreJoueur, CVent* _pVent, bool _VerifierCollisionJoueurMap(CPlayer* _pPlayer, SDL_Rect _RectPlayer, bool* _boCollisionCorps, bool* _boCollisionPieds, unsigned int* _uiXMap, unsigned int* _uiYMap), void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), double _Physique(CVecteur2D* _VitesseMissile, SDL_Rect* _DestinationMissile), SDL_Renderer* _pRenderer) {
 
 		m_boDebutPartie = true;
 
@@ -29,7 +29,7 @@ public:
 
 		for (int i = _iNombre…quipe; i > 0; i--) {
 
-			m_pTeamList->AjouterFin(new CTeam(_pGestionnaireSurface, _pGestionnaireTexture, i, _iNombreJoueur, _MapDestruction, _CollisionObjetMap, _Physique));
+			m_pTeamList->AjouterFin(new CTeam(_strEmplacementMap, _pRenderer, _pGestionnaireFont, _pGestionnaireSurface, _pGestionnaireTexture, i, _iNombreJoueur, _MapDestruction, _CollisionObjetMap, _Physique));
 		}
 		m_pTeamList->AllerDebut();
 
@@ -91,7 +91,7 @@ public:
 				unsigned int _uiX;
 				unsigned int _uiY;
 				
-				if (!pPlayerActif->IsStable()) {
+				if (!pPlayerActif->IsStable()) 
 					*pPlayerActif->ObtenirVecteurVitesse() += *m_pGameMap->ObtenirGravite();
 					Recttmp.x += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35;
 					Recttmp.y += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35;
@@ -104,7 +104,7 @@ public:
 						pPlayerActif->ModifierRectDestination(Recttmp);
 						pPlayerActif->ObtenirVecteurVitesse()->ModifierComposantY(0);
 					}
-				}
+				
 
 				m_pTimerPhysique->Start();
 			}

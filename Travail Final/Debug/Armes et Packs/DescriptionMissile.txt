@@ -1,0 +1,8 @@
+Dommage : 100 - % de proximité du rayon d'explosion
+ 
+Rayon d'explosion : 50
+ 
+Munition : 5
+ 
+Lance-Missile permettant d'infliger des dégats 
+inimaginables lorsque bien visé.

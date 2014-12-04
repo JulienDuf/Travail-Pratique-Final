@@ -98,3 +98,13 @@ les collisions corps-pieds Puisque ce n'est pas géré par le code de Julien.
 Mais pour l'instant je vais manger un cookie!
 
 ---------------------------------------------------------------------------------------------------------------------
+
+Jeudi 4 décembre 2014
+
+2:00 PM
+
+Travail avec Xavier sur la régression linéaire, le déplacement du joueur a des bugs maintenant
+donc il faudra travailler dessus, j'ai commencé a travailler sur les états du joueur, donc
+je m'arrange pour prendre en compte plein de booléens différents...
+
+---------------------------------------------------------------------------------------------------------------------

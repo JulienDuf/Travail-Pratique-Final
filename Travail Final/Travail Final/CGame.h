@@ -97,7 +97,7 @@ public:
 				Recttmp.x += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35;
 				Recttmp.y += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35;
 				pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination()));
-				DetectionCollisionPack(pPlayerActif, &boExplosion);
+				//DetectionCollisionPack(pPlayerActif, &boExplosion);
 				if (!m_pVerifierCollisionJoueurMap(pPlayerActif, Recttmp, &boCorps, &boPied, &_uiX, &_uiY)) {
 						pPlayerActif->ModifierRectDestination(Recttmp);
 					}
@@ -145,23 +145,24 @@ public:
 							else {
 
 								bool boExplosion;
+								SDL_Rect RectTmp;
 
 								RectPlayer.y -= (RectPlayer.h - _uiYMap);
 								pPlayer->ModifierRectDestination(RectPlayer);
 								pPlayer->ModifierStabiliteJoueur(true);
 
-								DetectionCollisionPack(pPlayer, &boExplosion);
+								DetectionCollisionPack(pPlayer, &boExplosion, &RectTmp);
 
 								if (boExplosion) {
-
-									
+									pPlayerListTmp->Retirer(true);
+									DomageExplosion(RectTmp, 45);
 								}
 
 							}
 						}
 
 
-						if (pPlayer->ObtenirSpriteParachute()->IsActif()) {
+						else if (pPlayer->ObtenirSpriteParachute()->IsActif()) {
 							RectPlayer = pPlayer->ObtenirRectDestinationParachute();
 							RectPlayer.y += 1;
 							if (!m_pVerifierCollisionJoueurMap(pPlayer, RectPlayer, &_boCorps, &_boPieds, &_uiXMap, &_uiYMap))
@@ -285,7 +286,7 @@ public:
 	_Pack = Pack sur lequel la collision sera verifiée
 	¸retour: true = une collision a lieu
 	*/
-	bool DetectionCollisionPack(CPlayer* _pPlayer, bool* _boExplosion) {
+	bool DetectionCollisionPack(CPlayer* _pPlayer, bool* _boExplosion, SDL_Rect* _RectExplosion) {
 
 		CPack* pPackTmp;
 
@@ -299,6 +300,8 @@ public:
 		SDL_Rect TmpSDLRectPlayerHitboxPieds;									// Structure SDL Rect qui contiendra le rectangle dans le rectangle source dans lequel il faudra vérifier les collisions du corps.
 
 		bool boTerminerBoucle = false;
+
+		*_boExplosion = false;
 
 		if (_pPlayer->ObtenirSpriteCourse()->IsActif()) {						// Si le joueur est en train de courir...
 
@@ -340,20 +343,24 @@ public:
 		for (int i = 0; i < m_pGameMap->ObtenirPackList()->ObtenirCompte(); i++) {
 
 			pPackTmp = m_pGameMap->ObtenirPackList()->ObtenirElementCurseur();
+			pTmpSDLSurfacePack = pPackTmp->GetSurface();
 
-			if ((TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerSource.x + TmpSDLRectPlayerDestination.w >= pPackTmp->GetRectDestination().x && TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerSource.x + TmpSDLRectPlayerDestination.w <= pPackTmp->GetRectDestination().x + pPackTmp->GetRectDestination().w) && (TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerDestination.h >= pPackTmp->GetRectDestination().y && TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerDestination.h <= pPackTmp->GetRectDestination().y + pPackTmp->GetRectDestination().h)) {
+			if (((TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerDestination.w >= pPackTmp->GetRectDestination().x && TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerDestination.w <= pPackTmp->GetRectDestination().x + pPackTmp->GetRectDestination().w) || (TmpSDLRectPlayerDestination.x >= pPackTmp->GetRectDestination().x && TmpSDLRectPlayerDestination.x <= pPackTmp->GetRectDestination().x + pPackTmp->GetRectDestination().w)) && ((TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerDestination.h >= pPackTmp->GetRectDestination().y && TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerDestination.h <= pPackTmp->GetRectDestination().y + pPackTmp->GetRectDestination().h) || (TmpSDLRectPlayerDestination.x >= pPackTmp->GetRectDestination().y && TmpSDLRectPlayerDestination.y <= pPackTmp->GetRectDestination().y + pPackTmp->GetRectDestination().h))) {
 
-				for (int x = _pPlayer->ObtenirHitboxPieds().w; x < 0 && !boTerminerBoucle; x--) {
+				for (int x = TmpSDLRectPlayerDestination.w; x > 0; x--) {
 
-					if ((((unsigned int*)pTmpSDLSurfacePack->pixels)[(TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerHitboxPieds.x + x) + (TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerHitboxPieds.y) * pTmpSDLSurfacePack->w] != 0) && (((unsigned int*)pTmpSDLSurfacePlayer->pixels)[(TmpSDLRectPlayerSource.x + TmpSDLRectPlayerHitboxPieds.x + x) + (TmpSDLRectPlayerSource.y + TmpSDLRectPlayerHitboxPieds.y) * pTmpSDLSurfacePlayer->w] != 0)) {
+					for (int y = TmpSDLRectPlayerDestination.h; y > 0; y--) {
 
-						*_boExplosion = pPackTmp->Use(_pPlayer);
-						DomageExplosion(pPackTmp->GetRectDestination(), 45);
-						return true;
+						if ((((unsigned int*)pTmpSDLSurfacePlayer->pixels)[(TmpSDLRectPlayerSource.x + TmpSDLRectPlayerHitboxPieds.x + x) + (TmpSDLRectPlayerSource.y + TmpSDLRectPlayerHitboxPieds.y + y) * pTmpSDLSurfacePlayer->w] != 0)) {
 
+							*_boExplosion = pPackTmp->Use(_pPlayer);
+							*_RectExplosion = pPackTmp->GetRectDestination();
+							m_pGameMap->ObtenirPackList()->Retirer(true);
+							return true;
+
+						}
 					}
 				}
-
 			}
 			m_pGameMap->ObtenirPackList()->AllerSuivantCurseur();
 		}
@@ -363,8 +370,14 @@ public:
 	void DomageExplosion(SDL_Rect _RectPositionExplosion, int _iRayon) {
 
 		CListeDC<CPlayer*>* pPlayerList;
+		CListeDC<CPack*>* pPackList;
 		CPlayer* pPlayerTmp;
+		CPack* pPackTmp;
 		SDL_Rect RectDestinationPlayer;
+		SDL_Rect RectDestinationPack;
+
+		int iDistanceRayon;
+		float fPourcentage;
 
 		for (int i = 0; i < m_pTeamList->ObtenirCompte(); i++) {
 
@@ -374,40 +387,52 @@ public:
 
 				pPlayerTmp = pPlayerList->ObtenirElementCurseur();
 				RectDestinationPlayer = pPlayerTmp->ObtenirRectDestination();
-				int iDistanceRayon;
-				float fPourcentage;
 
-				if (RectDestinationPlayer.x + RectDestinationPlayer.w / 2 >= _RectPositionExplosion.x - _iRayon) {
+				if (RectDestinationPlayer.x + RectDestinationPlayer.w / 2 >= _RectPositionExplosion.x - _iRayon && _RectPositionExplosion.x > RectDestinationPlayer.x) {
 
-					iDistanceRayon = (_RectPositionExplosion.x - _iRayon) - (RectDestinationPlayer.x + RectDestinationPlayer.w / 2);
+					iDistanceRayon = _RectPositionExplosion.x - RectDestinationPlayer.x;
 					fPourcentage = ((float)iDistanceRayon / (float)_iRayon);
-					pPlayerTmp->SetHealth(pPlayerTmp->GetHealth() * (100 - fPourcentage));
+					pPlayerTmp->SetHealth(pPlayerTmp->GetHealth() * (1 - fPourcentage));
 				}
 
-				else if (RectDestinationPlayer.x + RectDestinationPlayer.w / 2 <= _RectPositionExplosion.x + _iRayon){
+				else if (RectDestinationPlayer.x + RectDestinationPlayer.w / 2 <= _RectPositionExplosion.x + _iRayon && _RectPositionExplosion.x < RectDestinationPlayer.x){
 
-					iDistanceRayon = (_RectPositionExplosion.x + _iRayon) - (RectDestinationPlayer.x + RectDestinationPlayer.w);
+					iDistanceRayon = RectDestinationPlayer.x - _RectPositionExplosion.x;
 					fPourcentage = ((float)iDistanceRayon / (float)_iRayon);
-					pPlayerTmp->SetHealth(pPlayerTmp->GetHealth() * (100 - fPourcentage));
-				}
-
-				else if (RectDestinationPlayer.y + RectDestinationPlayer.h / 2 >= _RectPositionExplosion.y - _iRayon) {
-
-					iDistanceRayon = (_RectPositionExplosion.y - _iRayon) - (RectDestinationPlayer.y + RectDestinationPlayer.h / 2);
-					fPourcentage = ((float)iDistanceRayon / (float)_iRayon);
-					pPlayerTmp->SetHealth(pPlayerTmp->GetHealth() * (100 - fPourcentage));
-				}
-
-				else if (RectDestinationPlayer.y + RectDestinationPlayer.h / 2 >= _RectPositionExplosion.y + _iRayon) {
-
-					iDistanceRayon = (_RectPositionExplosion.y + _iRayon) - (RectDestinationPlayer.y + RectDestinationPlayer.w);
-					fPourcentage = ((float)iDistanceRayon / (float)_iRayon);
-					pPlayerTmp->SetHealth(pPlayerTmp->GetHealth() * (100 - fPourcentage));
+					pPlayerTmp->SetHealth(pPlayerTmp->GetHealth() * (1 - fPourcentage));
 				}
 
 				if (pPlayerTmp->GetHealth() <= 0)
 					pPlayerList->Retirer(true);
 
+				else
+					pPlayerList->AllerSuivantCurseur();
+
+			}
+
+			pPackList = m_pGameMap->ObtenirPackList();
+
+			pPackList->AllerDebut();
+
+			for (int i = 0; i < pPackList->ObtenirCompte(); i++) {
+
+				pPackTmp = pPackList->ObtenirElementCurseur();
+				RectDestinationPack = pPackTmp->GetRectDestination();
+
+				if (RectDestinationPack.x + RectDestinationPack.w >= (_RectPositionExplosion.x - _iRayon) && _RectPositionExplosion.x >= RectDestinationPack.x) {
+
+					pPackTmp->Use(nullptr);
+					m_pGameMap->ObtenirPackList()->Retirer(true);
+				}
+
+				else if ((RectDestinationPack.x) <= (_RectPositionExplosion.x + _iRayon) && _RectPositionExplosion.x <= RectDestinationPack.x){
+
+					pPackTmp->Use(nullptr);
+					m_pGameMap->ObtenirPackList()->Retirer(true);
+				}
+
+				else
+					pPackList->AllerSuivantCurseur();
 			}
 		}
 	}

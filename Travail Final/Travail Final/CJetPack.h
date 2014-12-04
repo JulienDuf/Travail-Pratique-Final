@@ -118,7 +118,7 @@ public:
 		m_pSpriteJetPack->Render(_pRenderer, _RectPlayerDestination);
 		if (m_pSpriteJetPack->IsActif())
 			m_pBarreDeCarburant->ShowBarre(_pRenderer, { _RectPlayerDestination.x, _RectPlayerDestination.y + _RectPlayerDestination.h + 2, 40, 6 });
-		m_pDescription->ShowControl(_pRenderer);
+		//m_pDescription->ShowControl(_pRenderer);
 	}
 
 	void DefinirActif(bool _boActif) {

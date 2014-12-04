@@ -85,6 +85,7 @@ public:
 
 			FichierMap.getline(chrTmp, 50);
 			strTampo = chrTmp[28];
+			strTampo += chrTmp[29];
 			iNombreMines = SDL_atoi(strTampo.c_str());
 
 			FichierMap.close();

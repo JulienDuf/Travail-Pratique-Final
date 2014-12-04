@@ -32,8 +32,12 @@ public:
 
 	bool Use(CPlayer* _pPlayer) {
 
-		_pPlayer->SetHealth(0.0f);
+		if (_pPlayer != nullptr) 
+			_pPlayer->SetHealth(0.0f);
+
 		m_pMapDestruction(45, m_RectDestination.x + m_RectDestination.w / 2, m_RectDestination.y + m_RectDestination.h);
+
+		
 		return true;
 	}
 

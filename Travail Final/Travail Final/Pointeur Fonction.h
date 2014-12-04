@@ -110,3 +110,10 @@ void MapDestruction(SDL_Surface* _pSDLSurfaceMap, SDL_Surface* _pSurfaceGabarie,
 	}
 
 }
+
+
+
+
+void DetectionRayonExplosion(){
+
+}

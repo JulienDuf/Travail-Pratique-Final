@@ -148,4 +148,9 @@ public:
 
 		return m_VecteurGravite;
 	}
+
+	CListeDC<CPack*>* ObtenirPackList(void) {
+
+		return m_pPackList;
+	}
 };

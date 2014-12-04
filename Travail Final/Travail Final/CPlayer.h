@@ -13,6 +13,9 @@ class CPlayer {
 private:
 
 	bool m_BoDeplacement;				// Si le joueur se déplace.
+	bool m_boStable;					// Si le joueur est stable
+	bool n_boChuteLibre;
+
 
 	CSprite* m_pSpriteCourse;			// Pointeur de sprite qui pointe sur le sprite qui représente le joueur qui est en état de course.
 	CSprite* m_pSpriteSaut;				// pointeur de sprite qui pointe sur le sprite qui représente le joueur qui est en état de saut.
@@ -34,8 +37,6 @@ private:
 	string m_strName;					// Chaine de caractères qui contient le nom du joueur.
 
 	CListeDC<CTools*>* m_pToolList;		// pointeur de liste d'outils qui pointe sur la liste d'outils de combat que l'utilisateur peut utiliser.
-
-	bool m_boStable;					// Si le joueur est stable
 
 	CVecteur2D* VecteurVitesse;			// Vitesse.
 
@@ -122,6 +123,7 @@ public:
 						m_boStable = false;
 					}
 
+<<<<<<< HEAD
 					break;
 
 				case SDL_SCANCODE_LEFT:
@@ -138,6 +140,32 @@ public:
 					break;
 
 				case SDL_SCANCODE_SPACE:								// Saut = Espace
+=======
+				if (!m_pSpriteCourse->IsActif() && !m_pSpriteParachute->IsActif()) {					// S'il était au repos et que la flèche droite est appuyer.
+					m_pSpriteCourse->DefinirAnimation(0);
+					m_pSpriteCourse->DefinirActif(true);
+					m_pSpriteRepos->DefinirAnimation(0);
+					m_pSpriteRepos->DefinirActif(false);			// Il n'est plus au repos.
+					VecteurVitesse->ModifierComposantX(35);
+					m_boStable = false;
+					m_BoDeplacement = true;
+				}
+
+				
+				break;
+			case SDL_SCANCODE_LEFT:
+
+				if (!m_pSpriteCourse->IsActif() && !m_pSpriteParachute->IsActif()) {					// S'il était au repos et que la flèche gauche est appuyer.
+					m_pSpriteCourse->DefinirAnimation(1);
+					m_pSpriteCourse->DefinirActif(true);
+					m_pSpriteRepos->DefinirAnimation(1);
+					m_pSpriteRepos->DefinirActif(false);			// Il n'est plus au repos.
+					VecteurVitesse->ModifierComposantX(-35);
+					m_boStable = false;
+					m_BoDeplacement = true;
+				}
+				break;
+>>>>>>> origin/Branche-Julien
 
 					if (!m_pSpriteSaut->IsActif()) {
 						m_pSpriteRepos->DefinirActif(false);
@@ -159,8 +187,14 @@ public:
 				VecteurVitesse->ModifierComposantX(0);
 				m_pSpriteCourse->DefinirActif(false);					// Le sprite ne court plus.
 				m_pSpriteRepos->DefinirActif(true);
+<<<<<<< HEAD
 				if (!m_pSpriteSaut->IsActif())
 					m_boStable = true;
+=======
+				m_boStable = true;
+				m_BoDeplacement = false;
+			}
+>>>>>>> origin/Branche-Julien
 
 				break;
 
@@ -214,10 +248,16 @@ public:
 		if (!m_pSpriteParachute->IsActif())
 			m_pBarreVie->ShowBarre(_pRenderer, { m_RectPlayerDestination.x, m_RectPlayerDestination.y - 2, 40, 6 });
 	}
+<<<<<<< HEAD
 
 	// Accesseur ... 
+=======
+															// Accesseur ... 
+	void SetHealth(float _fHealth) {
+>>>>>>> origin/Branche-Julien
 
-
+		m_pBarreVie->ModifierPourcentageVie(_fHealth);
+	}
 
 	void ModifierRectDestination(SDL_Rect _RectDestination) {
 
@@ -311,7 +351,17 @@ public:
 		return m_boStable;
 	}
 
+	bool IsMoving(void) {
+
+		return m_BoDeplacement;
+	}
+
 	CVecteur2D* ObtenirVecteurVitesse(void) {
 		return VecteurVitesse;
+	}
+
+	float GetHealth(void) {
+
+		return m_pBarreVie->ObtenirVie();
 	}
 };

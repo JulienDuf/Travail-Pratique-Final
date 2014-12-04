@@ -21,7 +21,6 @@ using namespace std;
 #include "CMenu.h"
 #include "CGestionaire.h"
 #include "CScrollBar.h"
-#include "CToolBar.h"
 #include "CBarrePuissance.h"
 #include "CTool.h"
 #include "CMissile.h"
@@ -30,6 +29,7 @@ using namespace std;
 #include "CBarreVie.h"
 #include "CJetPack.h"
 #include "CPlayer.h"
+#include "CToolBar.h"
 #include "CPack.h"
 #include "CHealthPack.h"
 #include "CMine.h"
@@ -803,7 +803,8 @@ int main(int argc, char* argv[]) {
 					break;
 				case SDL_SCANCODE_T:
 					//pWindowJeu->ObtenirGame()->ChangerTour(pGestionaireFont->ObtenirDonnee("pFontBouton"), pWindowJeu->ObtenirRenderer());
-					pWindowJeu->ObtenirGame()->ReverseShowToolBar();
+					if (!pWindowJeu->ObtenirGame()->IsDebut())
+						pWindowJeu->ObtenirGame()->ReverseShowToolBar();
 					break;
 				}
 				break;

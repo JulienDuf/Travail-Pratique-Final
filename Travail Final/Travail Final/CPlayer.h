@@ -43,6 +43,8 @@ private:
 
 	CVecteur2D* VecteurVitesse;			// Vitesse.
 
+	unsigned int m_uiMunition[4];
+
 public:
 
 	// Constructeur...
@@ -52,6 +54,10 @@ public:
 	// Paramètre: _strName, contient le nom que l'on veut donner au joueur.
 	// Retour: Rien (constructeur).
 	CPlayer(string _strEmplacement, SDL_Renderer* _pRenderer, CGestionaire<TTF_Font*>* _pGestionnaireFont, CGestionaire<SDL_Surface*>* _pGestionnaireSurface, CGestionaire<SDL_Texture*>* _pGestionnaireTexture, unsigned int _uiIDTeam, SDL_Rect _RectDestination, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), double _Physique(CVecteur2D* _VitesseMissile, SDL_Rect* _DestinationMissile)) {
+
+		for (int i = 0; i < 4; i++) {
+			m_uiMunition[i] = 0;
+		}
 
 		m_boStable = false;
 
@@ -334,4 +340,10 @@ public:
 
 		return m_pBarreVie->ObtenirVie();
 	}
+
+	void DefinirJetPackShowDescription(bool _boShow) {
+
+		m_pJetPack->DefinirboShowDescription(_boShow);
+	}
+	
 };

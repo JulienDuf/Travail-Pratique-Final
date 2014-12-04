@@ -7,6 +7,7 @@ class CGrenade: public CTools{
 private:
 	int m_iAngle; //Angle du lancement de la grenade
 	int m_iForce; //Force du lancement de la grenade
+	unsigned int m_uiMunition;
 	CBarrePuissance* m_pBarrePuissance; //Barre de puissance de la grenade
 
 	CLabel* m_plblDescription; //Description de la grenade
@@ -43,6 +44,10 @@ public:
 	void ReactToEvent(SDL_Event* _pEvent) {
 
 
+	}
+
+	unsigned int ObtenirMunition() {
+		return m_uiMunition;
 	}
 
 };

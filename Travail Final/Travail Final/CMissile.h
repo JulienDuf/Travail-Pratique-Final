@@ -109,4 +109,8 @@ public:
 
 	}
 
+	unsigned int ObtenirMunition() {
+		return m_iNombreMissiles;
+	}
+
 };

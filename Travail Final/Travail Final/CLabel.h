@@ -169,6 +169,10 @@ public:
 			m_pListeTextureLabel->AllerPrecedentCurseur();
 	}
 
+	void ModifierTexture(SDL_Texture* _pTexture) {
+		m_pListeTextureLabel->DefinirElementCurseur(_pTexture);
+	}
+
 	// Procédure qui obtient la dimension d'une texture.
 	// En entrée:
 	// Param1: Position de la texture voulue(Ordre de création)

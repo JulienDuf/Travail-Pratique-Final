@@ -67,12 +67,11 @@ public:
 		}
 
 		m_pToolBar->ShowToolBar(_pRenderer);
-
 	}
 
 	void ReactToEvent(SDL_Event* _pEvent) {
 
-		m_pToolBar->ReactToEvent(_pEvent);
+		m_pToolBar->ReactToEvent(_pEvent, m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif());
 
 		m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ReactToEvent(_pEvent, m_pToolBar->ObtenirPositionObjetSelection());
 
@@ -410,6 +409,10 @@ public:
 
 			}
 		}
+	}
+
+	bool IsDebut() {
+		return m_boDebutPartie;
 	}
 
 };

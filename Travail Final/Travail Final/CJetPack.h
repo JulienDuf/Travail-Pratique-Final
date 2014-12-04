@@ -7,29 +7,55 @@ private:
 	CLabel* m_pDescription;
 	CSprite* m_pSpriteJetPack;
 	CBarreVie* m_pBarreDeCarburant;
-
-	bool m_boSpace;
+	string m_strDescription[8];
+	TTF_Font* m_pFont;
+	bool m_boSpace,
+		m_boShowDescription;
 
 	unsigned int m_uiDepart;
 
-	void BlitText(string _strTexte[], int _iNombreElementTableau, TTF_Font* _Font, SDL_Color _Couleur, SDL_Surface* _pSurfaceToBlitIn) {
+	SDL_Surface* BlitText(string _strTexte[], unsigned int _uiNombreElementTableau, SDL_Color _Couleur) {
 
-		SDL_Surface* pSDLSurface; // Variable temporaire...
-		SDL_Rect RectTmp = { 0, 0, _pSurfaceToBlitIn->w - 2, 0};
+		SDL_Surface *pSurfaceBlitin,
+			*pSurfaceBlitSource;
 
-		for (int i = 0; i < _iNombreElementTableau; i++) {
-			pSDLSurface = TTF_RenderText_Blended(_Font, _strTexte[i].c_str(), _Couleur); // Créé la surface contenant le texte.
-			RectTmp.y = pSDLSurface->h * (i);
-			SDL_BlitSurface(pSDLSurface, NULL, _pSurfaceToBlitIn, &RectTmp);
-			SDL_FreeSurface(pSDLSurface);
+		SDL_Rect Rect = { 0, 0, 0, 0 };
+
+		pSurfaceBlitSource = TTF_RenderText_Blended(m_pFont, _strTexte[0].c_str(), { 0, 0, 0 });
+		unsigned int uiH = pSurfaceBlitSource->h;
+		
+		pSurfaceBlitin = SDL_CreateRGBSurface(pSurfaceBlitSource->flags, 283, pSurfaceBlitSource->h * _uiNombreElementTableau, pSurfaceBlitSource->format->BitsPerPixel, 0, 0, 0, 0);
+		SDL_FillRect(pSurfaceBlitin, NULL, SDL_MapRGB(pSurfaceBlitin->format, 255, 255, 255));
+
+		SDL_BlitSurface(pSurfaceBlitSource, NULL, pSurfaceBlitin, &Rect);
+
+		for (int i = 1; i < _uiNombreElementTableau; i++) {
+			pSurfaceBlitSource = TTF_RenderText_Blended(m_pFont, _strTexte[i].c_str(), { 0, 0, 0 });
+			Rect.y = uiH * i;
+			SDL_BlitSurface(pSurfaceBlitSource, NULL, pSurfaceBlitin, &Rect);
 		}
+
+		return pSurfaceBlitin;
+	}
+
+	char chr[3];
+
+	void MiseajourMunition(SDL_Renderer* _pRenderer) {
+		SDL_itoa(ObtenirMunition(), chr, 10);
+		m_strDescription[0] = "";
+		m_strDescription[0].append("Niveau de carburant : ");
+		m_strDescription[0].append(chr);
+		m_strDescription[0].append("%                        ");
+		m_pDescription->ModifierTexture(SDL_CreateTextureFromSurface(_pRenderer, BlitText(m_strDescription, 5, { 0, 0, 0 })));
 	}
 
 public:
 
 	CJetPack(string _strEmplacement, CGestionaire<TTF_Font*>* _pGestionnaireFont, CSprite* _pSpriteJetPack, CBarreVie* _pBarreDeCarburant, SDL_Renderer* _pRenderer) {
 
-		string strDescription[8];
+		m_boShowDescription = false;
+
+		m_strDescription;
 		string strEmplacement(_strEmplacement);
 		int i = strEmplacement.length();
 
@@ -39,10 +65,6 @@ public:
 			strEmplacement.resize(++i);
 		}
 
-		string strEmplacementSurface(strEmplacement);
-		strEmplacementSurface.append("Armes et Packs\\SurfaceLabel.png");
-		SDL_Surface* pSDLSurface = IMG_Load(strEmplacementSurface.c_str());
-
 		strEmplacement.append("Armes et Packs\\DescriptionJetPack.txt");
 		ifstream FichierDescription;
 		FichierDescription.open(strEmplacement);
@@ -50,16 +72,23 @@ public:
 			for (int i = 0; i < 8; i++) {
 				char chrtmp[75];
 				FichierDescription.getline(chrtmp, 75);
-				strDescription[i] = chrtmp;
+				m_strDescription[i] = chrtmp;
 			}
 		}
 
-		
+		FichierDescription.close();
 
-		m_pDescription = new CLabel(SDL_CreateTextureFromSurface(_pRenderer, pSDLSurface), { 500, 500, 500, 500 });
+		m_pFont = _pGestionnaireFont->ObtenirDonnee("pFontDescription");
+
+		SDL_Surface *pSDLSurface = BlitText(m_strDescription, 5, { 0, 0, 0 });
+		m_pDescription = new CLabel(SDL_CreateTextureFromSurface(_pRenderer, pSDLSurface), { 503, 346, pSDLSurface->w, pSDLSurface->h });
+
 		m_pSpriteJetPack = _pSpriteJetPack;
+
 		m_pBarreDeCarburant = _pBarreDeCarburant;
+
 		m_pSpriteJetPack->DefinirPositionDeBouclage(0, 1);
+
 		m_uiDepart = 0;
 	}
 
@@ -87,11 +116,8 @@ public:
 				break;
 		case SDL_SCANCODE_SPACE:
 			if (_pEvent->key.type == SDL_KEYDOWN) {
-<<<<<<< HEAD
-				m_pBarreDeCarburant->DiminuerPourcentageVie(0.002);
-=======
+				m_pBarreDeCarburant->ModifierPourcentageVie(0.002);
 				m_pBarreDeCarburant->ModifierPourcentageVie(m_pBarreDeCarburant->ObtenirVie() - 0.005);
->>>>>>> origin/Branche-jeu
 				_pVecteurVitesse->ModifierComposantY(-50);
 				m_uiDepart++;
 				if (m_uiDepart >= 3) {
@@ -121,7 +147,10 @@ public:
 		m_pSpriteJetPack->Render(_pRenderer, _RectPlayerDestination);
 		if (m_pSpriteJetPack->IsActif())
 			m_pBarreDeCarburant->ShowBarre(_pRenderer, { _RectPlayerDestination.x, _RectPlayerDestination.y + _RectPlayerDestination.h + 2, 40, 6 });
-		m_pDescription->ShowControl(_pRenderer);
+		if (m_boShowDescription) {
+			MiseajourMunition(_pRenderer);
+			m_pDescription->ShowControl(_pRenderer);
+		}
 	}
 
 	void DefinirActif(bool _boActif) {
@@ -130,5 +159,13 @@ public:
 
 	CSprite* ObtenirSprite() {
 		return m_pSpriteJetPack;
+	}
+
+	unsigned int ObtenirMunition() {
+		return m_pBarreDeCarburant->ObtenirPourcentage() * 100;
+	}
+
+	void DefinirboShowDescription(bool _boShow) {
+		m_boShowDescription = _boShow;
 	}
 };

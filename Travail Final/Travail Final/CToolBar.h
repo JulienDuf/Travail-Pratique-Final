@@ -17,7 +17,8 @@ private:
 	unsigned int m_uiPositionSelection, // Position dans la liste de l'objet en sélection.
 		m_uiPositionListe, // Position dans la liste du double-click.
 		m_uiPositionAffichage, // Position de l'affichage lors qu'il y a une scrollbar par rapport à la vraie taille de la toolbar et non celle affichée.
-		m_uiMinimumSpace; // Espace minimum entre deux objets
+		m_uiMinimumSpace, // Espace minimum entre deux objets
+		m_uiPositionHover; // Position de hovering
 
 	bool m_boShow; // Booléen qui dit si la toolbar s'affiche.
 	bool m_boClick;
@@ -120,7 +121,7 @@ public:
 							SDL_RenderCopy(_pRenderer, m_pListeObjet->ObtenirElementTrieur(), &Recttmp2, &Recttmp);
 						}
 						else
-							// Vérification si l'objet dépasse en partie à gauche...
+						// Vérification si l'objet dépasse en partie à gauche...
 						if ((m_RectTextureDestination.x + m_RectTextureDestination.w) >= m_uiPositionAffichage && (m_RectTextureDestination.x < m_uiPositionAffichage)) {
 							Recttmp = { m_RectToolBarDestination.x, m_RectToolBarDestination.y + m_RectTextureDestination.y, m_RectTextureDestination.x + m_RectTextureDestination.w - m_uiPositionAffichage, m_RectTextureDestination.h };
 							Recttmp2 = { (m_RectTextureDestination.w - Recttmp.w)* iW / m_RectTextureDestination.w, 0, Recttmp.w * iW / m_RectTextureDestination.w, iH };
@@ -151,13 +152,11 @@ public:
 
 	// Procédure permettant de réagir aux événement de la toolbar(selection)...
 	// Param1: Event de SDL.
-	void ReactToEvent(SDL_Event* _pEvent) {
+	void ReactToEvent(SDL_Event* _pEvent, CPlayer* _pPlayerActif) {
 		
 		if (m_boShow) {
-
-			// Switch pour gérer les événement de la toolbar...
-			switch (_pEvent->type) {
-			case SDL_MOUSEBUTTONDOWN: // Click droit souris.
+			if (_pEvent->motion.x >= 0 && _pEvent->motion.x <= 1366)
+				int i = 0;
 				// Vérification si le click de la souris est dans la toolbar...
 				if ((_pEvent->motion.x >= m_RectToolBarDestination.x && _pEvent->motion.x <= (m_RectToolBarDestination.x + m_RectToolBarDestination.w)) && (_pEvent->motion.y >= m_RectToolBarDestination.y && _pEvent->motion.y <= (m_RectToolBarDestination.y + m_RectToolBarDestination.h))) {
 					unsigned int uiX, uiY; // Positions X,Y pour la position de l'event click par rapport à la toolbar non pas par rapport à la window.
@@ -183,31 +182,49 @@ public:
 						// Si le click était entre des objets...
 						if (uiX <= m_uiMinimumSpace) {
 							m_uiPositionSelection = m_pListeObjet->ObtenirCompte() + 1; // Déselection
+							_pPlayerActif->DefinirJetPackShowDescription(false);
 						}
 						else
 						{
-							if (!m_pTimerClick->IsDone() && m_boClick) {
-								m_boShow = false;
-								m_uiPositionListe = m_uiPositionSelection;
+							if (_pEvent->type == SDL_MOUSEMOTION) {
+								switch (m_uiPositionSelection) {
+								case 0:
+
+								case 1:
+
+								case 2:
+
+								case 3:
+									_pPlayerActif->DefinirJetPackShowDescription(true);
+									break;
+								}
+								m_uiPositionHover = m_uiPositionSelection;
+								m_uiPositionSelection = m_pListeObjet->ObtenirCompte() + 1; //Déselection
 							}
-							else
-							{
-								m_pTimerClick->Start();
-								m_boClick = true;
+							else {
+								if (!m_pTimerClick->IsDone() && m_boClick) {
+									m_boShow = false;
+									m_uiPositionListe = m_uiPositionSelection;
+								}
+								else
+								{
+									m_pTimerClick->Start();
+									m_boClick = true;
+								}
 							}
 						}
 					}
 					else
 					{
+						_pPlayerActif->DefinirJetPackShowDescription(false);
 						m_uiPositionSelection = m_pListeObjet->ObtenirCompte() + 1; // Déselection
 					}
 				}
 				else
 				{
+					_pPlayerActif->DefinirJetPackShowDescription(false);
 					m_uiPositionSelection = m_pListeObjet->ObtenirCompte() + 1; // Déselection
 				}
-				break;
-			}
 		}
 	}
 

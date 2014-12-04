@@ -13,6 +13,9 @@ class CPlayer {
 private:
 
 	bool m_BoDeplacement;				// Si le joueur se déplace.
+	bool m_boStable;					// Si le joueur est stable
+	bool n_boChuteLibre;
+
 
 	CSprite* m_pSpriteCourse;			// Pointeur de sprite qui pointe sur le sprite qui représente le joueur qui est en état de course.
 	CSprite* m_pSpriteSaut;				// pointeur de sprite qui pointe sur le sprite qui représente le joueur qui est en état de saut.
@@ -37,8 +40,6 @@ private:
 	string m_strName;					// Chaine de caractères qui contient le nom du joueur.
 
 	CListeDC<CTools*>* m_pToolList;		// pointeur de liste d'outils qui pointe sur la liste d'outils de combat que l'utilisateur peut utiliser.
-
-	bool m_boStable;					// Si le joueur est stable
 
 	CVecteur2D* VecteurVitesse;			// Vitesse.
 
@@ -108,15 +109,15 @@ public:
 	// Paramètre: _pSDLRenderer, Rendeur de la fenêtre dans laquelle on veut afficher le joueur.
 	// Retour: Rien.
 	void ReactToEvent(SDL_Event* _pSDLEvent, unsigned int _uiObjetSelectionner) {
-		
+
 		if (!m_pSpriteParachute->IsActif() && _uiObjetSelectionner > 3) {
 
 			switch (_pSDLEvent->type) {
 			case SDL_KEYDOWN:
 				switch (_pSDLEvent->key.keysym.scancode) {
-				case SDL_SCANCODE_RIGHT:	// Flèche de droite appuyée...
+				case SDL_SCANCODE_RIGHT: // Flèche de droite appuyée...
 
-					if (!m_pSpriteCourse->IsActif()) {	// S'il était au repos
+					if (!m_pSpriteCourse->IsActif()) { // S'il était au repos
 						m_pSpriteRepos->DefinirEtage(0);  // Il n'est plus au repos.
 						m_pSpriteRepos->DefinirActif(false);
 						m_pSpriteCourse->DefinirEtage(0);
@@ -129,7 +130,7 @@ public:
 
 				case SDL_SCANCODE_LEFT:
 
-					if (!m_pSpriteCourse->IsActif()) {	// S'il était au repos
+					if (!m_pSpriteCourse->IsActif()) { // S'il était au repos
 						m_pSpriteRepos->DefinirEtage(1);  // Il n'est plus au repos.
 						m_pSpriteRepos->DefinirActif(false);
 						m_pSpriteCourse->DefinirEtage(1);
@@ -140,7 +141,7 @@ public:
 
 					break;
 
-				case SDL_SCANCODE_SPACE:								// Saut = Espace
+				case SDL_SCANCODE_SPACE:        // Saut = Espace
 
 					if (!m_pSpriteSaut->IsActif()) {
 						m_pSpriteRepos->DefinirActif(false);
@@ -160,7 +161,7 @@ public:
 			case SDL_KEYUP:
 
 				VecteurVitesse->ModifierComposantX(0);
-				m_pSpriteCourse->DefinirActif(false);					// Le sprite ne court plus.
+				m_pSpriteCourse->DefinirActif(false);     // Le sprite ne court plus.
 				m_pSpriteRepos->DefinirActif(true);
 				if (!m_pSpriteSaut->IsActif())
 					m_boStable = true;
@@ -188,7 +189,7 @@ public:
 				m_pSpriteParachute->DefinirActif(false);
 				m_pSpriteRepos->DefinirActif(false);
 				m_pSpriteSaut->DefinirActif(false);
-   				m_boStable = m_pJetPack->ReactToEvent(_pSDLEvent, VecteurVitesse);
+				m_boStable = m_pJetPack->ReactToEvent(_pSDLEvent, VecteurVitesse);
 
 				break;
 			}
@@ -218,9 +219,15 @@ public:
 			m_pBarreVie->ShowBarre(_pRenderer, { m_RectPlayerDestination.x, m_RectPlayerDestination.y - 2, 40, 6 });
 	}
 
+
 	// Accesseur ... 
 
+															// Accesseur ... 
+	void SetHealth(float _fHealth) {
 
+
+		m_pBarreVie->ModifierPourcentageVie(_fHealth);
+	}
 
 	void ModifierRectDestination(SDL_Rect _RectDestination) {
 
@@ -314,7 +321,17 @@ public:
 		return m_boStable;
 	}
 
+	bool IsMoving(void) {
+
+		return m_BoDeplacement;
+	}
+
 	CVecteur2D* ObtenirVecteurVitesse(void) {
 		return VecteurVitesse;
+	}
+
+	float GetHealth(void) {
+
+		return m_pBarreVie->ObtenirVie();
 	}
 };

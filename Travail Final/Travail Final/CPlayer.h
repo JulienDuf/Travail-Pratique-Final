@@ -43,6 +43,9 @@ private:
 
 	CVecteur2D* VecteurVitesse;			// Vitesse.
 
+	double m_dX;
+	double m_dY;
+
 public:
 
 	// Constructeur...
@@ -101,7 +104,7 @@ public:
 
 		m_pBarreVie = new CBarreVie(_pGestionnaireTexture, { _RectDestination.x, _RectDestination.y - 2, 0, 0 }, _uiIDTeam);
 
-		VecteurVitesse = new CVecteur2D(0, 0);
+		VecteurVitesse = new CVecteur2D(0, 0.0f);
 
 	}
 
@@ -122,7 +125,7 @@ public:
 						m_pSpriteRepos->DefinirActif(false);
 						m_pSpriteCourse->DefinirEtage(0);
 						m_pSpriteCourse->DefinirActif(true);
-						VecteurVitesse->ModifierComposantX(35);
+						//VecteurVitesse->ModifierComposantX(35);
 						m_boStable = false;
 					}
 
@@ -200,7 +203,8 @@ public:
 	//Paramètre : _pRenderer : Le render de la fenetre.
 	//Retour : rien.
 	void ShowPlayer(SDL_Renderer* _pRenderer) {
-
+		m_RectPlayerDestination.x = m_dX;
+		m_RectPlayerDestination.y = m_dY;
 		m_pSpriteCourse->ModifierAnnimation();
 		m_pSpriteCourse->Render(_pRenderer, m_RectPlayerDestination);
 
@@ -333,5 +337,19 @@ public:
 	float GetHealth(void) {
 
 		return m_pBarreVie->ObtenirVie();
+	}
+
+	void DefinirPositionX(double _dX) {
+		m_dX = _dX;
+	}
+
+	void DefinirPositionY(double _dY) {
+		m_dY = _dY;
+	}
+	double ObtenirPositionX(void) {
+		return m_dX;
+	}
+	double ObtenirPositionY(void) {
+		return m_dY;
 	}
 };

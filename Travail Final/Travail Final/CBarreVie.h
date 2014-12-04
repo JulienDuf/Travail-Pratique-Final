@@ -37,9 +37,9 @@ public:
 		m_RectSourceBarre = { _uiIDTeam * m_RectDestinationBarre.w, 0, m_RectDestinationBarre.w, m_RectDestinationBarre.h };
 	}
 
-	void ShowBarre(SDL_Renderer* _pRenderer) {
-
-		SDL_RenderCopy(_pRenderer, m_pTextureContourBarre, NULL, &m_RectDestinationContour);
+	void ShowBarre(SDL_Renderer* _pRenderer, SDL_Rect _RectDestination) {
+		m_RectDestinationBarre = { _RectDestination.x + 2, _RectDestination.y + 2, m_RectDestinationBarre.w, m_RectDestinationBarre.h};
+		SDL_RenderCopy(_pRenderer, m_pTextureContourBarre, NULL, &_RectDestination);
 		SDL_RenderCopy(_pRenderer, m_pTextureInterieurBarre, &m_RectSourceBarre, &m_RectDestinationBarre);
 	}
 
@@ -60,4 +60,7 @@ public:
 		m_RectDestinationBarre.y = m_RectDestinationContour.y + 2;
 	}
 
+	float ObtenirPourcentage() {
+		return m_fPourcentageVie;
+	}
 };

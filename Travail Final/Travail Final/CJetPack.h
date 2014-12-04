@@ -5,62 +5,74 @@ class CJetPack {
 private:
 
 	CSprite* m_pSpriteJetPack;
+	CBarreVie* m_pBarreDeCarburant;
 	bool m_boSpace;
+
+	unsigned int m_uiDepart;
 
 public:
 
-	CJetPack(CSprite* _pSpriteJetPack) {
+	CJetPack(CSprite* _pSpriteJetPack, CBarreVie* _pBarreDeCarburant) {
 		m_pSpriteJetPack = _pSpriteJetPack;
+		m_pBarreDeCarburant = _pBarreDeCarburant;
+		m_pSpriteJetPack->DefinirPositionDeBouclage(0, 1);
+		m_uiDepart = 0;
 	}
 
 	bool ReactToEvent(SDL_Event* _pEvent, CVecteur2D* _pVecteurVitesse) {
 
-		switch (_pEvent->type) {
-		case SDL_KEYDOWN:
-			switch (_pEvent->key.keysym.scancode) {
-			case SDL_SCANCODE_RIGHT:
-
-				if (m_boSpace) {
-					m_pSpriteJetPack->DefinirAnimation(0);
-					_pVecteurVitesse->ModifierComposantX(25);
+		if (m_pBarreDeCarburant->ObtenirPourcentage() <= 0) {
+			m_pSpriteJetPack->DefinirPositionDeBouclage(0, 1);
+			return false;
+		}
+		
+		switch (_pEvent->key.keysym.scancode) {
+		case SDL_SCANCODE_RIGHT:
+			if (_pEvent->key.type == SDL_KEYDOWN && m_boSpace) {
+					m_pSpriteJetPack->DefinirEtage(0);
+					_pVecteurVitesse->ModifierComposantX(10);
 					return false;
-				}
-
+			}
 				break;
-			case SDL_SCANCODE_LEFT:
-
-				if (m_boSpace) {
-					m_pSpriteJetPack->DefinirAnimation(0);
-					_pVecteurVitesse->ModifierComposantX(-25);
+		case SDL_SCANCODE_LEFT:
+			if (_pEvent->key.type == SDL_KEYDOWN && m_boSpace) {
+					m_pSpriteJetPack->DefinirEtage(1);
+					_pVecteurVitesse->ModifierComposantX(-10);
 					return false;
-				}
-
+			}
 				break;
-			case SDL_SCANCODE_SPACE:
-
+		case SDL_SCANCODE_SPACE:
+			if (_pEvent->key.type == SDL_KEYDOWN) {
+				m_pBarreDeCarburant->DiminuerPourcentageVie(0.005);
 				_pVecteurVitesse->ModifierComposantY(-50);
+				m_uiDepart++;
+				if (m_uiDepart >= 3) {
+					m_pSpriteJetPack->DefinirPositionDeBouclage(4, 6);
+				}
+				else
+				{
+					m_pSpriteJetPack->DefinirPositionDeBouclage(0, 6);
+				}	
 				m_boSpace = true;
 				return false;
-
-				break;
-			}
-
-			break;
-		case SDL_KEYUP:
-
-			m_boSpace = false;
-			if (!m_pSpriteJetPack->IsActif()) {
-				return true;
 			}
 			else
+			{
+				m_pSpriteJetPack->DefinirPositionDeBouclage(0, 1);
+				m_boSpace = false;
+				m_uiDepart = 0;
 				return false;
+			}
 			break;
 		}
+		return false;
 	}
 
-	void ShowJetPack(SDL_Renderer* _pRenderer, SDL_Rect m_RectPlayerDestination) {
+	void ShowJetPack(SDL_Renderer* _pRenderer, SDL_Rect _RectPlayerDestination) {
 		m_pSpriteJetPack->ModifierAnnimation();
-		m_pSpriteJetPack->Render(_pRenderer, m_RectPlayerDestination);
+		m_pSpriteJetPack->Render(_pRenderer, _RectPlayerDestination);
+		if (m_pSpriteJetPack->IsActif())
+			m_pBarreDeCarburant->ShowBarre(_pRenderer, { _RectPlayerDestination.x, _RectPlayerDestination.y + _RectPlayerDestination.h + 2, 40, 6 });
 	}
 
 	void DefinirActif(bool _boActif) {

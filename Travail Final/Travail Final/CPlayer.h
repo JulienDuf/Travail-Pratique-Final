@@ -59,12 +59,11 @@ public:
 
 		m_pSpriteRepos = new CSprite(_pGestionnaireSurface->ObtenirDonnee("pSurfaceRepos"), _pGestionnaireTexture->ObtenirDonnee("pTextureRepos"), _RectDestination, 1, 50, true, false, 2);
 
-		m_pJetPack = new CJetPack(new CSprite(_pGestionnaireSurface->ObtenirDonnee("pSurfaceJetPack"), _pGestionnaireTexture->ObtenirDonnee("pTextureJetPack"), _RectDestination, 6, 80, true, false, 2));
+		m_pJetPack = new CJetPack(new CSprite(_pGestionnaireSurface->ObtenirDonnee("pSurfaceJetPack"), _pGestionnaireTexture->ObtenirDonnee("pTextureJetPack"), _RectDestination, 6, 80, true, false, 2), new CBarreVie(_pGestionnaireTexture, { _RectDestination.x, _RectDestination.y + _RectDestination.h - 2, 0, 0 }, 6));
 
 		m_RectPlayerDestination = _RectDestination;
 		m_RectPlayerDestination.w = m_pSpriteCourse->ObtenirRectSource().w;
 		m_RectPlayerDestination.h = m_pSpriteCourse->ObtenirRectSource().h;
-
 		m_RectParachuteDestination = _RectDestination;
 		m_RectParachuteDestination.w = m_pSpriteParachute->ObtenirRectSource().w;
 		m_RectParachuteDestination.h = m_pSpriteParachute->ObtenirRectSource().h;
@@ -115,9 +114,9 @@ public:
 				case SDL_SCANCODE_RIGHT:	// Flèche de droite appuyée...
 
 					if (!m_pSpriteCourse->IsActif()) {	// S'il était au repos
-						m_pSpriteRepos->DefinirAnimation(0);  // Il n'est plus au repos.
+						m_pSpriteRepos->DefinirEtage(0);  // Il n'est plus au repos.
 						m_pSpriteRepos->DefinirActif(false);
-						m_pSpriteCourse->DefinirAnimation(0);
+						m_pSpriteCourse->DefinirEtage(0);
 						m_pSpriteCourse->DefinirActif(true);
 						VecteurVitesse->ModifierComposantX(35);
 						m_boStable = false;
@@ -128,9 +127,9 @@ public:
 				case SDL_SCANCODE_LEFT:
 
 					if (!m_pSpriteCourse->IsActif()) {	// S'il était au repos
-						m_pSpriteRepos->DefinirAnimation(1);  // Il n'est plus au repos.
+						m_pSpriteRepos->DefinirEtage(1);  // Il n'est plus au repos.
 						m_pSpriteRepos->DefinirActif(false);
-						m_pSpriteCourse->DefinirAnimation(1);
+						m_pSpriteCourse->DefinirEtage(1);
 						m_pSpriteCourse->DefinirActif(true);
 						VecteurVitesse->ModifierComposantX(-35);
 						m_boStable = false;
@@ -143,7 +142,7 @@ public:
 					if (!m_pSpriteSaut->IsActif()) {
 						m_pSpriteRepos->DefinirActif(false);
 						m_pSpriteCourse->DefinirActif(false);
-						m_pSpriteSaut->DefinirAnimation(m_pSpriteCourse->ObtenirAnimation()); // Pour que le saut sois du même bord que la course.
+						m_pSpriteSaut->DefinirEtage(m_pSpriteCourse->ObtenirAnimation()); // Pour que le saut sois du même bord que la course.
 						m_pSpriteSaut->DefinirActif(true);
 						VecteurVitesse->ModifierComposantX(0);
 						VecteurVitesse->ModifierComposantY(-150);
@@ -213,7 +212,7 @@ public:
 		m_pSpriteRepos->Render(_pRenderer, m_RectPlayerDestination);
 
 		if (!m_pSpriteParachute->IsActif())
-			m_pBarreVie->ShowBarre(_pRenderer);
+			m_pBarreVie->ShowBarre(_pRenderer, { m_RectPlayerDestination.x, m_RectPlayerDestination.y - 2, 40, 6 });
 	}
 
 	// Accesseur ... 

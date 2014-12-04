@@ -8,9 +8,10 @@
 #include <fstream>
 #include <math.h>
 using namespace std;
-#include "Pointeur Fonction.h"
+
 #include "CArbreAVL.h"
 #include "CListeDC.h"
+#include "Pointeur Fonction.h"
 #include "CTimer.h"
 #include "CVecteur2D.h"
 #include "CSprite.h"
@@ -70,6 +71,8 @@ float DegtoRad(float _fAngle) {
 
 
 // Pointeurs de fonctions pour les classes [
+
+
 
 // Fonction qui retourne la position d'une collision.
 // Paramètre: _pPlayer, joueur pour lequel on vérifie les collisions avec la carte de jeu

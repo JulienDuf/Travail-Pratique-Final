@@ -88,6 +88,7 @@ public:
 				SDL_Rect Recttmp = pPlayerActif->ObtenirRectDestination();
 				bool boCorps;
 				bool boPied;
+				bool boExplosion;
 				unsigned int _uiX;
 				unsigned int _uiY;
 				
@@ -96,7 +97,8 @@ public:
 				Recttmp.x += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35;
 				Recttmp.y += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35;
 				pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination()));
-					if (!m_pVerifierCollisionJoueurMap(pPlayerActif, Recttmp, &boCorps, &boPied, &_uiX, &_uiY)) {
+				DetectionCollisionPack(pPlayerActif, &boExplosion);
+				if (!m_pVerifierCollisionJoueurMap(pPlayerActif, Recttmp, &boCorps, &boPied, &_uiX, &_uiY)) {
 						pPlayerActif->ModifierRectDestination(Recttmp);
 					}
 					else { 
@@ -142,9 +144,18 @@ public:
 
 							else {
 
+								bool boExplosion;
+
 								RectPlayer.y -= (RectPlayer.h - _uiYMap);
 								pPlayer->ModifierRectDestination(RectPlayer);
 								pPlayer->ModifierStabiliteJoueur(true);
+
+								DetectionCollisionPack(pPlayer, &boExplosion);
+
+								if (boExplosion) {
+
+									
+								}
 
 							}
 						}
@@ -274,62 +285,131 @@ public:
 	_Pack = Pack sur lequel la collision sera verifiée
 	¸retour: true = une collision a lieu
 	*/
-	void DetectionCollisionPack(){
-		SDL_Surface* pTempSurfacePlayer;
-		SDL_Surface* pTempSurfacePack;
-		SDL_Rect TempRectDestinationPack;
+	bool DetectionCollisionPack(CPlayer* _pPlayer, bool* _boExplosion) {
 
-		for (int p = 0; p < m_pGameMap->ObtenirPackList()->ObtenirCompte(); p++){ //Parcours des packs
+		CPack* pPackTmp;
 
-			CPack* tempPack = m_pGameMap->ObtenirPackList()->ObtenirElementCurseur();
-			pTempSurfacePack = tempPack->GetSurface();
-			TempRectDestinationPack = tempPack->GetRectDestination();
+		SDL_Surface* pTmpSDLSurfacePlayer = nullptr;			// pointeur temporaire de surface qui pointera sur la surface appropriée du joueur.
+		SDL_Surface* pTmpSDLSurfacePack = nullptr;
 
-			for (int i = 0; i < m_pTeamList->ObtenirCompte(); i++){ //Parcours des equipes
-				CTeam* tempTeam = m_pTeamList->ObtenirElementCurseur();
-				CListeDC<CPlayer*>* tempPlayerList = tempTeam->obtenirListeTeam();
+		SDL_Rect TmpSDLRectPlayerDestination = _pPlayer->ObtenirRectDestination();						// Structure SDL Rect qui contient le rectangle dans lequel le joueur est affiché sur la map.
+		SDL_Rect TmpSDLRectPlayerSource;										// Structure SDL Rect qui contiendra le rectangle source de la surface appropriée du joueur pour la situation.
 
-				for (int j = 0; j < tempPlayerList->ObtenirCompte(); j++){ //Parcours des personnages dans l'equipe
-					CPlayer* tempPlayer = tempPlayerList->ObtenirElementCurseur();
-					SDL_Rect tempPositionPlayer = tempPlayer->ObtenirRectDestination();
+		SDL_Rect TmpSDLRectPlayerHitboxCorps;									// Structure SDL Rect qui contiendra le rectangle dans le rectangle source dans lequel il faudra vérifier les collisions du pieds.
+		SDL_Rect TmpSDLRectPlayerHitboxPieds;									// Structure SDL Rect qui contiendra le rectangle dans le rectangle source dans lequel il faudra vérifier les collisions du corps.
 
-					//Obtention de la bonne surface du joueur
-					if (tempPlayer->ObtenirSpriteCourse()->IsActif()){
-						pTempSurfacePlayer = tempPlayer->ObtenirSpriteCourse()->ObtenirSurface();
+		bool boTerminerBoucle = false;
+
+		if (_pPlayer->ObtenirSpriteCourse()->IsActif()) {						// Si le joueur est en train de courir...
+
+			pTmpSDLSurfacePlayer = _pPlayer->ObtenirSpriteCourse()->ObtenirSurface();			// On se sert de la surface du sprite de course.
+
+			TmpSDLRectPlayerSource = _pPlayer->ObtenirSpriteCourse()->ObtenirRectSource();		// On se sert du Rect source du sprite de course.
+
+			TmpSDLRectPlayerHitboxPieds = _pPlayer->ObtenirHitboxPieds();						// On se sert du hitbox des pieds approprié pour le sprite de course.
+		}
+
+		else if (_pPlayer->ObtenirSpriteSaut()->IsActif()) {
+
+			pTmpSDLSurfacePlayer = _pPlayer->ObtenirSpriteSaut()->ObtenirSurface();			// On se sert de la surface du sprite de saut.
+
+			TmpSDLRectPlayerSource = _pPlayer->ObtenirSpriteSaut()->ObtenirRectSource();		// On se sert du Rect source du sprite de saut.
+
+			TmpSDLRectPlayerHitboxPieds = _pPlayer->ObtenirHitboxPieds();						// On se sert du hitbox des pieds approprié pour le sprite de saut.
+		}
+
+		else if (_pPlayer->ObtenirSpriteParachute()->IsActif()) {
+
+			pTmpSDLSurfacePlayer = _pPlayer->ObtenirSpriteParachute()->ObtenirSurface();			// On se sert de la surface du sprite de parachute.
+
+			TmpSDLRectPlayerSource = _pPlayer->ObtenirSpriteParachute()->ObtenirRectSource();		// On se sert du Rect source du sprite de parachute.
+
+			TmpSDLRectPlayerHitboxPieds = _pPlayer->ObtenirHitboxPiedsParachute();						// On se sert du hitbox des pieds approprié pour le sprite de parachute.
+		}
+
+		else if (_pPlayer->ObtenirSpriteRepos()->IsActif()) {
+
+			pTmpSDLSurfacePlayer = _pPlayer->ObtenirSpriteRepos()->ObtenirSurface();			// On se sert de la surface du sprite de repos.
+
+			TmpSDLRectPlayerSource = _pPlayer->ObtenirSpriteRepos()->ObtenirRectSource();		// On se sert du Rect source du sprite de repos.
+
+			TmpSDLRectPlayerHitboxPieds = _pPlayer->ObtenirHitboxPieds();						// On se sert du hitbox des pieds approprié pour le sprite de repos.
+		}
+
+
+		for (int i = 0; i < m_pGameMap->ObtenirPackList()->ObtenirCompte(); i++) {
+
+			pPackTmp = m_pGameMap->ObtenirPackList()->ObtenirElementCurseur();
+
+			if ((TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerSource.x + TmpSDLRectPlayerDestination.w >= pPackTmp->GetRectDestination().x && TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerSource.x + TmpSDLRectPlayerDestination.w <= pPackTmp->GetRectDestination().x + pPackTmp->GetRectDestination().w) && (TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerDestination.h >= pPackTmp->GetRectDestination().y && TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerDestination.h <= pPackTmp->GetRectDestination().y + pPackTmp->GetRectDestination().h)) {
+
+				for (int x = _pPlayer->ObtenirHitboxPieds().w; x < 0 && !boTerminerBoucle; x--) {
+
+					if ((((unsigned int*)pTmpSDLSurfacePack->pixels)[(TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerHitboxPieds.x + x) + (TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerHitboxPieds.y) * pTmpSDLSurfacePack->w] != 0) && (((unsigned int*)pTmpSDLSurfacePlayer->pixels)[(TmpSDLRectPlayerSource.x + TmpSDLRectPlayerHitboxPieds.x + x) + (TmpSDLRectPlayerSource.y + TmpSDLRectPlayerHitboxPieds.y) * pTmpSDLSurfacePlayer->w] != 0)) {
+
+						*_boExplosion = pPackTmp->Use(_pPlayer);
+						DomageExplosion(pPackTmp->GetRectDestination(), 45);
+						return true;
+
 					}
-					else if (tempPlayer->ObtenirSpriteSaut()->IsActif()){
-						pTempSurfacePlayer = tempPlayer->ObtenirSpriteSaut()->ObtenirSurface();
-					}
-					else if (tempPlayer->ObtenirSpriteParachute()->IsActif()){
-						pTempSurfacePlayer = tempPlayer->ObtenirSpriteParachute()->ObtenirSurface();
-					}
-					else if (tempPlayer->ObtenirSpriteRepos()->IsActif()){
-						pTempSurfacePlayer = tempPlayer->ObtenirSpriteRepos()->ObtenirSurface();
-					}
-
-					for (int y = tempPositionPlayer.y; y < tempPositionPlayer.y + tempPositionPlayer.h; y++) { //Verification des collisions
-						for (int x = tempPositionPlayer.x; x < tempPositionPlayer.x + tempPositionPlayer.w; x++) {
-							for (int y2 = TempRectDestinationPack.y; y2 < TempRectDestinationPack.y + TempRectDestinationPack.h; y2++) {
-								for (int x2 = TempRectDestinationPack.x; x2 < TempRectDestinationPack.x + TempRectDestinationPack.w; x2++) {
-									if ((((unsigned int*)pTempSurfacePlayer->pixels)[(tempPositionPlayer.x + x) + (tempPositionPlayer.y + y) * pTempSurfacePlayer->w] != 0) && (((unsigned int*)pTempSurfacePack->pixels)[(TempRectDestinationPack.x + x) + (TempRectDestinationPack.y + y) * pTempSurfacePack->w] != 0)){ //Verification des pixels transparents
-										if ((x2 == x) && (y2 == y)){
-											if (tempPack->Use(tempPlayer)) {
-												tempPlayerList->Retirer(true);
-
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-					tempPlayerList->AllerSuivantCurseur();
 				}
-				m_pTeamList->AllerSuivantCurseur();
+
+			}
+			m_pGameMap->ObtenirPackList()->AllerSuivantCurseur();
+		}
+
+	}
+
+	void DomageExplosion(SDL_Rect _RectPositionExplosion, int _iRayon) {
+
+		CListeDC<CPlayer*>* pPlayerList;
+		CPlayer* pPlayerTmp;
+		SDL_Rect RectDestinationPlayer;
+
+		for (int i = 0; i < m_pTeamList->ObtenirCompte(); i++) {
+
+			pPlayerList = m_pTeamList->ObtenirElementCurseur()->obtenirListeTeam();
+
+			for (int j = 0; j < pPlayerList->ObtenirCompte(); j++) {
+
+				pPlayerTmp = pPlayerList->ObtenirElementCurseur();
+				RectDestinationPlayer = pPlayerTmp->ObtenirRectDestination();
+				int iDistanceRayon;
+				float fPourcentage;
+
+				if (RectDestinationPlayer.x + RectDestinationPlayer.w / 2 >= _RectPositionExplosion.x - _iRayon) {
+
+					iDistanceRayon = (_RectPositionExplosion.x - _iRayon) - (RectDestinationPlayer.x + RectDestinationPlayer.w / 2);
+					fPourcentage = ((float)iDistanceRayon / (float)_iRayon);
+					pPlayerTmp->SetHealth(pPlayerTmp->GetHealth() * (100 - fPourcentage));
+				}
+
+				else if (RectDestinationPlayer.x + RectDestinationPlayer.w / 2 <= _RectPositionExplosion.x + _iRayon){
+
+					iDistanceRayon = (_RectPositionExplosion.x + _iRayon) - (RectDestinationPlayer.x + RectDestinationPlayer.w);
+					fPourcentage = ((float)iDistanceRayon / (float)_iRayon);
+					pPlayerTmp->SetHealth(pPlayerTmp->GetHealth() * (100 - fPourcentage));
+				}
+
+				else if (RectDestinationPlayer.y + RectDestinationPlayer.h / 2 >= _RectPositionExplosion.y - _iRayon) {
+
+					iDistanceRayon = (_RectPositionExplosion.y - _iRayon) - (RectDestinationPlayer.y + RectDestinationPlayer.h / 2);
+					fPourcentage = ((float)iDistanceRayon / (float)_iRayon);
+					pPlayerTmp->SetHealth(pPlayerTmp->GetHealth() * (100 - fPourcentage));
+				}
+
+				else if (RectDestinationPlayer.y + RectDestinationPlayer.h / 2 >= _RectPositionExplosion.y + _iRayon) {
+
+					iDistanceRayon = (_RectPositionExplosion.y + _iRayon) - (RectDestinationPlayer.y + RectDestinationPlayer.w);
+					fPourcentage = ((float)iDistanceRayon / (float)_iRayon);
+					pPlayerTmp->SetHealth(pPlayerTmp->GetHealth() * (100 - fPourcentage));
+				}
+
+				if (pPlayerTmp->GetHealth() <= 0)
+					pPlayerList->Retirer(true);
+
 			}
 		}
 	}
-
-
 
 };

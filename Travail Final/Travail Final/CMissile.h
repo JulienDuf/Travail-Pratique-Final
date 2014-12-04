@@ -19,7 +19,7 @@ private:
 	SDL_Rect m_RectDestinationMissile; // La destination du missile dans la fenêtre.
 	CBarrePuissance* m_pBarrePuissance; // La barre déterminant l'angle et la puissance du missile.
 
-	//CLabel* m_pLblDescription; // La descripton du missile.
+	CLabel* m_pLblDescription; // La descripton du missile.
 
 	void(*m_pMapDestruction)(int _iRayon, int _iX, int _iY); // La destruction de la map.
 	void(*m_pCollisionMap)(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY); // Procédure déterminant 
@@ -28,7 +28,7 @@ private:
 
 public:
 
-	CMissile(CGestionaire<SDL_Surface*>* _pGestionnaireSurface, CGestionaire<SDL_Texture*>* _pGestionnaireTexture, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), double _PhysiqueMissile(CVecteur2D* _VitesseMissile, SDL_Rect* _DestinationMissile), SDL_Surface* _Rotation(SDL_Surface* _pSurfaceRotation, float _fAngle)) {
+	CMissile(string _strEmplacement, CGestionaire<SDL_Surface*>* _pGestionnaireSurface, CGestionaire<SDL_Texture*>* _pGestionnaireTexture, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), double _PhysiqueMissile(CVecteur2D* _VitesseMissile, SDL_Rect* _DestinationMissile), SDL_Surface* _Rotation(SDL_Surface* _pSurfaceRotation, float _fAngle)) {
 
 		m_dAngle = 0;
 		m_iForce = 0;

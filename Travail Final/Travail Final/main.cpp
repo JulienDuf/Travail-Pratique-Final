@@ -407,7 +407,7 @@ void ClickBoutonDebutPartie(void) {
 	iNombreEquipe = pGestionaireControl->ObtenirDonnee("pLblLRChoixNbrEquipe")->ObtenirElement("PositionLabel") + 2;
 	iNombreJoueur = pGestionaireControl->ObtenirDonnee("pLblLRChoixNbrJoueurEquipe")->ObtenirElement("PositionLabel") + 4;
 
-	pWindowJeu->CreateGame(strTmp, pGestionaireSurface, pGestionaireTexture, iNombreEquipe, iNombreJoueur, new CVent(pGestionaireFont->ObtenirDonnee("pFontBouton"), "250 km/h", CouleurTexte, pGestionaireTexture->ObtenirDonnee("pFlecheVent"), { 1200, 30, 117, 63 }, 180, pWindowJeu->ObtenirRenderer()),  VerifierCollisionJoueurMap, MapDestruction, CollisionObjetMap, PhysiqueMissile, pWindowJeu->ObtenirRenderer());
+	pWindowJeu->CreateGame(strTmp, pGestionaireFont, pGestionaireSurface, pGestionaireTexture, iNombreEquipe, iNombreJoueur, new CVent(pGestionaireFont->ObtenirDonnee("pFontBouton"), "250 km/h", CouleurTexte, pGestionaireTexture->ObtenirDonnee("pFlecheVent"), { 1200, 30, 117, 63 }, 180, pWindowJeu->ObtenirRenderer()),  VerifierCollisionJoueurMap, MapDestruction, CollisionObjetMap, PhysiqueMissile, pWindowJeu->ObtenirRenderer());
 }
 
 // Procédure pour le click sur le bouton quitter...
@@ -453,32 +453,17 @@ void ClickBoutonQuitterJeu(void) {
 // Param4: La couleur du texte.
 // En sortie:
 // La surface finale.
-SDL_Surface* BlitTexte(string _strTexte[], int _iNombreElementTableau, TTF_Font* _Font, SDL_Color _Couleur) {
+void BlitTexte(string _strTexte[], int _iNombreElementTableau, TTF_Font* _Font, SDL_Color _Couleur, SDL_Surface* _pSurfaceToBlitIn) {
 
 	SDL_Surface* pSDLSurface; // Variable temporaire...
-	SDL_Surface* pSDLSurfaceTmp;
 	SDL_Rect RectTmp = { 0, 0, 0, 0 };
-
-	if (_iNombreElementTableau > 0) {
-		pSDLSurface = TTF_RenderText_Blended(_Font, _strTexte[0].c_str(), _Couleur); // Créé la surface contenant le texte.
-		pSDLSurfaceTmp = SDL_CreateRGBSurface(pSDLSurface->flags, 500, pSDLSurface->h * _iNombreElementTableau, pSDLSurface->format->BitsPerPixel, pSDLSurface->format->Rmask, pSDLSurface->format->Gmask, pSDLSurface->format->Bmask, pSDLSurface->format->Amask);
-
-		SDL_BlitSurface(pSDLSurface, NULL, pSDLSurfaceTmp, &RectTmp);
-		RectTmp.y = pSDLSurface->h;
+	
+	for (int i = 0; i < _iNombreElementTableau; i++) {
+		pSDLSurface = TTF_RenderText_Blended(_Font, _strTexte[i].c_str(), _Couleur); // Créé la surface contenant le texte.
+		RectTmp.y = pSDLSurface->h * (i);
+		SDL_BlitSurface(pSDLSurface, NULL, _pSurfaceToBlitIn, &RectTmp);
 		SDL_FreeSurface(pSDLSurface);
-
-		for (int i = 1; i < _iNombreElementTableau; i++) {
-
-			pSDLSurface = TTF_RenderText_Blended(_Font, _strTexte[i].c_str(), _Couleur); // Créé la surface contenant le texte.
-			SDL_BlitSurface(pSDLSurface, NULL, pSDLSurfaceTmp, &RectTmp);
-			RectTmp.y = pSDLSurface->h * (i + 1);
-			SDL_FreeSurface(pSDLSurface);
-		}
-
-		return pSDLSurfaceTmp;
 	}
-
-	return nullptr;
 }
 
 // Procédure qui lis les informations d'une map.
@@ -510,8 +495,11 @@ void ReadMapInfo(string _strEmplacement) {
 		FichierMap.close();
 	}
 
+	SDL_Surface* pSDLSurface = TTF_RenderText_Blended(pGestionaireFont->ObtenirDonnee("pFontBouton"), strTmp[0].c_str(), CouleurTexte);
+	pSDLSurface = SDL_CreateRGBSurface(pSDLSurface->flags, 500, pSDLSurface->h * 5, pSDLSurface->format->BitsPerPixel, pSDLSurface->format->Rmask, pSDLSurface->format->Gmask, pSDLSurface->format->Bmask, pSDLSurface->format->Amask);
+
 	// Ajoute ce qui a été lu dans le label.
-	SDL_Surface* pSDLSurface = BlitTexte(strTmp, 5, pGestionaireFont->ObtenirDonnee("pFontBouton"), CouleurTexte);
+	BlitTexte(strTmp, 5, pGestionaireFont->ObtenirDonnee("pFontBouton"), CouleurTexte, pSDLSurface);
 	pGestionaireControl->ObtenirDonnee("pLblDescriptionMap")->AjouterTexture(1, SDL_CreateTextureFromSurface(pWindowJeu->ObtenirRenderer(), pSDLSurface));
 
 }
@@ -626,11 +614,11 @@ void Start(char* _strApplicationFilename) {
 	pGestionaireSurface->AjouterDonnee(IMG_Load(strEmplacement.c_str()), "pSurfaceMine");
 
 
-	// Chargement de font du texte des boutons...
+	// Chargement de font du texte des boutons et label de description...
 	strEmplacement = strApplicationPath;
 	strEmplacement.append("calibri.ttf");
 	pGestionaireFont->AjouterDonnee(TTF_OpenFont(strEmplacement.c_str(), 30), "pFontBouton");
-
+	pGestionaireFont->AjouterDonnee(TTF_OpenFont(strEmplacement.c_str(), 12), "pFontDescription");
 
 	// Chargement des textures des personnages...
 

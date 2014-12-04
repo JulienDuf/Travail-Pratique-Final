@@ -68,9 +68,9 @@ public:
 		va_end(parametres);
 	}
 	
-	void CreateGame(string _strEmplacementMap, CGestionaire<SDL_Surface*>* _pGestionnaireSurface, CGestionaire<SDL_Texture*>* _pGestionnaireTexture, int _iNombre…quipe, int _iNombreJoueur, CVent* _pVent, bool _VerifierCollisionJoueurMap(CPlayer* _pPlayer, SDL_Rect _RectPlayer, bool* _boCollisionCorps, bool* _boCollisionPieds, unsigned int* _uiXMap, unsigned int* _uiYMap), void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), double _Physique(CVecteur2D* _VitesseMissile, SDL_Rect* _DestinationMissile), SDL_Renderer* _pRenderer) {
+	void CreateGame(string _strEmplacementMap, CGestionaire<TTF_Font*>* _pGestionnaireFont, CGestionaire<SDL_Surface*>* _pGestionnaireSurface, CGestionaire<SDL_Texture*>* _pGestionnaireTexture, int _iNombre…quipe, int _iNombreJoueur, CVent* _pVent, bool _VerifierCollisionJoueurMap(CPlayer* _pPlayer, SDL_Rect _RectPlayer, bool* _boCollisionCorps, bool* _boCollisionPieds, unsigned int* _uiXMap, unsigned int* _uiYMap), void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), double _Physique(CVecteur2D* _VitesseMissile, SDL_Rect* _DestinationMissile), SDL_Renderer* _pRenderer) {
 
-		m_pGame = new CGame(_strEmplacementMap, _pGestionnaireSurface, _pGestionnaireTexture, _iNombre…quipe, _iNombreJoueur, _pVent, _VerifierCollisionJoueurMap, _MapDestruction, _CollisionObjetMap, _Physique, m_pSDLRenderer);
+		m_pGame = new CGame(_strEmplacementMap, _pGestionnaireFont, _pGestionnaireSurface, _pGestionnaireTexture, _iNombre…quipe, _iNombreJoueur, _pVent, _VerifierCollisionJoueurMap, _MapDestruction, _CollisionObjetMap, _Physique, m_pSDLRenderer);
 	}
 
 	// ProcÈdure qui rendre l'image final.

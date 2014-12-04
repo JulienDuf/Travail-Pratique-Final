@@ -116,7 +116,11 @@ public:
 				break;
 		case SDL_SCANCODE_SPACE:
 			if (_pEvent->key.type == SDL_KEYDOWN) {
+<<<<<<< HEAD
 				m_pBarreDeCarburant->ModifierPourcentageVie(0.002);
+=======
+				m_pBarreDeCarburant->ModifierPourcentageVie(m_pBarreDeCarburant->ObtenirVie() - 0.002);
+>>>>>>> origin/Branche-jeu
 				m_pBarreDeCarburant->ModifierPourcentageVie(m_pBarreDeCarburant->ObtenirVie() - 0.005);
 				_pVecteurVitesse->ModifierComposantY(-50);
 				m_uiDepart++;

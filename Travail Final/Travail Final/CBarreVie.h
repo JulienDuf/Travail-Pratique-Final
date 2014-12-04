@@ -43,9 +43,9 @@ public:
 		SDL_RenderCopy(_pRenderer, m_pTextureInterieurBarre, &m_RectSourceBarre, &m_RectDestinationBarre);
 	}
 
-	void DiminuerPourcentageVie(float _Diminution) {
+	void ModifierPourcentageVie(float _Diminution) {
 
-		m_fPourcentageVie -= _Diminution;
+		m_fPourcentageVie = _Diminution;
 
 		m_RectDestinationBarre.w = m_fPourcentageVie * 36;
 		m_RectSourceBarre.w = m_fPourcentageVie * 36;
@@ -58,6 +58,11 @@ public:
 
 		m_RectDestinationBarre.x = m_RectDestinationContour.x + 2;
 		m_RectDestinationBarre.y = m_RectDestinationContour.y + 2;
+	}
+
+	float ObtenirVie(void) {
+
+		return m_fPourcentageVie;
 	}
 
 };

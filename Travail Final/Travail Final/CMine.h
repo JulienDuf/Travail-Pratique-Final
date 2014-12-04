@@ -3,7 +3,7 @@
 
 class CMine : public CPack{
 private:
-	SDL_Rect m_pRectDestination; //position de la mine sur la map
+	SDL_Rect m_RectDestination; //position de la mine sur la map
 	SDL_Surface* m_pSurface; //Texture du pack
 	SDL_Texture* m_pTexture; // Texture du pack
 	bool m_boCollision; // Si la mine touche par terre.
@@ -18,10 +18,10 @@ public:
 		m_pTexture = SDL_CreateTextureFromSurface(_Renderer, m_pSurface);
 
 		//initialisation de la position de la mine
-		m_pRectDestination.h = m_pSurface->h;
-		m_pRectDestination.w = m_pSurface->w;
-		m_pRectDestination.y = 0;
-		m_pRectDestination.x = rand() % 1366;
+		m_RectDestination.h = m_pSurface->h;
+		m_RectDestination.w = m_pSurface->w;
+		m_RectDestination.y = 0;
+		m_RectDestination.x = rand() % 1366;
 
 		m_pCollisionMap = _CollisionMap;
 		m_pMapDestruction = _MapDestruction;
@@ -29,10 +29,13 @@ public:
 		m_boCollision = false;
 	}
 
-	/*void Use(CPlayer* _Player){
-		_Player->SetHealth((_Player->GetHealth())*0.25);
-	}*/
 
+	bool Use(CPlayer* _pPlayer) {
+
+		_pPlayer->SetHealth(0.0f);
+		m_pMapDestruction(45, m_RectDestination.x + m_RectDestination.w / 2, m_RectDestination.y + m_RectDestination.h);
+		return true;
+	}
 
 	/*
 	Affiche la mine sur la  map a la postion m_pRectDestination
@@ -41,14 +44,14 @@ public:
 		
 		if (!m_boCollision)
 			ModifierPosition();
-		SDL_RenderCopy(_Renderer, m_pTexture, NULL, &m_pRectDestination);
+		SDL_RenderCopy(_Renderer, m_pTexture, NULL, &m_RectDestination);
 	}
 
 	void ModifierPosition(void) {
 
 		int iX, iY;
 
-		SDL_Rect RectTmp = m_pRectDestination;
+		SDL_Rect RectTmp = m_RectDestination;
 		RectTmp.y += 9.8;
 		
 		m_pCollisionMap(m_pSurface, RectTmp, &iX, &iY);
@@ -56,12 +59,20 @@ public:
 		if (iX != 0 && iY != 0) {
 
 			RectTmp.y -= ((RectTmp.y + RectTmp.h) - iY);
-			m_pRectDestination = RectTmp;
+			m_RectDestination = RectTmp;
 			m_boCollision = true;
 		}
 
 		else
-			m_pRectDestination = RectTmp;
+			m_RectDestination = RectTmp;
 
+	}
+
+	SDL_Surface* GetSurface(){
+		return m_pSurface;
+	}
+
+	SDL_Rect GetRectDestination(){
+		return m_RectDestination;
 	}
 };

@@ -313,7 +313,10 @@ public:
 								for (int x2 = TempRectDestinationPack.x; x2 < TempRectDestinationPack.x + TempRectDestinationPack.w; x2++) {
 									if ((((unsigned int*)pTempSurfacePlayer->pixels)[(tempPositionPlayer.x + x) + (tempPositionPlayer.y + y) * pTempSurfacePlayer->w] != 0) && (((unsigned int*)pTempSurfacePack->pixels)[(TempRectDestinationPack.x + x) + (TempRectDestinationPack.y + y) * pTempSurfacePack->w] != 0)){ //Verification des pixels transparents
 										if ((x2 == x) && (y2 == y)){
-											tempPack->Use();
+											if (tempPack->Use(tempPlayer)) {
+												tempPlayerList->Retirer(true);
+
+											}
 										}
 									}
 								}
@@ -326,5 +329,7 @@ public:
 			}
 		}
 	}
+
+
 
 };

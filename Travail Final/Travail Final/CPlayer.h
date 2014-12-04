@@ -187,8 +187,10 @@ public:
 			m_pBarreVie->ShowBarre(_pRenderer);
 	}
 															// Accesseur ... 
+	void SetHealth(float _fHealth) {
 
-
+		m_pBarreVie->ModifierPourcentageVie(_fHealth);
+	}
 
 	void ModifierRectDestination(SDL_Rect _RectDestination) {
 
@@ -283,5 +285,10 @@ public:
 
 	CVecteur2D* ObtenirVecteurVitesse(void) {
 		return VecteurVitesse;
+	}
+
+	float GetHealth(void) {
+
+		return m_pBarreVie->ObtenirVie();
 	}
 };

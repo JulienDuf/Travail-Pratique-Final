@@ -28,12 +28,9 @@ using namespace std;
 #include "CGrenade.h"
 #include "CMelee.h"
 #include "CBarreVie.h"
-<<<<<<< HEAD
 #include "CJetPack.h"
-=======
 #include "CPlayer.h"
 #include "CPack.h"
->>>>>>> origin/Branche-Julien
 #include "CHealthPack.h"
 #include "CMine.h"
 #include "CTeam.h"

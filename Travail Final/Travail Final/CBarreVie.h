@@ -60,15 +60,12 @@ public:
 		m_RectDestinationBarre.y = m_RectDestinationContour.y + 2;
 	}
 
-<<<<<<< HEAD
 	float ObtenirPourcentage() {
 		return m_fPourcentageVie;
 	}
-=======
 	float ObtenirVie(void) {
 
 		return m_fPourcentageVie;
 	}
 
->>>>>>> origin/Branche-Julien
 };

@@ -106,15 +106,15 @@ public:
 	// Paramètre: _pSDLRenderer, Rendeur de la fenêtre dans laquelle on veut afficher le joueur.
 	// Retour: Rien.
 	void ReactToEvent(SDL_Event* _pSDLEvent, unsigned int _uiObjetSelectionner) {
-		
+
 		if (!m_pSpriteParachute->IsActif() && _uiObjetSelectionner > 3) {
 
 			switch (_pSDLEvent->type) {
 			case SDL_KEYDOWN:
 				switch (_pSDLEvent->key.keysym.scancode) {
-				case SDL_SCANCODE_RIGHT:	// Flèche de droite appuyée...
+				case SDL_SCANCODE_RIGHT: // Flèche de droite appuyée...
 
-					if (!m_pSpriteCourse->IsActif()) {	// S'il était au repos
+					if (!m_pSpriteCourse->IsActif()) { // S'il était au repos
 						m_pSpriteRepos->DefinirEtage(0);  // Il n'est plus au repos.
 						m_pSpriteRepos->DefinirActif(false);
 						m_pSpriteCourse->DefinirEtage(0);
@@ -123,12 +123,11 @@ public:
 						m_boStable = false;
 					}
 
-<<<<<<< HEAD
 					break;
 
 				case SDL_SCANCODE_LEFT:
 
-					if (!m_pSpriteCourse->IsActif()) {	// S'il était au repos
+					if (!m_pSpriteCourse->IsActif()) { // S'il était au repos
 						m_pSpriteRepos->DefinirEtage(1);  // Il n'est plus au repos.
 						m_pSpriteRepos->DefinirActif(false);
 						m_pSpriteCourse->DefinirEtage(1);
@@ -139,33 +138,7 @@ public:
 
 					break;
 
-				case SDL_SCANCODE_SPACE:								// Saut = Espace
-=======
-				if (!m_pSpriteCourse->IsActif() && !m_pSpriteParachute->IsActif()) {					// S'il était au repos et que la flèche droite est appuyer.
-					m_pSpriteCourse->DefinirAnimation(0);
-					m_pSpriteCourse->DefinirActif(true);
-					m_pSpriteRepos->DefinirAnimation(0);
-					m_pSpriteRepos->DefinirActif(false);			// Il n'est plus au repos.
-					VecteurVitesse->ModifierComposantX(35);
-					m_boStable = false;
-					m_BoDeplacement = true;
-				}
-
-				
-				break;
-			case SDL_SCANCODE_LEFT:
-
-				if (!m_pSpriteCourse->IsActif() && !m_pSpriteParachute->IsActif()) {					// S'il était au repos et que la flèche gauche est appuyer.
-					m_pSpriteCourse->DefinirAnimation(1);
-					m_pSpriteCourse->DefinirActif(true);
-					m_pSpriteRepos->DefinirAnimation(1);
-					m_pSpriteRepos->DefinirActif(false);			// Il n'est plus au repos.
-					VecteurVitesse->ModifierComposantX(-35);
-					m_boStable = false;
-					m_BoDeplacement = true;
-				}
-				break;
->>>>>>> origin/Branche-Julien
+				case SDL_SCANCODE_SPACE:        // Saut = Espace
 
 					if (!m_pSpriteSaut->IsActif()) {
 						m_pSpriteRepos->DefinirActif(false);
@@ -185,16 +158,10 @@ public:
 			case SDL_KEYUP:
 
 				VecteurVitesse->ModifierComposantX(0);
-				m_pSpriteCourse->DefinirActif(false);					// Le sprite ne court plus.
+				m_pSpriteCourse->DefinirActif(false);     // Le sprite ne court plus.
 				m_pSpriteRepos->DefinirActif(true);
-<<<<<<< HEAD
 				if (!m_pSpriteSaut->IsActif())
 					m_boStable = true;
-=======
-				m_boStable = true;
-				m_BoDeplacement = false;
-			}
->>>>>>> origin/Branche-Julien
 
 				break;
 
@@ -219,7 +186,7 @@ public:
 				m_pSpriteParachute->DefinirActif(false);
 				m_pSpriteRepos->DefinirActif(false);
 				m_pSpriteSaut->DefinirActif(false);
-   				m_boStable = m_pJetPack->ReactToEvent(_pSDLEvent, VecteurVitesse);
+				m_boStable = m_pJetPack->ReactToEvent(_pSDLEvent, VecteurVitesse);
 
 				break;
 			}
@@ -248,13 +215,13 @@ public:
 		if (!m_pSpriteParachute->IsActif())
 			m_pBarreVie->ShowBarre(_pRenderer, { m_RectPlayerDestination.x, m_RectPlayerDestination.y - 2, 40, 6 });
 	}
-<<<<<<< HEAD
+
 
 	// Accesseur ... 
-=======
+
 															// Accesseur ... 
 	void SetHealth(float _fHealth) {
->>>>>>> origin/Branche-Julien
+
 
 		m_pBarreVie->ModifierPourcentageVie(_fHealth);
 	}

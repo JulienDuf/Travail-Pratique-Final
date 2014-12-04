@@ -4,7 +4,7 @@
 class CJetPack {
 private:
 
-	CLabel* m_pDescription;
+	CLabel* m_pLblDescription;
 	CSprite* m_pSpriteJetPack;
 	CBarreVie* m_pBarreDeCarburant;
 	string m_strDescription[8];
@@ -46,7 +46,7 @@ private:
 		m_strDescription[0].append("Niveau de carburant : ");
 		m_strDescription[0].append(chr);
 		m_strDescription[0].append("%                        ");
-		m_pDescription->ModifierTexture(SDL_CreateTextureFromSurface(_pRenderer, BlitText(m_strDescription, 5, { 0, 0, 0 })));
+		m_pLblDescription->ModifierTexture(SDL_CreateTextureFromSurface(_pRenderer, BlitText(m_strDescription, 5, { 0, 0, 0 })));
 	}
 
 public:
@@ -81,7 +81,7 @@ public:
 		m_pFont = _pGestionnaireFont->ObtenirDonnee("pFontDescription");
 
 		SDL_Surface *pSDLSurface = BlitText(m_strDescription, 5, { 0, 0, 0 });
-		m_pDescription = new CLabel(SDL_CreateTextureFromSurface(_pRenderer, pSDLSurface), { 503, 346, pSDLSurface->w, pSDLSurface->h });
+		m_pLblDescription = new CLabel(SDL_CreateTextureFromSurface(_pRenderer, pSDLSurface), { 503, 346, pSDLSurface->w, pSDLSurface->h });
 
 		m_pSpriteJetPack = _pSpriteJetPack;
 
@@ -116,12 +116,7 @@ public:
 				break;
 		case SDL_SCANCODE_SPACE:
 			if (_pEvent->key.type == SDL_KEYDOWN) {
-<<<<<<< HEAD
-				m_pBarreDeCarburant->ModifierPourcentageVie(0.002);
-=======
 				m_pBarreDeCarburant->ModifierPourcentageVie(m_pBarreDeCarburant->ObtenirVie() - 0.002);
->>>>>>> origin/Branche-jeu
-				m_pBarreDeCarburant->ModifierPourcentageVie(m_pBarreDeCarburant->ObtenirVie() - 0.005);
 				_pVecteurVitesse->ModifierComposantY(-50);
 				m_uiDepart++;
 				if (m_uiDepart >= 3) {
@@ -153,7 +148,7 @@ public:
 			m_pBarreDeCarburant->ShowBarre(_pRenderer, { _RectPlayerDestination.x, _RectPlayerDestination.y + _RectPlayerDestination.h + 2, 40, 6 });
 		if (m_boShowDescription) {
 			MiseajourMunition(_pRenderer);
-			m_pDescription->ShowControl(_pRenderer);
+			m_pLblDescription->ShowControl(_pRenderer);
 		}
 	}
 

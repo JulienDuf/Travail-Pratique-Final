@@ -338,6 +338,15 @@ public:
 			TmpSDLRectPlayerHitboxPieds = _pPlayer->ObtenirHitboxPieds();						// On se sert du hitbox des pieds approprié pour le sprite de repos.
 		}
 
+		else if (_pPlayer->ObtenirSpriteJetPack()->IsActif()) {
+
+			pTmpSDLSurfacePlayer = _pPlayer->ObtenirSpriteJetPack()->ObtenirSurface();
+
+			TmpSDLRectPlayerSource = _pPlayer->ObtenirSpriteJetPack()->ObtenirRectSource();
+
+			TmpSDLRectPlayerHitboxPieds = _pPlayer->ObtenirHitboxPieds();
+		}
+
 
 		for (int i = 0; i < m_pGameMap->ObtenirPackList()->ObtenirCompte(); i++) {
 

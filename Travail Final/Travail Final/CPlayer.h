@@ -101,7 +101,7 @@ public:
 
 		m_pToolList = new CListeDC<CTools*>();
 
-		m_pToolList->AjouterFin(new CMissile(_strEmplacement, _pGestionnaireSurface, _pGestionnaireTexture, _MapDestruction, _CollisionObjetMap, _Physique, NULL));
+		m_pToolList->AjouterFin(new CMissile(_strEmplacement, _pGestionnaireFont, _pRenderer,_pGestionnaireSurface, _pGestionnaireTexture, _MapDestruction, _CollisionObjetMap, _Physique, NULL));
 
 		m_BoDeplacement = false;
 
@@ -346,4 +346,8 @@ public:
 		m_pJetPack->DefinirboShowDescription(_boShow);
 	}
 	
+	void DefinirMissileShowDescription(bool _boShow) {
+
+		m_pMissile->DefinirboShowDescription(_boShow);
+	}
 };

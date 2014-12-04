@@ -182,6 +182,7 @@ public:
 						// Si le click était entre des objets...
 						if (uiX <= m_uiMinimumSpace) {
 							m_uiPositionSelection = m_pListeObjet->ObtenirCompte() + 1; // Déselection
+							_pPlayerActif->DefinirMissileShowDescription(false);
 							_pPlayerActif->DefinirJetPackShowDescription(false);
 						}
 						else
@@ -190,10 +191,14 @@ public:
 								switch (m_uiPositionSelection) {
 								case 0:
 
+									_pPlayerActif->DefinirMissileShowDescription(true);
+									break;
 								case 1:
 
+									break;
 								case 2:
 
+									break;
 								case 3:
 									_pPlayerActif->DefinirJetPackShowDescription(true);
 									break;
@@ -216,12 +221,14 @@ public:
 					}
 					else
 					{
+						_pPlayerActif->DefinirMissileShowDescription(false);
 						_pPlayerActif->DefinirJetPackShowDescription(false);
 						m_uiPositionSelection = m_pListeObjet->ObtenirCompte() + 1; // Déselection
 					}
 				}
 				else
 				{
+					_pPlayerActif->DefinirMissileShowDescription(false);
 					_pPlayerActif->DefinirJetPackShowDescription(false);
 					m_uiPositionSelection = m_pListeObjet->ObtenirCompte() + 1; // Déselection
 				}

@@ -125,7 +125,7 @@ public:
 						m_pSpriteRepos->DefinirActif(false);
 						m_pSpriteCourse->DefinirEtage(0);
 						m_pSpriteCourse->DefinirActif(true);
-						//VecteurVitesse->ModifierComposantX(35);
+						VecteurVitesse->ModifierComposantX(35);
 						m_boStable = false;
 					}
 
@@ -346,9 +346,11 @@ public:
 	void DefinirPositionY(double _dY) {
 		m_dY = _dY;
 	}
+
 	double ObtenirPositionX(void) {
 		return m_dX;
 	}
+
 	double ObtenirPositionY(void) {
 		return m_dY;
 	}

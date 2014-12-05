@@ -95,8 +95,8 @@ public:
 				if (!pPlayerActif->IsStable()) 
 					*pPlayerActif->ObtenirVecteurVitesse() += *m_pGameMap->ObtenirGravite();
 				pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination()));
-				pPlayerActif->DefinirPositionX(pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35 + Recttmp.x);
-				pPlayerActif->DefinirPositionY(pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35 + Recttmp.y);
+				pPlayerActif->DefinirPositionX(pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35 + pPlayerActif->ObtenirPositionX());
+				pPlayerActif->DefinirPositionY(pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35 + pPlayerActif->ObtenirPositionY());
 				DetectionCollisionPack(pPlayerActif, &boExplosion);
 				if (!m_pVerifierCollisionJoueurMap(pPlayerActif, Recttmp, &boCorps, &boPied, &_uiX, &_uiY)) {
 						pPlayerActif->ModifierRectDestination(Recttmp);
@@ -140,14 +140,14 @@ public:
 							RectPlayer = pPlayer->ObtenirRectDestination();
 							RectPlayer.y += 9.8;
 							if (!m_pVerifierCollisionJoueurMap(pPlayer, RectPlayer, &_boCorps, &_boPieds, &_uiXMap, &_uiYMap))
-								pPlayer->ModifierRectDestination(RectPlayer);
+								pPlayer->DefinirPositionY(RectPlayer.y);
 
 							else {
 
 								bool boExplosion;
 
 								RectPlayer.y -= (RectPlayer.h - _uiYMap);
-								pPlayer->ModifierRectDestination(RectPlayer);
+								pPlayer->DefinirPositionY(RectPlayer.y);
 								pPlayer->ModifierStabiliteJoueur(true);
 
 								DetectionCollisionPack(pPlayer, &boExplosion);

@@ -7,8 +7,8 @@ class CVecteur2D {
 
 private:
 
-	int m_iComposanteX, // La composante en x du vecteur.
-		m_iComposanteY; // La composante en y du vecteur.
+	double m_dComposanteX, // La composante en x du vecteur.
+		m_dComposanteY; // La composante en y du vecteur.
 
 public:
 
@@ -16,19 +16,19 @@ public:
 	// En entrée:
 	// Param1: La composante en x du vecteur.
 	// Param2: La composante en y du vecteur.
-	CVecteur2D(int _iX, int _iY) {
+	CVecteur2D(double _dX, double _dY) {
 
-		m_iComposanteX = _iX;
-		m_iComposanteY = _iY;
+		m_dComposanteX = _dX;
+		m_dComposanteY = _dY;
 	}
 
 	// Constructeur...
 	// En entrée:
 	// Param1: La norme du vecteur.
 	// Param2: L'orientation du vecteur.
-	CVecteur2D(float _fNorme, float _fOrientation) {
+	CVecteur2D(double _dNorme, float _dOrientation) {
 
-		ModifierVecteur(_fNorme, _fOrientation);		// L'orientation commence à l'angle 0 et va dans le sens horaire au lieu du sens antihoraire.  
+		ModifierVecteur(_dNorme, _dOrientation);		// L'orientation commence à l'angle 0 et va dans le sens horaire au lieu du sens antihoraire.  
 														// 90 degré pointera donc vers le bas et 270 degrés vers le haut. Ça fait chier. -Nico
 	}
 
@@ -37,50 +37,50 @@ public:
 	// Param1: L'autre vecteur à additionner.
 	void operator += (CVecteur2D _VecteurB) {
 
-		m_iComposanteX += _VecteurB.m_iComposanteX;
-		m_iComposanteY += _VecteurB.m_iComposanteY;
+		m_dComposanteX += _VecteurB.m_dComposanteX;
+		m_dComposanteY += _VecteurB.m_dComposanteY;
 
 	}
-	void ModifierVecteur(float _fNorme, float _fOrientation) {
+	void ModifierVecteur(float _dNorme, float _dOrientation) {
 
-		m_iComposanteX = _fNorme * (cosf((M_PI / 180) * _fOrientation));
-		m_iComposanteY = _fNorme * (sinf((M_PI / 180) * _fOrientation));
+		m_dComposanteX = _dNorme * (cosf((M_PI / 180) * _dOrientation));
+		m_dComposanteY = _dNorme * (sinf((M_PI / 180) * _dOrientation));
 	}
 
 	void ModifierComposantX(int _iX) {
 
-		m_iComposanteX = _iX;
+		m_dComposanteX = _iX;
 	}
 
 	void ModifierComposantY(int _iY) {
 
-		m_iComposanteY = _iY;
+		m_dComposanteY = _iY;
 	}
 
-	int ObtenirComposanteX(void) {
+	double ObtenirComposanteX(void) {
 
-		return m_iComposanteX;
+		return m_dComposanteX;
 	}
 
-	int ObtenirComposanteY(void) {
+	double ObtenirComposanteY(void) {
 
-		return m_iComposanteY;
+		return m_dComposanteY;
 	}
 
-	void ModifierOrientation(float _fOrientation) {
+	void ModifierOrientation(double _dOrientation) {
 
-		if (_fOrientation <= 360) {
+		if (_dOrientation <= 360) {
 
-			float fNorme = sqrt(pow(m_iComposanteX, 2) + pow(m_iComposanteY, 2)); // Pythagore
-			m_iComposanteX = fNorme * (cosf((M_PI / 180) * _fOrientation));
-			m_iComposanteY = fNorme * (sinf((M_PI / 180) * _fOrientation));
+			double dNorme = sqrt(pow(m_dComposanteX, 2) + pow(m_dComposanteY, 2)); // Pythagore
+			m_dComposanteX = dNorme * (cosf((M_PI / 180) * _dOrientation));
+			m_dComposanteY = dNorme * (sinf((M_PI / 180) * _dOrientation));
 
 		}
 
 		else {
-			float fNorme = sqrt(pow(m_iComposanteX, 2) + pow(m_iComposanteY, 2)); // Pythagore
-			m_iComposanteX = fNorme * (cosf((M_PI / 180) * 90));
-			m_iComposanteY = fNorme * (sinf((M_PI / 180) * 90));
+			double dNorme = sqrt(pow(m_dComposanteX, 2) + pow(m_dComposanteY, 2)); // Pythagore
+			m_dComposanteX = dNorme * (cosf((M_PI / 180) * 90));
+			m_dComposanteY = dNorme * (sinf((M_PI / 180) * 90));
 
 		}
 	}

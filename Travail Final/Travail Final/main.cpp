@@ -139,9 +139,9 @@ bool VerifierCollisionJoueurMap(CPlayer* _pPlayer, SDL_Rect _RectPlayer, bool* _
 	}
 
 	if (_pPlayer->ObtenirSpriteCourse()->ObtenirAnimation())					// Si le jueur est orienté vers la droite...
-		TmpSDLRectPlayerHitboxCorps = _pPlayer->ObtenirHitboxCorpsDroite();		// On se sert du rectangle pour le corps de droite. 
+		TmpSDLRectPlayerHitboxCorps = _pPlayer->ObtenirHitboxCorpsGauche();		// On se sert du rectangle pour le corps de droite. 
 	else																		// Sinon...
-		TmpSDLRectPlayerHitboxCorps = _pPlayer->ObtenirHitboxCorpsGauche();		// On se sert du rectangle pour le corps de gauche.	
+		TmpSDLRectPlayerHitboxCorps = _pPlayer->ObtenirHitboxCorpsDroite();		// On se sert du rectangle pour le corps de gauche.	
 
 
 	*_pboCollisionCorps = false;
@@ -254,7 +254,7 @@ void MapDestruction(int _iRayon, int _iX, int _iY) {
 			if ((iY >= 0 && iX >= 0) && (iY <= 768 & iX <= 1366)) {
 
 				if (((unsigned int*)pSurfaceGabarie->pixels)[y * pSurfaceGabarie->w + RectSource.x + x] != BLANC32BIT)
-					((unsigned int*)pSurfaceMap->pixels)[iY * pSurfaceMap->w + iX] = TRANSPARENCE32BIT;
+					((unsigned int*)pSurfaceMap->pixels)[iY * pSurfaceMap->w + iX] = 0;
 			}
 			iX++;
 

@@ -14,7 +14,7 @@ private:
 
 	bool m_BoDeplacement;				// Si le joueur se déplace.
 	bool m_boStable;					// Si le joueur est stable
-	bool n_boChuteLibre;
+	bool m_boChuteLibre;				// Si le joueur est en chute libre. 
 
 
 	CSprite* m_pSpriteCourse;			// Pointeur de sprite qui pointe sur le sprite qui représente le joueur qui est en état de course.
@@ -42,6 +42,7 @@ private:
 	CListeDC<CTools*>* m_pToolList;		// pointeur de liste d'outils qui pointe sur la liste d'outils de combat que l'utilisateur peut utiliser.
 
 	CVecteur2D* VecteurVitesse;			// Vitesse.
+	CVecteur2D* VecteurPoids;
 
 	double m_dX;
 	double m_dY;
@@ -54,7 +55,7 @@ public:
 	// Paramètre: _pToolList, pointe sur la liste d'outils que l'on veut donner au joueur.
 	// Paramètre: _strName, contient le nom que l'on veut donner au joueur.
 	// Retour: Rien (constructeur).
-	CPlayer(string _strEmplacement, SDL_Renderer* _pRenderer, CGestionaire<TTF_Font*>* _pGestionnaireFont, CGestionaire<SDL_Surface*>* _pGestionnaireSurface, CGestionaire<SDL_Texture*>* _pGestionnaireTexture, unsigned int _uiIDTeam, SDL_Rect _RectDestination, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), double _Physique(CVecteur2D* _VitesseMissile, SDL_Rect* _DestinationMissile)) {
+	CPlayer(string _strEmplacement, SDL_Renderer* _pRenderer, CGestionaire<TTF_Font*>* _pGestionnaireFont, CGestionaire<SDL_Surface*>* _pGestionnaireSurface, CGestionaire<SDL_Texture*>* _pGestionnaireTexture, unsigned int _uiIDTeam, SDL_Rect _RectDestination, double _dGravite, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), double _Physique(CVecteur2D* _VitesseMissile, SDL_Rect* _DestinationMissile)) {
 
 		m_boStable = false;
 
@@ -101,11 +102,12 @@ public:
 		m_pToolList->AjouterFin(new CMissile(_strEmplacement, _pGestionnaireSurface, _pGestionnaireTexture, _MapDestruction, _CollisionObjetMap, _Physique, NULL));
 
 		m_BoDeplacement = false;
+		m_boChuteLibre = false;
 
 		m_pBarreVie = new CBarreVie(_pGestionnaireTexture, { _RectDestination.x, _RectDestination.y - 2, 0, 0 }, _uiIDTeam);
 
 		VecteurVitesse = new CVecteur2D(0, 0.0f);
-
+		VecteurPoids = new CVecteur2D(_dGravite, 90.0f);
 	}
 
 	// Procédure qui affiche le joueur.
@@ -127,6 +129,7 @@ public:
 						m_pSpriteCourse->DefinirActif(true);
 						VecteurVitesse->ModifierComposantX(35);
 						m_boStable = false;
+						m_BoDeplacement = true;
 					}
 
 					break;
@@ -140,6 +143,7 @@ public:
 						m_pSpriteCourse->DefinirActif(true);
 						VecteurVitesse->ModifierComposantX(-35);
 						m_boStable = false;
+						m_BoDeplacement = true;
 					}
 
 					break;
@@ -152,7 +156,7 @@ public:
 						m_pSpriteSaut->DefinirEtage(m_pSpriteCourse->ObtenirAnimation()); // Pour que le saut sois du même bord que la course.
 						m_pSpriteSaut->DefinirActif(true);
 						VecteurVitesse->ModifierComposantX(0);
-						VecteurVitesse->ModifierComposantY(-150);
+						VecteurVitesse->ModifierComposantY(-35);
 						m_boStable = false;
 					}
 
@@ -162,12 +166,12 @@ public:
 				break;
 
 			case SDL_KEYUP:
-
-				VecteurVitesse->ModifierComposantX(0);
+				if (!m_boChuteLibre)
+					VecteurVitesse->ModifierComposantX(0);
 				m_pSpriteCourse->DefinirActif(false);     // Le sprite ne court plus.
 				m_pSpriteRepos->DefinirActif(true);
-				if (!m_pSpriteSaut->IsActif())
-					m_boStable = true;
+				m_BoDeplacement = false;
+				m_boStable = false;
 
 				break;
 
@@ -256,6 +260,11 @@ public:
 		m_boStable = _boStable;
 	}
 
+	void ModifierChuteLibreJoueur(bool _boChuteLibre) {
+
+		m_boChuteLibre = _boChuteLibre;
+	}
+
 	CSprite* ObtenirSpriteCourse(void) {
 
 		return m_pSpriteCourse;
@@ -330,8 +339,18 @@ public:
 		return m_BoDeplacement;
 	}
 
+	bool IsFreeFalling(void) {
+
+		return m_boChuteLibre;
+	}
+
 	CVecteur2D* ObtenirVecteurVitesse(void) {
 		return VecteurVitesse;
+	}
+
+	CVecteur2D* ObtenirVecteurPoids(void)  {
+
+		return VecteurPoids;
 	}
 
 	float GetHealth(void) {

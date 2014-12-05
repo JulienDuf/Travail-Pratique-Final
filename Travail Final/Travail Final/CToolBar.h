@@ -233,6 +233,11 @@ public:
 					m_uiPositionSelection = m_pListeObjet->ObtenirCompte() + 1; // Déselection
 				}
 		}
+		else
+		{
+			_pPlayerActif->DefinirMissileShowDescription(false);
+			_pPlayerActif->DefinirJetPackShowDescription(false);
+		}
 	}
 
 	void ReverseboShow() {

@@ -53,7 +53,7 @@ public:
 	// Paramètre: _pToolList, pointe sur la liste d'outils que l'on veut donner au joueur.
 	// Paramètre: _strName, contient le nom que l'on veut donner au joueur.
 	// Retour: Rien (constructeur).
-	CPlayer(string _strEmplacement, SDL_Renderer* _pRenderer, CGestionaire<TTF_Font*>* _pGestionnaireFont, CGestionaire<SDL_Surface*>* _pGestionnaireSurface, CGestionaire<SDL_Texture*>* _pGestionnaireTexture, unsigned int _uiIDTeam, SDL_Rect _RectDestination, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), double _Physique(CVecteur2D* _VitesseMissile, SDL_Rect* _DestinationMissile)) {
+	CPlayer(string _strEmplacement, SDL_Renderer* _pRenderer, CGestionaire<TTF_Font*>* _pGestionnaireFont, CGestionaire<SDL_Surface*>* _pGestionnaireSurface, CGestionaire<SDL_Texture*>* _pGestionnaireTexture, unsigned int _uiIDTeam, SDL_Rect _RectDestination, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), double _Physique(CVecteur2D* _VitesseMissile, SDL_Rect* _DestinationMissile), SDL_Surface* _Rotation(SDL_Surface* _pSurfaceRotation, float _fAngle)) {
 
 		for (int i = 0; i < 4; i++) {
 			m_uiMunition[i] = 0;
@@ -70,6 +70,8 @@ public:
 		m_pSpriteRepos = new CSprite(_pGestionnaireSurface->ObtenirDonnee("pSurfaceRepos"), _pGestionnaireTexture->ObtenirDonnee("pTextureRepos"), _RectDestination, 1, 50, true, false, 2);
 
 		m_pJetPack = new CJetPack(_strEmplacement, _pGestionnaireFont, new CSprite(_pGestionnaireSurface->ObtenirDonnee("pSurfaceJetPack"), _pGestionnaireTexture->ObtenirDonnee("pTextureJetPack"), _RectDestination, 6, 80, true, false, 2), new CBarreVie(_pGestionnaireTexture, { _RectDestination.x, _RectDestination.y + _RectDestination.h - 2, 0, 0 }, 6), _pRenderer);
+
+		m_pMissile = new CMissile(_strEmplacement, _pGestionnaireFont, _pRenderer, _pGestionnaireSurface, _pGestionnaireTexture, _MapDestruction, _CollisionObjetMap, _Physique, _Rotation);
 
 		m_RectPlayerDestination = _RectDestination;
 		m_RectPlayerDestination.w = m_pSpriteCourse->ObtenirRectSource().w;
@@ -218,6 +220,8 @@ public:
 
 		m_pJetPack->ShowJetPack(_pRenderer, m_RectPlayerDestination);
 		
+		m_pMissile->ShowTools(_pRenderer);
+
 		m_pSpriteRepos->ModifierAnnimation();
 		m_pSpriteRepos->Render(_pRenderer, m_RectPlayerDestination);
 

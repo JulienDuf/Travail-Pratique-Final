@@ -58,10 +58,10 @@ private:
 	void MiseajourMunition(SDL_Renderer* _pRenderer) {
 		SDL_itoa(ObtenirMunition(), chr, 10);
 		m_strDescription[0] = "";
-		m_strDescription[0].append("Niveau de carburant : ");
+		m_strDescription[0].append("Munition : ");
 		m_strDescription[0].append(chr);
-		m_strDescription[0].append("%                        ");
-		m_pLblDescription->ModifierTexture(SDL_CreateTextureFromSurface(_pRenderer, BlitText(m_strDescription, 5, { 0, 0, 0 })));
+		m_strDescription[0].append("                                       ");
+		m_pLblDescription->ModifierTexture(SDL_CreateTextureFromSurface(_pRenderer, BlitText(m_strDescription, 8, { 0, 0, 0 })));
 	}
 
 public:
@@ -69,6 +69,8 @@ public:
 	CMissile(string _strEmplacement, CGestionaire<TTF_Font*>* _pGestionnaireFont, SDL_Renderer* _pRenderer, CGestionaire<SDL_Surface*>* _pGestionnaireSurface, CGestionaire<SDL_Texture*>* _pGestionnaireTexture, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), double _PhysiqueMissile(CVecteur2D* _VitesseMissile, SDL_Rect* _DestinationMissile), SDL_Surface* _Rotation(SDL_Surface* _pSurfaceRotation, float _fAngle)) {
 
 		m_boShowDescription = false;
+
+		m_iNombreMissiles = 5;
 
 		m_strDescription;
 		string strEmplacement(_strEmplacement);
@@ -80,7 +82,7 @@ public:
 			strEmplacement.resize(++i);
 		}
 
-		strEmplacement.append("Armes et Packs\\DescriptionJetPack.txt");
+		strEmplacement.append("Armes et Packs\\DescriptionMissile.txt");
 		ifstream FichierDescription;
 		FichierDescription.open(strEmplacement);
 		if (FichierDescription.is_open()) {
@@ -95,7 +97,7 @@ public:
 
 		m_pFont = _pGestionnaireFont->ObtenirDonnee("pFontDescription");
 
-		SDL_Surface *pSDLSurface = BlitText(m_strDescription, 5, { 0, 0, 0 });
+		SDL_Surface *pSDLSurface = BlitText(m_strDescription, 8, { 0, 0, 0 });
 		m_pLblDescription = new CLabel(SDL_CreateTextureFromSurface(_pRenderer, pSDLSurface), { 503, 346, pSDLSurface->w, pSDLSurface->h });
 		
 		m_dAngle = 0;

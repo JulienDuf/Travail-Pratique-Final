@@ -1,9 +1,17 @@
-class CTools {
+class CTool {
 
 public:
 
-	virtual void ShowTools(SDL_Renderer* _pRenderer) = 0;
+	virtual void ShowTool(SDL_Renderer* _pRenderer, SDL_Rect _RectPlayerDestination) = 0;
 
 	virtual void ReactToEvent(SDL_Event* _pEvent) = 0;
 	
+	virtual void DefinirActif(bool _boActif) = 0;
+
+	virtual CSprite* ObtenirSprite(string _strNom) = 0;
+
+	virtual unsigned int ObtenirMunition() = 0;
+
+	virtual void DefinirboShowDescription(bool _boShow) = 0;
+
 };

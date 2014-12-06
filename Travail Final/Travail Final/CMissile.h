@@ -3,7 +3,7 @@
 // 16 novembre 2014 par Julien Dufresne (dufresne_julien@hotmail.ca)
 //
 
-class CMissile : public CTools {
+class CMissile : public CTool {
 
 private:
 
@@ -61,7 +61,7 @@ private:
 		m_strDescription[0].append("Munition : ");
 		m_strDescription[0].append(chr);
 		m_strDescription[0].append("                                       ");
-		m_pLblDescription->ModifierTexture(SDL_CreateTextureFromSurface(_pRenderer, BlitText(m_strDescription, 8, { 0, 0, 0 })));
+		m_pLblDescription->ModifierTexture(SDL_CreateTextureFromSurface(_pRenderer, BlitText(m_strDescription, 8, { 0, 0, 0 })), 0);
 	}
 
 public:
@@ -120,7 +120,7 @@ public:
 		m_boMissileLancer = false;
 	}
 
-	void ShowTools(SDL_Renderer* _pRenderer) {
+	void ShowTool(SDL_Renderer* _pRenderer, SDL_Rect _RectPlayerDestination) {
 
 		if (m_boMissileLancer) {
 
@@ -192,4 +192,11 @@ public:
 		m_boShowDescription = _boShow;
 	}
 
+	void DefinirActif(bool _boActif) {
+
+	}
+
+	CSprite* ObtenirSprite(string _strNom) {
+		return nullptr;
+	}
 };

@@ -23,6 +23,8 @@ using namespace std;
 #include "CScrollBar.h"
 #include "CBarrePuissance.h"
 #include "CTool.h"
+#include "CDeplacement.h"
+#include "CMouvement.h"
 #include "CMissile.h"
 #include "CGrenade.h"
 #include "CMelee.h"
@@ -138,7 +140,7 @@ bool VerifierCollisionJoueurMap(CPlayer* _pPlayer, SDL_Rect _RectPlayer, bool* _
 		TmpSDLRectPlayerHitboxPieds = _pPlayer->ObtenirHitboxPieds();
 	}
 
-	if (_pPlayer->ObtenirSpriteCourse()->ObtenirAnimation())					// Si le jueur est orienté vers la droite...
+	if (_pPlayer->ObtenirSpriteCourse()->ObtenirEtage() == 0)					// Si le jueur est orienté vers la droite...
 		TmpSDLRectPlayerHitboxCorps = _pPlayer->ObtenirHitboxCorpsDroite();		// On se sert du rectangle pour le corps de droite. 
 	else																		// Sinon...
 		TmpSDLRectPlayerHitboxCorps = _pPlayer->ObtenirHitboxCorpsGauche();		// On se sert du rectangle pour le corps de gauche.	

@@ -1,13 +1,13 @@
 // Classe représentant la gestion d'un jetpack...
 // Créée ppar Gabriel Beaudry le 02 décembre 2014 (gabriel.bdry@gmail.com)
 
-class CJetPack {
+class CJetPack : public CDeplacement {
 private:
 
 	CLabel* m_pLblDescription;
 	CSprite* m_pSpriteJetPack;
 	CBarreVie* m_pBarreDeCarburant;
-	string m_strDescription[8];
+	string m_strDescription[5];
 	TTF_Font* m_pFont;
 	bool m_boSpace,
 		m_boShowDescription;
@@ -38,15 +38,13 @@ private:
 		return pSurfaceBlitin;
 	}
 
-	char chr[3];
-
-	void MiseajourMunition(SDL_Renderer* _pRenderer) {
-		SDL_itoa(ObtenirMunition(), chr, 10);
+	void MiseajourMunition(SDL_Renderer* _pRenderer, char _chrMunition[]) {
+		
 		m_strDescription[0] = "";
 		m_strDescription[0].append("Niveau de carburant : ");
-		m_strDescription[0].append(chr);
+		m_strDescription[0].append(_chrMunition);
 		m_strDescription[0].append("%                        ");
-		m_pLblDescription->ModifierTexture(SDL_CreateTextureFromSurface(_pRenderer, BlitText(m_strDescription, 5, { 0, 0, 0 })));
+		m_pLblDescription->ModifierTexture(SDL_CreateTextureFromSurface(_pRenderer, BlitText(m_strDescription, 5, { 0, 0, 0 })), 0);
 	}
 
 public:
@@ -69,7 +67,7 @@ public:
 		ifstream FichierDescription;
 		FichierDescription.open(strEmplacement);
 		if (FichierDescription.is_open()) {
-			for (int i = 0; i < 8; i++) {
+			for (int i = 0; i < 5; i++) {
 				char chrtmp[75];
 				FichierDescription.getline(chrtmp, 75);
 				m_strDescription[i] = chrtmp;
@@ -92,62 +90,69 @@ public:
 		m_uiDepart = 0;
 	}
 
-	bool ReactToEvent(SDL_Event* _pEvent, CVecteur2D* _pVecteurVitesse) {
+	void ReactToEvent(SDL_Event* _pEvent, CVecteur2D* _pVecteurVitesse, bool* _boStable) {
 
-		if (m_pBarreDeCarburant->ObtenirPourcentage() <= 0) {
-			m_pSpriteJetPack->DefinirPositionDeBouclage(0, 1);
-			return false;
-		}
-		
-		switch (_pEvent->key.keysym.scancode) {
-		case SDL_SCANCODE_RIGHT:
-			if (_pEvent->key.type == SDL_KEYDOWN && m_boSpace) {
-					m_pSpriteJetPack->DefinirEtage(0);
-					_pVecteurVitesse->ModifierComposantX(10);
-					return false;
-			}
-				break;
-		case SDL_SCANCODE_LEFT:
-			if (_pEvent->key.type == SDL_KEYDOWN && m_boSpace) {
-					m_pSpriteJetPack->DefinirEtage(1);
-					_pVecteurVitesse->ModifierComposantX(-10);
-					return false;
-			}
-				break;
-		case SDL_SCANCODE_SPACE:
-			if (_pEvent->key.type == SDL_KEYDOWN) {
-				m_pBarreDeCarburant->ModifierPourcentageVie(m_pBarreDeCarburant->ObtenirVie() - 0.002);
-				_pVecteurVitesse->ModifierComposantY(-50);
-				m_uiDepart++;
-				if (m_uiDepart >= 3) {
-					m_pSpriteJetPack->DefinirPositionDeBouclage(4, 6);
-				}
-				else
-				{
-					m_pSpriteJetPack->DefinirPositionDeBouclage(0, 6);
-				}	
-				m_boSpace = true;
-				return false;
+		m_pSpriteJetPack->DefinirActif(true);
+			// Barre de carburant vide
+			if (m_pBarreDeCarburant->ObtenirPourcentage() <= 0) {
+				m_pSpriteJetPack->DefinirPositionDeBouclage(0, 1);
+				*_boStable = false;
 			}
 			else
 			{
-				m_pSpriteJetPack->DefinirPositionDeBouclage(0, 1);
-				m_boSpace = false;
-				m_uiDepart = 0;
-				return false;
+				switch (_pEvent->key.keysym.scancode) {
+				case SDL_SCANCODE_RIGHT:
+					if (_pEvent->key.type == SDL_KEYDOWN && m_boSpace) {
+						m_pSpriteJetPack->DefinirEtage(0);
+						_pVecteurVitesse->ModifierComposantX(10);
+						_boStable = false;
+					}
+					break;
+				case SDL_SCANCODE_LEFT:
+					if (_pEvent->key.type == SDL_KEYDOWN && m_boSpace) {
+						m_pSpriteJetPack->DefinirEtage(1);
+						_pVecteurVitesse->ModifierComposantX(-10);
+						_boStable = false;
+					}
+					break;
+				case SDL_SCANCODE_SPACE:
+					if (_pEvent->key.type == SDL_KEYDOWN) {
+						m_pBarreDeCarburant->ModifierPourcentageVie(m_pBarreDeCarburant->ObtenirVie() - 0.002);
+						_pVecteurVitesse->ModifierComposantY(-50);
+						m_uiDepart++;
+						if (m_uiDepart >= 3) {
+							m_pSpriteJetPack->DefinirPositionDeBouclage(4, 6);
+						}
+						else
+						{
+							m_pSpriteJetPack->DefinirPositionDeBouclage(0, 6);
+						}
+						m_boSpace = true;
+						_boStable = false;
+					}
+					else
+					{
+						m_pSpriteJetPack->DefinirPositionDeBouclage(0, 1);
+						m_boSpace = false;
+						m_uiDepart = 0;
+						_boStable = false;
+					}
+					break;
+				}
 			}
-			break;
-		}
-		return false;
+			
+			_boStable = false;
 	}
 
-	void ShowJetPack(SDL_Renderer* _pRenderer, SDL_Rect _RectPlayerDestination) {
+	void ShowPlayer(SDL_Renderer* _pRenderer, SDL_Rect _RectPlayerDestination) {
 		m_pSpriteJetPack->ModifierAnnimation();
 		m_pSpriteJetPack->Render(_pRenderer, _RectPlayerDestination);
 		if (m_pSpriteJetPack->IsActif())
 			m_pBarreDeCarburant->ShowBarre(_pRenderer, { _RectPlayerDestination.x, _RectPlayerDestination.y + _RectPlayerDestination.h + 2, 40, 6 });
 		if (m_boShowDescription) {
-			MiseajourMunition(_pRenderer);
+			char chr[3];
+			SDL_itoa(ObtenirMunition(), chr, 10);
+			MiseajourMunition(_pRenderer, chr);
 			m_pLblDescription->ShowControl(_pRenderer);
 		}
 	}
@@ -156,7 +161,7 @@ public:
 		m_pSpriteJetPack->DefinirActif(_boActif);
 	}
 
-	CSprite* ObtenirSprite() {
+	CSprite* ObtenirSprite(string _strNom) {
 		return m_pSpriteJetPack;
 	}
 

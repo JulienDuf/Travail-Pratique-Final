@@ -1,4 +1,3 @@
-
 // 420-202-RE : Travail final
 // Classe qui représente un joueur du jeu.
 // 4 novembre 2014 par Nicolas Dean (Gody117@hotmail.com)
@@ -8,42 +7,31 @@
 // 02 décembre 2014, gabriel beaudry (gabriel.bdry@gmail.com)
 // -Modification du reacttoevent pour la gestion des objets de la toolbar, début du jetpack, ajout de la classe jetpack
 //Fin des modifications.
+
+
 class CPlayer {
 
 private:
 
-	bool m_BoDeplacement;				// Si le joueur se déplace.
 	bool m_boStable;					// Si le joueur est stable
-	bool n_boChuteLibre;
+	bool m_boToolActif;
 
+	CListeDC<CTool*>* m_pListeTools;
 
-	CSprite* m_pSpriteCourse;			// Pointeur de sprite qui pointe sur le sprite qui représente le joueur qui est en état de course.
-	CSprite* m_pSpriteSaut;				// pointeur de sprite qui pointe sur le sprite qui représente le joueur qui est en état de saut.
-	CSprite* m_pSpriteParachute;		// Pointeur de sprite qui pointe sur le sprite qui représente le joueur qui est en état de chute.
-	CSprite* m_pSpriteRepos;		    // Pointeur de sprite qui pointe sur le sprite qui représente le joueur qui est au repos.
-	
-	CGrenade* m_pGrenade;
-	CMissile* m_pMissile;
-	CMelee* m_pMelee;
-	CJetPack* m_pJetPack;
+	CListeDC<CDeplacement*>* m_pListeDeplacement;
 
 	CBarreVie* m_pBarreVie;				// La barre de vie du personnage.
 
+	CSprite* m_pSpriteParachute;
+
 	SDL_Rect m_RectPlayerDestination;   // La destination du joueur dans le fenêtre.
 	SDL_Rect m_RectParachuteDestination;   // La destination du joueur dans le fenêtre.
-	SDL_Rect m_RectSource;				// Affiche si le joueur est ves le gauche ou vers le droite.
 	SDL_Rect m_RectHitboxCorpsGauche;
 	SDL_Rect m_RectHitboxCorpsDroite;
 	SDL_Rect m_RectHitboxPieds;
 	SDL_Rect m_RectHitboxPiedsParachute;
 
-	string m_strName;					// Chaine de caractères qui contient le nom du joueur.
-
-	CListeDC<CTools*>* m_pToolList;		// pointeur de liste d'outils qui pointe sur la liste d'outils de combat que l'utilisateur peut utiliser.
-
-	CVecteur2D* VecteurVitesse;			// Vitesse.
-
-	unsigned int m_uiMunition[4];
+	CVecteur2D* m_pVecteurVitesse;			// Vitesse.
 
 public:
 
@@ -54,28 +42,34 @@ public:
 	// Paramètre: _strName, contient le nom que l'on veut donner au joueur.
 	// Retour: Rien (constructeur).
 	CPlayer(string _strEmplacement, SDL_Renderer* _pRenderer, CGestionaire<TTF_Font*>* _pGestionnaireFont, CGestionaire<SDL_Surface*>* _pGestionnaireSurface, CGestionaire<SDL_Texture*>* _pGestionnaireTexture, unsigned int _uiIDTeam, SDL_Rect _RectDestination, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), double _Physique(CVecteur2D* _VitesseMissile, SDL_Rect* _DestinationMissile), SDL_Surface* _Rotation(SDL_Surface* _pSurfaceRotation, float _fAngle)) {
-
-		for (int i = 0; i < 4; i++) {
-			m_uiMunition[i] = 0;
-		}
+		
+		m_pListeTools = new CListeDC<CTool*>();
+		m_pListeDeplacement = new CListeDC<CDeplacement*>();
 
 		m_boStable = false;
+		m_boToolActif = false;
 
-		m_pSpriteCourse = new CSprite(_pGestionnaireSurface->ObtenirDonnee("pSurfaceCourse"), _pGestionnaireTexture->ObtenirDonnee("pTextureCourse"), _RectDestination, 9, 50, true, false, 2);
+		m_pListeDeplacement->AjouterFin(new CJetPack(_strEmplacement, _pGestionnaireFont, new CSprite(_pGestionnaireSurface->ObtenirDonnee("pSurfaceJetPack"), _pGestionnaireTexture->ObtenirDonnee("pTextureJetPack"), _RectDestination, 6, 80, true, false, 2), new CBarreVie(_pGestionnaireTexture, { _RectDestination.x, _RectDestination.y + _RectDestination.h - 2, 0, 0 }, 6), _pRenderer));
+		
+		m_pListeDeplacement->AjouterFin(new CMouvement(_pGestionnaireSurface, _pGestionnaireTexture, _RectDestination));
 
-		m_pSpriteSaut = new CSprite(_pGestionnaireSurface->ObtenirDonnee("pSurfaceSaut"), _pGestionnaireTexture->ObtenirDonnee("pTextureSaut"), _RectDestination, 9, 100, false, false, 2);
+		m_pListeDeplacement->AllerACurseur(1);
+		m_pListeDeplacement->AllerATrieur(0);
+
+		m_pListeTools->AjouterFin(new CMissile(_strEmplacement, _pGestionnaireFont, _pRenderer, _pGestionnaireSurface, _pGestionnaireTexture, _MapDestruction, _CollisionObjetMap, _Physique, _Rotation));
+
+		m_pListeTools->AjouterFin(new CGrenade(_strEmplacement, _pRenderer));
+
+		m_pListeTools->AjouterFin(new CMelee(_strEmplacement));
+
+		m_pListeTools->AllerACurseur(0);
+		m_pListeTools->AllerATrieur(0);
 
 		m_pSpriteParachute = new CSprite(_pGestionnaireSurface->ObtenirDonnee("pSurfaceParachute"), _pGestionnaireTexture->ObtenirDonnee("pTextureParachute"), _RectDestination, 24, 20, true, true, 1);
 
-		m_pSpriteRepos = new CSprite(_pGestionnaireSurface->ObtenirDonnee("pSurfaceRepos"), _pGestionnaireTexture->ObtenirDonnee("pTextureRepos"), _RectDestination, 1, 50, true, false, 2);
-
-		m_pJetPack = new CJetPack(_strEmplacement, _pGestionnaireFont, new CSprite(_pGestionnaireSurface->ObtenirDonnee("pSurfaceJetPack"), _pGestionnaireTexture->ObtenirDonnee("pTextureJetPack"), _RectDestination, 6, 80, true, false, 2), new CBarreVie(_pGestionnaireTexture, { _RectDestination.x, _RectDestination.y + _RectDestination.h - 2, 0, 0 }, 6), _pRenderer);
-
-		m_pMissile = new CMissile(_strEmplacement, _pGestionnaireFont, _pRenderer, _pGestionnaireSurface, _pGestionnaireTexture, _MapDestruction, _CollisionObjetMap, _Physique, _Rotation);
-
 		m_RectPlayerDestination = _RectDestination;
-		m_RectPlayerDestination.w = m_pSpriteCourse->ObtenirRectSource().w;
-		m_RectPlayerDestination.h = m_pSpriteCourse->ObtenirRectSource().h;
+		m_RectPlayerDestination.w = ObtenirSpriteCourse()->ObtenirRectSource().w;
+		m_RectPlayerDestination.h = ObtenirSpriteCourse()->ObtenirRectSource().h;
 		m_RectParachuteDestination = _RectDestination;
 		m_RectParachuteDestination.w = m_pSpriteParachute->ObtenirRectSource().w;
 		m_RectParachuteDestination.h = m_pSpriteParachute->ObtenirRectSource().h;
@@ -101,15 +95,9 @@ public:
 		m_RectHitboxPiedsParachute.w = 58;
 		m_RectHitboxPiedsParachute.h = 19;
 
-		m_pToolList = new CListeDC<CTools*>();
-
-		m_pToolList->AjouterFin(new CMissile(_strEmplacement, _pGestionnaireFont, _pRenderer,_pGestionnaireSurface, _pGestionnaireTexture, _MapDestruction, _CollisionObjetMap, _Physique, NULL));
-
-		m_BoDeplacement = false;
-
 		m_pBarreVie = new CBarreVie(_pGestionnaireTexture, { _RectDestination.x, _RectDestination.y - 2, 0, 0 }, _uiIDTeam);
 
-		VecteurVitesse = new CVecteur2D(0, 0);
+		m_pVecteurVitesse = new CVecteur2D(0, 0);
 
 	}
 
@@ -117,89 +105,19 @@ public:
 	// Paramètre: _pSDLRenderer, Rendeur de la fenêtre dans laquelle on veut afficher le joueur.
 	// Retour: Rien.
 	void ReactToEvent(SDL_Event* _pSDLEvent, unsigned int _uiObjetSelectionner) {
-
-		if (!m_pSpriteParachute->IsActif() && _uiObjetSelectionner > 3) {
-
-			switch (_pSDLEvent->type) {
-			case SDL_KEYDOWN:
-				switch (_pSDLEvent->key.keysym.scancode) {
-				case SDL_SCANCODE_RIGHT: // Flèche de droite appuyée...
-
-					if (!m_pSpriteCourse->IsActif()) { // S'il était au repos
-						m_pSpriteRepos->DefinirEtage(0);  // Il n'est plus au repos.
-						m_pSpriteRepos->DefinirActif(false);
-						m_pSpriteCourse->DefinirEtage(0);
-						m_pSpriteCourse->DefinirActif(true);
-						VecteurVitesse->ModifierComposantX(35);
-						m_boStable = false;
-					}
-
-					break;
-
-				case SDL_SCANCODE_LEFT:
-
-					if (!m_pSpriteCourse->IsActif()) { // S'il était au repos
-						m_pSpriteRepos->DefinirEtage(1);  // Il n'est plus au repos.
-						m_pSpriteRepos->DefinirActif(false);
-						m_pSpriteCourse->DefinirEtage(1);
-						m_pSpriteCourse->DefinirActif(true);
-						VecteurVitesse->ModifierComposantX(-35);
-						m_boStable = false;
-					}
-
-					break;
-
-				case SDL_SCANCODE_SPACE:        // Saut = Espace
-
-					if (!m_pSpriteSaut->IsActif()) {
-						m_pSpriteRepos->DefinirActif(false);
-						m_pSpriteCourse->DefinirActif(false);
-						m_pSpriteSaut->DefinirEtage(m_pSpriteCourse->ObtenirAnimation()); // Pour que le saut sois du même bord que la course.
-						m_pSpriteSaut->DefinirActif(true);
-						VecteurVitesse->ModifierComposantX(0);
-						VecteurVitesse->ModifierComposantY(-150);
-						m_boStable = false;
-					}
-
-					break;
-				}
-
-				break;
-
-			case SDL_KEYUP:
-
-				VecteurVitesse->ModifierComposantX(0);
-				m_pSpriteCourse->DefinirActif(false);     // Le sprite ne court plus.
-				m_pSpriteRepos->DefinirActif(true);
-				if (!m_pSpriteSaut->IsActif())
-					m_boStable = true;
-
-				break;
-
+		if (!m_pSpriteParachute->IsActif()) {
+			if (_uiObjetSelectionner <= 2) {
+				m_boToolActif = true;
+				m_pListeTools->AllerACurseur(_uiObjetSelectionner);
+				m_pListeTools->ObtenirElementCurseur()->ReactToEvent(_pSDLEvent);
 			}
-		}
-		else
-		{
-			switch (_uiObjetSelectionner) {
-			case 0: // Bazooka
-
-				break;
-			case 1: // Grenada
-
-				break;
-			case 2: // Épée
-
-				break;
-			case 3: // JetPack
-
-				m_pJetPack->DefinirActif(true);
-				m_pSpriteCourse->DefinirActif(false);
-				m_pSpriteParachute->DefinirActif(false);
-				m_pSpriteRepos->DefinirActif(false);
-				m_pSpriteSaut->DefinirActif(false);
-				m_boStable = m_pJetPack->ReactToEvent(_pSDLEvent, VecteurVitesse);
-
-				break;
+			else
+			{
+				if (_uiObjetSelectionner == 3)
+					m_pListeDeplacement->AllerACurseur(0);
+				else
+					m_pListeDeplacement->AllerACurseur(1);
+				m_pListeDeplacement->ObtenirElementCurseur()->ReactToEvent(_pSDLEvent, m_pVecteurVitesse, &m_boStable);
 			}
 		}
 	}
@@ -208,31 +126,24 @@ public:
 	//Paramètre : _pRenderer : Le render de la fenetre.
 	//Retour : rien.
 	void ShowPlayer(SDL_Renderer* _pRenderer) {
+		if (m_pSpriteParachute->IsActif()) {
+			m_pSpriteParachute->ModifierAnnimation();
+			m_pSpriteParachute->Render(_pRenderer, m_RectParachuteDestination);
+		}
+		else
+		{
+			m_pListeDeplacement->ObtenirElementCurseur()->ShowPlayer(_pRenderer, m_RectPlayerDestination);
 
-		m_pSpriteCourse->ModifierAnnimation();
-		m_pSpriteCourse->Render(_pRenderer, m_RectPlayerDestination);
-
-		m_pSpriteParachute->ModifierAnnimation();
-		m_pSpriteParachute->Render(_pRenderer, m_RectParachuteDestination);
-
-		m_pSpriteSaut->ModifierAnnimation();
-		m_pSpriteSaut->Render(_pRenderer, m_RectPlayerDestination);
-
-		m_pJetPack->ShowJetPack(_pRenderer, m_RectPlayerDestination);
-		
-		m_pMissile->ShowTools(_pRenderer);
-
-		m_pSpriteRepos->ModifierAnnimation();
-		m_pSpriteRepos->Render(_pRenderer, m_RectPlayerDestination);
-
-		if (!m_pSpriteParachute->IsActif())
 			m_pBarreVie->ShowBarre(_pRenderer, { m_RectPlayerDestination.x, m_RectPlayerDestination.y - 2, 40, 6 });
+
+			if (m_boToolActif)
+				m_pListeTools->ObtenirElementCurseur()->ShowTool(_pRenderer, m_RectPlayerDestination);
+		}
 	}
 
 
 	// Accesseur ... 
 
-															// Accesseur ... 
 	void SetHealth(float _fHealth) {
 
 
@@ -262,40 +173,34 @@ public:
 		m_boStable = _boStable;
 	}
 
-	CSprite* ObtenirSpriteCourse(void) {
-
-		return m_pSpriteCourse;
-
+	CSprite* ObtenirSpriteCourse() {
+		m_pListeDeplacement->AllerATrieur(1);
+		return m_pListeDeplacement->ObtenirElementTrieur()->ObtenirSprite("Course");
 	}
 
-	CSprite* ObtenirSpriteSaut(void) {
-
-		return m_pSpriteSaut;
-
+	CSprite* ObtenirSpriteRepos() {
+		m_pListeDeplacement->AllerATrieur(1);
+		return m_pListeDeplacement->ObtenirElementTrieur()->ObtenirSprite("Repos");
 	}
 
-	CSprite* ObtenirSpriteRepos(void) {
+	CSprite* ObtenirSpriteSaut() {
+		m_pListeDeplacement->AllerATrieur(1);
+		return m_pListeDeplacement->ObtenirElementTrieur()->ObtenirSprite("Saut");
+	}
 
-		return m_pSpriteRepos;
-
+	CSprite* ObtenirSpriteJetPack() {
+		m_pListeDeplacement->AllerATrieur(0);
+		return m_pListeDeplacement->ObtenirElementTrieur()->ObtenirSprite("");
 	}
 
 	CSprite* ObtenirSpriteParachute(void) {
 
 		return m_pSpriteParachute;
-
-	}
-
-	CSprite* ObtenirSpriteJetPack(void) {
-
-		return m_pJetPack->ObtenirSprite();
-
 	}
 
 	SDL_Rect ObtenirHitboxCorpsDroite(void) {
 
 		return m_RectHitboxCorpsDroite;
-
 	}
 
 	SDL_Rect ObtenirHitboxCorpsGauche(void) {
@@ -331,13 +236,8 @@ public:
 		return m_boStable;
 	}
 
-	bool IsMoving(void) {
-
-		return m_BoDeplacement;
-	}
-
 	CVecteur2D* ObtenirVecteurVitesse(void) {
-		return VecteurVitesse;
+		return m_pVecteurVitesse;
 	}
 
 	float GetHealth(void) {
@@ -346,12 +246,12 @@ public:
 	}
 
 	void DefinirJetPackShowDescription(bool _boShow) {
-
-		m_pJetPack->DefinirboShowDescription(_boShow);
+		m_pListeDeplacement->AllerATrieur(0);
+		m_pListeDeplacement->ObtenirElementTrieur()->DefinirboShowDescription(_boShow);
 	}
 	
 	void DefinirMissileShowDescription(bool _boShow) {
-
-		m_pMissile->DefinirboShowDescription(_boShow);
+		m_pListeTools->AllerATrieur(0);
+		m_pListeTools->ObtenirElementTrieur()->DefinirboShowDescription(_boShow);
 	}
 };

@@ -121,7 +121,6 @@ public:
 	void DefinirEtage(unsigned int _uiEtage) {
 
 		m_uiEtage = _uiEtage;
-		m_RectSource.x = 0;
 		m_RectSource.y = m_RectSource.h * m_uiEtage;
 	}
 
@@ -132,7 +131,7 @@ public:
 		return m_RectSource;
 	}
 
-	unsigned int ObtenirAnimation(void) {
+	unsigned int ObtenirEtage(void) {
 		
 		return m_uiEtage;
 	}

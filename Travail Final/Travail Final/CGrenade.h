@@ -3,7 +3,7 @@ Classe qui gere les grenades et leur rebondissement
 Crée par Samuel Rambaud le 25 novembre 2014
 */
 
-class CGrenade: public CTools{
+class CGrenade: public CTool {
 private:
 	int m_iAngle; //Angle du lancement de la grenade
 	int m_iForce; //Force du lancement de la grenade
@@ -36,18 +36,16 @@ public:
 		m_pRectDestination.x = 0;
 	}
 	
-	void ShowTools(SDL_Renderer* _pRenderer) {
+	void ShowTool(SDL_Renderer* _pRenderer, SDL_Rect _RectPlayerDestination) {}
 
+	void ReactToEvent(SDL_Event* _pEvent) {}
 
-	}
+	void DefinirActif(bool _boActif) {}
 
-	void ReactToEvent(SDL_Event* _pEvent) {
+	CSprite* ObtenirSprite(string _strNom) { return nullptr; }
 
+	unsigned int ObtenirMunition() { return 0; }
 
-	}
-
-	unsigned int ObtenirMunition() {
-		return m_uiMunition;
-	}
+	void DefinirboShowDescription(bool _boShow) {}
 
 };

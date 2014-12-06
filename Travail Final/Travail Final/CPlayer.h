@@ -88,9 +88,9 @@ public:
 		m_RectHitboxCorpsDroite.h = 40;
 
 		m_RectHitboxPieds.x = 0;
-		m_RectHitboxPieds.y = 40;
+		m_RectHitboxPieds.y = 50;
 		m_RectHitboxPieds.w = 40;
-		m_RectHitboxPieds.h = 15;
+		m_RectHitboxPieds.h = 5;
 
 		m_RectHitboxPiedsParachute.x = 0;
 		m_RectHitboxPiedsParachute.y = 92;
@@ -99,7 +99,8 @@ public:
 
 		m_pToolList = new CListeDC<CTools*>();
 
-		m_pToolList->AjouterFin(new CMissile(_strEmplacement, _pGestionnaireSurface, _pGestionnaireTexture, _MapDestruction, _CollisionObjetMap, _Physique, NULL));
+		m_pToolList->AjouterFin(new CMissile(_strEmplacement, _pGestionnaireSurface, _pGestionnaireTexture, _MapDestruction, _CollisionObjetMap, _Physique, Rotation));
+		m_pToolList->AllerDebut();
 
 		m_BoDeplacement = false;
 		m_boChuteLibre = false;
@@ -177,8 +178,9 @@ public:
 
 			}
 		}
-		else
-		{
+		else {
+
+			m_pToolList->AllerACurseur(_uiObjetSelectionner);
 			switch (_uiObjetSelectionner) {
 			case 0: // Bazooka
 
@@ -225,6 +227,8 @@ public:
 
 		if (!m_pSpriteParachute->IsActif())
 			m_pBarreVie->ShowBarre(_pRenderer, { m_RectPlayerDestination.x, m_RectPlayerDestination.y - 2, 40, 6 });
+
+		m_pToolList->ObtenirElementCurseur()->ShowTools(_pRenderer);
 	}
 
 

@@ -61,15 +61,6 @@ SDL_Color CouleurTexte; // La couleur du texte.
 
 CTimer* pTimerPhysique;
 
-// Fonction convertissant en angle de degré à radian.
-// En entrée:
-// Param1: L'angle à convertir.
-// En sortie: L'angle converti.
-float DegtoRad(float _fAngle) {
-
-	return (M_PI / 180) * _fAngle;
-}
-
 
 // Pointeurs de fonctions pour les classes [
 
@@ -192,31 +183,6 @@ bool VerifierCollisionJoueurMap(CPlayer* _pPlayer, SDL_Rect _RectPlayer, bool* _
 
 }
 
-
-// Fontion effectuant un rotation sur une surface selon un angle.
-// En entrée: 
-// Param1: La surface qui doit être tourné.
-// Param2: L'angle de la rotation.
-// En sortie: La surface avec la rotaiton.
-SDL_Surface* Rotation(SDL_Surface* _pSurfaceRotation, float _fAngle) {
-
-	SDL_Surface * pNouvelleSurface = SDL_CreateRGBSurface(_pSurfaceRotation->flags, _pSurfaceRotation->w, _pSurfaceRotation->h, _pSurfaceRotation->format->BitsPerPixel, _pSurfaceRotation->format->Rmask, _pSurfaceRotation->format->Gmask, _pSurfaceRotation->format->Bmask, _pSurfaceRotation->format->Amask);
-
-	double sin = sinf(DegtoRad(_fAngle));
-	double cos = cosf(DegtoRad(_fAngle));
-
-	for (int y = 0; y < _pSurfaceRotation->h; y++)
-		for (int x = 0; x < _pSurfaceRotation->w; x++) {
-
-		int RotX = (x - _pSurfaceRotation->w / 2) * cos - (y - _pSurfaceRotation->h / 2) * sin + _pSurfaceRotation->w / 2;
-		int RotY = (x - _pSurfaceRotation->w / 2) * sin + (y - _pSurfaceRotation->h / 2) * cos + _pSurfaceRotation->w / 2;
-
-		if ((RotX >= 0 && RotY >= 0 && (RotX < _pSurfaceRotation->w && RotY < _pSurfaceRotation->h)))
-			((unsigned int*)pNouvelleSurface->pixels)[y * pNouvelleSurface->w + x] = ((unsigned int*)_pSurfaceRotation->pixels)[RotY * _pSurfaceRotation->w + RotX];
-		}
-
-	return pNouvelleSurface;
-}
 
 // Procédure détruisant une partie de la map selon un rayon.
 // En entrée:
@@ -572,7 +538,7 @@ void Start(char* _strApplicationFilename) {
 	pGestionaireControl = new CGestionaire<CControl*>();
 	pGestionaireMenu = new CGestionaire<CMenu*>();
 
-	pTimerPhysique = new CTimer(20);
+	pTimerPhysique = new CTimer(1000);
 
 	// Chargement du gabarie...
 	strEmplacement = strApplicationPath;
@@ -770,6 +736,8 @@ int main(int argc, char* argv[]) {
 	Start(argv[0]); // Initialisation
 
 	srand(time(NULL));
+	
+	pTimerPhysique->Start();
 
 	// Boucle principale de l'application.
 	while (boExecution) {

@@ -56,7 +56,7 @@ public:
 
 			int iX, iY;
 
-			m_pPhysiqueMissile(VecteurVitesse, &m_RectDestinationMissile);
+			ModifierAngle(m_pPhysiqueMissile(VecteurVitesse, &m_RectDestinationMissile));
 			SDL_Texture* pTextureTMP = SDL_CreateTextureFromSurface(_pRenderer, m_pSDLSurfaceMissileRotation);
 			SDL_RenderCopy(_pRenderer, pTextureTMP, NULL, &m_RectDestinationMissile);
 			SDL_DestroyTexture(pTextureTMP);
@@ -107,6 +107,15 @@ public:
 
 		m_pSDLSurfaceMissileRotation = m_pRotation(m_pSDLSurfaceMissile, m_dAngle);
 
+	}
+
+	void ModifierPositionTool(SDL_Rect _RectDestination) {
+
+		m_RectDestinationMissile.x = _RectDestination.x;
+		m_RectDestinationMissile.y = _RectDestination.y;
+
+		m_pBarrePuissance->DefenirPositionBarre(_RectDestination);
+		m_pBarrePuissance->DefenirBoActif(true);
 	}
 
 };

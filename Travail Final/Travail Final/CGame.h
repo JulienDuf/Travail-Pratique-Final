@@ -99,15 +99,6 @@ public:
 				SDL_Rect RectExplosion;
 
 				dAngle = CalculerPente(pPlayerActif);
-				if (dAngle > 65) {
-					pPlayerActif->ModifierChuteLibreJoueur(true);
-				}
-
-				if (dAngle > 360)
-					dAngle = 90;
-
-				pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(dAngle);
-				pPlayerActif->ObtenirVecteurPoids()->ModifierOrientation(-dAngle);
 
 				if (pPlayerActif->IsFreeFalling()) {
 					*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
@@ -125,7 +116,12 @@ public:
 					dComposanteY += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35;
 
 				}
-				//pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination()));
+
+				*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
+				dComposanteX += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35;
+				dComposanteY += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35;
+
+				double angle = RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination());
 
 				RectTmp.x = dComposanteX;
 				RectTmp.y = dComposanteY;
@@ -134,7 +130,8 @@ public:
 
 					DomageExplosion(RectExplosion, 45);
 				}
-				if (!m_pVerifierCollisionJoueurMap(pPlayerActif, RectTmp, &boCorps, &boPied, &_uiX, &_uiY)) {
+				
+				else if (!m_pVerifierCollisionJoueurMap(pPlayerActif, RectTmp, &boCorps, &boPied, &_uiX, &_uiY)) {
 					pPlayerActif->DefinirPositionX(dComposanteX);
 					pPlayerActif->DefinirPositionY(dComposanteY);
 				}
@@ -142,8 +139,13 @@ public:
 
 					if (boPied)
 						dComposanteY -= (RectTmp.h - _uiY);
-					if (boCorps)
+					if (boCorps && pPlayerActif->ObtenirSpriteRepos()->ObtenirAnimation() == 0)
 						dComposanteX -= (RectTmp.w - _uiX);
+
+					if (boCorps && pPlayerActif->ObtenirSpriteRepos()->ObtenirAnimation() == 1)
+						dComposanteX += _uiX;
+				
+						
 					pPlayerActif->DefinirPositionX(dComposanteX);
 					pPlayerActif->DefinirPositionY(dComposanteY);
 					pPlayerActif->ObtenirVecteurVitesse()->ModifierComposantY(0);
@@ -517,7 +519,7 @@ public:
 						return 361;
 					}
 
-					if ((((unsigned int*)pSurfaceMap->pixels)[(TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerDestination.w) + (TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerDestination.h + iNombrePixel) * pSurfaceMap->w] != 0)) {
+					if ((((unsigned int*)pSurfaceMap->pixels)[(TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerDestination.w + 5) + (TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerDestination.h + iNombrePixel) * pSurfaceMap->w] != 0)) {
 						boNonTransparence = true;
 						dPente = ((double)iNombrePixel / 5);
 						return (180 / M_PI) * atanf(dPente);
@@ -534,7 +536,7 @@ public:
 
 					iNombrePixel--;
 
-					if ((((unsigned int*)pSurfaceMap->pixels)[(TmpSDLRectPlayerSource.x + TmpSDLRectPlayerHitboxPieds.x) + (TmpSDLRectPlayerSource.y + TmpSDLRectPlayerHitboxPieds.y + iNombrePixel) * pSurfaceMap->w] == 0))
+					if ((((unsigned int*)pSurfaceMap->pixels)[(TmpSDLRectPlayerSource.x + TmpSDLRectPlayerHitboxPieds.x + 5) + (TmpSDLRectPlayerSource.y + TmpSDLRectPlayerHitboxPieds.y + iNombrePixel) * pSurfaceMap->w] == 0))
 						boTransparence = true;
 				}
 

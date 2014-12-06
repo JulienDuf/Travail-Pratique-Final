@@ -126,4 +126,10 @@ public:
 		*_iY = m_RectDestinationBarre.y;
 	}
 
+	void DefenirPositionBarre(SDL_Rect _RectDestination) {
+
+		m_RectDestinationBarre.x = _RectDestination.x;
+		m_RectDestinationBarre.y = _RectDestination.y;
+	}
+
 };

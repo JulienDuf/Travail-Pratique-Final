@@ -15,7 +15,7 @@ private:
 
 public:
 
-	CGame(string _strEmplacementMap, CGestionaire<TTF_Font*>* _pGestionnaireFont, CGestionaire<SDL_Surface*>* _pGestionnaireSurface, CGestionaire<SDL_Texture*>* _pGestionnaireTexture, int _iNombreÉquipe, int _iNombreJoueur, CVent* _pVent, bool _VerifierCollisionJoueurMap(CPlayer* _pPlayer, SDL_Rect _RectPlayer, bool* _boCollisionCorps, bool* _boCollisionPieds, unsigned int* _uiXMap, unsigned int* _uiYMap), void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), double _Physique(CVecteur2D* _VitesseMissile, SDL_Rect* _DestinationMissile), SDL_Renderer* _pRenderer) {
+	CGame(string _strEmplacementMap, CGestionaire<TTF_Font*>* _pGestionnaireFont, CGestionaire<SDL_Surface*>* _pGestionnaireSurface, CGestionaire<SDL_Texture*>* _pGestionnaireTexture, int _iNombreÉquipe, int _iNombreJoueur, CVent* _pVent, bool _VerifierCollisionJoueurMap(CPlayer* _pPlayer, SDL_Rect _RectPlayer, bool* _boCollisionCorps, bool* _boCollisionPieds, unsigned int* _uiXMap, unsigned int* _uiYMap), void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), double _Physique(CVecteur2D* _VitesseMissile, SDL_Rect* _DestinationMissile), SDL_Surface* _Rotation(SDL_Surface* _pSurfaceRotation, float _fAngle), SDL_Renderer* _pRenderer) {
 
 		m_boDebutPartie = true;
 
@@ -31,7 +31,11 @@ public:
 
 		for (int i = _iNombreÉquipe; i > 0; i--) {
 
+<<<<<<< HEAD
 			m_pTeamList->AjouterFin(new CTeam(_strEmplacementMap, _pRenderer, _pGestionnaireFont, _pGestionnaireSurface, _pGestionnaireTexture, i, _iNombreJoueur, Gravite, _MapDestruction, _CollisionObjetMap, _Physique));
+=======
+			m_pTeamList->AjouterFin(new CTeam(_strEmplacementMap, _pRenderer, _pGestionnaireFont, _pGestionnaireSurface, _pGestionnaireTexture, i, _iNombreJoueur, _MapDestruction, _CollisionObjetMap, _Physique, _Rotation));
+>>>>>>> origin/Branche-jetpack
 		}
 		m_pTeamList->AllerDebut();
 
@@ -63,21 +67,22 @@ public:
 		PhysiquePlayer();
 
 		for (int i = 0; i < m_pTeamList->ObtenirCompte(); i++) {
-
 			m_pTeamList->ObtenirElementCurseur()->ShowTeam(_pRenderer);
 			m_pTeamList->AllerSuivantCurseur();
 		}
 
 		m_pToolBar->ShowToolBar(_pRenderer);
 
+		m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ShowDescription(_pRenderer);
 	}
 
 	void ReactToEvent(SDL_Event* _pEvent) {
 
-		m_pToolBar->ReactToEvent(_pEvent);
+		m_pToolBar->ReactToEvent(_pEvent, m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif());
 
-		m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ReactToEvent(_pEvent, m_pToolBar->ObtenirPositionObjetSelection());
-
+		m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ReactToEvent(_pEvent, m_pToolBar->ObtenirPositionObjetDoubleClick());
+		
+		m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->UpdateDescription(m_pToolBar->ObtenirPositionObjetSuvol(), m_pToolBar->ObtenirRectPositionSouris());
 	}
 
 	void PhysiquePlayer(void) {
@@ -269,6 +274,7 @@ public:
 	// Paramètre : _RectPiedJoueur : Le rect pied du joueur acitf.
 	// Retour : integer double qui représente l'angle de la pente.
 	float RegressionLineaire(SDL_Rect _RectPiedJoueur, SDL_Rect _RectJoueur) {
+<<<<<<< HEAD
 		 float fPente = 0;
 		 float iCov = 0; // Variable en y moyenne.
 		 float iVar = 0; // Variable en x moyen.
@@ -277,6 +283,16 @@ public:
 		 int iN = 0; // Le nombre de fois qu'il y a des "différent de transparent" Sert a savoir le milieu de la régressuion
 		 int* iTableau = new int[_RectPiedJoueur.w, _RectPiedJoueur.h]; // Tableau.
 		for (int j = 0; j <  _RectPiedJoueur.h; j++) { // Boucler sur toute le rect du pied dans la position de la map.
+=======
+		float fPente = 0;
+		float iCov = 0; // Variable en y moyenne.
+		float iVar = 0; // Variable en x moyen.
+		float fX = 0; // Valeur en x pour la régression.
+		float fY = 0; // Valeur en y pour la régression.
+		int iN = 0; // Le nombre de fois qu'il y a des "différent de transparent" Sert a savoir le milieu de la régressuion
+		int* iTableau = new int[_RectPiedJoueur.w, _RectPiedJoueur.h]; // Tableau.
+		for (int j = 0; j < _RectPiedJoueur.h; j++) { // Boucler sur toute le rect du pied dans la position de la map.
+>>>>>>> origin/Branche-jetpack
 			for (int i = 0; i < _RectPiedJoueur.w; i++) {
 				if (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(i + _RectPiedJoueur.x + _RectJoueur.x) + ((j + _RectPiedJoueur.y + _RectJoueur.y) * m_pGameMap->ObtenirSurfaceMap()->w)] != 0) { // Si le pixel est différent de transparent.
 					iTableau[i, j] = 1; // Mettre 1 dans mon tableau.
@@ -294,11 +310,11 @@ public:
 			for (int i = 0; i < _RectPiedJoueur.h; i++) {
 				if (iTableau[i, j] == 1) {
 					iCov += ((i - fX) * (j - fY)); // Calcul pour Y moyens avec le Y moyens.
-					iVar += pow ((i - fX), 2);	   // Calcul pour X moyens avec le X moyens.
+					iVar += pow((i - fX), 2);	   // Calcul pour X moyens avec le X moyens.
 				}
 			}
 		}
-		
+
 		if (iCov != 0 && iVar != 0) {
 			iCov = (iCov / iN); //moyenne
 			iCov -= 2 * iCov;
@@ -309,6 +325,7 @@ public:
 		
 		fPente = iCov / iVar;
 
+<<<<<<< HEAD
 		if (iCov != 0 && iVar != 0) { 
 			if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirAnimation() == 0 && fPente > 0) // Le joueur se déplace vers la droite et la pente est positive.
 				return -(180 / M_PI) * atanf(fPente);
@@ -320,11 +337,26 @@ public:
 				return 180 - (180 / M_PI) * atanf(fPente);
 
 			if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirAnimation() == 1 && fPente < 0) // Le joueur se déplace vers la gauche et la pente est négative.
+=======
+		fPente = iCov / iVar;
+
+		if (iCov != 0 && iVar != 0) {
+			if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 0 && fPente > 0) // Le joueur se déplace vers la droite et la pente est positive.
+				return -(180 / M_PI) * atanf(fPente);
+
+			if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 0 && fPente < 0) // Le joueur se déplace vers la droite et la pente est négative.
+				return -(180 / M_PI) * atanf(fPente);
+
+			if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 1 && fPente > 0) // Le joueur se déplace vers la gauche et la pente est positive.
+				return 180 - (180 / M_PI) * atanf(fPente);
+
+			if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 1 && fPente < 0) // Le joueur se déplace vers la gauche et la pente est négative.
+>>>>>>> origin/Branche-jetpack
 				return 180 + (180 / M_PI) * atanf(fPente);
 		}
 
 		return 362;
-		
+
 	}
 
 	/*
@@ -385,6 +417,15 @@ public:
 			TmpSDLRectPlayerSource = _pPlayer->ObtenirSpriteRepos()->ObtenirRectSource();		// On se sert du Rect source du sprite de repos.
 
 			TmpSDLRectPlayerHitboxPieds = _pPlayer->ObtenirHitboxPieds();						// On se sert du hitbox des pieds approprié pour le sprite de repos.
+		}
+
+		else if (_pPlayer->ObtenirSpriteJetPack()->IsActif()) {
+
+			pTmpSDLSurfacePlayer = _pPlayer->ObtenirSpriteJetPack()->ObtenirSurface();
+
+			TmpSDLRectPlayerSource = _pPlayer->ObtenirSpriteJetPack()->ObtenirRectSource();
+
+			TmpSDLRectPlayerHitboxPieds = _pPlayer->ObtenirHitboxPieds();
 		}
 
 
@@ -544,6 +585,10 @@ public:
 				return -(180 / M_PI) * atanf(dPente);
 			}
 		}
+	}
+
+	bool IsDebut() {
+		return m_boDebutPartie;
 	}
 
 };

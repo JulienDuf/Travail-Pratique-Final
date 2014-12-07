@@ -10,12 +10,14 @@ private:
 	SDL_Texture* m_pTextureToolBar; // Texture du fond de la toolbar.
 	CListeDC<SDL_Texture*>* m_pListeObjet; // Liste des textures représentant les objet pour l'affichage.
 	SDL_Rect m_RectToolBarDestination, // Rect de destination de la toolbar.
+		m_RectPositionSouris, // Rect de la position de la souris.
 		m_RectTextureDestination; // Rect de destination de la ToolBar pour chaque texture.
 	CScrollBar *m_pScrollBar; // Barre de défilement permettant de manipuler l'affichage.
 	CTimer *m_pTimerClick; // Timer pour le double click.
 
 	unsigned int m_uiPositionSelection, // Position dans la liste de l'objet en sélection.
-		m_uiPositionListe, // Position dans la liste du double-click.
+		m_uiPositionDoubleClick, // Position dans la liste du double-click.
+		m_uiPositionHover, // Position de hovering
 		m_uiPositionAffichage, // Position de l'affichage lors qu'il y a une scrollbar par rapport à la vraie taille de la toolbar et non celle affichée.
 		m_uiMinimumSpace; // Espace minimum entre deux objets
 
@@ -35,6 +37,8 @@ public:
 	// Param7: Nombre de texture(objet) de la ToolBar.
 	// Param8: Textures des objets de la ToolBar.
 	CToolBar(SDL_Rect _RectDestination, SDL_Color _Color, SDL_Renderer* _pRenderer, unsigned int _uiObjectWidth, unsigned int _uiObjectHeight, unsigned int _uiMinimumSpace, unsigned int argc, ...) {
+
+		m_RectPositionSouris = { 0, 0, 0, 0 };
 
 		m_pTimerClick = new CTimer(500);
 
@@ -63,7 +67,8 @@ public:
 		va_end(parametres);
 		
 		m_uiPositionSelection = argc;
-		m_uiPositionListe = argc;
+		m_uiPositionDoubleClick = argc;
+		m_uiPositionHover = argc;
 		m_pListeObjet->AllerATrieur(0);
 
 		// Initialisation de mon rect pour les textures individuelles...
@@ -77,13 +82,6 @@ public:
 		m_RectTextureDestination.x = m_uiMinimumSpace;
 		m_RectTextureDestination.w = _uiObjectWidth;
 		m_RectTextureDestination.h = _uiObjectHeight;
-	}
-
-	// Fonction permettant d'obtenir la position de l'objet selectionné...
-	// En sortie:
-	// La position de l'objet sélectionné.
-	unsigned int ObtenirPositionObjetSelection() {
-		return m_uiPositionListe;
 	}
 
 	// Procédure permettant d'afficher la toolbar...
@@ -120,7 +118,7 @@ public:
 							SDL_RenderCopy(_pRenderer, m_pListeObjet->ObtenirElementTrieur(), &Recttmp2, &Recttmp);
 						}
 						else
-							// Vérification si l'objet dépasse en partie à gauche...
+						// Vérification si l'objet dépasse en partie à gauche...
 						if ((m_RectTextureDestination.x + m_RectTextureDestination.w) >= m_uiPositionAffichage && (m_RectTextureDestination.x < m_uiPositionAffichage)) {
 							Recttmp = { m_RectToolBarDestination.x, m_RectToolBarDestination.y + m_RectTextureDestination.y, m_RectTextureDestination.x + m_RectTextureDestination.w - m_uiPositionAffichage, m_RectTextureDestination.h };
 							Recttmp2 = { (m_RectTextureDestination.w - Recttmp.w)* iW / m_RectTextureDestination.w, 0, Recttmp.w * iW / m_RectTextureDestination.w, iH };
@@ -151,64 +149,91 @@ public:
 
 	// Procédure permettant de réagir aux événement de la toolbar(selection)...
 	// Param1: Event de SDL.
-	void ReactToEvent(SDL_Event* _pEvent) {
+	void ReactToEvent(SDL_Event* _pEvent, CPlayer* _pPlayerActif) {
 		
 		if (m_boShow) {
+			// Vérification si le click de la souris est dans la toolbar...
+			if ((_pEvent->motion.x >= m_RectToolBarDestination.x && _pEvent->motion.x <= (m_RectToolBarDestination.x + m_RectToolBarDestination.w)) && (_pEvent->motion.y >= m_RectToolBarDestination.y && _pEvent->motion.y <= (m_RectToolBarDestination.y + m_RectToolBarDestination.h))) {
+				unsigned int uiX, uiY; // Positions X,Y pour la position de l'event click par rapport à la toolbar non pas par rapport à la window.
 
-			// Switch pour gérer les événement de la toolbar...
-			switch (_pEvent->type) {
-			case SDL_MOUSEBUTTONDOWN: // Click droit souris.
-				// Vérification si le click de la souris est dans la toolbar...
-				if ((_pEvent->motion.x >= m_RectToolBarDestination.x && _pEvent->motion.x <= (m_RectToolBarDestination.x + m_RectToolBarDestination.w)) && (_pEvent->motion.y >= m_RectToolBarDestination.y && _pEvent->motion.y <= (m_RectToolBarDestination.y + m_RectToolBarDestination.h))) {
-					unsigned int uiX, uiY; // Positions X,Y pour la position de l'event click par rapport à la toolbar non pas par rapport à la window.
+				// Ajustement du rectevent et de la position d'affichage si il y a une toolbar ou  non...
+				if (m_pScrollBar != nullptr) {
+					// Mise à jour de la position d'affichage et des events de la scrollingbar...
+					m_uiPositionAffichage = (float)m_pScrollBar->ReactToEvent(_pEvent);
+					uiX = _pEvent->motion.x - m_RectToolBarDestination.x + m_uiPositionAffichage;
+				}
+				else
+					uiX = _pEvent->motion.x - m_RectToolBarDestination.x;
+				uiY = _pEvent->motion.y - m_RectToolBarDestination.y;
 
-					// Ajustement du rectevent et de la position d'affichage si il y a une toolbar ou  non...
-					if (m_pScrollBar != nullptr) {
-						// Mise à jour de la position d'affichage et des events de la scrollingbar...
-						m_uiPositionAffichage = (float)m_pScrollBar->ReactToEvent(_pEvent);
-						uiX = _pEvent->motion.x - m_RectToolBarDestination.x + m_uiPositionAffichage;
+				unsigned int uiPositionListe = 0;
+
+				// Vérification si le click est à la hauteur des textures dans la toolbar...
+				if (uiY >= m_RectTextureDestination.y && uiY <= (m_RectTextureDestination.y + m_RectTextureDestination.h)) {
+					// Boucle d'incrémentation de la position de sélection dans la liste jusqu'à ce qu'il n'y ait plus de modulo à faire...
+					while (uiX >= (m_uiMinimumSpace + m_RectTextureDestination.w)) {
+						uiPositionListe++;
+						uiX -= (m_uiMinimumSpace + m_RectTextureDestination.w);
 					}
-					else
-						uiX = _pEvent->motion.x - m_RectToolBarDestination.x;
-					uiY = _pEvent->motion.y - m_RectToolBarDestination.y;
-
-					// Vérification si le click est à la hauteur des textures dans la toolbar...
-					if (uiY >= m_RectTextureDestination.y && uiY <= (m_RectTextureDestination.y + m_RectTextureDestination.h)) {
-						m_uiPositionSelection = 0;
-						// Boucle d'incrémentation de la position de sélection dans la liste jusqu'à ce qu'il n'y ait plus de modulo à faire...
-						while (uiX >= (m_uiMinimumSpace + m_RectTextureDestination.w)) {
-							m_uiPositionSelection++;
-							uiX -= (m_uiMinimumSpace + m_RectTextureDestination.w);
-						}
-						// Si le click était entre des objets...
-						if (uiX <= m_uiMinimumSpace) {
-							m_uiPositionSelection = m_pListeObjet->ObtenirCompte() + 1; // Déselection
-						}
-						else
-						{
-							if (!m_pTimerClick->IsDone() && m_boClick) {
-								m_boShow = false;
-								m_uiPositionListe = m_uiPositionSelection;
-							}
-							else
-							{
-								m_pTimerClick->Start();
-								m_boClick = true;
-							}
+					// Si le click était entre des objets...
+					if (uiX <= m_uiMinimumSpace) {
+						m_uiPositionHover = m_pListeObjet->ObtenirCompte();
+						if (_pEvent->type == SDL_MOUSEBUTTONDOWN) {
+							m_uiPositionSelection = m_pListeObjet->ObtenirCompte();
 						}
 					}
 					else
 					{
-						m_uiPositionSelection = m_pListeObjet->ObtenirCompte() + 1; // Déselection
+						m_uiPositionHover = uiPositionListe;
+						m_RectPositionSouris.x = _pEvent->motion.x;
+						m_RectPositionSouris.y = _pEvent->motion.y;
+						if (_pEvent->type == SDL_MOUSEBUTTONDOWN) {
+							m_uiPositionSelection = uiPositionListe;
+							if (!m_pTimerClick->IsDone()) {
+								m_boShow = false;
+								m_uiPositionHover = m_pListeObjet->ObtenirCompte();
+								m_uiPositionDoubleClick = m_uiPositionSelection;
+								m_uiPositionSelection = m_pListeObjet->ObtenirCompte();
+							}
+							else
+							{
+								m_pTimerClick->Start();
+							}
+						}
 					}
 				}
 				else
 				{
-					m_uiPositionSelection = m_pListeObjet->ObtenirCompte() + 1; // Déselection
+					m_uiPositionHover = m_pListeObjet->ObtenirCompte();
+					if (_pEvent->type == SDL_MOUSEBUTTONDOWN)
+						m_uiPositionSelection = m_pListeObjet->ObtenirCompte();
 				}
-				break;
+			}
+			else
+			{
+				if (_pEvent->type == SDL_MOUSEMOTION)
+					m_uiPositionHover = m_uiPositionSelection;
+				else
+					m_uiPositionSelection = m_pListeObjet->ObtenirCompte() + 1; // Déselection
 			}
 		}
+	}
+
+	SDL_Rect ObtenirRectPositionSouris() {
+		return m_RectPositionSouris;
+	}
+
+	// Fonction permettant d'obtenir la position de l'objet selectionné...
+	// En sortie:
+	// La position de l'objet sélectionné.
+	unsigned int ObtenirPositionObjetDoubleClick() {
+		unsigned int ui = m_uiPositionDoubleClick;
+		m_uiPositionDoubleClick = m_pListeObjet->ObtenirCompte();
+		return ui;
+	}
+
+	unsigned int ObtenirPositionObjetSuvol() {
+		return m_uiPositionHover;
 	}
 
 	void ReverseboShow() {

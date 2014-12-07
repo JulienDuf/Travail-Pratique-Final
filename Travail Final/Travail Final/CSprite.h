@@ -93,14 +93,14 @@ public:
 			// Atteint la fin...
 			if (m_RectSource.x >= (m_RectSource.w * m_uiPositionBouclageFin)) {
 
-				// Pas de bouclage...
-				if (!m_boBoucle) {
+				// Bouclage...
+				if (m_boBoucle) {
 
-					m_boActif = false;
+					m_RectSource.x = m_uiPositionBouclageDebut * m_RectSource.w; // Retour au départ voulu.
 				}
 				else
 				{
-					m_RectSource.x = m_uiPositionBouclageDebut * m_RectSource.w; // Retour au départ voulu.
+					m_boActif = false;
 				}
 			}
 		}
@@ -121,7 +121,6 @@ public:
 	void DefinirEtage(unsigned int _uiEtage) {
 
 		m_uiEtage = _uiEtage;
-		m_RectSource.x = 0;
 		m_RectSource.y = m_RectSource.h * m_uiEtage;
 	}
 
@@ -132,7 +131,7 @@ public:
 		return m_RectSource;
 	}
 
-	unsigned int ObtenirAnimation(void) {
+	unsigned int ObtenirEtage(void) {
 		
 		return m_uiEtage;
 	}

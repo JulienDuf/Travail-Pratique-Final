@@ -74,6 +74,7 @@
     <ClInclude Include="CBarreVie.h" />
     <ClInclude Include="CButton.h" />
     <ClInclude Include="CControl.h" />
+    <ClInclude Include="CDeplacement.h" />
     <ClInclude Include="CGame.h" />
     <ClInclude Include="CGestionaire.h" />
     <ClInclude Include="CGrenade.h" />
@@ -87,6 +88,7 @@
     <ClInclude Include="CMenu.h" />
     <ClInclude Include="CMine.h" />
     <ClInclude Include="CMissile.h" />
+    <ClInclude Include="CMouvement.h" />
     <ClInclude Include="CNoeudArbreAVL.h" />
     <ClInclude Include="CPack.h" />
     <ClInclude Include="CPlayer.h" />

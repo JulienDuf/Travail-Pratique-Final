@@ -21,15 +21,17 @@ using namespace std;
 #include "CMenu.h"
 #include "CGestionaire.h"
 #include "CScrollBar.h"
-#include "CToolBar.h"
 #include "CBarrePuissance.h"
 #include "CTool.h"
+#include "CDeplacement.h"
+#include "CMouvement.h"
 #include "CMissile.h"
 #include "CGrenade.h"
 #include "CMelee.h"
 #include "CBarreVie.h"
 #include "CJetPack.h"
 #include "CPlayer.h"
+#include "CToolBar.h"
 #include "CPack.h"
 #include "CHealthPack.h"
 #include "CMine.h"
@@ -129,8 +131,13 @@ bool VerifierCollisionJoueurMap(CPlayer* _pPlayer, SDL_Rect _RectPlayer, bool* _
 		TmpSDLRectPlayerHitboxPieds = _pPlayer->ObtenirHitboxPieds();
 	}
 
+<<<<<<< HEAD
 	if (_pPlayer->ObtenirSpriteCourse()->ObtenirAnimation())					// Si le jueur est orienté vers la droite...
 		TmpSDLRectPlayerHitboxCorps = _pPlayer->ObtenirHitboxCorpsGauche();		// On se sert du rectangle pour le corps de droite. 
+=======
+	if (_pPlayer->ObtenirSpriteCourse()->ObtenirEtage() == 0)					// Si le jueur est orienté vers la droite...
+		TmpSDLRectPlayerHitboxCorps = _pPlayer->ObtenirHitboxCorpsDroite();		// On se sert du rectangle pour le corps de droite. 
+>>>>>>> origin/Branche-jetpack
 	else																		// Sinon...
 		TmpSDLRectPlayerHitboxCorps = _pPlayer->ObtenirHitboxCorpsDroite();		// On se sert du rectangle pour le corps de gauche.	
 
@@ -376,7 +383,7 @@ void ClickBoutonDebutPartie(void) {
 	iNombreEquipe = pGestionaireControl->ObtenirDonnee("pLblLRChoixNbrEquipe")->ObtenirElement("PositionLabel") + 2;
 	iNombreJoueur = pGestionaireControl->ObtenirDonnee("pLblLRChoixNbrJoueurEquipe")->ObtenirElement("PositionLabel") + 4;
 
-	pWindowJeu->CreateGame(strTmp, pGestionaireFont, pGestionaireSurface, pGestionaireTexture, iNombreEquipe, iNombreJoueur, new CVent(pGestionaireFont->ObtenirDonnee("pFontBouton"), "250 km/h", CouleurTexte, pGestionaireTexture->ObtenirDonnee("pFlecheVent"), { 1200, 30, 117, 63 }, 180, pWindowJeu->ObtenirRenderer()),  VerifierCollisionJoueurMap, MapDestruction, CollisionObjetMap, PhysiqueMissile, pWindowJeu->ObtenirRenderer());
+	pWindowJeu->CreateGame(strTmp, pGestionaireFont, pGestionaireSurface, pGestionaireTexture, iNombreEquipe, iNombreJoueur, new CVent(pGestionaireFont->ObtenirDonnee("pFontBouton"), "250 km/h", CouleurTexte, pGestionaireTexture->ObtenirDonnee("pFlecheVent"), { 1200, 30, 117, 63 }, 180, pWindowJeu->ObtenirRenderer()),  VerifierCollisionJoueurMap, MapDestruction, CollisionObjetMap, PhysiqueMissile, Rotation);
 }
 
 // Procédure pour le click sur le bouton quitter...
@@ -771,7 +778,8 @@ int main(int argc, char* argv[]) {
 					break;
 				case SDL_SCANCODE_T:
 					//pWindowJeu->ObtenirGame()->ChangerTour(pGestionaireFont->ObtenirDonnee("pFontBouton"), pWindowJeu->ObtenirRenderer());
-					pWindowJeu->ObtenirGame()->ReverseShowToolBar();
+					if (!pWindowJeu->ObtenirGame()->IsDebut())
+						pWindowJeu->ObtenirGame()->ReverseShowToolBar();
 					break;
 				}
 				break;

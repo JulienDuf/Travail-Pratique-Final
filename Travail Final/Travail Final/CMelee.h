@@ -3,34 +3,44 @@ Classe qui gere les armes de melee
 Crée par Samuel Rambaud le 25 novembre 2014
 */
 
-class CMelee : public CTools{
+class CMelee : public CTool {
 private:
 	int iDamage; //Degats de l'arme de melee
-	CLabel* m_plblDescription; //Description de l'arme de melee
+	CLabel* m_pLblDescription; //Description de l'arme de melee
+	bool m_boShowDescription;
 	SDL_Surface* m_pSurfaceSprite; //Surface SDL qui deviendra le sprite
 	CSprite* m_pSprite; //sprite du personnage qui utilise l'arme de melee
 	SDL_Rect m_RectDestinationArme;
 public:
 
 	//constructeur
-	CMelee(string _strEmplacement){
+	CMelee(string _strEmplacement, SDL_Renderer* _pRenderer){
 
+		m_pLblDescription = new CLabel(_pRenderer, { 0, 0, 100, 100 });
 		iDamage = 0.2;
 		//m_pSprite = new CSprite(0, 0,0 ,300);
 	}
 
-
-	/*
-	Affichage du sprite de l'utilisation de l'arme de melee
-	parametre:
-		_Renderer = Renderer SDL ou s'afffichera le sprite
-	*/
-	void ShowTools(SDL_Renderer* _Renderer){
-		m_pSprite->Render(_Renderer, m_RectDestinationArme);
+	void ShowTool(SDL_Renderer* _pRenderer, SDL_Rect _RectPlayerDestination) {
+		m_pSprite->Render(_pRenderer, m_RectDestinationArme);
 	}
 
-	void ReactToEvent(SDL_Event* _pEvent) {
+	void ShowDescription(SDL_Renderer* _pRenderer) {
+		if (m_boShowDescription)
+			m_pLblDescription->ShowControl(_pRenderer);
+	}
 
+	void ReactToEvent(SDL_Event* _pEvent) {}
 
+	void DefinirActif(bool _boActif) {}
+
+	CSprite* ObtenirSprite(string _strNom) { return nullptr; }
+
+	unsigned int ObtenirMunition() { return 0; }
+
+	void UpdateDescription(bool _boShow, SDL_Rect _RectPositionDescription) {
+		m_boShowDescription = _boShow;
+		m_pLblDescription->SetRectDestinationX(_RectPositionDescription.x);
+		m_pLblDescription->SetRectDestinationY(_RectPositionDescription.y);
 	}
 };

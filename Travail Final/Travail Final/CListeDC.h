@@ -165,7 +165,7 @@ public:
 					m_pTrieur = m_pDerniere;
 					// Boucle qui s'arrête quand le pointeur m_pCurseur est à la position voulue.
 					for (unsigned int ui = m_uiCompte - 1; ui > _uiPosition; ui--) {
-						m_pTrieur = m_pCurseur->ObtenirPrecedente();
+						m_pTrieur = m_pTrieur->ObtenirPrecedente();
 					}
 				}
 			}
@@ -176,7 +176,7 @@ public:
 					m_pTrieur = m_pDerniere->ObtenirSuivante();
 					// Boucle qui s'arrête quand le pointeur m_pCurseur est à la position voulue.
 					for (unsigned int ui = 0; ui < _uiPosition; ui++) {
-						m_pCurseur = m_pCurseur->ObtenirSuivante();
+						m_pTrieur = m_pTrieur->ObtenirSuivante();
 					}
 				}
 				else

@@ -13,42 +13,6 @@ private:
 	CListeDC<SDL_Texture*>* m_pListeTextureLabel; // La texture d'un label.
 	SDL_Rect m_RectPosition; // La postion/destination qu'on veut l'afficher.
 
-	// Fonction qui met le texte d'un tableau en une seule surface.
-	// En entrée: 
-	// Param1: Le tableau contenant le texte à mettre ensemble.
-	// Param2: Le nombre d'élément du tableau.
-	// Param3: La font du texte.
-	// Param4: La couleur du texte.
-	// En sortie:
-	// La surface finale.
-	SDL_Surface* BlitTexte(string _strTexte[], int _iNombreElementTableau, TTF_Font* _Font, SDL_Color _Couleur) {
-
-		SDL_Surface* pSDLSurface; // Variable temporaire...
-		SDL_Surface* pSDLSurfaceTmp;
-		SDL_Rect RectTmp = { 0, 0, 0, 0 };
-
-		if (_iNombreElementTableau > 0) {
-			pSDLSurface = TTF_RenderText_Blended(_Font, _strTexte[0].c_str(), _Couleur); // Créé la surface contenant le texte.
-			pSDLSurfaceTmp = SDL_CreateRGBSurface(pSDLSurface->flags, m_RectPosition.w, pSDLSurface->h * _iNombreElementTableau, pSDLSurface->format->BitsPerPixel, pSDLSurface->format->Rmask, pSDLSurface->format->Gmask, pSDLSurface->format->Bmask, pSDLSurface->format->Amask);
-
-			SDL_BlitSurface(pSDLSurface, NULL, pSDLSurfaceTmp, &RectTmp);
-			RectTmp.y = pSDLSurface->h;			
-			SDL_FreeSurface(pSDLSurface);
-
-			for (int i = 1; i < _iNombreElementTableau; i++) {
-
-				pSDLSurface = TTF_RenderText_Blended(_Font, _strTexte[i].c_str(), _Couleur); // Créé la surface contenant le texte.
-				SDL_BlitSurface(pSDLSurface, NULL, pSDLSurfaceTmp, &RectTmp);
-				RectTmp.y = pSDLSurface->h * (i + 1);
-				SDL_FreeSurface(pSDLSurface);
-			}
-
-			return pSDLSurfaceTmp;
-		}
-
-		return nullptr;
-	}
-
 public:
 
 	// Constructeurs de CLabel de text...
@@ -152,10 +116,7 @@ public:
 		}
 	}
 
-	int ObtenirElement(string _Element) {
-
-		return 0;
-	}
+	// Méthodes...
 
 	// Procédure changeant le position du curseur.
 	// En entrée:
@@ -169,6 +130,26 @@ public:
 			m_pListeTextureLabel->AllerPrecedentCurseur();
 	}
 
+	// En entrée:
+	// Param1; Nouvelle texture.
+	// Param2: Position de la texture à modifier.
+	void RemplacerTexture(SDL_Texture* _pTexture, unsigned int _uiPosition) {
+		m_pListeTextureLabel->AllerACurseur(_uiPosition);
+		m_pListeTextureLabel->DefinirElementCurseur(_pTexture);
+	}
+
+	int ObtenirElement(string _Element) {
+
+		return 0;
+	}
+
+	
+
+	void ModifierTexture(SDL_Texture* _pTexture, unsigned int _uiPosition) {
+		m_pListeTextureLabel->AllerACurseur(_uiPosition);
+		m_pListeTextureLabel->DefinirElementCurseur(_pTexture);
+	}
+
 	// Procédure qui obtient la dimension d'une texture.
 	// En entrée:
 	// Param1: Position de la texture voulue(Ordre de création)
@@ -179,4 +160,11 @@ public:
 		SDL_QueryTexture(m_pListeTextureLabel->ObtenirElementCurseur(), nullptr, nullptr, _iW, _iH);
 	}
 
+	void SetRectDestinationX(unsigned int _uiX) {
+		m_RectPosition.x = _uiX;
+	}
+
+	void SetRectDestinationY(unsigned int _uiY) {
+		m_RectPosition.y = _uiY;
+	}
 };

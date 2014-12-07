@@ -19,4 +19,8 @@ public:
 	virtual int ObtenirElement(string _Element) = 0;
 
 	virtual void ChangeTexture(bool _boDroite) = 0;
+
+	virtual void SetRectDestinationX(unsigned int _uiX) = 0;
+
+	virtual void SetRectDestinationY(unsigned int _uiY) = 0;
 };

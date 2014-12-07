@@ -97,7 +97,8 @@ public:
 					*pPlayerActif->ObtenirVecteurVitesse() += *m_pGameMap->ObtenirGravite();
 				Recttmp.x += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35;
 				Recttmp.y += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35;
-				pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination()));
+				if (!pPlayerActif->ObtenirSpriteSaut()->IsActif())
+					pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination()));
 				DetectionCollisionPack(pPlayerActif, &boExplosion);
 				if (!m_pVerifierCollisionJoueurMap(pPlayerActif, Recttmp, &boCorps, &boPied, &_uiX, &_uiY)) {
 						pPlayerActif->ModifierRectDestination(Recttmp);
@@ -262,20 +263,20 @@ public:
 
 		delete[] iTableau;
 
-		fPente = iCov / iVar;
+		fPente = iCov / iVar; // Donne la pente. iCov = y , iVar = x.
 
 		if (iCov != 0 && iVar != 0) {
 			if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 0 && fPente > 0) // Le joueur se déplace vers la droite et la pente est positive.
-				return -(180 / M_PI) * atanf(fPente);
+				return (180 / M_PI) * atanf(fPente);
 
 			if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 0 && fPente < 0) // Le joueur se déplace vers la droite et la pente est négative.
-				return -(180 / M_PI) * atanf(fPente);
+				return 360 - ((180 / M_PI) * atanf(-fPente));
 
 			if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 1 && fPente > 0) // Le joueur se déplace vers la gauche et la pente est positive.
-				return 180 - (180 / M_PI) * atanf(fPente);
+				return 180 + (180 / M_PI) * atanf(fPente);
 
 			if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 1 && fPente < 0) // Le joueur se déplace vers la gauche et la pente est négative.
-				return 180 + (180 / M_PI) * atanf(fPente);
+				return 90 + (180 / M_PI) * atanf(-fPente);
 		}
 
 		return 362;

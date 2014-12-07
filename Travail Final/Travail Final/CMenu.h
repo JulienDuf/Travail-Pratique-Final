@@ -9,8 +9,8 @@ private:
 
 	CArbreAVL<CControl*>* m_pArbreControl; // Liste des contrôles.
 	bool m_boShow; // Booléen qui dicte si le menu s'affiche ou non.
-	SDL_Texture* m_pTextureBackGroundMenu; // Le background du menu.
 	SDL_Rect m_RectDestinationBackGround; // La position du background.
+	SDL_Color m_CouleurBackground; // La couleur du background.
 
 public:
 
@@ -19,16 +19,13 @@ public:
 	// Param1: booléen qui dicte si le menu doit s'afficher ou non.
 	// Param2; Nombre de Contrôles à ajouter.
 	// Param3...; Contrôles à ajouter.
-	CMenu(bool _boShow, SDL_Rect _RectDestination, SDL_Renderer* _pRenderer,unsigned int argc, ...) {
+	CMenu(bool _boShow, SDL_Rect _RectDestination, SDL_Renderer* _pRenderer, SDL_Color _CouleurBackGround, unsigned int argc, ...) {
 		m_boShow = _boShow;
 		m_pArbreControl = new CArbreAVL<CControl*>();
 
-		SDL_Surface* pSDLSurface = SDL_CreateRGBSurface(0, 470, 470, 32, 0, 0, 0, 0);
-		SDL_FillRect(pSDLSurface, NULL, 0xFFFFFF);
-		m_pTextureBackGroundMenu = SDL_CreateTextureFromSurface(_pRenderer, pSDLSurface);
-		SDL_FreeSurface(pSDLSurface);
-
 		m_RectDestinationBackGround = _RectDestination;
+
+		m_CouleurBackground = _CouleurBackGround;
 
 		if (argc > 0) {
 			va_list parametres;
@@ -89,7 +86,10 @@ public:
 	void ShowMenu(SDL_Renderer* _pSDLRenderer) {
 		if (m_boShow) {
 
-			SDL_RenderCopy(_pSDLRenderer, m_pTextureBackGroundMenu, NULL, &m_RectDestinationBackGround);
+			SDL_SetRenderDrawBlendMode(_pSDLRenderer, SDL_BLENDMODE_BLEND);
+			SDL_SetRenderDrawColor(_pSDLRenderer, m_CouleurBackground.r, m_CouleurBackground.b, m_CouleurBackground.b, m_CouleurBackground.a);
+
+			SDL_RenderFillRect(_pSDLRenderer, &m_RectDestinationBackGround);
 			m_pArbreControl->ParcoursControl(_pSDLRenderer);
 		}
 	}

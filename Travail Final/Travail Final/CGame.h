@@ -59,6 +59,7 @@ public:
 		m_pGameMap->ShowMap(_pRenderer);
 
 		PhysiquePlayer();
+		PhysiquePack();
 
 		for (int i = 0; i < m_pTeamList->ObtenirCompte(); i++) {
 			m_pTeamList->ObtenirElementCurseur()->ShowTeam(_pRenderer);
@@ -237,6 +238,36 @@ public:
 		}
 	}
 
+	void PhysiquePack(void) {
+
+		CListeDC<CPack*>* pPackListTmp = m_pGameMap->ObtenirPackList();
+		SDL_Rect RectTmp;
+		int iX, iY;
+
+		for (int i = 0; i < pPackListTmp->ObtenirCompte(); i++) {
+
+			if (!pPackListTmp->ObtenirElementCurseur()->IsStable()) {
+
+				RectTmp = pPackListTmp->ObtenirElementCurseur()->GetRectDestination();
+				RectTmp.y += m_pGameMap->ObtenirGravite()->ObtenirComposanteY();
+
+				if (CollisionObjetMap(pPackListTmp->ObtenirElementCurseur()->GetSurface(), RectTmp, &iX, &iY)) {
+
+					RectTmp.y -= RectTmp.h - iY;
+					pPackListTmp->ObtenirElementCurseur()->ModifierStabilePack(true);
+
+					pPackListTmp->ObtenirElementCurseur()->ModifierAnlge(RegressionLineaire({0,0,RectTmp.w,RectTmp.h}, RectTmp));
+					pPackListTmp->ObtenirElementCurseur()->ModifierPosition(RectTmp);
+				}
+
+				else
+					pPackListTmp->ObtenirElementCurseur()->ModifierPosition(RectTmp);
+			}
+
+			pPackListTmp->AllerSuivantCurseur();
+		}
+	}
+
 	CMap* ObtenirMap(void) {
 
 		return m_pGameMap;
@@ -341,6 +372,39 @@ public:
 
 		}
 
+	}
+
+	// Procédure déterminant la position d'une collision entre un objet et la map, si il y en a une.
+	// En entrée:
+	// Param1: La surface de l'objet.
+	// Param2: La destination de l'objet.
+	// Param3: La position en X qui sera retourné.
+	// Param4: La position en Y qui sera retourné.
+	bool CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY) {
+
+		*_iX = 0;
+		*_iY = 0;
+
+		unsigned int ix, iy;
+
+		SDL_Surface* pSDLSurfaceMap = m_pGameMap->ObtenirSurfaceMap();
+
+		for (int y = 0; y < _RectDestination.h; y++) {
+			for (int x = 0; x <_RectDestination.w; x++) {
+
+				if (x >= 0 && x <= 1366 && y >= 0 && y <= 768) {
+
+					if ((((unsigned int*)pSDLSurfaceMap->pixels)[(y + _RectDestination.y) * pSDLSurfaceMap->w + (x + _RectDestination.x)] != 0) && (((unsigned int*)_pSDLSurface->pixels)[(y) * _pSDLSurface->w + (x)] != 0)) {
+						
+						*_iX = x;
+						*_iY = y;
+						
+						return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	/*
@@ -461,14 +525,14 @@ public:
 				pPlayerTmp = pPlayerList->ObtenirElementCurseur();
 				RectDestinationPlayer = pPlayerTmp->ObtenirRectDestination();
 
-				if (RectDestinationPlayer.x + RectDestinationPlayer.w / 2 >= _RectPositionExplosion.x - _iRayon && _RectPositionExplosion.x > RectDestinationPlayer.x) {
+				if (RectDestinationPlayer.x + RectDestinationPlayer.w >= _RectPositionExplosion.x - _iRayon && _RectPositionExplosion.x > RectDestinationPlayer.x && (_RectPositionExplosion.y - (RectDestinationPlayer.y + RectDestinationPlayer.h)) < 5 && (_RectPositionExplosion.y - (RectDestinationPlayer.y + RectDestinationPlayer.h)) > -5) {
 
-					iDistanceRayon = _RectPositionExplosion.x - RectDestinationPlayer.x;
+					iDistanceRayon = _RectPositionExplosion.x - (RectDestinationPlayer.x + RectDestinationPlayer.w);
 					fPourcentage = ((float)iDistanceRayon / (float)_iRayon);
 					pPlayerTmp->SetHealth(pPlayerTmp->GetHealth() * (1 - fPourcentage));
 				}
 
-				else if (RectDestinationPlayer.x + RectDestinationPlayer.w / 2 <= _RectPositionExplosion.x + _iRayon && _RectPositionExplosion.x < RectDestinationPlayer.x){
+				else if (RectDestinationPlayer.x <= _RectPositionExplosion.x + _iRayon && _RectPositionExplosion.x < RectDestinationPlayer.x && (_RectPositionExplosion.y - (RectDestinationPlayer.y + RectDestinationPlayer.h)) < 5 && (_RectPositionExplosion.y - (RectDestinationPlayer.y + RectDestinationPlayer.h)) > -5) {
 
 					iDistanceRayon = RectDestinationPlayer.x - _RectPositionExplosion.x;
 					fPourcentage = ((float)iDistanceRayon / (float)_iRayon);

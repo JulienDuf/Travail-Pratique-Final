@@ -6,7 +6,8 @@ private:
 	SDL_Rect m_RectDestination; //position de la mine sur la map
 	SDL_Surface* m_pSurface; //Texture du pack
 	SDL_Texture* m_pTexture; // Texture du pack
-	bool m_boCollision; // Si la mine touche par terre.
+	bool m_boStable; // Si la mine touche par terre.
+	double m_dAnglemine; // L'angle de la mine.
 
 	void(*m_pCollisionMap)(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY);
 	void(*m_pMapDestruction)(int _iRayon, int _iX, int _iY);
@@ -26,7 +27,8 @@ public:
 		m_pCollisionMap = _CollisionMap;
 		m_pMapDestruction = _MapDestruction;
 
-		m_boCollision = false;
+		m_boStable = false;
+		m_dAnglemine = 0;
 	}
 
 
@@ -46,30 +48,23 @@ public:
 	*/
 	void ShowPack(SDL_Renderer* _Renderer){
 		
-		if (!m_boCollision)
-			ModifierPosition();
-		SDL_RenderCopy(_Renderer, m_pTexture, NULL, &m_RectDestination);
+		SDL_RenderCopyEx(_Renderer, m_pTexture, NULL, &m_RectDestination, m_dAnglemine, NULL, SDL_FLIP_NONE);
 	}
 
-	void ModifierPosition(void) {
+	void ModifierPosition(SDL_Rect _RectDestination) {
 
-		int iX, iY;
+		m_RectDestination = _RectDestination;
 
-		SDL_Rect RectTmp = m_RectDestination;
-		RectTmp.y += 9.8;
-		
-		m_pCollisionMap(m_pSurface, RectTmp, &iX, &iY);
+	}
 
-		if (iX != 0 && iY != 0) {
+	void ModifierStabilePack(bool _boStable) {
 
-			RectTmp.y -= ((RectTmp.y + RectTmp.h) - iY);
-			m_RectDestination = RectTmp;
-			m_boCollision = true;
-		}
+		m_boStable = _boStable;
+	}
 
-		else
-			m_RectDestination = RectTmp;
+	void ModifierAnlge(double _dAngle) {
 
+		m_dAnglemine = _dAngle;
 	}
 
 	SDL_Surface* GetSurface(){
@@ -79,4 +74,10 @@ public:
 	SDL_Rect GetRectDestination(){
 		return m_RectDestination;
 	}
+
+	bool IsStable(void) {
+
+		return m_boStable;
+	}
+
 };

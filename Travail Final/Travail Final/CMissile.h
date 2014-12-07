@@ -99,7 +99,7 @@ public:
 
 		SDL_Surface *pSDLSurface = BlitText(m_strDescription, 8, { 0, 0, 0 });
 		m_pLblDescription = new CLabel(SDL_CreateTextureFromSurface(_pRenderer, pSDLSurface), { 503, 346, pSDLSurface->w, pSDLSurface->h });
-		
+
 		m_dAngle = 0;
 		m_iForce = 0;
 
@@ -126,7 +126,7 @@ public:
 
 			int iX, iY;
 
-			ModifierAngle(m_pPhysiqueMissile(VecteurVitesse, &m_RectDestinationMissile));
+			m_pPhysiqueMissile(VecteurVitesse, &m_RectDestinationMissile);
 			SDL_Texture* pTextureTMP = SDL_CreateTextureFromSurface(_pRenderer, m_pSDLSurfaceMissileRotation);
 			SDL_RenderCopy(_pRenderer, pTextureTMP, NULL, &m_RectDestinationMissile);
 			SDL_DestroyTexture(pTextureTMP);
@@ -191,17 +191,6 @@ public:
 
 	}
 
-<<<<<<< HEAD
-	void ModifierPositionTool(SDL_Rect _RectDestination) {
-
-		m_RectDestinationMissile.x = _RectDestination.x;
-		m_RectDestinationMissile.y = _RectDestination.y;
-
-		m_pBarrePuissance->DefenirPositionBarre(_RectDestination);
-		m_pBarrePuissance->DefenirBoActif(true);
-	}
-
-=======
 	unsigned int ObtenirMunition() {
 		return m_iNombreMissiles;
 	}
@@ -219,5 +208,4 @@ public:
 	CSprite* ObtenirSprite(string _strNom) {
 		return nullptr;
 	}
->>>>>>> origin/Branche-jetpack
 };

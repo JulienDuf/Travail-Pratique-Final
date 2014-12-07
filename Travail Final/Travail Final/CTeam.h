@@ -12,11 +12,7 @@ private:
 
 public:
 
-<<<<<<< HEAD
-	CTeam(string _strEmplacement, SDL_Renderer* _pRenderer, CGestionaire<TTF_Font*>* _pGestionnaireFont, CGestionaire<SDL_Surface*>* _pGestionnaireSurface, CGestionaire<SDL_Texture*>* _pGestionnaireTexture,unsigned int _uiIDTeam, int _iNombreJoueur, double _dGravite ,void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), double _Physique(CVecteur2D* _VitesseMissile, SDL_Rect* _DestinationMissile)) {
-=======
 	CTeam(string _strEmplacement, SDL_Renderer* _pRenderer, CGestionaire<TTF_Font*>* _pGestionnaireFont, CGestionaire<SDL_Surface*>* _pGestionnaireSurface, CGestionaire<SDL_Texture*>* _pGestionnaireTexture, unsigned int _uiIDTeam, int _iNombreJoueur, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), double _Physique(CVecteur2D* _VitesseMissile, SDL_Rect* _DestinationMissile), SDL_Surface* _Rotation(SDL_Surface* _pSurfaceRotation, float _fAngle)) {
->>>>>>> origin/Branche-jetpack
 
 		m_pPlayerList = new CListeDC<CPlayer*>();
 
@@ -26,11 +22,7 @@ public:
 
 			iX = rand() % 1298;
 
-<<<<<<< HEAD
-			m_pPlayerList->AjouterFin(new CPlayer( _strEmplacement, _pRenderer, _pGestionnaireFont, _pGestionnaireSurface, _pGestionnaireTexture, _uiIDTeam, {iX, 5, 0, 0}, _dGravite, _MapDestruction, _CollisionObjetMap, _Physique));
-=======
-			m_pPlayerList->AjouterFin(new CPlayer( _strEmplacement, _pRenderer, _pGestionnaireFont, _pGestionnaireSurface, _pGestionnaireTexture, _uiIDTeam, {iX, 5, 0, 0}, _MapDestruction, _CollisionObjetMap, _Physique, _Rotation));
->>>>>>> origin/Branche-jetpack
+			m_pPlayerList->AjouterFin(new CPlayer(_strEmplacement, _pRenderer, _pGestionnaireFont, _pGestionnaireSurface, _pGestionnaireTexture, _uiIDTeam, { iX, 5, 0, 0 }, _MapDestruction, _CollisionObjetMap, _Physique, _Rotation));
 
 		}
 		m_pPlayerList->AllerDebut();

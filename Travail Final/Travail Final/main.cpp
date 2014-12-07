@@ -131,15 +131,10 @@ bool VerifierCollisionJoueurMap(CPlayer* _pPlayer, SDL_Rect _RectPlayer, bool* _
 		TmpSDLRectPlayerHitboxPieds = _pPlayer->ObtenirHitboxPieds();
 	}
 
-<<<<<<< HEAD
-	if (_pPlayer->ObtenirSpriteCourse()->ObtenirAnimation())					// Si le jueur est orienté vers la droite...
-		TmpSDLRectPlayerHitboxCorps = _pPlayer->ObtenirHitboxCorpsGauche();		// On se sert du rectangle pour le corps de droite. 
-=======
 	if (_pPlayer->ObtenirSpriteCourse()->ObtenirEtage() == 0)					// Si le jueur est orienté vers la droite...
 		TmpSDLRectPlayerHitboxCorps = _pPlayer->ObtenirHitboxCorpsDroite();		// On se sert du rectangle pour le corps de droite. 
->>>>>>> origin/Branche-jetpack
 	else																		// Sinon...
-		TmpSDLRectPlayerHitboxCorps = _pPlayer->ObtenirHitboxCorpsDroite();		// On se sert du rectangle pour le corps de gauche.	
+		TmpSDLRectPlayerHitboxCorps = _pPlayer->ObtenirHitboxCorpsGauche();		// On se sert du rectangle pour le corps de gauche.	
 
 
 	*_pboCollisionCorps = false;
@@ -166,7 +161,7 @@ bool VerifierCollisionJoueurMap(CPlayer* _pPlayer, SDL_Rect _RectPlayer, bool* _
 		}
 
 	}
-	
+
 	// Vérification de la collision du corps du joueur avec la carte de jeu.
 
 	for (unsigned int y = 0; y < TmpSDLRectPlayerHitboxCorps.h && !*_pboCollisionCorps; y++) {				// On parcours les pixels dans le hitbox de haut en bas.
@@ -184,7 +179,7 @@ bool VerifierCollisionJoueurMap(CPlayer* _pPlayer, SDL_Rect _RectPlayer, bool* _
 		}
 
 	}
-	
+
 	return (*_pboCollisionPieds || *_pboCollisionCorps);			// On retourne vrai dès qu'il y a eu une collision.
 
 

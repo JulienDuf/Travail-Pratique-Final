@@ -154,9 +154,6 @@ public:
 		m_pSpriteJetPack->Render(_pRenderer, _RectPlayerDestination);
 		if (m_pSpriteJetPack->IsActif())
 			m_pBarreDeCarburant->ShowBarre(_pRenderer, { _RectPlayerDestination.x, _RectPlayerDestination.y + _RectPlayerDestination.h + 2, 40, 6 });
-<<<<<<< HEAD
-		//m_pDescription->ShowControl(_pRenderer);
-=======
 		if (m_boShowDescription) {
 			MiseajourMunition(_pRenderer);
 			m_pLblDescription->ShowControl(_pRenderer);
@@ -168,7 +165,6 @@ public:
 			MiseajourMunition(_pRenderer);
 			m_pLblDescription->ShowControl(_pRenderer);
 		}
->>>>>>> origin/Branche-jetpack
 	}
 
 	void DefinirActif(bool _boActif) {

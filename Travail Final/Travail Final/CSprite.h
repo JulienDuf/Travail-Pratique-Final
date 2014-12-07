@@ -93,14 +93,14 @@ public:
 			// Atteint la fin...
 			if (m_RectSource.x >= (m_RectSource.w * m_uiPositionBouclageFin)) {
 
-				// Pas de bouclage...
-				if (!m_boBoucle) {
+				// Bouclage...
+				if (m_boBoucle) {
 
-					m_boActif = false;
+					m_RectSource.x = m_uiPositionBouclageDebut * m_RectSource.w; // Retour au départ voulu.
 				}
 				else
 				{
-					m_RectSource.x = m_uiPositionBouclageDebut * m_RectSource.w; // Retour au départ voulu.
+					m_boActif = false;
 				}
 			}
 		}

@@ -61,20 +61,22 @@ public:
 		PhysiquePlayer();
 
 		for (int i = 0; i < m_pTeamList->ObtenirCompte(); i++) {
-
 			m_pTeamList->ObtenirElementCurseur()->ShowTeam(_pRenderer);
 			m_pTeamList->AllerSuivantCurseur();
 		}
 
 		m_pToolBar->ShowToolBar(_pRenderer);
+
+		m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ShowDescription(_pRenderer);
 	}
 
 	void ReactToEvent(SDL_Event* _pEvent) {
 
 		m_pToolBar->ReactToEvent(_pEvent, m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif());
 
-		m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ReactToEvent(_pEvent, m_pToolBar->ObtenirPositionObjetSelection());
-
+		m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ReactToEvent(_pEvent, m_pToolBar->ObtenirPositionObjetDoubleClick());
+		
+		m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->UpdateDescription(m_pToolBar->ObtenirPositionObjetSuvol(), m_pToolBar->ObtenirRectPositionSouris());
 	}
 
 	void PhysiquePlayer(void) {

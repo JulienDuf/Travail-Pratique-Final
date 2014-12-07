@@ -6,21 +6,28 @@ Crée par Samuel Rambaud le 25 novembre 2014
 class CMelee : public CTool {
 private:
 	int iDamage; //Degats de l'arme de melee
-	CLabel* m_plblDescription; //Description de l'arme de melee
+	CLabel* m_pLblDescription; //Description de l'arme de melee
+	bool m_boShowDescription;
 	SDL_Surface* m_pSurfaceSprite; //Surface SDL qui deviendra le sprite
 	CSprite* m_pSprite; //sprite du personnage qui utilise l'arme de melee
 	SDL_Rect m_RectDestinationArme;
 public:
 
 	//constructeur
-	CMelee(string _strEmplacement){
+	CMelee(string _strEmplacement, SDL_Renderer* _pRenderer){
 
+		m_pLblDescription = new CLabel(_pRenderer, { 0, 0, 100, 100 });
 		iDamage = 0.2;
 		//m_pSprite = new CSprite(0, 0,0 ,300);
 	}
 
 	void ShowTool(SDL_Renderer* _pRenderer, SDL_Rect _RectPlayerDestination) {
 		m_pSprite->Render(_pRenderer, m_RectDestinationArme);
+	}
+
+	void ShowDescription(SDL_Renderer* _pRenderer) {
+		if (m_boShowDescription)
+			m_pLblDescription->ShowControl(_pRenderer);
 	}
 
 	void ReactToEvent(SDL_Event* _pEvent) {}
@@ -31,5 +38,9 @@ public:
 
 	unsigned int ObtenirMunition() { return 0; }
 
-	void DefinirboShowDescription(bool _boShow) {}
+	void UpdateDescription(bool _boShow, SDL_Rect _RectPositionDescription) {
+		m_boShowDescription = _boShow;
+		m_pLblDescription->SetRectDestinationX(_RectPositionDescription.x);
+		m_pLblDescription->SetRectDestinationY(_RectPositionDescription.y);
+	}
 };

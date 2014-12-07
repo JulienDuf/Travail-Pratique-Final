@@ -166,4 +166,12 @@ public:
 
 	}
 
+	void SetRectDestinationX(unsigned int _uiX) {
+		m_SDLRectPositionButton.x = _uiX;
+	}
+
+	void SetRectDestinationY(unsigned int _uiY) {
+		m_SDLRectPositionButton.y = _uiY;
+	}
+
 };

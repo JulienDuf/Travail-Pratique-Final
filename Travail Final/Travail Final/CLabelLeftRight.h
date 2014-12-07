@@ -156,4 +156,11 @@ public:
 		return m_iPositionLabel;
 	}
 
+	void SetRectDestinationX(unsigned int _uiX) {
+		m_SDLRectLabel.x = _uiX;
+	}
+
+	void SetRectDestinationY(unsigned int _uiY) {
+		m_SDLRectLabel.y = _uiY;
+	}
 };

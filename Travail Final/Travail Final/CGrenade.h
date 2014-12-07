@@ -10,7 +10,8 @@ private:
 	unsigned int m_uiMunition;
 	CBarrePuissance* m_pBarrePuissance; //Barre de puissance de la grenade
 
-	CLabel* m_plblDescription; //Description de la grenade
+	CLabel* m_pLblDescription; //Description de la grenade
+	bool m_boShowDescription;
 
 	SDL_Texture* m_pTexture; //Texture de la grenade
 	SDL_Rect m_pRectDestination; //Position de la grenade
@@ -23,6 +24,8 @@ public:
 		string strSourceImage = _strSourceImage;
 		strSourceImage.append("\\Armes et Packs\\Grenade.png");
 		m_pTexture = IMG_LoadTexture(_Renderer, strSourceImage.c_str());
+
+		m_pLblDescription = new CLabel(m_pTexture, { 0, 0, 100, 100 });
 
 		//initialisation des vecteurs de la grenade
 		m_iAngle = 0;
@@ -38,6 +41,11 @@ public:
 	
 	void ShowTool(SDL_Renderer* _pRenderer, SDL_Rect _RectPlayerDestination) {}
 
+	void ShowDescription(SDL_Renderer* _pRenderer) {
+		if (m_boShowDescription) {
+			m_pLblDescription->ShowControl(_pRenderer);
+		}
+	}
 	void ReactToEvent(SDL_Event* _pEvent) {}
 
 	void DefinirActif(bool _boActif) {}
@@ -46,6 +54,10 @@ public:
 
 	unsigned int ObtenirMunition() { return 0; }
 
-	void DefinirboShowDescription(bool _boShow) {}
+	void UpdateDescription(bool _boShow, SDL_Rect _RectPositionDescription) {
+		m_boShowDescription = _boShow;
+		m_pLblDescription->SetRectDestinationX(_RectPositionDescription.x);
+		m_pLblDescription->SetRectDestinationY(_RectPositionDescription.y);
+	}
 
 };

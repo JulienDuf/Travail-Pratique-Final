@@ -7,5 +7,7 @@ public:
 
 	virtual CSprite* ObtenirSprite(string _strNom) = 0;
 
-	virtual void DefinirboShowDescription(bool _boShow) = 0;
+	virtual void UpdateDescription(bool _boShow, SDL_Rect _RectPositionDescription) = 0;
+
+	virtual void ShowDescription(SDL_Renderer* _pRenderer) = 0;
 };

@@ -33,11 +33,10 @@ public:
 	// retourne une booléenne qui indique true si la minuterie est terminée.
 	bool IsDone(void) {
 		if (m_uiTicks != 0) {
-			int i = SDL_GetTicks();
 			return (SDL_GetTicks() - m_uiTicks >= m_uiTimer);
 		}
 		else
-			return false;
+			return true;
 	}
 
 

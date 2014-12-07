@@ -149,6 +149,13 @@ public:
 		}
 	}
 
+	void ShowDescription(SDL_Renderer* _pRenderer) {
+		if (m_boShowDescription) {
+			MiseajourMunition(_pRenderer);
+			m_pLblDescription->ShowControl(_pRenderer);
+		}
+	}
+
 	void ReactToEvent(SDL_Event* _pEvent) {
 
 		m_pBarrePuissance->ReactToEvent(_pEvent);
@@ -188,8 +195,10 @@ public:
 		return m_iNombreMissiles;
 	}
 
-	void DefinirboShowDescription(bool _boShow) {
+	void UpdateDescription(bool _boShow, SDL_Rect _RectPositionDescription) {
 		m_boShowDescription = _boShow;
+		m_pLblDescription->SetRectDestinationX(_RectPositionDescription.x);
+		m_pLblDescription->SetRectDestinationY(_RectPositionDescription.y);
 	}
 
 	void DefinirActif(bool _boActif) {

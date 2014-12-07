@@ -8,6 +8,7 @@ private:
 		*m_pSpriteSaut,				// pointeur de sprite qui pointe sur le sprite qui représente le joueur qui est en état de saut.
 		*m_pSpriteRepos;		    // Pointeur de sprite qui pointe sur le sprite qui représente le joueur qui est au repos.
 
+	bool m_boSpace;
 	unsigned int m_uiCompte;
 
 	/*
@@ -22,6 +23,8 @@ public:
 
 		m_uiCompte = 0;
 
+		m_boSpace = false;
+
 		m_pSpriteCourse = new CSprite(_pGestionnaireSurface->ObtenirDonnee("pSurfaceCourse"), _pGestionnaireTexture->ObtenirDonnee("pTextureCourse"), _RectDestination, 9, 50, true, false, 2);
 
 		m_pSpriteSaut = new CSprite(_pGestionnaireSurface->ObtenirDonnee("pSurfaceSaut"), _pGestionnaireTexture->ObtenirDonnee("pTextureSaut"), _RectDestination, 9, 100, false, false, 2);
@@ -31,12 +34,12 @@ public:
 
 	void ReactToEvent(SDL_Event* _pEvent, CVecteur2D* _pVecteurVitesse, bool* _boStable) {
 
-			// Event scancode...
-			switch (_pEvent->key.keysym.scancode) {
-			case SDL_SCANCODE_RIGHT: // Flèche de droite appuyée...
+		// Event scancode...
+		switch (_pEvent->key.keysym.scancode) {
+		case SDL_SCANCODE_RIGHT: // Flèche de droite appuyée...
 
+			if (!m_pSpriteSaut->IsActif()) {
 				if (_pEvent->type == SDL_KEYDOWN) {
-					
 					// Sprite de course déjà actif ou non...
 					switch (m_pSpriteCourse->IsActif()) {
 					case true:
@@ -62,10 +65,12 @@ public:
 						*_boStable = true;
 					}
 				}
-				break;
+			}
+			break;
 
-			case SDL_SCANCODE_LEFT: // Flèche de gauche appuyée...
+		case SDL_SCANCODE_LEFT: // Flèche de gauche appuyée...
 
+			if (!m_pSpriteSaut->IsActif()) {
 				if (_pEvent->type == SDL_KEYDOWN) {
 					switch (m_pSpriteCourse->IsActif()) {
 					case true:
@@ -91,29 +96,37 @@ public:
 						*_boStable = true;
 					}
 				}
-				break;
+			}
+			break;
 
-			case SDL_SCANCODE_SPACE: // Saut
-
-				if (_pEvent->type == SDL_KEYDOWN) {
-					// S'il n'était pas déjà actif...
-					if (!m_pSpriteSaut->IsActif()) {
-						m_pSpriteRepos->DefinirActif(false);
-						m_pSpriteCourse->DefinirActif(false);
-						m_pSpriteSaut->DefinirEtage(m_pSpriteCourse->ObtenirEtage()); // Pour que le saut sois du même bord que la course.
-						m_pSpriteSaut->DefinirActif(true);
-						_pVecteurVitesse->ModifierComposantY(-100);
-						*_boStable = false;
-					}
-				}
-				else
-				{
-
+		case SDL_SCANCODE_SPACE: // Saut
+			
+			if (_pEvent->type == SDL_KEYDOWN) {
+				
+				m_boSpace = true;
+				// S'il n'était pas déjà actif...
+				if (!m_pSpriteSaut->IsActif()) {
+					m_pSpriteRepos->DefinirActif(false);
+					m_pSpriteCourse->DefinirActif(false);
+					m_pSpriteSaut->DefinirEtage(m_pSpriteCourse->ObtenirEtage()); // Pour que le saut sois du même bord que la course.
 					m_pSpriteSaut->DefinirActif(true);
+					_pVecteurVitesse->ModifierComposantY(-100);
 					*_boStable = false;
 				}
-				break;
 			}
+			else
+			{
+				if (!m_pSpriteSaut->IsActif()) {
+					m_pSpriteRepos->DefinirActif(true);
+					*_boStable = true;
+				}
+			}
+			break;
+		}
+		if (!m_boSpace && !m_pSpriteSaut->IsActif() && !m_pSpriteCourse->IsActif()) {
+			m_pSpriteRepos->DefinirActif(true);
+			*_boStable = true;
+		}
 	}
 
 	void ShowPlayer(SDL_Renderer* _pRenderer, SDL_Rect _RectPlayerDestination) {
@@ -132,6 +145,8 @@ public:
 		}
 	}
 
+	void ShowDescription(SDL_Renderer* _pRenderer) {}
+
 	void DefinirActif(bool _boActif) {}
 
 	CSprite* ObtenirSprite(string _strNom) {
@@ -148,7 +163,7 @@ public:
 
 	unsigned int ObtenirMunition() { return 0; }
 
-	void DefinirboShowDescription(bool _boShow) {}
+	void UpdateDescription(bool _boShow, SDL_Rect _RectPositionDescription) {}
 
 	// Accesseurs...
 	CSprite* ObtenirSpriteActif() {

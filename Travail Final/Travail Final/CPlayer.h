@@ -24,12 +24,12 @@ private:
 
 	CSprite* m_pSpriteParachute;
 
-	SDL_Rect m_RectPlayerDestination;   // La destination du joueur dans le fenêtre.
-	SDL_Rect m_RectParachuteDestination;   // La destination du joueur dans le fenêtre.
-	SDL_Rect m_RectHitboxCorpsGauche;
-	SDL_Rect m_RectHitboxCorpsDroite;
-	SDL_Rect m_RectHitboxPieds;
-	SDL_Rect m_RectHitboxPiedsParachute;
+	SDL_Rect m_RectPlayerDestination,   // La destination du joueur dans le fenêtre.
+		m_RectParachuteDestination,   // La destination du joueur dans le fenêtre.
+		m_RectHitboxCorpsGauche,
+		m_RectHitboxCorpsDroite,
+		m_RectHitboxPieds,
+		m_RectHitboxPiedsParachute;
 
 	CVecteur2D* m_pVecteurVitesse;			// Vitesse.
 
@@ -60,7 +60,7 @@ public:
 
 		m_pListeTools->AjouterFin(new CGrenade(_strEmplacement, _pRenderer));
 
-		m_pListeTools->AjouterFin(new CMelee(_strEmplacement));
+		m_pListeTools->AjouterFin(new CMelee(_strEmplacement, _pRenderer));
 
 		m_pListeTools->AllerACurseur(0);
 		m_pListeTools->AllerATrieur(0);
@@ -141,6 +141,14 @@ public:
 		}
 	}
 
+	void ShowDescription(SDL_Renderer* _pRenderer) {
+		m_pListeDeplacement->AllerATrieur(0);
+		m_pListeDeplacement->ObtenirElementTrieur()->ShowDescription(_pRenderer);
+		for (int i = 0; i < 3; i++) {
+			m_pListeTools->AllerATrieur(i);
+			m_pListeTools->ObtenirElementTrieur()->ShowDescription(_pRenderer);
+		}
+	}
 
 	// Accesseur ... 
 
@@ -245,13 +253,35 @@ public:
 		return m_pBarreVie->ObtenirVie();
 	}
 
-	void DefinirJetPackShowDescription(bool _boShow) {
-		m_pListeDeplacement->AllerATrieur(0);
-		m_pListeDeplacement->ObtenirElementTrieur()->DefinirboShowDescription(_boShow);
-	}
-	
-	void DefinirMissileShowDescription(bool _boShow) {
-		m_pListeTools->AllerATrieur(0);
-		m_pListeTools->ObtenirElementTrieur()->DefinirboShowDescription(_boShow);
+	void UpdateDescription(unsigned int _uiPosition, SDL_Rect _RectPositionSouris) {
+		if (_uiPosition <= 2) {
+			m_pListeTools->AllerATrieur(_uiPosition);
+			m_pListeTools->ObtenirElementTrieur()->UpdateDescription(true, _RectPositionSouris);
+			m_pListeTools->AllerSuivantTrieur();
+			m_pListeTools->ObtenirElementTrieur()->UpdateDescription(false, _RectPositionSouris);
+			m_pListeTools->AllerSuivantTrieur();
+			m_pListeTools->ObtenirElementTrieur()->UpdateDescription(false, _RectPositionSouris);
+		}
+		else if (_uiPosition == 3) {
+			m_pListeDeplacement->AllerATrieur(0);
+			m_pListeDeplacement->ObtenirElementTrieur()->UpdateDescription(true, _RectPositionSouris);
+			m_pListeTools->AllerATrieur(_uiPosition);
+			m_pListeTools->ObtenirElementTrieur()->UpdateDescription(false, _RectPositionSouris);
+			m_pListeTools->AllerSuivantTrieur();
+			m_pListeTools->ObtenirElementTrieur()->UpdateDescription(false, _RectPositionSouris);
+			m_pListeTools->AllerSuivantTrieur();
+			m_pListeTools->ObtenirElementTrieur()->UpdateDescription(false, _RectPositionSouris);
+		}
+		else
+		{
+			m_pListeDeplacement->AllerATrieur(0);
+			m_pListeDeplacement->ObtenirElementTrieur()->UpdateDescription(false, _RectPositionSouris);
+			m_pListeTools->AllerATrieur(_uiPosition);
+			m_pListeTools->ObtenirElementTrieur()->UpdateDescription(false, _RectPositionSouris);
+			m_pListeTools->AllerSuivantTrieur();
+			m_pListeTools->ObtenirElementTrieur()->UpdateDescription(false, _RectPositionSouris);
+			m_pListeTools->AllerSuivantTrieur();
+			m_pListeTools->ObtenirElementTrieur()->UpdateDescription(false, _RectPositionSouris);
+		}
 	}
 };

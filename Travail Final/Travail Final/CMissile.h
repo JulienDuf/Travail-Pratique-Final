@@ -11,7 +11,7 @@ private:
 	double m_dAngle; // L'angle de départ du missile.
 	int m_iForce; // Force de départ du missile.
 	unsigned int m_uiMunition; // Le nombre de missiles disponible.
-	CVecteur2D* VecteurVitesse;
+	CVecteur2D* VecteurVitesseMissile;
 
 	SDL_Point  m_PointRotation; // Le poitn de rotation.
 	SDL_Surface* m_pSDLSurfaceMissile; // La surface du missile.
@@ -130,19 +130,20 @@ public:
 
 			int iX, iY;
 
-			m_pPhysiqueMissile(VecteurVitesse, &m_RectDestinationMissile);
+			ModifierAngle(m_pPhysiqueMissile(VecteurVitesseMissile, &m_RectDestinationMissile));
 			SDL_Texture* pTextureTMP = SDL_CreateTextureFromSurface(_pRenderer, m_pSDLSurfaceMissileRotation);
 			SDL_RenderCopy(_pRenderer, pTextureTMP, NULL, &m_RectDestinationMissile);
 			SDL_DestroyTexture(pTextureTMP);
 
 			m_pCollisionMap(m_pSDLSurfaceMissileRotation, m_RectDestinationMissile, &iX, &iY);
-
+			/*
 			if (iX != 0 && iY != 0) {
 
 				m_pMapDestruction(50, iX, iY);
 
 				m_boMissileLancer = false;
 			}
+			*/
 		}
 		else
 			m_pBarrePuissance->AfficherBarre(_pRenderer, _RectPlayerDestination);
@@ -172,10 +173,9 @@ public:
 					m_iForce = (m_pBarrePuissance->ObtenirForce() + 3) * 100;
 					m_boMissileLancer = true;
 					float fAngle = m_dAngle;
-					VecteurVitesse = new CVecteur2D((float)m_iForce, fAngle);
+					VecteurVitesseMissile = new CVecteur2D((float)m_iForce, fAngle);
 
 					m_pBarrePuissance->ObtenirPosition(&m_RectDestinationMissile.x, &m_RectDestinationMissile.y);
-					m_pBarrePuissance->DefenirBoActif(false);
 				}
 				break;
 			}

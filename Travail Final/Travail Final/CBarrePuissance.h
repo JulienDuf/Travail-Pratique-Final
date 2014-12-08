@@ -13,7 +13,8 @@ private:
 
 	SDL_Point m_PointRotation; // Le point de rotation.
 	SDL_Texture* m_pSDLTextureBarrre; // La texture de la barre.
-	SDL_Rect m_RectDestinationBarre; // La destination de la barre dans la fenêtre.
+	SDL_Rect m_RectDestinationBarre, // La destination de la barre dans la fenêtre.
+		m_RectSourceBarre;
 
 public:
 
@@ -34,26 +35,26 @@ public:
 
 		m_RectDestinationBarre.w /= 4;
 
+		m_RectSourceBarre = { 0, 0, m_RectDestinationBarre.w, m_RectDestinationBarre.h };
+
 		m_PointRotation = { 0, m_RectDestinationBarre.h / 2};
 	}
 
 	// Procédure affichant la barre de puissance...
 	// En entrée:
 	// Param1: Le renderer de la fenêtre.
-	void AfficherBarre(SDL_Renderer* _pRenderer) {
+	void AfficherBarre(SDL_Renderer* _pRenderer, SDL_Rect _RectBarreDestination) {
 
-		if (m_BoBarreActive) {
+		m_RectDestinationBarre.x = _RectBarreDestination.x + _RectBarreDestination.w;
+		m_RectDestinationBarre.y = _RectBarreDestination.y;
 
-			SDL_Rect RectSource = { m_iForce * m_RectDestinationBarre.w, 0, m_RectDestinationBarre.w, m_RectDestinationBarre.h };
-
-			SDL_RenderCopyEx(_pRenderer, m_pSDLTextureBarrre, &RectSource, &m_RectDestinationBarre, m_dAngle, &m_PointRotation, SDL_FLIP_VERTICAL);
-
-		}
+		SDL_RenderCopyEx(_pRenderer, m_pSDLTextureBarrre, &m_RectSourceBarre, &m_RectDestinationBarre, m_dAngle, &m_PointRotation, SDL_FLIP_VERTICAL);
 	}
 
 	void ModifierForceBarre(int _iForce) {
 
 		m_iForce = _iForce;
+		m_RectSourceBarre.x = m_iForce * m_RectDestinationBarre.w;
 	}
 
 	void ReactToEvent(SDL_Event* _pEvent) {
@@ -69,7 +70,7 @@ public:
 			case SDL_SCANCODE_RIGHT:
 
 				m_iForce = (m_iForce + 1) % 4;
-
+				m_RectSourceBarre.x = m_iForce * m_RectDestinationBarre.w;
 				break;
 
 			case SDL_SCANCODE_LEFT:
@@ -77,7 +78,7 @@ public:
 				m_iForce--;
 				if (m_iForce < 0)
 					m_iForce = 3;
-
+				m_RectSourceBarre.x = m_iForce * m_RectDestinationBarre.w;
 				break;
 
 			case SDL_SCANCODE_DOWN:

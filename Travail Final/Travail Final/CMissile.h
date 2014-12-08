@@ -10,7 +10,7 @@ private:
 	bool m_boMissileLancer; // Si le missile est lancé
 	double m_dAngle; // L'angle de départ du missile.
 	int m_iForce; // Force de départ du missile.
-	int m_iNombreMissiles; // Le nombre de missiles disponible.
+	unsigned int m_uiMunition; // Le nombre de missiles disponible.
 	CVecteur2D* VecteurVitesse;
 
 	SDL_Point  m_PointRotation; // Le poitn de rotation.
@@ -26,8 +26,8 @@ private:
 
 	void(*m_pMapDestruction)(int _iRayon, int _iX, int _iY); // La destruction de la map.
 	void(*m_pCollisionMap)(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY); // Procédure déterminant 
-	double(*m_pPhysiqueMissile)(CVecteur2D* _ForceMissile, SDL_Rect* _DestinationMissile);
-	SDL_Surface* (*m_pRotation)(SDL_Surface* _pSurfaceRotation, float _fAngle);
+	double(*m_pPhysiqueMissile)(CVecteur2D* _ForceMissile, SDL_Rect* _DestinationMissile); // Physique du missile
+	SDL_Surface* (*m_pRotation)(SDL_Surface* _pSurfaceRotation, float _fAngle); // Rotation
 
 	SDL_Surface* BlitText(string _strTexte[], unsigned int _uiNombreElementTableau, SDL_Color _Couleur) {
 
@@ -39,7 +39,7 @@ private:
 		pSurfaceBlitSource = TTF_RenderText_Blended(m_pFont, _strTexte[0].c_str(), { 0, 0, 0 });
 		unsigned int uiH = pSurfaceBlitSource->h;
 
-		pSurfaceBlitin = SDL_CreateRGBSurface(pSurfaceBlitSource->flags, 283, pSurfaceBlitSource->h * _uiNombreElementTableau, pSurfaceBlitSource->format->BitsPerPixel, 0, 0, 0, 0);
+		pSurfaceBlitin = SDL_CreateRGBSurface(pSurfaceBlitSource->flags, 300, pSurfaceBlitSource->h * _uiNombreElementTableau, pSurfaceBlitSource->format->BitsPerPixel, 0, 0, 0, 0);
 		SDL_FillRect(pSurfaceBlitin, NULL, SDL_MapRGB(pSurfaceBlitin->format, 255, 255, 255));
 
 		SDL_BlitSurface(pSurfaceBlitSource, NULL, pSurfaceBlitin, &Rect);
@@ -56,11 +56,10 @@ private:
 	char chr[3];
 
 	void MiseajourMunition(SDL_Renderer* _pRenderer) {
-		SDL_itoa(ObtenirMunition(), chr, 10);
+		SDL_itoa(m_uiMunition, chr, 10);
 		m_strDescription[0] = "";
 		m_strDescription[0].append("Munition : ");
 		m_strDescription[0].append(chr);
-		m_strDescription[0].append("                                       ");
 		m_pLblDescription->ModifierTexture(SDL_CreateTextureFromSurface(_pRenderer, BlitText(m_strDescription, 8, { 0, 0, 0 })), 0);
 	}
 
@@ -70,10 +69,9 @@ public:
 
 		m_boShowDescription = false;
 
-		m_iNombreMissiles = 5;
-
 		m_strDescription;
 		string strEmplacement(_strEmplacement);
+		string strMunition;
 		int i = strEmplacement.length();
 
 		for (int i2 = 0; i2 < 2; i2++) {
@@ -86,8 +84,14 @@ public:
 		ifstream FichierDescription;
 		FichierDescription.open(strEmplacement);
 		if (FichierDescription.is_open()) {
-			for (int i = 0; i < 8; i++) {
-				char chrtmp[75];
+			char chrtmp[55];
+			FichierDescription.getline(chrtmp, 75);
+			for (int i = 11; chrtmp[i] != -52; i++) {
+				strMunition += chrtmp[i];
+			}
+			m_uiMunition = SDL_atoi(strMunition.c_str());
+			m_strDescription[0] = chrtmp;
+			for (int i = 1; i < 8; i++) {
 				FichierDescription.getline(chrtmp, 75);
 				m_strDescription[i] = chrtmp;
 			}
@@ -98,7 +102,7 @@ public:
 		m_pFont = _pGestionnaireFont->ObtenirDonnee("pFontDescription");
 
 		SDL_Surface *pSDLSurface = BlitText(m_strDescription, 8, { 0, 0, 0 });
-		m_pLblDescription = new CLabel(SDL_CreateTextureFromSurface(_pRenderer, pSDLSurface), { 503, 346, pSDLSurface->w, pSDLSurface->h });
+		m_pLblDescription = new CLabel(SDL_CreateTextureFromSurface(_pRenderer, pSDLSurface), { 0, 0, pSDLSurface->w, pSDLSurface->h });
 		
 		m_dAngle = 0;
 		m_iForce = 0;
@@ -140,13 +144,9 @@ public:
 				m_boMissileLancer = false;
 			}
 		}
+		else
+			m_pBarrePuissance->AfficherBarre(_pRenderer, _RectPlayerDestination);
 
-		m_pBarrePuissance->AfficherBarre(_pRenderer);
-
-		if (m_boShowDescription) {
-			MiseajourMunition(_pRenderer);
-			m_pLblDescription->ShowControl(_pRenderer);
-		}
 	}
 
 	void ShowDescription(SDL_Renderer* _pRenderer) {
@@ -192,17 +192,13 @@ public:
 	}
 
 	unsigned int ObtenirMunition() {
-		return m_iNombreMissiles;
+		return m_uiMunition;
 	}
 
 	void UpdateDescription(bool _boShow, SDL_Rect _RectPositionDescription) {
 		m_boShowDescription = _boShow;
 		m_pLblDescription->SetRectDestinationX(_RectPositionDescription.x);
 		m_pLblDescription->SetRectDestinationY(_RectPositionDescription.y);
-	}
-
-	void DefinirActif(bool _boActif) {
-
 	}
 
 	CSprite* ObtenirSprite(string _strNom) {

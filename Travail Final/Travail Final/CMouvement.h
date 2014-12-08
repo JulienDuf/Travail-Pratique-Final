@@ -101,11 +101,10 @@ public:
 
 		case SDL_SCANCODE_SPACE: // Saut
 			
-			if (_pEvent->type == SDL_KEYDOWN) {
+			if (_pEvent->type == SDL_KEYDOWN && !m_boSpace) {
 				
-				m_boSpace = true;
-				// S'il n'était pas déjà actif...
 				if (!m_pSpriteSaut->IsActif()) {
+					m_boSpace = true;
 					m_pSpriteRepos->DefinirActif(false);
 					m_pSpriteCourse->DefinirActif(false);
 					m_pSpriteSaut->DefinirEtage(m_pSpriteCourse->ObtenirEtage()); // Pour que le saut sois du même bord que la course.
@@ -114,18 +113,19 @@ public:
 					*_boStable = false;
 				}
 			}
-			else
-			{
-				if (!m_pSpriteSaut->IsActif()) {
-					m_pSpriteRepos->DefinirActif(true);
-					*_boStable = true;
-				}
+			else if (_pEvent->type == SDL_KEYUP && m_pSpriteSaut->IsActif()) {
+				m_boSpace = false;
+				*_boStable = false;
 			}
 			break;
-		}
-		if (!m_boSpace && !m_pSpriteSaut->IsActif() && !m_pSpriteCourse->IsActif()) {
-			m_pSpriteRepos->DefinirActif(true);
-			*_boStable = true;
+
+		case SDL_SCANCODE_UNKNOWN:
+
+			if (!m_pSpriteSaut->IsActif()) {
+				m_pSpriteRepos->DefinirActif(true);
+				*_boStable = true;
+			}
+			break;
 		}
 	}
 

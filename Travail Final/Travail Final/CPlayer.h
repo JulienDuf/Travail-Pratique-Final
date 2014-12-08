@@ -58,9 +58,9 @@ public:
 
 		m_pListeTools->AjouterFin(new CMissile(_strEmplacement, _pGestionnaireFont, _pRenderer, _pGestionnaireSurface, _pGestionnaireTexture, _MapDestruction, _CollisionObjetMap, _Physique, _Rotation));
 
-		m_pListeTools->AjouterFin(new CGrenade(_strEmplacement, _pRenderer));
+		m_pListeTools->AjouterFin(new CGrenade(_strEmplacement, _pGestionnaireFont, _pRenderer));
 
-		m_pListeTools->AjouterFin(new CMelee(_strEmplacement, _pRenderer));
+		m_pListeTools->AjouterFin(new CMelee(_strEmplacement, _pGestionnaireFont, _pRenderer));
 
 		m_pListeTools->AllerACurseur(0);
 		m_pListeTools->AllerATrieur(0);
@@ -261,11 +261,13 @@ public:
 			m_pListeTools->ObtenirElementTrieur()->UpdateDescription(false, _RectPositionSouris);
 			m_pListeTools->AllerSuivantTrieur();
 			m_pListeTools->ObtenirElementTrieur()->UpdateDescription(false, _RectPositionSouris);
+			m_pListeDeplacement->AllerATrieur(0);
+			m_pListeDeplacement->ObtenirElementTrieur()->UpdateDescription(false, _RectPositionSouris);
 		}
 		else if (_uiPosition == 3) {
 			m_pListeDeplacement->AllerATrieur(0);
 			m_pListeDeplacement->ObtenirElementTrieur()->UpdateDescription(true, _RectPositionSouris);
-			m_pListeTools->AllerATrieur(_uiPosition);
+			m_pListeTools->AllerATrieur(0);
 			m_pListeTools->ObtenirElementTrieur()->UpdateDescription(false, _RectPositionSouris);
 			m_pListeTools->AllerSuivantTrieur();
 			m_pListeTools->ObtenirElementTrieur()->UpdateDescription(false, _RectPositionSouris);
@@ -276,7 +278,7 @@ public:
 		{
 			m_pListeDeplacement->AllerATrieur(0);
 			m_pListeDeplacement->ObtenirElementTrieur()->UpdateDescription(false, _RectPositionSouris);
-			m_pListeTools->AllerATrieur(_uiPosition);
+			m_pListeTools->AllerATrieur(0);
 			m_pListeTools->ObtenirElementTrieur()->UpdateDescription(false, _RectPositionSouris);
 			m_pListeTools->AllerSuivantTrieur();
 			m_pListeTools->ObtenirElementTrieur()->UpdateDescription(false, _RectPositionSouris);

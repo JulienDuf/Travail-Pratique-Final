@@ -180,8 +180,19 @@ public:
 	}
 
 	void UpdateDescription(bool _boShow, SDL_Rect _RectPositionDescription) {
+		
 		m_boShowDescription = _boShow;
-		m_pLblDescription->SetRectDestinationX(_RectPositionDescription.x);
-		m_pLblDescription->SetRectDestinationY(_RectPositionDescription.y);
+		int uiW,
+			uiH;
+		m_pLblDescription->GetTextureDimension(0, &uiW, &uiH);
+		if (_RectPositionDescription.x + uiW >= 1366)
+			m_pLblDescription->SetRectDestinationX(_RectPositionDescription.x - uiW);
+		else
+			m_pLblDescription->SetRectDestinationX(_RectPositionDescription.x);
+
+		if (_RectPositionDescription.y + uiH >= 768)
+			m_pLblDescription->SetRectDestinationY(_RectPositionDescription.y - uiH);
+		else
+			m_pLblDescription->SetRectDestinationY(_RectPositionDescription.y);
 	}
 };

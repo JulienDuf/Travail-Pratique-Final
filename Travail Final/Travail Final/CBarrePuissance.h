@@ -7,7 +7,6 @@ class CBarrePuissance {
 
 private:
 
-	bool m_BoBarreActive; // Si la barre est active.
 	double m_dAngle; // L'angle de la barre.
 	int m_iForce; // La force affiché par la barre.
 
@@ -23,8 +22,6 @@ public:
 	// Param1: L'emplacement des fichiers.
 	// Param2: Le renderer de la fenêtre.
 	CBarrePuissance(CGestionaire<SDL_Texture*>* _pGestionnaireTexture) {
-
-		m_BoBarreActive = false;
 
 		m_iForce = 0;
 
@@ -102,11 +99,6 @@ public:
 			break;
 
 		}
-	}
-
-	void DefenirBoActif(bool _boActif) {
-
-		m_BoBarreActive = _boActif;
 	}
 
 	// Accesseurs...

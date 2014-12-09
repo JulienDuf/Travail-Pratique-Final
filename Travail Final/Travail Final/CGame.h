@@ -15,7 +15,7 @@ private:
 
 public:
 
-	CGame(string _strEmplacementMap, CGestionaire<TTF_Font*>* _pGestionnaireFont, CGestionaire<SDL_Surface*>* _pGestionnaireSurface, CGestionaire<SDL_Texture*>* _pGestionnaireTexture, int _iNombre…quipe, int _iNombreJoueur, CVent* _pVent, bool _VerifierCollisionJoueurMap(CPlayer* _pPlayer, SDL_Rect _RectPlayer, bool* _boCollisionCorps, bool* _boCollisionPieds, unsigned int* _uiXMap, unsigned int* _uiYMap), void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), double _Physique(CVecteur2D* _VitesseMissile, SDL_Rect* _DestinationMissile), SDL_Surface* _Rotation(SDL_Surface* _pSurfaceRotation, float _fAngle), SDL_Renderer* _pRenderer) {
+	CGame(string _strEmplacementMap, CGestionaire<TTF_Font*>* _pGestionnaireFont, CGestionaire<SDL_Surface*>* _pGestionnaireSurface, CGestionaire<SDL_Texture*>* _pGestionnaireTexture, int _iNombre…quipe, int _iNombreJoueur, CVent* _pVent, bool _VerifierCollisionJoueurMap(CPlayer* _pPlayer, SDL_Rect _RectPlayer, bool* _boCollisionCorps, bool* _boCollisionPieds, unsigned int* _uiXMap, unsigned int* _uiYMap), void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), SDL_Surface* _Rotation(SDL_Surface* _pSurfaceRotation, float _fAngle), SDL_Renderer* _pRenderer) {
 
 		m_boDebutPartie = true;
 
@@ -29,7 +29,7 @@ public:
 
 		for (int i = _iNombre…quipe; i > 0; i--) {
 
-			m_pTeamList->AjouterFin(new CTeam(_strEmplacementMap, _pRenderer, _pGestionnaireFont, _pGestionnaireSurface, _pGestionnaireTexture, i, _iNombreJoueur, _MapDestruction, _CollisionObjetMap, _Physique, _Rotation));
+			m_pTeamList->AjouterFin(new CTeam(_strEmplacementMap, _pRenderer, _pGestionnaireFont, _pGestionnaireSurface, _pGestionnaireTexture, i, _iNombreJoueur, _MapDestruction, _CollisionObjetMap, _Rotation));
 		}
 		m_pTeamList->AllerDebut();
 
@@ -59,6 +59,8 @@ public:
 		m_pGameMap->ShowMap(_pRenderer);
 
 		PhysiquePlayer();
+		if (m_pToolBar->ObtenirPositionObjetDoubleClick() == 0 && m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirVecteurTool() != nullptr)
+			PhysiqueMissile(m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirVecteurTool(), m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirRectTool());
 
 		for (int i = 0; i < m_pTeamList->ObtenirCompte(); i++) {
 			m_pTeamList->ObtenirElementCurseur()->ShowTeam(_pRenderer);
@@ -73,10 +75,41 @@ public:
 	void ReactToEvent(SDL_Event* _pEvent) {
 
 		m_pToolBar->ReactToEvent(_pEvent, m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif());
-
+		if (m_pToolBar->ObtenirPositionObjetDoubleClick() == 0)
+			int i = 0;
 		m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ReactToEvent(_pEvent, m_pToolBar->ObtenirPositionObjetDoubleClick());
 		
 		m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->UpdateDescription(m_pToolBar->ObtenirPositionObjetSuvol(), m_pToolBar->ObtenirRectPositionSouris());
+	}
+
+	// Fonction effectuant la physique d'un missile.
+	// En entrÈe:
+	// Param1: Le vecteur de la vitesse du missile.
+	// Param2: La destination du missile.
+	// En sortie: Le nouvel angle du missile.
+	double PhysiqueMissile(CVecteur2D* _VitesseMissile, SDL_Rect* _DestinationMissile) {
+
+		_DestinationMissile->x += _VitesseMissile->ObtenirComposanteX() / 35;
+		_DestinationMissile->y += (_VitesseMissile->ObtenirComposanteY()) / 35;
+
+		if (m_pTimerPhysique->IsDone()) {
+
+			*_VitesseMissile += *m_pGameMap->ObtenirGravite();
+
+			if (_VitesseMissile->ObtenirComposanteY() < 0 && _VitesseMissile->ObtenirComposanteX() >= 0)
+				return (180 / M_PI) * atanf(((-(float)_VitesseMissile->ObtenirComposanteY()) / ((float)_VitesseMissile->ObtenirComposanteX())));
+
+			if (_VitesseMissile->ObtenirComposanteY() >= 0 && _VitesseMissile->ObtenirComposanteX() < 0)
+				return 180 + (180 / M_PI) * atanf((((float)_VitesseMissile->ObtenirComposanteY()) / (-(float)_VitesseMissile->ObtenirComposanteX())));
+
+			if (_VitesseMissile->ObtenirComposanteY() < 0 && _VitesseMissile->ObtenirComposanteX() < 0)
+				return 180 - (180 / M_PI) * atanf(((-(float)_VitesseMissile->ObtenirComposanteY()) / (-(float)_VitesseMissile->ObtenirComposanteX())));
+
+			if (_VitesseMissile->ObtenirComposanteY() >= 0 && _VitesseMissile->ObtenirComposanteX() >= 0)
+				return 360 - (180 / M_PI) * atanf((((float)_VitesseMissile->ObtenirComposanteY()) / ((float)_VitesseMissile->ObtenirComposanteX())));
+
+			m_pTimerPhysique->Start();
+		}
 	}
 
 	void PhysiquePlayer(void) {

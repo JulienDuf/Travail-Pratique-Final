@@ -3,7 +3,7 @@
 // 16 novembre 2014 par Julien Dufresne (dufresne_julien@hotmail.ca)
 //
 
-class CMissile : public CTool {
+class CMissile : public CProjectile {
 
 private:
 
@@ -11,7 +11,7 @@ private:
 	double m_dAngle; // L'angle de départ du missile.
 	int m_iForce; // Force de départ du missile.
 	unsigned int m_uiMunition; // Le nombre de missiles disponible.
-	CVecteur2D* VecteurVitesseMissile;
+	CVecteur2D* m_pVecteurVitesseMissile;
 
 	SDL_Point  m_PointRotation; // Le poitn de rotation.
 	SDL_Surface* m_pSDLSurfaceMissile; // La surface du missile.
@@ -65,7 +65,7 @@ private:
 
 public:
 
-	CMissile(string _strEmplacement, CGestionaire<TTF_Font*>* _pGestionnaireFont, SDL_Renderer* _pRenderer, CGestionaire<SDL_Surface*>* _pGestionnaireSurface, CGestionaire<SDL_Texture*>* _pGestionnaireTexture, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), double _PhysiqueMissile(CVecteur2D* _VitesseMissile, SDL_Rect* _DestinationMissile), SDL_Surface* _Rotation(SDL_Surface* _pSurfaceRotation, float _fAngle)) {
+	CMissile(string _strEmplacement, CGestionaire<TTF_Font*>* _pGestionnaireFont, SDL_Renderer* _pRenderer, CGestionaire<SDL_Surface*>* _pGestionnaireSurface, CGestionaire<SDL_Texture*>* _pGestionnaireTexture, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), SDL_Surface* _Rotation(SDL_Surface* _pSurfaceRotation, float _fAngle)) {
 
 		m_boShowDescription = false;
 
@@ -116,7 +116,6 @@ public:
 
 		m_pMapDestruction = _MapDestruction;
 		m_pCollisionMap = _CollisionMap;
-		m_pPhysiqueMissile = _PhysiqueMissile;
 		m_pRotation = _Rotation;
 
 		m_PointRotation = { m_RectDestinationMissile.w, m_RectDestinationMissile.h / 2 };
@@ -130,7 +129,7 @@ public:
 
 			int iX, iY;
 
-			ModifierAngle(m_pPhysiqueMissile(VecteurVitesseMissile, &m_RectDestinationMissile));
+			ModifierAngle(m_pPhysiqueMissile(m_pVecteurVitesseMissile, &m_RectDestinationMissile));
 			SDL_Texture* pTextureTMP = SDL_CreateTextureFromSurface(_pRenderer, m_pSDLSurfaceMissileRotation);
 			SDL_RenderCopy(_pRenderer, pTextureTMP, NULL, &m_RectDestinationMissile);
 			SDL_DestroyTexture(pTextureTMP);
@@ -173,7 +172,7 @@ public:
 					m_iForce = (m_pBarrePuissance->ObtenirForce() + 3) * 100;
 					m_boMissileLancer = true;
 					float fAngle = m_dAngle;
-					VecteurVitesseMissile = new CVecteur2D((float)m_iForce, fAngle);
+					m_pVecteurVitesseMissile = new CVecteur2D((float)m_iForce, fAngle);
 
 					m_pBarrePuissance->ObtenirPosition(&m_RectDestinationMissile.x, &m_RectDestinationMissile.y);
 				}
@@ -214,5 +213,15 @@ public:
 
 	CSprite* ObtenirSprite(string _strNom) {
 		return nullptr;
+	}
+
+	CVecteur2D* ObtenirVecteurVitesse() {
+
+		return m_pVecteurVitesseMissile;
+	}
+
+	SDL_Rect* ObtenirRectDestination() {
+
+		return &m_RectDestinationMissile;
 	}
 };

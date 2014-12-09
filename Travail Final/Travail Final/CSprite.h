@@ -82,7 +82,8 @@ public:
 	}
 
 	// Procédure permettant de déplacer le cadre d'affichage de un vers la droit où le retourne au départ voulue...
-	void ModifierAnnimation(void) {
+	// En sotrie : Si l'animation à finie(true) une boucle...
+	bool ModifierAnnimation() {
 
 		// Délai fini et sprite actif...
 		if (m_pTimerDelay->IsDone() && m_boActif) {
@@ -102,8 +103,13 @@ public:
 				{
 					m_boActif = false;
 				}
+				return true;
 			}
+			else
+				return false;
 		}
+		else
+			return false;
 	}
 
 	// Méthodes...

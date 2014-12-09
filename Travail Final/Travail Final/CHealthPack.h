@@ -4,7 +4,7 @@
 
 class CHealthPack: public CPack{
 private:
-	SDL_Rect m_pRectDestination; //Position du pack sur la map
+	SDL_Rect m_RectDestination; //Position du pack sur la map
 	SDL_Texture* m_pTexture; //Texture du pack
 public:
 	//constructeur
@@ -15,10 +15,10 @@ public:
 		m_pTexture = IMG_LoadTexture(_Renderer, strSourceImage.c_str());
 
 		//initialisation de la position du pack
-		m_pRectDestination.h = 40;
-		m_pRectDestination.w = 34;
-		m_pRectDestination.y = 0;
-		m_pRectDestination.x = rand() % 1366;
+		m_RectDestination.h = 40;
+		m_RectDestination.w = 34;
+		m_RectDestination.y = 0;
+		m_RectDestination.x = rand() % 1366;
 	}
 
 	/*
@@ -34,7 +34,7 @@ public:
 	Affichage du pack de vie sur la map a la position m_pRectDestination
 	*/
 	void Show(SDL_Renderer* _Renderer){
-		SDL_RenderCopy(_Renderer, m_pTexture, NULL, &m_pRectDestination);
+		SDL_RenderCopy(_Renderer, m_pTexture, NULL, &m_RectDestination);
 	}
 
 
@@ -42,6 +42,6 @@ public:
 	calcul de la chute du pack au debut de partie
 	*/
 	void ChuteDebut(){
-		m_pRectDestination.y += 15;
+		m_RectDestination.y += 15;
 	}
 };

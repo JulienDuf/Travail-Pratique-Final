@@ -74,7 +74,7 @@
     <ClInclude Include="CBarreVie.h" />
     <ClInclude Include="CButton.h" />
     <ClInclude Include="CControl.h" />
-    <ClInclude Include="CDeplacement.h" />
+    <ClInclude Include="CMouvement.h" />
     <ClInclude Include="CGame.h" />
     <ClInclude Include="CGestionaire.h" />
     <ClInclude Include="CGrenade.h" />
@@ -88,7 +88,7 @@
     <ClInclude Include="CMenu.h" />
     <ClInclude Include="CMine.h" />
     <ClInclude Include="CMissile.h" />
-    <ClInclude Include="CMouvement.h" />
+    <ClInclude Include="CDeplacement.h" />
     <ClInclude Include="CNoeudArbreAVL.h" />
     <ClInclude Include="CPack.h" />
     <ClInclude Include="CPlayer.h" />
@@ -96,7 +96,7 @@
     <ClInclude Include="CSprite.h" />
     <ClInclude Include="CTeam.h" />
     <ClInclude Include="CTimer.h" />
-    <ClInclude Include="CTool.h" />
+    <ClInclude Include="CProjectile.h" />
     <ClInclude Include="CToolBar.h" />
     <ClInclude Include="CVecteur2D.h" />
     <ClInclude Include="CVent.h" />

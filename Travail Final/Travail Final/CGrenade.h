@@ -3,16 +3,17 @@ Classe qui gere les grenades et leur rebondissement
 Crée par Samuel Rambaud le 25 novembre 2014
 */
 
-class CGrenade: public CTool {
+class CGrenade: public CProjectile {
 private:
 
 	int m_iAngle; //Angle du lancement de la grenade
 	int m_iForce; //Force du lancement de la grenade
 	unsigned int m_uiMunition;
 	CBarrePuissance* m_pBarrePuissance; //Barre de puissance de la grenade
+	CVecteur2D* m_pVecteurVitesseGrenade;
 
 	SDL_Texture* m_pTexture; //Texture de la grenade
-	SDL_Rect m_pRectDestination; //Position de la grenade
+	SDL_Rect m_RectDestinationGrenade; //Position de la grenade
 
 	CLabel* m_pLblDescription; // La descripton du missile.
 	string m_strDescription[8];
@@ -105,10 +106,10 @@ public:
 		//m_pBarrePuissance = new CBarrePuissance(_strSourceImage);
 
 		//initialisation de la position de la grenade
-		m_pRectDestination.h = 24;
-		m_pRectDestination.w = 33;
-		m_pRectDestination.y = 0;
-		m_pRectDestination.x = 0;
+		m_RectDestinationGrenade.h = 24;
+		m_RectDestinationGrenade.w = 33;
+		m_RectDestinationGrenade.y = 0;
+		m_RectDestinationGrenade.x = 0;
 	}
 	
 	void ShowTool(SDL_Renderer* _pRenderer, SDL_Rect _RectPlayerDestination) {}
@@ -142,6 +143,16 @@ public:
 			m_pLblDescription->SetRectDestinationY(_RectPositionDescription.y - uiH);
 		else
 			m_pLblDescription->SetRectDestinationY(_RectPositionDescription.y);
+	}
+
+	CVecteur2D* ObtenirVecteurVitesse() {
+
+		return m_pVecteurVitesseGrenade;
+	}
+
+	SDL_Rect* ObtenirRectDestination() {
+
+		return &m_RectDestinationGrenade;
 	}
 
 };

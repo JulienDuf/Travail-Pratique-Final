@@ -1,7 +1,7 @@
+Munition : 5
+
 Dommage : 100 - % de proximité du rayon d'explosion
 
 Rayon d'explosion : 45
 
-Munition : 5
-
-Grenadaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+Grenadaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!

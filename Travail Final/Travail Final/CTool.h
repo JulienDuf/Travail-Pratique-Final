@@ -5,8 +5,11 @@ public:
 	virtual void ShowTool(SDL_Renderer* _pRenderer, SDL_Rect _RectPlayerDestination) = 0;
 
 	virtual void ReactToEvent(SDL_Event* _pEvent) = 0;
+<<<<<<< HEAD
 
 	virtual void DefinirActif(bool _boActif) = 0;
+=======
+>>>>>>> origin/Branche-jeu
 
 	virtual CSprite* ObtenirSprite(string _strNom) = 0;
 

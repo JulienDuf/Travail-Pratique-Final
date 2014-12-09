@@ -191,8 +191,8 @@ public:
 							m_uiPositionSelection = uiPositionListe;
 							if (!m_pTimerClick->IsDone()) {
 								m_boShow = false;
-								m_uiPositionHover = m_pListeObjet->ObtenirCompte();
 								m_uiPositionDoubleClick = m_uiPositionSelection;
+								m_uiPositionHover = m_pListeObjet->ObtenirCompte();
 								m_uiPositionSelection = m_pListeObjet->ObtenirCompte();
 							}
 							else
@@ -223,13 +223,15 @@ public:
 		return m_RectPositionSouris;
 	}
 
+	void NouveauTour() {
+		m_uiPositionDoubleClick = m_pListeObjet->ObtenirCompte();
+	}
+
 	// Fonction permettant d'obtenir la position de l'objet selectionné...
 	// En sortie:
 	// La position de l'objet sélectionné.
 	unsigned int ObtenirPositionObjetDoubleClick() {
-		unsigned int ui = m_uiPositionDoubleClick;
-		m_uiPositionDoubleClick = m_pListeObjet->ObtenirCompte();
-		return ui;
+		return m_uiPositionDoubleClick;
 	}
 
 	unsigned int ObtenirPositionObjetSuvol() {
@@ -238,6 +240,8 @@ public:
 
 	void ReverseboShow() {
 		m_boShow = !m_boShow;
+		m_uiPositionDoubleClick = m_pListeObjet->ObtenirCompte();
 		m_uiPositionSelection = m_pListeObjet->ObtenirCompte();
+		m_uiPositionHover = m_pListeObjet->ObtenirCompte();
 	}
 };

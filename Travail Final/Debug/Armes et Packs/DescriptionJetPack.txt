@@ -1,4 +1,4 @@
-Niveau de Carburant : 100%                        
+Niveau de Carburant : 100%
 
 Poussée vertical : 50
 

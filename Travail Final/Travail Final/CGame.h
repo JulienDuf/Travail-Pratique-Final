@@ -132,11 +132,25 @@ public:
 					DomageExplosion(RectExplosion, 45);
 				}
 				
+<<<<<<< HEAD
 				else if (!m_pVerifierCollisionJoueurMap(pPlayerActif, RectTmp, &boCorps, &boPied, &_uiX, &_uiY)) {
 					pPlayerActif->DefinirPositionX(dComposanteX);
 					pPlayerActif->DefinirPositionY(dComposanteY);
 				}
 				else {
+=======
+				if (!pPlayerActif->IsStable()) 
+					*pPlayerActif->ObtenirVecteurVitesse() += *m_pGameMap->ObtenirGravite();
+				Recttmp.x += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35;
+				Recttmp.y += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35;
+				if (!pPlayerActif->ObtenirSpriteSaut()->IsActif())
+					pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination()));
+				DetectionCollisionPack(pPlayerActif, &boExplosion);
+				if (!m_pVerifierCollisionJoueurMap(pPlayerActif, Recttmp, &boCorps, &boPied, &_uiX, &_uiY)) {
+						pPlayerActif->ModifierRectDestination(Recttmp);
+					}
+					else {
+>>>>>>> origin/Branche-jeu
 
 					if (boPied)
 						dComposanteY -= (RectTmp.h - _uiY);
@@ -349,6 +363,7 @@ public:
 
 			delete[] iTableau;
 
+<<<<<<< HEAD
 			fPente = iCov / iVar;
 
 			if (iCov != 0 && iVar != 0) {
@@ -370,6 +385,22 @@ public:
 
 			
 
+=======
+		fPente = iCov / iVar; // Donne la pente. iCov = y , iVar = x.
+
+		if (iCov != 0 && iVar != 0) {
+			if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 0 && fPente > 0) // Le joueur se déplace vers la droite et la pente est positive.
+				return (180 / M_PI) * atanf(fPente);
+
+			if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 0 && fPente < 0) // Le joueur se déplace vers la droite et la pente est négative.
+				return 360 - ((180 / M_PI) * atanf(-fPente));
+
+			if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 1 && fPente > 0) // Le joueur se déplace vers la gauche et la pente est positive.
+				return 180 + (180 / M_PI) * atanf(fPente);
+
+			if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 1 && fPente < 0) // Le joueur se déplace vers la gauche et la pente est négative.
+				return 90 + (180 / M_PI) * atanf(-fPente);
+>>>>>>> origin/Branche-jeu
 		}
 
 	}
@@ -432,7 +463,7 @@ public:
 		*_boExplosion = false;
 
 		if (_pPlayer->ObtenirSpriteCourse()->IsActif()) {						// Si le joueur est en train de courir...
-
+			
 			pTmpSDLSurfacePlayer = _pPlayer->ObtenirSpriteCourse()->ObtenirSurface();			// On se sert de la surface du sprite de course.
 
 			TmpSDLRectPlayerSource = _pPlayer->ObtenirSpriteCourse()->ObtenirRectSource();		// On se sert du Rect source du sprite de course.

@@ -160,6 +160,7 @@ public:
 		SDL_QueryTexture(m_pListeTextureLabel->ObtenirElementCurseur(), nullptr, nullptr, _iW, _iH);
 	}
 
+
 	void SetRectDestinationX(unsigned int _uiX) {
 		m_RectPosition.x = _uiX;
 	}

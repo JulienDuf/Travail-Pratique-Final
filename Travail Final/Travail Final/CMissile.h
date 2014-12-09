@@ -102,13 +102,11 @@ public:
 		m_pFont = _pGestionnaireFont->ObtenirDonnee("pFontDescription");
 
 		SDL_Surface *pSDLSurface = BlitText(m_strDescription, 8, { 0, 0, 0 });
-<<<<<<< HEAD
+
 		m_pLblDescription = new CLabel(SDL_CreateTextureFromSurface(_pRenderer, pSDLSurface), { 503, 346, pSDLSurface->w, pSDLSurface->h });
 
-=======
 		m_pLblDescription = new CLabel(SDL_CreateTextureFromSurface(_pRenderer, pSDLSurface), { 0, 0, pSDLSurface->w, pSDLSurface->h });
-		
->>>>>>> origin/Branche-jeu
+
 		m_dAngle = 0;
 		m_iForce = 0;
 
@@ -185,6 +183,10 @@ public:
 				break;
 			}
 		}
+
+	}
+
+	void DefinirActif(bool _boActif) {
 
 	}
 

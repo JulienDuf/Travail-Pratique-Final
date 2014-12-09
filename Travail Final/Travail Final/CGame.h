@@ -97,8 +97,6 @@ public:
 				unsigned int _uiX;
 				unsigned int _uiY;
 				SDL_Rect RectExplosion;
-
-				dAngle = CalculerPente(pPlayerActif);
 				pPlayerActif->ObtenirVecteurPoids()->ModifierComposantY(m_pGameMap->ObtenirGravite()->ObtenirComposanteY());
 
 				if (pPlayerActif->IsFreeFalling()) {
@@ -111,7 +109,7 @@ public:
 				}
 
 				if (pPlayerActif->IsMoving()) {
-					
+
 					*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
 					dComposanteX += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35;
 					dComposanteY += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35;
@@ -122,7 +120,7 @@ public:
 				dComposanteX += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35;
 				dComposanteY += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35;
 
-			//	double angle = RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination());
+				//	double angle = RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination());
 
 				RectTmp.x = dComposanteX;
 				RectTmp.y = dComposanteY;
@@ -131,47 +129,35 @@ public:
 
 					DomageExplosion(RectExplosion, 45);
 				}
-				
-<<<<<<< HEAD
+
+
 				else if (!m_pVerifierCollisionJoueurMap(pPlayerActif, RectTmp, &boCorps, &boPied, &_uiX, &_uiY)) {
 					pPlayerActif->DefinirPositionX(dComposanteX);
 					pPlayerActif->DefinirPositionY(dComposanteY);
 				}
-				else {
-=======
-				if (!pPlayerActif->IsStable()) 
-					*pPlayerActif->ObtenirVecteurVitesse() += *m_pGameMap->ObtenirGravite();
-				Recttmp.x += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35;
-				Recttmp.y += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35;
-				if (!pPlayerActif->ObtenirSpriteSaut()->IsActif())
-					pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination()));
-				DetectionCollisionPack(pPlayerActif, &boExplosion);
-				if (!m_pVerifierCollisionJoueurMap(pPlayerActif, Recttmp, &boCorps, &boPied, &_uiX, &_uiY)) {
-						pPlayerActif->ModifierRectDestination(Recttmp);
-					}
-					else {
->>>>>>> origin/Branche-jeu
 
-					if (boPied)
-						dComposanteY -= (RectTmp.h - _uiY);
+				else {
+
 					if (boCorps && pPlayerActif->ObtenirSpriteRepos()->ObtenirEtage() == 0)
 						dComposanteX -= (RectTmp.w - _uiX);
 
 					if (boCorps && pPlayerActif->ObtenirSpriteRepos()->ObtenirEtage() == 1)
-						dComposanteX += _uiX;
-				
-						
+						dComposanteX += (pPlayerActif->ObtenirHitboxCorpsGauche().w - _uiX);
+
+					if (boPied && !boCorps)
+						dComposanteY -= (RectTmp.h - _uiY);
+
 					pPlayerActif->DefinirPositionX(dComposanteX);
 					pPlayerActif->DefinirPositionY(dComposanteY);
 					pPlayerActif->ObtenirVecteurVitesse()->ModifierComposantY(0);
 					pPlayerActif->ModifierStabiliteJoueur(true);
 				}
-				
+
 
 				m_pTimerPhysique->Start();
+
 			}
 		}
-
 		else {
 
 			bool _boCorps;
@@ -223,8 +209,10 @@ public:
 						else if (pPlayer->ObtenirSpriteParachute()->IsActif()) {
 							RectPlayer = pPlayer->ObtenirRectDestinationParachute();
 							RectPlayer.y += 1;
-							if (!m_pVerifierCollisionJoueurMap(pPlayer, RectPlayer, &_boCorps, &_boPieds, &_uiXMap, &_uiYMap))
+							if (!m_pVerifierCollisionJoueurMap(pPlayer, RectPlayer, &_boCorps, &_boPieds, &_uiXMap, &_uiYMap)) {
 								pPlayer->ModifierRectDestinationParachute(RectPlayer);
+
+							}
 
 							else {
 
@@ -363,7 +351,7 @@ public:
 
 			delete[] iTableau;
 
-<<<<<<< HEAD
+
 			fPente = iCov / iVar;
 
 			if (iCov != 0 && iVar != 0) {
@@ -381,30 +369,30 @@ public:
 					return 180 + (180 / M_PI) * atanf(fPente);
 			}
 
-				return 362;
+			return 362;
 
-			
 
-=======
-		fPente = iCov / iVar; // Donne la pente. iCov = y , iVar = x.
 
-		if (iCov != 0 && iVar != 0) {
-			if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 0 && fPente > 0) // Le joueur se déplace vers la droite et la pente est positive.
-				return (180 / M_PI) * atanf(fPente);
 
-			if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 0 && fPente < 0) // Le joueur se déplace vers la droite et la pente est négative.
-				return 360 - ((180 / M_PI) * atanf(-fPente));
+			fPente = iCov / iVar; // Donne la pente. iCov = y , iVar = x.
 
-			if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 1 && fPente > 0) // Le joueur se déplace vers la gauche et la pente est positive.
-				return 180 + (180 / M_PI) * atanf(fPente);
+			if (iCov != 0 && iVar != 0) {
+				if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 0 && fPente > 0) // Le joueur se déplace vers la droite et la pente est positive.
+					return (180 / M_PI) * atanf(fPente);
 
-			if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 1 && fPente < 0) // Le joueur se déplace vers la gauche et la pente est négative.
-				return 90 + (180 / M_PI) * atanf(-fPente);
->>>>>>> origin/Branche-jeu
+				if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 0 && fPente < 0) // Le joueur se déplace vers la droite et la pente est négative.
+					return 360 - ((180 / M_PI) * atanf(-fPente));
+
+				if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 1 && fPente > 0) // Le joueur se déplace vers la gauche et la pente est positive.
+					return 180 + (180 / M_PI) * atanf(fPente);
+
+				if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 1 && fPente < 0) // Le joueur se déplace vers la gauche et la pente est négative.
+					return 90 + (180 / M_PI) * atanf(-fPente);
+
+			}
+
 		}
-
 	}
-
 	// Procédure déterminant la position d'une collision entre un objet et la map, si il y en a une.
 	// En entrée:
 	// Param1: La surface de l'objet.

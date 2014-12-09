@@ -88,18 +88,18 @@ public:
 
 		m_RectHitboxCorpsGauche.x = 0;
 		m_RectHitboxCorpsGauche.y = 0;
-		m_RectHitboxCorpsGauche.w = 20;
+		m_RectHitboxCorpsGauche.w = 10;
 		m_RectHitboxCorpsGauche.h = 40;
 
-		m_RectHitboxCorpsDroite.x = 20;
+		m_RectHitboxCorpsDroite.x = 30;
 		m_RectHitboxCorpsDroite.y = 0;
-		m_RectHitboxCorpsDroite.w = 20;
+		m_RectHitboxCorpsDroite.w = 10;
 		m_RectHitboxCorpsDroite.h = 40;
 
 		m_RectHitboxPieds.x = 0;
-		m_RectHitboxPieds.y = 40;
-		m_RectHitboxPieds.w = 40;
-		m_RectHitboxPieds.h = 15;
+		m_RectHitboxPieds.y = 45;
+		m_RectHitboxPieds.w = 36;
+		m_RectHitboxPieds.h = 10;
 
 		m_RectHitboxPiedsParachute.x = 0;
 		m_RectHitboxPiedsParachute.y = 92;

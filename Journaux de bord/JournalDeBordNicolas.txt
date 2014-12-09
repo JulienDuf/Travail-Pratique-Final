@@ -108,3 +108,13 @@ donc il faudra travailler dessus, j'ai commencé a travailler sur les états du jo
 je m'arrange pour prendre en compte plein de booléens différents...
 
 ---------------------------------------------------------------------------------------------------------------------
+
+Mardi 9 décembre 2014
+
+10:00 AM
+
+J'ai ajouté des booléens au CPlayer pour pouvoir gérer plus d'états du joueur. J'ai modifié le mouvement du joueur
+et le reactToEvent du joueur. Je pensais améliorer le fonctionnement du mouvement mais le mouvement est maintenant
+nul. Mmmmh il faudra réparer ça!
+
+---------------------------------------------------------------------------------------------------------------------

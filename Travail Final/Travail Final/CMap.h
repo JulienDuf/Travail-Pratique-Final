@@ -73,7 +73,7 @@ public:
 			strTampo = chrTmp[20];
 			strTampo += chrTmp[21];
 			strTampo += chrTmp[22];
-			m_VecteurGravite = new CVecteur2D((float)SDL_atof(strTampo.c_str()), 90.0);
+			m_VecteurGravite = new CVecteur2D(SDL_atof(strTampo.c_str()), 90.0f);
 			FichierMap.getline(chrTmp, 50);
 			
 			FichierMap.getline(chrTmp, 50);
@@ -85,6 +85,7 @@ public:
 
 			FichierMap.getline(chrTmp, 50);
 			strTampo = chrTmp[28];
+			strTampo += chrTmp[29];
 			iNombreMines = SDL_atoi(strTampo.c_str());
 
 			FichierMap.close();

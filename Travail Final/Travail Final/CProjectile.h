@@ -6,6 +6,8 @@ public:
 
 	virtual void ReactToEvent(SDL_Event* _pEvent) = 0;
 
+	virtual void DefinirActif(bool _boActif) = 0;
+
 	virtual CSprite* ObtenirSprite(string _strNom) = 0;
 
 	virtual unsigned int ObtenirMunition() = 0;

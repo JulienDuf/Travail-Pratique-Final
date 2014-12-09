@@ -63,15 +63,6 @@ SDL_Color CouleurTexte; // La couleur du texte.
 
 CTimer* pTimerPhysique;
 
-// Fonction convertissant en angle de degré à radian.
-// En entrée:
-// Param1: L'angle à convertir.
-// En sortie: L'angle converti.
-float DegtoRad(float _fAngle) {
-
-	return (M_PI / 180) * _fAngle;
-}
-
 
 // Pointeurs de fonctions pour les classes [
 
@@ -170,7 +161,7 @@ bool VerifierCollisionJoueurMap(CPlayer* _pPlayer, SDL_Rect _RectPlayer, bool* _
 		}
 
 	}
-	
+
 	// Vérification de la collision du corps du joueur avec la carte de jeu.
 
 	for (unsigned int y = 0; y < TmpSDLRectPlayerHitboxCorps.h && !*_pboCollisionCorps; y++) {				// On parcours les pixels dans le hitbox de haut en bas.
@@ -188,37 +179,12 @@ bool VerifierCollisionJoueurMap(CPlayer* _pPlayer, SDL_Rect _RectPlayer, bool* _
 		}
 
 	}
-	
+
 	return (*_pboCollisionPieds || *_pboCollisionCorps);			// On retourne vrai dès qu'il y a eu une collision.
 
 
 }
 
-
-// Fontion effectuant un rotation sur une surface selon un angle.
-// En entrée: 
-// Param1: La surface qui doit être tourné.
-// Param2: L'angle de la rotation.
-// En sortie: La surface avec la rotaiton.
-SDL_Surface* Rotation(SDL_Surface* _pSurfaceRotation, float _fAngle) {
-
-	SDL_Surface * pNouvelleSurface = SDL_CreateRGBSurface(_pSurfaceRotation->flags, _pSurfaceRotation->w, _pSurfaceRotation->h, _pSurfaceRotation->format->BitsPerPixel, _pSurfaceRotation->format->Rmask, _pSurfaceRotation->format->Gmask, _pSurfaceRotation->format->Bmask, _pSurfaceRotation->format->Amask);
-
-	double sin = sinf(DegtoRad(_fAngle));
-	double cos = cosf(DegtoRad(_fAngle));
-
-	for (int y = 0; y < _pSurfaceRotation->h; y++)
-		for (int x = 0; x < _pSurfaceRotation->w; x++) {
-
-		int RotX = (x - _pSurfaceRotation->w / 2) * cos - (y - _pSurfaceRotation->h / 2) * sin + _pSurfaceRotation->w / 2;
-		int RotY = (x - _pSurfaceRotation->w / 2) * sin + (y - _pSurfaceRotation->h / 2) * cos + _pSurfaceRotation->w / 2;
-
-		if ((RotX >= 0 && RotY >= 0 && (RotX < _pSurfaceRotation->w && RotY < _pSurfaceRotation->h)))
-			((unsigned int*)pNouvelleSurface->pixels)[y * pNouvelleSurface->w + x] = ((unsigned int*)_pSurfaceRotation->pixels)[RotY * _pSurfaceRotation->w + RotX];
-		}
-
-	return pNouvelleSurface;
-}
 
 // Procédure détruisant une partie de la map selon un rayon.
 // En entrée:
@@ -256,7 +222,7 @@ void MapDestruction(int _iRayon, int _iX, int _iY) {
 			if ((iY >= 0 && iX >= 0) && (iY <= 768 & iX <= 1366)) {
 
 				if (((unsigned int*)pSurfaceGabarie->pixels)[y * pSurfaceGabarie->w + RectSource.x + x] != BLANC32BIT)
-					((unsigned int*)pSurfaceMap->pixels)[iY * pSurfaceMap->w + iX] = TRANSPARENCE32BIT;
+					((unsigned int*)pSurfaceMap->pixels)[iY * pSurfaceMap->w + iX] = 0;
 			}
 			iX++;
 
@@ -544,7 +510,7 @@ void Start(char* _strApplicationFilename) {
 	pGestionaireControl = new CGestionaire<CControl*>();
 	pGestionaireMenu = new CGestionaire<CMenu*>();
 
-	pTimerPhysique = new CTimer(20);
+	pTimerPhysique = new CTimer(1000);
 
 	// Chargement du gabarie...
 	strEmplacement = strApplicationPath;
@@ -671,8 +637,8 @@ void Start(char* _strApplicationFilename) {
 	pGestionaireControl->AjouterDonnee(new CButton("Quitter", pGestionaireFont->ObtenirDonnee("pFontBouton"), CouleurTexte, strEmplacement.c_str(), { (iW - 500) / 2, 320, 500, 60 }, 3, 0, pWindowJeu->ObtenirRenderer(), ClickBoutonQuitter), "pBtnQuitter");
 	pGestionaireControl->AjouterDonnee(new CButton("Debuter la partie", pGestionaireFont->ObtenirDonnee("pFontBouton"), CouleurTexte, strEmplacement.c_str(), { 790, 530, 500, 60 }, 3, 0, pWindowJeu->ObtenirRenderer(), ClickBoutonDebutPartie), "pBtnDebutPartie");
 	pGestionaireControl->AjouterDonnee(new CButton("Retour", pGestionaireFont->ObtenirDonnee("pFontBouton"), CouleurTexte, strEmplacement.c_str(), { 790, 600, 500, 60 }, 3, 0, pWindowJeu->ObtenirRenderer(), ClickBoutonRetour), "pBtnRetour");
-	pGestionaireControl->AjouterDonnee(new CButton("Resumer", pGestionaireFont->ObtenirDonnee("pFontBouton"), CouleurTexte, strEmplacement.c_str(), { 503, 324, 360, 60 }, 3, 0, pWindowJeu->ObtenirRenderer(), ClickBoutonResumer), "pBtnResumer");
-	pGestionaireControl->AjouterDonnee(new CButton("Quitter", pGestionaireFont->ObtenirDonnee("pFontBouton"), CouleurTexte, strEmplacement.c_str(), { 503, 484, 360, 60 }, 3, 0, pWindowJeu->ObtenirRenderer(), ClickBoutonQuitterJeu), "pBtnQuitterGame");
+	pGestionaireControl->AjouterDonnee(new CButton("Resumer", pGestionaireFont->ObtenirDonnee("pFontBouton"), CouleurTexte, strEmplacement.c_str(), { 503, 284, 360, 60 }, 3, 0, pWindowJeu->ObtenirRenderer(), ClickBoutonResumer), "pBtnResumer");
+	pGestionaireControl->AjouterDonnee(new CButton("Quitter", pGestionaireFont->ObtenirDonnee("pFontBouton"), CouleurTexte, strEmplacement.c_str(), { 503, 444, 360, 60 }, 3, 0, pWindowJeu->ObtenirRenderer(), ClickBoutonQuitterJeu), "pBtnQuitterGame");
 
 	// Création des labels...
 	pGestionaireControl->AjouterDonnee(new CLabel(pWindowJeu->ObtenirRenderer(), "Nombre d equipes", pGestionaireFont->ObtenirDonnee("pFontBouton"), CouleurTexte, { 180, 520, 231, 32 }), "pLblNombreEquipe");
@@ -718,9 +684,9 @@ void Start(char* _strApplicationFilename) {
 	strEmplacementFichier = strApplicationPath;
 
 	// Création des menus...
-	pGestionaireMenu->AjouterDonnee(new CMenu(true, { 0, 0, iW, iH }, pWindowJeu->ObtenirRenderer(), 2, pGestionaireControl->ObtenirDonnee("pBtnNouvellePartie"), pGestionaireControl->ObtenirDonnee("pBtnQuitter")), "pMenuPrincipal"); // Crée le menu principal.
-	pGestionaireMenu->AjouterDonnee(new CMenu(false, { 0, 0, iW, iH }, pWindowJeu->ObtenirRenderer(), 8, pGestionaireControl->ObtenirDonnee("pBtnDebutPartie"), pGestionaireControl->ObtenirDonnee("pBtnRetour"), pGestionaireControl->ObtenirDonnee("pLblDescriptionMap"), pGestionaireControl->ObtenirDonnee("pLblNombreJoueurEquipe"), pGestionaireControl->ObtenirDonnee("pLblNombreEquipe"), pGestionaireControl->ObtenirDonnee("pLblLRChoixNbrEquipe"), pGestionaireControl->ObtenirDonnee("pLblLRChoixNbrJoueurEquipe"), pGestionaireControl->ObtenirDonnee("pLblLRChoixMap")), "pMenuNouvellePartie"); // Créé le menu nouvelle partie.
-	pGestionaireMenu->AjouterDonnee(new CMenu(false, { 433, 134, 500, 500 }, pWindowJeu->ObtenirRenderer(), 2, pGestionaireControl->ObtenirDonnee("pBtnResumer"), pGestionaireControl->ObtenirDonnee("pBtnQuitterGame")), "pMenuPause");
+	pGestionaireMenu->AjouterDonnee(new CMenu(true, { 0, 0, iW, iH }, pWindowJeu->ObtenirRenderer(), { 255, 255, 255, 255 }, 2, pGestionaireControl->ObtenirDonnee("pBtnNouvellePartie"), pGestionaireControl->ObtenirDonnee("pBtnQuitter")), "pMenuPrincipal"); // Crée le menu principal.
+	pGestionaireMenu->AjouterDonnee(new CMenu(false, { 0, 0, iW, iH }, pWindowJeu->ObtenirRenderer(), { 255, 255, 255, 255 }, 8, pGestionaireControl->ObtenirDonnee("pBtnDebutPartie"), pGestionaireControl->ObtenirDonnee("pBtnRetour"), pGestionaireControl->ObtenirDonnee("pLblDescriptionMap"), pGestionaireControl->ObtenirDonnee("pLblNombreJoueurEquipe"), pGestionaireControl->ObtenirDonnee("pLblNombreEquipe"), pGestionaireControl->ObtenirDonnee("pLblLRChoixNbrEquipe"), pGestionaireControl->ObtenirDonnee("pLblLRChoixNbrJoueurEquipe"), pGestionaireControl->ObtenirDonnee("pLblLRChoixMap")), "pMenuNouvellePartie"); // Créé le menu nouvelle partie.
+	pGestionaireMenu->AjouterDonnee(new CMenu(false, { 341, 192, 683, 384 }, pWindowJeu->ObtenirRenderer(), { 128, 128, 128, 165 }, 2, pGestionaireControl->ObtenirDonnee("pBtnResumer"), pGestionaireControl->ObtenirDonnee("pBtnQuitterGame")), "pMenuPause");
 
 	// Ajoue des menus dans la fenêtre.
 	pWindowJeu->AjouterMenu(3, pGestionaireMenu->ObtenirDonnee("pMenuPrincipal"), pGestionaireMenu->ObtenirDonnee("pMenuNouvellePartie"), pGestionaireMenu->ObtenirDonnee("pMenuPause"));
@@ -751,6 +717,8 @@ int main(int argc, char* argv[]) {
 	Start(argv[0]); // Initialisation
 
 	srand(time(NULL));
+	
+	pTimerPhysique->Start();
 
 	// Boucle principale de l'application.
 	while (boExecution) {

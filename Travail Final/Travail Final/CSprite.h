@@ -1,4 +1,5 @@
 
+
 // 420-202-RE : Travail final
 // Classe qui représente un sprite.
 // 4 novembre 2014 par Nicolas Dean (Gody117@hotmail.com)
@@ -19,7 +20,7 @@ private:
 	SDL_Surface* m_pSurfaceSprite;		// pointeur de surface SDL qui pointe la surface qui contient l'image du sprite.
 
 	SDL_Texture* m_pTextureSprite;		// pointeur de texture SDL qui pointe sur la texture qui contient l'image du sprite.
-	
+
 	SDL_Rect m_RectSource;				// Rectangle qui représente la position et les dimensions du rectangle qui contiendra l'image que l'on veut afficher
 
 	CTimer* m_pTimerDelay;				// Pointeur de minuterie qui indique le temps de délai entre chaque cadre.
@@ -74,9 +75,9 @@ public:
 	// Param1; Renderer de la fenetre.
 	// Param2: Rect de destination du sprite.
 	void Render(SDL_Renderer* _Renderer, SDL_Rect _RectDestination) {
-		
+
 		if (m_boActif) {
-			
+
 			SDL_RenderCopy(_Renderer, m_pTextureSprite, &m_RectSource, &_RectDestination);		// On rends le cadre actuel dans la fenêtre.
 		}
 	}
@@ -133,12 +134,12 @@ public:
 	// Accesseur ...
 
 	SDL_Rect ObtenirRectSource(void) {
-		
+
 		return m_RectSource;
 	}
 
 	unsigned int ObtenirEtage(void) {
-		
+
 		return m_uiEtage;
 	}
 

@@ -1,4 +1,4 @@
-// 420-202-RE : Travail final
+//// 420-202-RE : Travail final
 // Classe qui représente un joueur du jeu.
 // 4 novembre 2014 par Nicolas Dean (Gody117@hotmail.com)
 //
@@ -13,10 +13,20 @@ class CPlayer {
 
 private:
 
+<<<<<<< HEAD
 	bool m_boStable;					// Si le joueur est stable.
 	bool m_boToolActif;					// Si le joueur est en utilisation d'un outil.
 	bool m_boChuteLibre;				// Si le joueur est en chute libre.
 	bool m_boGlissade;					// Si le joueur est en train de glisser :)
+=======
+	bool m_boStable;					// Si le joueur est stable
+	bool m_boToolActif;
+	bool m_boChuteLibre;
+	bool m_boMouvement;
+
+	double m_dPositionX;
+	double m_dPositionY;
+>>>>>>> origin/Branche-Julien
 
 	CListeDC<CProjectile*>* m_pListeTools;
 
@@ -34,6 +44,7 @@ private:
 		m_RectHitboxPiedsParachute;
 
 	CVecteur2D* m_pVecteurVitesse;			// Vitesse.
+	CVecteur2D* m_pVecteurPoids; 
 
 public:
 
@@ -43,6 +54,7 @@ public:
 	// Paramètre: _pToolList, pointe sur la liste d'outils que l'on veut donner au joueur.
 	// Paramètre: _strName, contient le nom que l'on veut donner au joueur.
 	// Retour: Rien (constructeur).
+<<<<<<< HEAD
 	CPlayer(string _strEmplacement, SDL_Renderer* _pRenderer, CGestionaire<TTF_Font*>* _pGestionnaireFont, CGestionaire<SDL_Surface*>* _pGestionnaireSurface, CGestionaire<SDL_Texture*>* _pGestionnaireTexture, unsigned int _uiIDTeam, SDL_Rect _RectDestination, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), SDL_Surface* _Rotation(SDL_Surface* _pSurfaceRotation, float _fAngle)) {
 		
 		m_pListeTools = new CListeDC<CProjectile*>();
@@ -56,6 +68,24 @@ public:
 		m_pListeMouvement->AjouterFin(new CJetPack(_strEmplacement, _pGestionnaireFont, new CSprite(_pGestionnaireSurface->ObtenirDonnee("pSurfaceJetPack"), _pGestionnaireTexture->ObtenirDonnee("pTextureJetPack"), _RectDestination, 6, 80, true, false, 2), new CBarreVie(_pGestionnaireTexture, { _RectDestination.x, _RectDestination.y + _RectDestination.h - 2, 0, 0 }, 6), _pRenderer));
 		
 		m_pListeMouvement->AjouterFin(new CDeplacement(_pGestionnaireSurface, _pGestionnaireTexture, _RectDestination));
+=======
+	CPlayer(string _strEmplacement, SDL_Renderer* _pRenderer, CGestionaire<TTF_Font*>* _pGestionnaireFont, CGestionaire<SDL_Surface*>* _pGestionnaireSurface, CGestionaire<SDL_Texture*>* _pGestionnaireTexture, unsigned int _uiIDTeam, SDL_Rect _RectDestination, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), double _Physique(CVecteur2D* _VitesseMissile, SDL_Rect* _DestinationMissile), SDL_Surface* _Rotation(SDL_Surface* _pSurfaceRotation, float _fAngle)) {
+
+		m_pListeTools = new CListeDC<CTool*>();
+		m_pListeDeplacement = new CListeDC<CDeplacement*>();
+
+		m_boStable = false;
+		m_boToolActif = false;
+		m_boChuteLibre = false;
+		m_boMouvement = false;
+
+		m_dPositionX = 0;
+		m_dPositionY = 0;
+
+		m_pListeDeplacement->AjouterFin(new CJetPack(_strEmplacement, _pGestionnaireFont, new CSprite(_pGestionnaireSurface->ObtenirDonnee("pSurfaceJetPack"), _pGestionnaireTexture->ObtenirDonnee("pTextureJetPack"), _RectDestination, 6, 80, true, false, 2), new CBarreVie(_pGestionnaireTexture, { _RectDestination.x, _RectDestination.y + _RectDestination.h - 2, 0, 0 }, 6), _pRenderer));
+
+		m_pListeDeplacement->AjouterFin(new CMouvement(_pGestionnaireSurface, _pGestionnaireTexture, _RectDestination));
+>>>>>>> origin/Branche-Julien
 
 		m_pListeMouvement->AllerACurseur(2);
 		m_pListeMouvement->AllerATrieur(0);
@@ -79,18 +109,18 @@ public:
 
 		m_RectHitboxCorpsGauche.x = 0;
 		m_RectHitboxCorpsGauche.y = 0;
-		m_RectHitboxCorpsGauche.w = 20;
+		m_RectHitboxCorpsGauche.w = 10;
 		m_RectHitboxCorpsGauche.h = 40;
 
-		m_RectHitboxCorpsDroite.x = 20;
+		m_RectHitboxCorpsDroite.x = 30;
 		m_RectHitboxCorpsDroite.y = 0;
-		m_RectHitboxCorpsDroite.w = 20;
+		m_RectHitboxCorpsDroite.w = 10;
 		m_RectHitboxCorpsDroite.h = 40;
 
 		m_RectHitboxPieds.x = 0;
-		m_RectHitboxPieds.y = 40;
-		m_RectHitboxPieds.w = 40;
-		m_RectHitboxPieds.h = 15;
+		m_RectHitboxPieds.y = 45;
+		m_RectHitboxPieds.w = 36;
+		m_RectHitboxPieds.h = 10;
 
 		m_RectHitboxPiedsParachute.x = 0;
 		m_RectHitboxPiedsParachute.y = 92;
@@ -99,7 +129,8 @@ public:
 
 		m_pBarreVie = new CBarreVie(_pGestionnaireTexture, { _RectDestination.x, _RectDestination.y - 2, 0, 0 }, _uiIDTeam);
 
-		m_pVecteurVitesse = new CVecteur2D(0, 0);
+		m_pVecteurVitesse = new CVecteur2D(0, 0.0f);
+		m_pVecteurPoids = new CVecteur2D(0, 0.0f);
 
 	}
 
@@ -128,6 +159,10 @@ public:
 	//Paramètre : _pRenderer : Le render de la fenetre.
 	//Retour : rien.
 	void ShowPlayer(SDL_Renderer* _pRenderer) {
+		
+		m_RectPlayerDestination.x = m_dPositionX;
+		m_RectPlayerDestination.y = m_dPositionY;
+		
 		if (m_pSpriteParachute->IsActif()) {
 			m_pSpriteParachute->ModifierAnnimation();
 			m_pSpriteParachute->Render(_pRenderer, m_RectParachuteDestination);
@@ -174,7 +209,7 @@ public:
 
 		m_RectParachuteDestination = _RectDestination;
 	}
-	
+
 	void AjouterAPositionY(int _iY) {
 
 		m_RectPlayerDestination.x += _iY;
@@ -183,6 +218,21 @@ public:
 	void ModifierStabiliteJoueur(bool _boStable) {
 
 		m_boStable = _boStable;
+	}
+
+	void ModifierChuteLibreJoueur(bool _boChuteLibre) {
+
+		m_boChuteLibre = _boChuteLibre;
+	}
+
+	void DefinirPositionX(double _dX) {
+
+		m_dPositionX = _dX;
+	}
+
+	void DefinirPositionY(double _dY) {
+
+		m_dPositionY = _dY;
 	}
 
 	CSprite* ObtenirSpriteCourse() {
@@ -248,10 +298,31 @@ public:
 		return m_boStable;
 	}
 
+	bool IsFreeFalling(void) {
+
+		return m_boChuteLibre;
+	}
+
+	bool IsMoving(void) {
+
+		return m_boMouvement;
+	}
+
+	double ObtenirPositionX(void) {
+
+		return m_dPositionX;
+	}
+
+	double ObtenirPositionY(void) {
+
+		return m_dPositionY;
+	}
+
 	CVecteur2D* ObtenirVecteurVitesse(void) {
 		return m_pVecteurVitesse;
 	}
 
+<<<<<<< HEAD
 	CVecteur2D* ObtenirVecteurTool() {
 
 		return m_pListeTools->ObtenirElementCurseur()->ObtenirVecteurVitesse();
@@ -260,6 +331,11 @@ public:
 	SDL_Rect* ObtenirRectTool() {
 
 		return m_pListeTools->ObtenirElementCurseur()->ObtenirRectDestination();
+=======
+	CVecteur2D* ObtenirVecteurPoids(void) {
+
+		return m_pVecteurPoids;
+>>>>>>> origin/Branche-Julien
 	}
 
 	float GetHealth(void) {

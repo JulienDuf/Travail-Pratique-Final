@@ -22,7 +22,11 @@ public:
 
 			iX = rand() % 1298;
 
+<<<<<<< HEAD
 			m_pPlayerList->AjouterFin(new CPlayer( _strEmplacement, _pRenderer, _pGestionnaireFont, _pGestionnaireSurface, _pGestionnaireTexture, _uiIDTeam, {iX, 5, 0, 0}, _MapDestruction, _CollisionObjetMap, _Rotation));
+=======
+			m_pPlayerList->AjouterFin(new CPlayer(_strEmplacement, _pRenderer, _pGestionnaireFont, _pGestionnaireSurface, _pGestionnaireTexture, _uiIDTeam, { iX, 5, 0, 0 }, _MapDestruction, _CollisionObjetMap, _Physique, _Rotation));
+>>>>>>> origin/Branche-Julien
 
 		}
 		m_pPlayerList->AllerDebut();

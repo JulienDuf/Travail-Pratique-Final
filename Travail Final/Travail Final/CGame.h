@@ -92,24 +92,25 @@ public:
 				bool boExplosion;
 				unsigned int _uiX;
 				unsigned int _uiY;
-				
-				if (!pPlayerActif->IsStable()) 
+
+				if (!pPlayerActif->IsStable()) {
+
 					*pPlayerActif->ObtenirVecteurVitesse() += *m_pGameMap->ObtenirGravite();
-				Recttmp.x += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35;
-				Recttmp.y += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35;
-				if (!pPlayerActif->ObtenirSpriteSaut()->IsActif())
-					pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination()));
-				DetectionCollisionPack(pPlayerActif, &boExplosion);
-				if (!m_pVerifierCollisionJoueurMap(pPlayerActif, Recttmp, &boCorps, &boPied, &_uiX, &_uiY)) {
-						pPlayerActif->ModifierRectDestination(Recttmp);
-					}
-					else {
+					Recttmp.x += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35;
+					Recttmp.y += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35;
 
-						Recttmp.y -= (Recttmp.h - _uiY);
-						pPlayerActif->ModifierRectDestination(Recttmp);
-						pPlayerActif->ObtenirVecteurVitesse()->ModifierComposantY(0);
+					if (pPlayerActif->ObtenirSpriteCourse()->IsActif())
+						pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination()));
+					
+					DetectionCollisionPack(pPlayerActif, &boExplosion);
 
-					}
+				}
+				if (m_pVerifierCollisionJoueurMap(pPlayerActif, Recttmp, &boCorps, &boPied, &_uiX, &_uiY)) {
+					Recttmp.y -= (Recttmp.h - _uiY);
+					pPlayerActif->ObtenirVecteurVitesse()->ModifierComposantY(0);
+				}
+
+				pPlayerActif->ModifierRectDestination(Recttmp);
 				
 
 				m_pTimerPhysique->Start();

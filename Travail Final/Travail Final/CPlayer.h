@@ -13,8 +13,10 @@ class CPlayer {
 
 private:
 
-	bool m_boStable;					// Si le joueur est stable
-	bool m_boToolActif;
+	bool m_boStable;					// Si le joueur est stable.
+	bool m_boToolActif;					// Si le joueur est en utilisation d'un outil.
+	bool m_boChuteLibre;				// Si le joueur est en chute libre.
+	bool m_boGlissade;					// Si le joueur est en train de glisser :)
 
 	CListeDC<CTool*>* m_pListeTools;
 

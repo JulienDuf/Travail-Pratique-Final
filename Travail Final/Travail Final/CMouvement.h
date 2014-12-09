@@ -41,30 +41,28 @@ public:
 			if (!m_pSpriteSaut->IsActif()) {
 				if (_pEvent->type == SDL_KEYDOWN) {
 					// Sprite de course déjà actif ou non...
-					switch (m_pSpriteCourse->IsActif()) {
-					case true:
-						m_pSpriteCourse->DefinirEtage(0);
+
+					if (!m_pSpriteCourse->IsActif()) {
 						_pVecteurVitesse->ModifierComposantX(35);
-						break;
-					case false:
+						m_pSpriteCourse->DefinirEtage(0);
 						m_pSpriteRepos->DefinirEtage(0);
-						m_pSpriteRepos->DefinirActif(false);
-						m_pSpriteCourse->DefinirEtage(0);
 						m_pSpriteCourse->DefinirActif(true);
-						_pVecteurVitesse->ModifierComposantX(35);
-						break;
+						m_pSpriteRepos->DefinirActif(false);
+						*_boStable = false;
 					}
-					*_boStable = false;
+
+
 				}
-				else
-				{
+
+				else if (m_pSpriteCourse->IsActif()) {
+
 					m_pSpriteCourse->DefinirActif(false);
 					_pVecteurVitesse->ModifierComposantX(0);
-					if (!m_pSpriteSaut->IsActif()) {
-						m_pSpriteRepos->DefinirActif(true);
-						*_boStable = true;
-					}
+					m_pSpriteRepos->DefinirActif(true);
+					*_boStable = true;
+
 				}
+
 			}
 			break;
 
@@ -72,61 +70,52 @@ public:
 
 			if (!m_pSpriteSaut->IsActif()) {
 				if (_pEvent->type == SDL_KEYDOWN) {
-					switch (m_pSpriteCourse->IsActif()) {
-					case true:
+
+					if (!m_pSpriteCourse->IsActif()) {
+
+						_pVecteurVitesse->ModifierComposantX(35);
 						m_pSpriteCourse->DefinirEtage(1);
-						_pVecteurVitesse->ModifierComposantX(-35);
-						break;
-					case false:
 						m_pSpriteRepos->DefinirEtage(1);
-						m_pSpriteRepos->DefinirActif(false);
-						m_pSpriteCourse->DefinirEtage(1);
 						m_pSpriteCourse->DefinirActif(true);
-						_pVecteurVitesse->ModifierComposantX(-35);
-						break;
+						m_pSpriteRepos->DefinirActif(false);
+						*_boStable = false;
+
 					}
-					*_boStable = false;
+
 				}
-				else
-				{
+
+				else if (m_pSpriteCourse->IsActif()) {
+
 					m_pSpriteCourse->DefinirActif(false);
 					_pVecteurVitesse->ModifierComposantX(0);
-					if (!m_pSpriteSaut->IsActif()) {
-						m_pSpriteRepos->DefinirActif(true);
-						*_boStable = true;
-					}
+					m_pSpriteRepos->DefinirActif(true);
+					*_boStable = true;
+
 				}
+
 			}
 			break;
 
 		case SDL_SCANCODE_SPACE: // Saut
-			
+
 			if (_pEvent->type == SDL_KEYDOWN && !m_boSpace) {
-				
-				if (!m_pSpriteSaut->IsActif()) {
-					m_boSpace = true;
-					m_pSpriteRepos->DefinirActif(false);
-					m_pSpriteCourse->DefinirActif(false);
-					m_pSpriteSaut->DefinirEtage(m_pSpriteCourse->ObtenirEtage()); // Pour que le saut sois du même bord que la course.
-					m_pSpriteSaut->DefinirActif(true);
-					_pVecteurVitesse->ModifierComposantY(-100);
-					*_boStable = false;
-				}
-			}
-			else if (_pEvent->type == SDL_KEYUP && m_pSpriteSaut->IsActif()) {
-				m_boSpace = false;
+
+				m_boSpace = true;
+				m_pSpriteRepos->DefinirActif(false);
+				m_pSpriteCourse->DefinirActif(false);
+				m_pSpriteSaut->DefinirEtage(m_pSpriteCourse->ObtenirEtage()); // Pour que le saut sois du même bord que la course.
+				m_pSpriteSaut->DefinirActif(true);
+				_pVecteurVitesse->ModifierComposantY(-100);
 				*_boStable = false;
+
 			}
+			else if (_pEvent->type == SDL_KEYUP && m_pSpriteSaut->IsActif())
+				m_boSpace = false;
+
 			break;
 
-		case SDL_SCANCODE_UNKNOWN:
-
-			if (!m_pSpriteSaut->IsActif()) {
-				m_pSpriteRepos->DefinirActif(true);
-				*_boStable = true;
-			}
-			break;
 		}
+
 	}
 
 	void ShowPlayer(SDL_Renderer* _pRenderer, SDL_Rect _RectPlayerDestination) {

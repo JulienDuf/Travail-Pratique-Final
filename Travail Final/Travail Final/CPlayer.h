@@ -13,20 +13,16 @@ class CPlayer {
 
 private:
 
-<<<<<<< HEAD
+
 	bool m_boStable;					// Si le joueur est stable.
 	bool m_boToolActif;					// Si le joueur est en utilisation d'un outil.
 	bool m_boChuteLibre;				// Si le joueur est en chute libre.
 	bool m_boGlissade;					// Si le joueur est en train de glisser :)
-=======
-	bool m_boStable;					// Si le joueur est stable
-	bool m_boToolActif;
-	bool m_boChuteLibre;
-	bool m_boMouvement;
+
 
 	double m_dPositionX;
 	double m_dPositionY;
->>>>>>> origin/Branche-Julien
+
 
 	CListeDC<CProjectile*>* m_pListeTools;
 
@@ -54,7 +50,7 @@ public:
 	// Paramètre: _pToolList, pointe sur la liste d'outils que l'on veut donner au joueur.
 	// Paramètre: _strName, contient le nom que l'on veut donner au joueur.
 	// Retour: Rien (constructeur).
-<<<<<<< HEAD
+
 	CPlayer(string _strEmplacement, SDL_Renderer* _pRenderer, CGestionaire<TTF_Font*>* _pGestionnaireFont, CGestionaire<SDL_Surface*>* _pGestionnaireSurface, CGestionaire<SDL_Texture*>* _pGestionnaireTexture, unsigned int _uiIDTeam, SDL_Rect _RectDestination, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), SDL_Surface* _Rotation(SDL_Surface* _pSurfaceRotation, float _fAngle)) {
 		
 		m_pListeTools = new CListeDC<CProjectile*>();
@@ -68,31 +64,6 @@ public:
 		m_pListeMouvement->AjouterFin(new CJetPack(_strEmplacement, _pGestionnaireFont, new CSprite(_pGestionnaireSurface->ObtenirDonnee("pSurfaceJetPack"), _pGestionnaireTexture->ObtenirDonnee("pTextureJetPack"), _RectDestination, 6, 80, true, false, 2), new CBarreVie(_pGestionnaireTexture, { _RectDestination.x, _RectDestination.y + _RectDestination.h - 2, 0, 0 }, 6), _pRenderer));
 		
 		m_pListeMouvement->AjouterFin(new CDeplacement(_pGestionnaireSurface, _pGestionnaireTexture, _RectDestination));
-=======
-	CPlayer(string _strEmplacement, SDL_Renderer* _pRenderer, CGestionaire<TTF_Font*>* _pGestionnaireFont, CGestionaire<SDL_Surface*>* _pGestionnaireSurface, CGestionaire<SDL_Texture*>* _pGestionnaireTexture, unsigned int _uiIDTeam, SDL_Rect _RectDestination, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), double _Physique(CVecteur2D* _VitesseMissile, SDL_Rect* _DestinationMissile), SDL_Surface* _Rotation(SDL_Surface* _pSurfaceRotation, float _fAngle)) {
-
-		m_pListeTools = new CListeDC<CTool*>();
-		m_pListeDeplacement = new CListeDC<CDeplacement*>();
-
-		m_boStable = false;
-		m_boToolActif = false;
-		m_boChuteLibre = false;
-		m_boMouvement = false;
-
-		m_dPositionX = 0;
-		m_dPositionY = 0;
-
-		m_pListeDeplacement->AjouterFin(new CJetPack(_strEmplacement, _pGestionnaireFont, new CSprite(_pGestionnaireSurface->ObtenirDonnee("pSurfaceJetPack"), _pGestionnaireTexture->ObtenirDonnee("pTextureJetPack"), _RectDestination, 6, 80, true, false, 2), new CBarreVie(_pGestionnaireTexture, { _RectDestination.x, _RectDestination.y + _RectDestination.h - 2, 0, 0 }, 6), _pRenderer));
-
-		m_pListeDeplacement->AjouterFin(new CMouvement(_pGestionnaireSurface, _pGestionnaireTexture, _RectDestination));
->>>>>>> origin/Branche-Julien
-
-		m_pListeMouvement->AllerACurseur(2);
-		m_pListeMouvement->AllerATrieur(0);
-
-		m_pListeTools->AjouterFin(new CMissile(_strEmplacement, _pGestionnaireFont, _pRenderer, _pGestionnaireSurface, _pGestionnaireTexture, _MapDestruction, _CollisionObjetMap, _Rotation));
-
-		m_pListeTools->AjouterFin(new CGrenade(_strEmplacement, _pGestionnaireFont, _pRenderer));
 
 		m_pListeTools->AllerACurseur(0);
 		m_pListeTools->AllerATrieur(0);
@@ -303,10 +274,6 @@ public:
 		return m_boChuteLibre;
 	}
 
-	bool IsMoving(void) {
-
-		return m_boMouvement;
-	}
 
 	double ObtenirPositionX(void) {
 
@@ -322,7 +289,7 @@ public:
 		return m_pVecteurVitesse;
 	}
 
-<<<<<<< HEAD
+
 	CVecteur2D* ObtenirVecteurTool() {
 
 		return m_pListeTools->ObtenirElementCurseur()->ObtenirVecteurVitesse();
@@ -331,11 +298,11 @@ public:
 	SDL_Rect* ObtenirRectTool() {
 
 		return m_pListeTools->ObtenirElementCurseur()->ObtenirRectDestination();
-=======
+	}
 	CVecteur2D* ObtenirVecteurPoids(void) {
 
 		return m_pVecteurPoids;
->>>>>>> origin/Branche-Julien
+
 	}
 
 	float GetHealth(void) {

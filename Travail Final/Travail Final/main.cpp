@@ -584,6 +584,10 @@ void Start(char* _strApplicationFilename) {
 	strEmplacement.append("Armes et Packs\\Mine.png");
 	pGestionaireSurface->AjouterDonnee(IMG_Load(strEmplacement.c_str()), "pSurfaceMine");
 
+	// Chargement de la surface des explosions...
+	strEmplacement = strApplicationPath;
+	strEmplacement.append("Armes et Packs\\Explosion.png");
+	pGestionaireSurface->AjouterDonnee(IMG_Load(strEmplacement.c_str()), "pSurfaceExplosion");
 
 	// Chargement de font du texte des boutons et label de description...
 	strEmplacement = strApplicationPath;
@@ -648,6 +652,7 @@ void Start(char* _strApplicationFilename) {
 	strEmplacement = strApplicationPath;
 	strEmplacement.append("FlecheVent.png");
 	pGestionaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pFlecheVent");
+
 
 	CouleurTexte = { 0, 0, 0, 0 }; // Met la couleur noir.
 

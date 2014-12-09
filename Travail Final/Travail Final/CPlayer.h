@@ -65,6 +65,13 @@ public:
 		
 		m_pListeMouvement->AjouterFin(new CDeplacement(_pGestionnaireSurface, _pGestionnaireTexture, _RectDestination));
 
+		m_pListeMouvement->AllerACurseur(2);
+		m_pListeMouvement->AllerATrieur(0);
+
+		m_pListeTools->AjouterFin(new CMissile(_strEmplacement, _pGestionnaireFont, _pRenderer, _pGestionnaireSurface, _pGestionnaireTexture, _MapDestruction, _CollisionObjetMap, _Rotation));
+
+		m_pListeTools->AjouterFin(new CGrenade(_strEmplacement, _pGestionnaireFont, _pRenderer));
+
 		m_pListeTools->AllerACurseur(0);
 		m_pListeTools->AllerATrieur(0);
 

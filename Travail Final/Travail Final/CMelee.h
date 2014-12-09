@@ -3,18 +3,17 @@ Classe qui gere les armes de melee
 Crée par Samuel Rambaud le 25 novembre 2014
 */
 
-class CMelee : public CTool {
+class CMelee : public CMouvement {
 private:
 
 	float m_fDommage; //Degats de l'arme de melee
-	SDL_Surface* m_pSurfaceSprite; //Surface SDL qui deviendra le sprite
 	CSprite* m_pSprite; //sprite du personnage qui utilise l'arme de melee
-	SDL_Rect m_RectDestinationArme;
 
 	CLabel* m_pLblDescription; // La descripton du missile.
 	string m_strDescription[8];
 	TTF_Font* m_pFont;
 	bool m_boShowDescription;
+	bool m_boSpace;
 
 	SDL_Surface* BlitText(string _strTexte[], unsigned int _uiNombreElementTableau, SDL_Color _Couleur) {
 
@@ -43,7 +42,7 @@ private:
 public:
 
 	// Constructeur de CMelee
-	CMelee(string _strEmplacement, CGestionaire<TTF_Font*>* _pGestionnaireFont, SDL_Renderer* _pRenderer){
+	CMelee(string _strEmplacement, CGestionaire<TTF_Font*>* _pGestionnaireFont, CSprite* _pSprite, SDL_Renderer* _pRenderer) {
 
 		m_boShowDescription = false;
 
@@ -81,10 +80,26 @@ public:
 
 		SDL_Surface *pSDLSurface = BlitText(m_strDescription, 8, { 0, 0, 0 });
 		m_pLblDescription = new CLabel(SDL_CreateTextureFromSurface(_pRenderer, pSDLSurface), { 0, 0, pSDLSurface->w, pSDLSurface->h });
+
+		m_pSprite = _pSprite;
+		m_pSprite->DefinirPositionDeBouclage(0, 1);
+
+		m_boSpace = false;
 	}
 
-	void ShowTool(SDL_Renderer* _pRenderer, SDL_Rect _RectPlayerDestination) {
-		m_pSprite->Render(_pRenderer, m_RectDestinationArme);
+
+	void ReactToEvent(SDL_Event* _pEvent, CVecteur2D* _pVecteurVitesse, bool* _boStable) { 
+		m_pSprite->DefinirActif(true);
+   		if (_pEvent->key.keysym.scancode == SDL_SCANCODE_SPACE && !m_boSpace) {
+			m_boSpace = true;
+			m_pSprite->DefinirPositionDeBouclage(0, 30);
+		}
+	}
+
+	void ShowPlayer(SDL_Renderer* _pRenderer, SDL_Rect _RectPlayerDestination) {
+		if (m_pSprite->ModifierAnnimation())
+			m_pSprite->DefinirPositionDeBouclage(0, 1);
+		m_pSprite->Render(_pRenderer, _RectPlayerDestination);
 	}
 
 	void ShowDescription(SDL_Renderer* _pRenderer) {
@@ -92,13 +107,12 @@ public:
 			m_pLblDescription->ShowControl(_pRenderer);
 	}
 
-	void ReactToEvent(SDL_Event* _pEvent) {}
+	void DefinirActif(bool _boActif) {
 
-	void DefinirActif(bool _boActif) {}
+		m_pSprite->DefinirActif(_boActif);
+	}
 
-	CSprite* ObtenirSprite(string _strNom) { return nullptr; }
-
-	unsigned int ObtenirMunition() { return 0; }
+	CSprite* ObtenirSprite(string _strNom) { return m_pSprite; }
 
 	void UpdateDescription(bool _boShow, SDL_Rect _RectPositionDescription) {
 		

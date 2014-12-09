@@ -1,4 +1,4 @@
-class CTool {
+class CProjectile {
 
 public:
 
@@ -14,4 +14,7 @@ public:
 
 	virtual void ShowDescription(SDL_Renderer* _pRenderer) = 0;
 
+	virtual CVecteur2D* ObtenirVecteurVitesse() = 0;
+
+	virtual SDL_Rect* ObtenirRectDestination() = 0;
 };

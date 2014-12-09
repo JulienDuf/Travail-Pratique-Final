@@ -15,7 +15,7 @@ private:
 
 public:
 
-	CGame(string _strEmplacementMap, CGestionaire<TTF_Font*>* _pGestionnaireFont, CGestionaire<SDL_Surface*>* _pGestionnaireSurface, CGestionaire<SDL_Texture*>* _pGestionnaireTexture, int _iNombreÉquipe, int _iNombreJoueur, CVent* _pVent, bool _VerifierCollisionJoueurMap(CPlayer* _pPlayer, SDL_Rect _RectPlayer, bool* _boCollisionCorps, bool* _boCollisionPieds, unsigned int* _uiXMap, unsigned int* _uiYMap), void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), double _Physique(CVecteur2D* _VitesseMissile, SDL_Rect* _DestinationMissile), SDL_Surface* _Rotation(SDL_Surface* _pSurfaceRotation, float _fAngle), SDL_Renderer* _pRenderer) {
+	CGame(string _strEmplacementMap, CGestionaire<TTF_Font*>* _pGestionnaireFont, CGestionaire<SDL_Surface*>* _pGestionnaireSurface, CGestionaire<SDL_Texture*>* _pGestionnaireTexture, int _iNombreÉquipe, int _iNombreJoueur, CVent* _pVent, bool _VerifierCollisionJoueurMap(CPlayer* _pPlayer, SDL_Rect _RectPlayer, bool* _boCollisionCorps, bool* _boCollisionPieds, unsigned int* _uiXMap, unsigned int* _uiYMap), void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), SDL_Surface* _Rotation(SDL_Surface* _pSurfaceRotation, float _fAngle), SDL_Renderer* _pRenderer) {
 
 		m_boDebutPartie = true;
 
@@ -29,7 +29,7 @@ public:
 
 		for (int i = _iNombreÉquipe; i > 0; i--) {
 
-			m_pTeamList->AjouterFin(new CTeam(_strEmplacementMap, _pRenderer, _pGestionnaireFont, _pGestionnaireSurface, _pGestionnaireTexture, i, _iNombreJoueur, _MapDestruction, _CollisionObjetMap, _Physique, _Rotation));
+			m_pTeamList->AjouterFin(new CTeam(_strEmplacementMap, _pRenderer, _pGestionnaireFont, _pGestionnaireSurface, _pGestionnaireTexture, i, _iNombreJoueur, _MapDestruction, _CollisionObjetMap, _Rotation));
 		}
 		m_pTeamList->AllerDebut();
 
@@ -59,6 +59,8 @@ public:
 		m_pGameMap->ShowMap(_pRenderer);
 
 		PhysiquePlayer();
+		if (m_pToolBar->ObtenirPositionObjetDoubleClick() == 0 && m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirVecteurTool() != nullptr)
+			PhysiqueMissile(m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirVecteurTool(), m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirRectTool());
 
 		for (int i = 0; i < m_pTeamList->ObtenirCompte(); i++) {
 			m_pTeamList->ObtenirElementCurseur()->ShowTeam(_pRenderer);
@@ -73,10 +75,41 @@ public:
 	void ReactToEvent(SDL_Event* _pEvent) {
 
 		m_pToolBar->ReactToEvent(_pEvent, m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif());
-
+		if (m_pToolBar->ObtenirPositionObjetDoubleClick() == 0)
+			int i = 0;
 		m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ReactToEvent(_pEvent, m_pToolBar->ObtenirPositionObjetDoubleClick());
 		
 		m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->UpdateDescription(m_pToolBar->ObtenirPositionObjetSuvol(), m_pToolBar->ObtenirRectPositionSouris());
+	}
+
+	// Fonction effectuant la physique d'un missile.
+	// En entrée:
+	// Param1: Le vecteur de la vitesse du missile.
+	// Param2: La destination du missile.
+	// En sortie: Le nouvel angle du missile.
+	double PhysiqueMissile(CVecteur2D* _VitesseMissile, SDL_Rect* _DestinationMissile) {
+
+		_DestinationMissile->x += _VitesseMissile->ObtenirComposanteX() / 35;
+		_DestinationMissile->y += (_VitesseMissile->ObtenirComposanteY()) / 35;
+
+		if (m_pTimerPhysique->IsDone()) {
+
+			*_VitesseMissile += *m_pGameMap->ObtenirGravite();
+
+			if (_VitesseMissile->ObtenirComposanteY() < 0 && _VitesseMissile->ObtenirComposanteX() >= 0)
+				return (180 / M_PI) * atanf(((-(float)_VitesseMissile->ObtenirComposanteY()) / ((float)_VitesseMissile->ObtenirComposanteX())));
+
+			if (_VitesseMissile->ObtenirComposanteY() >= 0 && _VitesseMissile->ObtenirComposanteX() < 0)
+				return 180 + (180 / M_PI) * atanf((((float)_VitesseMissile->ObtenirComposanteY()) / (-(float)_VitesseMissile->ObtenirComposanteX())));
+
+			if (_VitesseMissile->ObtenirComposanteY() < 0 && _VitesseMissile->ObtenirComposanteX() < 0)
+				return 180 - (180 / M_PI) * atanf(((-(float)_VitesseMissile->ObtenirComposanteY()) / (-(float)_VitesseMissile->ObtenirComposanteX())));
+
+			if (_VitesseMissile->ObtenirComposanteY() >= 0 && _VitesseMissile->ObtenirComposanteX() >= 0)
+				return 360 - (180 / M_PI) * atanf((((float)_VitesseMissile->ObtenirComposanteY()) / ((float)_VitesseMissile->ObtenirComposanteX())));
+
+			m_pTimerPhysique->Start();
+		}
 	}
 
 	void PhysiquePlayer(void) {
@@ -232,10 +265,43 @@ public:
 		float fX = 0; // Valeur en x pour la régression.
 		float fY = 0; // Valeur en y pour la régression.
 		int iN = 0; // Le nombre de fois qu'il y a des "différent de transparent" Sert a savoir le milieu de la régressuion
-		int* iTableau = new int[_RectPiedJoueur.w, _RectPiedJoueur.h]; // Tableau.
-		for (int j = 0; j < _RectPiedJoueur.h; j++) { // Boucler sur toute le rect du pied dans la position de la map.
-			for (int i = 0; i < _RectPiedJoueur.w; i++) {
-				if (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(i + _RectPiedJoueur.x + _RectJoueur.x) + ((j + _RectPiedJoueur.y + _RectJoueur.y) * m_pGameMap->ObtenirSurfaceMap()->w)] != 0) { // Si le pixel est différent de transparent.
+		SDL_Rect _RectRegression;
+		_RectRegression.x = (_RectPiedJoueur.x + _RectJoueur.w) / 2; // Le rect commence au milieu du joueur.
+		_RectRegression.y = _RectPiedJoueur.y + _RectPiedJoueur.h;
+		_RectRegression.w = 15; // Largeur du Rect.
+		int y = 0; // Utiliser pour ma boucle au lieu d'utiliser mon rect pour vérifier.
+		if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 1) {
+			_RectRegression.x = _RectRegression.x - _RectRegression.w;
+			while (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(_RectRegression.x + _RectJoueur.x) + ((y + _RectRegression.y + _RectJoueur.y) * m_pGameMap->ObtenirSurfaceMap()->w)] == 0) {
+
+				_RectRegression.h = y;
+				y++;
+			}
+			y = 0; // Au cas qu'il est entrer dans la premiere boucle.
+			while (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(_RectRegression.x + _RectJoueur.x) + ((y + _RectRegression.y + _RectJoueur.y) * m_pGameMap->ObtenirSurfaceMap()->w)] != 0) {
+
+				_RectRegression.h = abs(y);
+				y--;
+			}
+		}
+
+		else if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 0) {
+			while (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(_RectRegression.w + _RectRegression.x + _RectJoueur.x) + ((y + _RectRegression.y + _RectJoueur.y) * m_pGameMap->ObtenirSurfaceMap()->w)] == 0) {
+
+				_RectRegression.h = y;
+				y++;
+			}
+			y = 0; // Au cas qu'il est entrer dans la premiere boucle.
+			while (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(_RectRegression.w + _RectRegression.x + _RectJoueur.x) + ((y + _RectRegression.y + _RectJoueur.y) * m_pGameMap->ObtenirSurfaceMap()->w)] != 0) {
+
+				_RectRegression.h = abs(y);
+				y--;
+			}
+		}
+		int* iTableau = new int[_RectRegression.w, _RectRegression.h]; // Tableau.
+		for (int j = 0; j < _RectRegression.h; j++) { // Boucler sur toute le rect du pied dans la position de la map.
+			for (int i = 0; i < _RectRegression.w; i++) {
+				if (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(i + _RectRegression.x + _RectJoueur.x) + ((j + _RectRegression.y + _RectJoueur.y) * m_pGameMap->ObtenirSurfaceMap()->w)] = 0) { // Si le pixel est différent de transparent.
 					iTableau[i, j] = 1; // Mettre 1 dans mon tableau.
 					fX += i; // fX va servir a faire la moyenne des X.
 					fY += j; // fX va servir a faire la moyenne des Y.
@@ -247,8 +313,8 @@ public:
 			fX = fX / iN; // moyenne
 			fY = fY / iN; // moyenne
 		}
-		for (int j = 0; j < _RectPiedJoueur.w; j++) {
-			for (int i = 0; i < _RectPiedJoueur.h; i++) {
+		for (int j = 0; j < _RectRegression.w; j++) {
+			for (int i = 0; i < _RectRegression.h; i++) {
 				if (iTableau[i, j] == 1) {
 					iCov += ((i - fX) * (j - fY)); // Calcul pour Y moyens avec le Y moyens.
 					iVar += pow((i - fX), 2);	   // Calcul pour X moyens avec le X moyens.

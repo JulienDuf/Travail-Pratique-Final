@@ -32,33 +32,6 @@ private:
 		}
 	}
 
-	/*
-	// Procédure qui appel tous les ShowTool de mon arbre...
-	void ParcoursShowTool(CNoeudArbreAVL<T>* _pNoeud, SDL_Renderer* _pRenderer, SDL_Rect _RectPlayerDestination) {
-		// S'il a un enfant gauche...
-		if (_pNoeud->ObtenirEG() != nullptr) {
-			ParcoursShowTool(_pNoeud->ObtenirEG(), _pRenderer, _RectPlayerDestination);
-		}
-		_pNoeud->ObtenirElement()->ShowTool(_pRenderer, _RectPlayerDestination);
-		// S'il a un enfant droit
-		if (_pNoeud->ObtenirED() != nullptr) {
-			ParcoursShowTool(_pNoeud->ObtenirED(), _pRenderer, _RectPlayerDestination);
-		}
-	}
-
-	// Procédure qui appel tous les ReactToEvent de mon arbre...
-	void ParcoursReactToEventTool(CNoeudArbreAVL<T>* _pNoeud, SDL_Event* _pEvent, CVecteur2D* _pVecteurVitesse, bool* _pboStable, unsigned int _uiObjetSelectionner) {
-		// S'il a un enfant gauche...
-		if (_pNoeud->ObtenirEG() != nullptr) {
-			ParcoursReactToEventTool(_pNoeud->ObtenirEG(), _pEvent, _pVecteurVitesse, _boStable, _uiObjetSelectionner);
-		}
-		_pNoeud->ObtenirElement()->ReactToEvent(_pEvent, _pVecteurVitesse, _boStable, _uiObjetSelectionner);
-		// S'il a un enfant droit
-		if (_pNoeud->ObtenirED() != nullptr) {
-			ParcoursReactToEventTool(_pNoeud->ObtenirED(), _pEvent, _pVecteurVitesse, _boStable, _uiObjetSelectionner);
-		}
-	}
-	*/
 	// Procédure qui appel tous les ShowControl de mon arbre...
 	void ParcoursControl(CNoeudArbreAVL<T>* _pNoeud, SDL_Renderer* _pSDLRendererParcours) {
 		// S'il a un enfant gauche...
@@ -554,21 +527,7 @@ public:
 	}
 
 	// Méthodes public ...
-	/*
-	// Procédure qui appel tous les ReactToEvent de mon arbre...
-	void ParcoursReactToEventTool(SDL_Event* _pEvent, CVecteur2D* _pVecteurVitesse, bool* _boStable, unsigned int _uiObjetSelectionner) {
-		if (m_pRacine != nullptr) {
-			ParcoursReactToEventTool(m_pRacine, _pEvent, _pVecteurVitesse, _boStable, _uiObjetSelectionner); // Parcour des contrôles.
-		}
-	}
-
-	// Procédure qui appel tous les ShowTool de mon arbre...
-	void ParcoursShowTool(SDL_Renderer* _pRenderer, SDL_Rect _RectPlayerDestination) {
-		if (m_pRacine != nullptr) {
-			ParcoursShowTool(m_pRacine, _pRenderer, _RectPlayerDestination); // Parcour des contrôles.
-		}
-	}
-	*/
+	
 	// Procédure qui parcours les contrôles pour ShowControl...
 	void ParcoursMenu(SDL_Renderer* _pSDLRendererParcours) {
 		if (m_pRacine != nullptr) {

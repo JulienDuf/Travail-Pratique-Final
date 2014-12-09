@@ -1,7 +1,7 @@
 // Classe représentant la gestion d'un jetpack...
 // Créée ppar Gabriel Beaudry le 02 décembre 2014 (gabriel.bdry@gmail.com)
 
-class CJetPack : public CDeplacement {
+class CJetPack : public CMouvement {
 private:
 
 	CSprite* m_pSpriteJetPack;
@@ -154,10 +154,6 @@ public:
 		m_pSpriteJetPack->Render(_pRenderer, _RectPlayerDestination);
 		if (m_pSpriteJetPack->IsActif())
 			m_pBarreDeCarburant->ShowBarre(_pRenderer, { _RectPlayerDestination.x, _RectPlayerDestination.y + _RectPlayerDestination.h + 2, 40, 6 });
-		if (m_boShowDescription) {
-			MiseajourMunition(_pRenderer);
-			m_pLblDescription->ShowControl(_pRenderer);
-		}
 	}
 
 	void ShowDescription(SDL_Renderer* _pRenderer) {

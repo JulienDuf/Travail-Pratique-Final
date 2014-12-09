@@ -22,9 +22,9 @@ using namespace std;
 #include "CGestionaire.h"
 #include "CScrollBar.h"
 #include "CBarrePuissance.h"
-#include "CTool.h"
-#include "CDeplacement.h"
+#include "CProjectile.h"
 #include "CMouvement.h"
+#include "CDeplacement.h"
 #include "CMissile.h"
 #include "CGrenade.h"
 #include "CMelee.h"
@@ -270,36 +270,6 @@ void MapDestruction(int _iRayon, int _iX, int _iY) {
 
 }
 
-// Fonction effectuant la physique d'un missile.
-// En entrée:
-// Param1: Le vecteur de la vitesse du missile.
-// Param2: La destination du missile.
-// En sortie: Le nouvel angle du missile.
-double PhysiqueMissile(CVecteur2D* _VitesseMissile, SDL_Rect* _DestinationMissile) {
-
-	_DestinationMissile->x += _VitesseMissile->ObtenirComposanteX() / 35;
-	_DestinationMissile->y += (_VitesseMissile->ObtenirComposanteY()) / 35;
-
-	if (pTimerPhysique->IsDone()) {
-
-		*_VitesseMissile += *pWindowJeu->ObtenirGame()->ObtenirMap()->ObtenirGravite();
-
-		if (_VitesseMissile->ObtenirComposanteY() < 0 && _VitesseMissile->ObtenirComposanteX() >= 0)
-			return (180 / M_PI) * atanf(((-(float)_VitesseMissile->ObtenirComposanteY()) / ((float)_VitesseMissile->ObtenirComposanteX())));
-
-		if (_VitesseMissile->ObtenirComposanteY() >= 0 && _VitesseMissile->ObtenirComposanteX() < 0)
-			return 180 + (180 / M_PI) * atanf((((float)_VitesseMissile->ObtenirComposanteY()) / (-(float)_VitesseMissile->ObtenirComposanteX())));
-
-		if (_VitesseMissile->ObtenirComposanteY() < 0 && _VitesseMissile->ObtenirComposanteX() < 0)
-			return 180 - (180 / M_PI) * atanf(((-(float)_VitesseMissile->ObtenirComposanteY()) / (-(float)_VitesseMissile->ObtenirComposanteX())));
-
-		if (_VitesseMissile->ObtenirComposanteY() >= 0 && _VitesseMissile->ObtenirComposanteX() >= 0)
-			return 360 - (180 / M_PI) * atanf((((float)_VitesseMissile->ObtenirComposanteY()) / ((float)_VitesseMissile->ObtenirComposanteX())));
-
-		pTimerPhysique->Start();
-	}
-}
-
 // Procédure déterminant la position d'une collision entre un objet et la map, si il y en a une.
 // En entrée:
 // Param1: La surface de l'objet.
@@ -412,7 +382,7 @@ void ClickBoutonDebutPartie(void) {
 	iNombreEquipe = pGestionaireControl->ObtenirDonnee("pLblLRChoixNbrEquipe")->ObtenirElement("PositionLabel") + 2;
 	iNombreJoueur = pGestionaireControl->ObtenirDonnee("pLblLRChoixNbrJoueurEquipe")->ObtenirElement("PositionLabel") + 4;
 
-	pWindowJeu->CreateGame(strTmp, pGestionaireFont, pGestionaireSurface, pGestionaireTexture, iNombreEquipe, iNombreJoueur, new CVent(pGestionaireFont->ObtenirDonnee("pFontBouton"), "250 km/h", CouleurTexte, pGestionaireTexture->ObtenirDonnee("pFlecheVent"), { 1200, 30, 117, 63 }, 180, pWindowJeu->ObtenirRenderer()),  VerifierCollisionJoueurMap, MapDestruction, CollisionObjetMap, PhysiqueMissile, Rotation);
+	pWindowJeu->CreateGame(strTmp, pGestionaireFont, pGestionaireSurface, pGestionaireTexture, iNombreEquipe, iNombreJoueur, new CVent(pGestionaireFont->ObtenirDonnee("pFontBouton"), "250 km/h", CouleurTexte, pGestionaireTexture->ObtenirDonnee("pFlecheVent"), { 1200, 30, 117, 63 }, 180, pWindowJeu->ObtenirRenderer()),  VerifierCollisionJoueurMap, MapDestruction, CollisionObjetMap, Rotation);
 }
 
 // Procédure pour le click sur le bouton quitter...
@@ -613,6 +583,11 @@ void Start(char* _strApplicationFilename) {
 	strEmplacement.append("Armes et Packs\\Missile.png");
 	pGestionaireSurface->AjouterDonnee(IMG_Load(strEmplacement.c_str()), "pSurfaceMissile");
 
+	// L'attaque de mélée...
+	strEmplacement = strApplicationPath;
+	strEmplacement.append("Personnage\\Melee.png");
+	pGestionaireSurface->AjouterDonnee(IMG_Load(strEmplacement.c_str()), "pSurfaceMelee");
+
 	// Chargement de la surface des mines...
 	strEmplacement = strApplicationPath;
 	strEmplacement.append("Armes et Packs\\Mine.png");
@@ -652,6 +627,10 @@ void Start(char* _strApplicationFilename) {
 	strEmplacement.append("Personnage\\jetpack.png");
 	pGestionaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTextureJetPack");
 	
+	// L'attaque de mélée...
+	strEmplacement = strApplicationPath;
+	strEmplacement.append("Personnage\\Melee.png");
+	pGestionaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTextureMelee");
 
 	// Chargement de la texture de la barre de puissance
 	strEmplacement = strApplicationPath;

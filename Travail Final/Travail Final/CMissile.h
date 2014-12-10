@@ -178,7 +178,7 @@ public:
 					m_boMissileLancer = true;
 					float fAngle = m_dAngle;
 					m_pVecteurVitesseMissile = new CVecteur2D((float)m_iForce, fAngle);
-
+					m_uiMunition--;
 					m_pBarrePuissance->ObtenirPosition(&m_RectDestinationMissile.x, &m_RectDestinationMissile.y);
 				}
 				break;

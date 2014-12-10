@@ -155,4 +155,13 @@ public:
 		return &m_RectDestinationGrenade;
 	}
 
+	void DefinirAngle(double _dAngle) {
+
+
+	}
+
+	void DefinirPosition(SDL_Rect _Rect) {
+
+		m_RectDestinationGrenade = _Rect;
+	}
 };

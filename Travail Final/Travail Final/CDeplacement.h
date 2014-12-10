@@ -29,7 +29,7 @@ public:
 
 		m_pSpriteSaut = new CSprite(_pGestionnaireSurface->ObtenirDonnee("pSurfaceSaut"), _pGestionnaireTexture->ObtenirDonnee("pTextureSaut"), _RectDestination, 9, 100, false, false, 2);
 
-		m_pSpriteRepos = new CSprite(_pGestionnaireSurface->ObtenirDonnee("pSurfaceRepos"), _pGestionnaireTexture->ObtenirDonnee("pTextureRepos"), _RectDestination, 1, 50, true, true, 2);
+		m_pSpriteRepos = new CSprite(_pGestionnaireSurface->ObtenirDonnee("pSurfaceRepos"), _pGestionnaireTexture->ObtenirDonnee("pTextureRepos"), _RectDestination, 1, 50, true, false, 2);
 	}
 
 	void ReactToEvent(SDL_Event* _pEvent, CVecteur2D* _pVecteurVitesse, bool* _boStable) {
@@ -73,7 +73,7 @@ public:
 
 					if (!m_pSpriteCourse->IsActif()) {
 
-						_pVecteurVitesse->ModifierComposantX(35);
+						_pVecteurVitesse->ModifierComposantX(-35);
 						m_pSpriteCourse->DefinirEtage(1);
 						m_pSpriteRepos->DefinirEtage(1);
 						m_pSpriteCourse->DefinirActif(true);

@@ -59,10 +59,6 @@ public:
 		m_pGameMap->ShowMap(_pRenderer);
 
 		PhysiquePlayer();
-
-		if (m_pToolBar->ObtenirPositionObjetDoubleClick() == 0 && m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirVecteurTool() != nullptr)
-			PhysiqueMissile(m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirVecteurTool(), m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirRectTool());
-
 		PhysiquePack();
 
 
@@ -86,42 +82,12 @@ public:
 		m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->UpdateDescription(m_pToolBar->ObtenirPositionObjetSuvol(), m_pToolBar->ObtenirRectPositionSouris());
 	}
 
-	// Fonction effectuant la physique d'un missile.
-	// En entrée:
-	// Param1: Le vecteur de la vitesse du missile.
-	// Param2: La destination du missile.
-	// En sortie: Le nouvel angle du missile.
-	double PhysiqueMissile(CVecteur2D* _VitesseMissile, SDL_Rect* _DestinationMissile) {
-
-		_DestinationMissile->x += _VitesseMissile->ObtenirComposanteX() / 35;
-		_DestinationMissile->y += (_VitesseMissile->ObtenirComposanteY()) / 35;
-
-		if (m_pTimerPhysique->IsDone()) {
-
-			*_VitesseMissile += *m_pGameMap->ObtenirGravite();
-
-			if (_VitesseMissile->ObtenirComposanteY() < 0 && _VitesseMissile->ObtenirComposanteX() >= 0)
-				return (180 / M_PI) * atanf(((-(float)_VitesseMissile->ObtenirComposanteY()) / ((float)_VitesseMissile->ObtenirComposanteX())));
-
-			if (_VitesseMissile->ObtenirComposanteY() >= 0 && _VitesseMissile->ObtenirComposanteX() < 0)
-				return 180 + (180 / M_PI) * atanf((((float)_VitesseMissile->ObtenirComposanteY()) / (-(float)_VitesseMissile->ObtenirComposanteX())));
-
-			if (_VitesseMissile->ObtenirComposanteY() < 0 && _VitesseMissile->ObtenirComposanteX() < 0)
-				return 180 - (180 / M_PI) * atanf(((-(float)_VitesseMissile->ObtenirComposanteY()) / (-(float)_VitesseMissile->ObtenirComposanteX())));
-
-			if (_VitesseMissile->ObtenirComposanteY() >= 0 && _VitesseMissile->ObtenirComposanteX() >= 0)
-				return 360 - (180 / M_PI) * atanf((((float)_VitesseMissile->ObtenirComposanteY()) / ((float)_VitesseMissile->ObtenirComposanteX())));
-
-			m_pTimerPhysique->Start();
-		}
-	}
-
 	void PhysiquePlayer(void) {
 
 		if (!m_boDebutPartie) {
 
 			if (m_pTimerPhysique->IsDone()) {
-
+				PhysiqueTool();
 				CPlayer* pPlayerActif = m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif();
 				SDL_Rect RectTmp = pPlayerActif->ObtenirRectDestination();
 				double dComposanteX = pPlayerActif->ObtenirPositionX();
@@ -134,34 +100,8 @@ public:
 				unsigned int _uiY;
 				SDL_Rect RectExplosion;
 
-				if (!pPlayerActif->IsStable()) {
-
-					*pPlayerActif->ObtenirVecteurVitesse() += *m_pGameMap->ObtenirGravite();
-					RectTmp.x += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35;
-					RectTmp.y += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35;
-
-					if (pPlayerActif->ObtenirSpriteCourse()->IsActif())
-						pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination()));
-					
-					DetectionCollisionPack(pPlayerActif, &boExplosion, &RectExplosion);
-
-				}
-				if (m_pVerifierCollisionJoueurMap(pPlayerActif, RectTmp, &boCorps, &boPied, &_uiX, &_uiY)) {
-					RectTmp.y -= (RectTmp.h - _uiY);
-					pPlayerActif->ObtenirVecteurVitesse()->ModifierComposantY(0);
-				}
-
 				pPlayerActif->ModifierRectDestination(RectTmp);
 				pPlayerActif->ObtenirVecteurPoids()->ModifierComposantY(m_pGameMap->ObtenirGravite()->ObtenirComposanteY());
-
-				if (pPlayerActif->IsFreeFalling()) {
-					*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
-					dComposanteX += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35;
-					dComposanteY += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35;
-
-					if (pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() == 0)
-						pPlayerActif->ModifierChuteLibreJoueur(false);
-				}
 
 				*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
 				dComposanteX += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35;
@@ -185,11 +125,11 @@ public:
 
 				else {
 
-					if (boCorps && pPlayerActif->ObtenirSpriteRepos()->ObtenirEtage() == 0)
+					if (boCorps && pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 0)
 						dComposanteX -= (RectTmp.w - _uiX);
 
-					if (boCorps && pPlayerActif->ObtenirSpriteRepos()->ObtenirEtage() == 1)
-						dComposanteX += (pPlayerActif->ObtenirHitboxCorpsGauche().w - _uiX);
+					if (boCorps && pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1)
+						dComposanteX += _uiX;
 
 					if (boPied && !boCorps)
 						dComposanteY -= (RectTmp.h - _uiY);
@@ -313,6 +253,41 @@ public:
 			}
 
 			pPackListTmp->AllerSuivantCurseur();
+		}
+	}
+
+	void PhysiqueTool(void) {
+
+		CProjectile* pProjectileTmp;
+		SDL_Rect* RectTmp;
+		CVecteur2D* pVecteurVitesse;
+
+		if (m_pToolBar->ObtenirPositionObjetDoubleClick() == 0)  {
+
+			pProjectileTmp = m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirMissile();
+			RectTmp = pProjectileTmp->ObtenirRectDestination();
+			pVecteurVitesse = pProjectileTmp->ObtenirVecteurVitesse();
+
+			if (pVecteurVitesse != nullptr) {
+
+				RectTmp->x += pVecteurVitesse->ObtenirComposanteX() / 35;
+				RectTmp->y += pVecteurVitesse->ObtenirComposanteY() / 35;
+
+
+				*pVecteurVitesse += *m_pGameMap->ObtenirGravite();
+
+				if (pVecteurVitesse->ObtenirComposanteY() < 0 && pVecteurVitesse->ObtenirComposanteX() >= 0)
+					pProjectileTmp->DefinirAngle((180 / M_PI) * atanf(((-(float)pVecteurVitesse->ObtenirComposanteY()) / ((float)pVecteurVitesse->ObtenirComposanteX()))));
+
+				if (pVecteurVitesse->ObtenirComposanteY() >= 0 && pVecteurVitesse->ObtenirComposanteX() < 0)
+					pProjectileTmp->DefinirAngle(180  + (180 / M_PI) * atanf((((float)pVecteurVitesse->ObtenirComposanteY()) / (-(float)pVecteurVitesse->ObtenirComposanteX()))));
+
+				if (pVecteurVitesse->ObtenirComposanteY() < 0 && pVecteurVitesse->ObtenirComposanteX() < 0)
+					pProjectileTmp->DefinirAngle(180 - (180 / M_PI) * atanf(((-(float)pVecteurVitesse->ObtenirComposanteY()) / (-(float)pVecteurVitesse->ObtenirComposanteX()))));
+
+				if (pVecteurVitesse->ObtenirComposanteY() >= 0 && pVecteurVitesse->ObtenirComposanteX() >= 0)
+					pProjectileTmp->DefinirAngle(360 - (180 / M_PI) * atanf((((float)pVecteurVitesse->ObtenirComposanteY()) / ((float)pVecteurVitesse->ObtenirComposanteX()))));
+			}
 		}
 	}
 

@@ -19,4 +19,9 @@ public:
 	virtual CVecteur2D* ObtenirVecteurVitesse() = 0;
 
 	virtual SDL_Rect* ObtenirRectDestination() = 0;
+
+	virtual void DefinirAngle(double _dAngle) = 0;
+
+	virtual void DefinirPosition(SDL_Rect _Rect) = 0;
+
 };

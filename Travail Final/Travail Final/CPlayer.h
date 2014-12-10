@@ -214,22 +214,22 @@ public:
 	}
 
 	CSprite* ObtenirSpriteCourse() {
-		m_pListeMouvement->AllerATrieur(1);
+		m_pListeMouvement->AllerATrieur(2);
 		return m_pListeMouvement->ObtenirElementTrieur()->ObtenirSprite("Course");
 	}
 
 	CSprite* ObtenirSpriteRepos() {
-		m_pListeMouvement->AllerATrieur(1);
+		m_pListeMouvement->AllerATrieur(2);
 		return m_pListeMouvement->ObtenirElementTrieur()->ObtenirSprite("Repos");
 	}
 
 	CSprite* ObtenirSpriteSaut() {
-		m_pListeMouvement->AllerATrieur(1);
+		m_pListeMouvement->AllerATrieur(2);
 		return m_pListeMouvement->ObtenirElementTrieur()->ObtenirSprite("Saut");
 	}
 
 	CSprite* ObtenirSpriteJetPack() {
-		m_pListeMouvement->AllerATrieur(0);
+		m_pListeMouvement->AllerATrieur(1);
 		return m_pListeMouvement->ObtenirElementTrieur()->ObtenirSprite("");
 	}
 
@@ -306,10 +306,17 @@ public:
 
 		return m_pListeTools->ObtenirElementCurseur()->ObtenirRectDestination();
 	}
+
 	CVecteur2D* ObtenirVecteurPoids(void) {
 
 		return m_pVecteurPoids;
 
+	}
+
+	CProjectile* ObtenirMissile(void) {
+
+		m_pListeTools->AllerACurseur(0);
+		return m_pListeTools->ObtenirElementCurseur();
 	}
 
 	float GetHealth(void) {

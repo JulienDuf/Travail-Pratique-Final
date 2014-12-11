@@ -6,17 +6,15 @@ Crée par Samuel Rambaud le 25 novembre 2014
 class CGrenade: public CProjectile {
 private:
 
-	bool m_boMissileLancer; // Si le missile est lancé
-	double m_dAngle; // L'angle de départ du missile.
-	int m_iForce; // Force de départ du missile.
-	unsigned int m_uiMunition; // Le nombre de missiles disponible.
-
-	CVecteur2D* m_pVecteurVitesseGrenade;
-	SDL_Point  m_PointRotation; // Le poitn de rotation.
-	SDL_Surface* m_pSDLSurfaceMissile; // La surface du missile.
-	SDL_Surface* m_pSDLSurfaceMissileRotation; // La surface du missile.
-	SDL_Rect m_RectDestinationGrenade; // La destination du missile dans la fenêtre.
+	int m_iAngle; //Angle du lancement de la grenade
+	int m_iForce; //Force du lancement de la grenade
+	unsigned int m_uiMunition;
 	CBarrePuissance* m_pBarrePuissance; //Barre de puissance de la grenade
+	CVecteur2D* m_pVecteurVitesseGrenade;
+
+	SDL_Texture* m_pTexture; //Texture de la grenade
+	SDL_Surface* m_pSurface;
+	SDL_Rect m_RectDestinationGrenade; //Position de la grenade
 
 	CLabel* m_pLblDescription; // La descripton du missile.
 	string m_strDescription[8];
@@ -98,13 +96,27 @@ public:
 		SDL_Surface *pSDLSurface = BlitText(m_strDescription, 7, { 0, 0, 0 });
 		m_pLblDescription = new CLabel(SDL_CreateTextureFromSurface(_pRenderer, pSDLSurface), { 0, 0, pSDLSurface->w, pSDLSurface->h });
 
-		
+		//Initialisation de la texture
+		string strSourceImage = _strEmplacement;
+		strSourceImage.append("\\Armes et Packs\\Grenade.png");
+		m_pTexture = IMG_LoadTexture(_pRenderer, strSourceImage.c_str());
+
+		//initialisation des vecteurs de la grenade
+		m_iAngle = 0;
+		m_iForce = 0;
+		//m_pBarrePuissance = new CBarrePuissance(_strSourceImage);
+
+		//initialisation de la position de la grenade
 		m_RectDestinationGrenade.h = 24;
 		m_RectDestinationGrenade.w = 33;
 		m_RectDestinationGrenade.y = 0;
 		m_RectDestinationGrenade.x = 0;
 	}
 	
+	void ReactionColision(int iX, int iY) {
+	
+	}
+
 	void ShowTool(SDL_Renderer* _pRenderer, SDL_Rect _RectPlayerDestination) {}
 
 	void ShowDescription(SDL_Renderer* _pRenderer) {
@@ -113,6 +125,7 @@ public:
 			m_pLblDescription->ShowControl(_pRenderer);
 		}
 	}
+	
 	void ReactToEvent(SDL_Event* _pEvent) {}
 
 	void DefinirActif(bool _boActif) {}
@@ -146,6 +159,11 @@ public:
 	SDL_Rect* ObtenirRectDestination() {
 
 		return &m_RectDestinationGrenade;
+	}
+
+	SDL_Surface* ObtenirSurface(void) {
+
+		return m_pSurface;
 	}
 
 	void DefinirAngle(double _dAngle) {

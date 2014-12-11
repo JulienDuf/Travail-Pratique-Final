@@ -127,24 +127,22 @@ public:
 		m_boMissileLancer = false;
 	}
 
+	void ReactionColision(int iX, int iY) {
+	
+		m_pMapDestruction(50, iX, iY);
+		m_boMissileLancer = false;
+
+		delete m_pVecteurVitesseMissile;
+		m_pVecteurVitesseMissile = nullptr;
+	}
+
 	void ShowTool(SDL_Renderer* _pRenderer, SDL_Rect _RectPlayerDestination) {
 
 		if (m_boMissileLancer) {
 
-			int iX, iY;
-
 			SDL_Texture* pTextureTMP = SDL_CreateTextureFromSurface(_pRenderer, m_pSDLSurfaceMissileRotation);
 			SDL_RenderCopy(_pRenderer, pTextureTMP, NULL, &m_RectDestinationMissile);
 			SDL_DestroyTexture(pTextureTMP);
-
-			m_pCollisionMap(m_pSDLSurfaceMissileRotation, m_RectDestinationMissile, &iX, &iY);
-			
-			if (iX != 0 && iY != 0) {
-
-				m_pMapDestruction(50, iX, iY);
-
-				m_boMissileLancer = false;
-			}
 			
 		}
 		else {
@@ -178,7 +176,7 @@ public:
 					m_boMissileLancer = true;
 					float fAngle = m_dAngle;
 					m_pVecteurVitesseMissile = new CVecteur2D((float)m_iForce, fAngle);
-					m_uiMunition--;
+
 					m_pBarrePuissance->ObtenirPosition(&m_RectDestinationMissile.x, &m_RectDestinationMissile.y);
 				}
 				break;
@@ -224,6 +222,11 @@ public:
 	SDL_Rect* ObtenirRectDestination() {
 
 		return &m_RectDestinationMissile;
+	}
+
+	SDL_Surface* ObtenirSurface(void) {
+
+		return m_pSDLSurfaceMissileRotation;
 	}
 
 	void DefinirAngle(double _dAngle) {

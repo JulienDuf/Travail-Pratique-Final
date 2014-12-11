@@ -492,7 +492,7 @@ public:
 
 							*_boExplosion = pPackTmp->Use(_pPlayer);
 							*_RectExplosion = pPackTmp->GetRectDestination();
-							m_pGameMap->ObtenirPackList()->Retirer(true);
+							//m_pGameMap->ObtenirPackList()->Retirer(true);
 							return true;
 
 						}

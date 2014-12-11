@@ -242,6 +242,7 @@ public:
 				if (CollisionObjetMap(pPackListTmp->ObtenirElementCurseur()->GetSurface(), RectTmp, &iX, &iY)) {
 
 					RectTmp.y -= RectTmp.h - iY;
+					pPackListTmp->ObtenirElementCurseur()->ModifierAnlge(RegressionLineaire({ 0, 0, RectTmp.w, RectTmp.h }, RectTmp));
 					pPackListTmp->ObtenirElementCurseur()->ModifierStabilePack(true);
 
 					pPackListTmp->ObtenirElementCurseur()->ModifierAnlge(RegressionLineaire({0,0,RectTmp.w,RectTmp.h}, RectTmp));
@@ -291,8 +292,8 @@ public:
 			
 				if (ColisionMissile(pProjectileTmp->ObtenirSurface(), *pProjectileTmp->ObtenirRectDestination(), &iX, &iY)) {
 
-					pProjectileTmp->ReactionColision(iX, iY);
-					DomageExplosion({ iX, iY }, 50);
+					pProjectileTmp->ReactionColision(pProjectileTmp->ObtenirRectDestination()->x + iX, pProjectileTmp->ObtenirRectDestination()->y + iY);
+					DomageExplosion({ pProjectileTmp->ObtenirRectDestination()->x + iX, pProjectileTmp->ObtenirRectDestination()->y }, 50);
 				}
 			}
 		}
@@ -337,8 +338,8 @@ public:
 		float fY = 0; // Valeur en y pour la régression.
 		int iN = 0; // Le nombre de fois qu'il y a des "différent de transparent" Sert a savoir le milieu de la régressuion
 		SDL_Rect _RectRegression;
-		_RectRegression.x = (_RectPiedJoueur.x + _RectJoueur.w) / 2; // Le rect commence au milieu du joueur.
-		_RectRegression.y = _RectPiedJoueur.y + _RectPiedJoueur.h;
+		_RectRegression.x = (_RectPiedJoueur.x + _RectJoueur.x + _RectJoueur.w) / 2; // Le rect commence au milieu du joueur.
+		_RectRegression.y = _RectPiedJoueur.y + _RectJoueur.y + _RectPiedJoueur.h;
 		_RectRegression.w = 15; // Largeur du Rect.
 		int y = 0; // Utiliser pour ma boucle au lieu d'utiliser mon rect pour vérifier.
 		if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 1) {
@@ -372,7 +373,7 @@ public:
 		int* iTableau = new int[_RectRegression.w, _RectRegression.h]; // Tableau.
 		for (int j = 0; j < _RectRegression.h; j++) { // Boucler sur toute le rect du pied dans la position de la map.
 			for (int i = 0; i < _RectRegression.w; i++) {
-				if (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(i + _RectRegression.x + _RectJoueur.x) + ((j + _RectRegression.y + _RectJoueur.y) * m_pGameMap->ObtenirSurfaceMap()->w)] = 0) { // Si le pixel est différent de transparent.
+				if (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(i + _RectRegression.x) + ((j + _RectRegression.y) * m_pGameMap->ObtenirSurfaceMap()->w)] = 0) { // Si le pixel est différent de transparent.
 					iTableau[i, j] = 1; // Mettre 1 dans mon tableau.
 					fX += i; // fX va servir a faire la moyenne des X.
 					fY += j; // fX va servir a faire la moyenne des Y.
@@ -431,8 +432,6 @@ public:
 		*_iX = 0;
 		*_iY = 0;
 
-		unsigned int ix, iy;
-
 		SDL_Surface* pSDLSurfaceMap = m_pGameMap->ObtenirSurfaceMap();
 
 		for (int y = 0; y < _RectDestination.h; y++) {
@@ -442,8 +441,8 @@ public:
 
 					if ((((unsigned int*)pSDLSurfaceMap->pixels)[(y + _RectDestination.y) * pSDLSurfaceMap->w + (x + _RectDestination.x)] != 0) && (((unsigned int*)_pSDLSurface->pixels)[(y) * _pSDLSurface->w + (x)] != 0)) {
 						
-						*_iX = x + _RectDestination.x;
-						*_iY = y + _RectDestination.y;
+						*_iX = x;
+						*_iY = y;
 						
 						return true;
 					}

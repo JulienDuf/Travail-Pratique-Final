@@ -118,3 +118,13 @@ et le reactToEvent du joueur. Je pensais améliorer le fonctionnement du mouvemen
 nul. Mmmmh il faudra réparer ça!
 
 ---------------------------------------------------------------------------------------------------------------------
+
+Jeudi 11 décembre 2014
+
+12:00 PM
+
+J'ai travaillé sur le déplacement, mais ce n'est pas fini. Il faut complèetement changer la façon dont il est
+fait. Maintenant au moins les personnages ne montent plus n'importe quelle pente. Par contre, ils peuvent
+parfois marcher au travers de la map.
+
+----------------------------------------------------------------------------------------------------------------------

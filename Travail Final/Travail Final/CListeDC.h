@@ -304,6 +304,44 @@ public:
 	}
 
 	/*
+	Fonction permettant de retirer le cellule à la position du curseur et de faire pointer celui-ci sur la cellule suivante, sauf s'il n'y en a pas.
+	Si la modification a peut avoir lieu, retourn vrai, sinon, retourne faux.
+	Prend un bool qui dit s'il faut supprimer l'élément dans la cellule.
+	*/
+	bool RetirerTrieur(bool _boSupprimer) {
+		// Si le curseur n'est pas null...
+		if (m_pTrieur != nullptr) {
+			m_pTrieur->ObtenirPrecedente()->DefinirSuivante(m_pTrieur->ObtenirSuivante());
+			m_pTrieur->ObtenirSuivante()->DefinirPrecedente(m_pTrieur->ObtenirPrecedente());
+			CCelluleListeDC<T>* pCelltmpListeDC = m_pTrieur; // Pointeur de type CCelluleListeDC sur m_pCurseur.
+			// Si le curseur n'est pas sur m_pDernière... il sera égal à sa suivante
+			if (m_pTrieur != m_pDerniere)
+				m_pTrieur = m_pTrieur->ObtenirSuivante();
+			if (m_pTrieur == m_pCurseur)
+				m_pCurseur->ObtenirPrecedente();
+			// Sinon il est égal à sa précédente pour ne pas revenir au début.
+			else
+			{
+				m_pTrieur = m_pTrieur->ObtenirPrecedente();
+				m_pTrieur = m_pTrieur;
+			}
+			// Si l'utilisateur veut effacer l'élément dans la cellule.
+			if (_boSupprimer)
+				delete pCelltmpListeDC->ObtenirElement();
+			delete pCelltmpListeDC;
+			m_uiCompte--; // Décrémentation du compte.
+			// Si le compte est à zéro, tout mettre à nullptr.
+			if (m_uiCompte == 0) {
+				m_pTrieur = nullptr;
+				m_pDerniere = nullptr;
+			}
+			return true;
+		}
+		else
+			return false;
+	}
+
+	/*
 	Procédure permettant d'ajouter une cellule au début de la liste
 	Prend un élément à ajouter.
 	*/

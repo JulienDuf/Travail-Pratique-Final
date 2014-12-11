@@ -275,6 +275,8 @@ public:
 				RectTmp->x += pVecteurVitesse->ObtenirComposanteX() / 35;
 				RectTmp->y += pVecteurVitesse->ObtenirComposanteY() / 35;
 
+				if (RectTmp->x >= 1366 || RectTmp->x + RectTmp->w <= 0 || RectTmp->y >= 768)
+					pProjectileTmp->ReactionColision(0, 0);
 
 				*pVecteurVitesse += *m_pGameMap->ObtenirGravite();
 
@@ -459,41 +461,66 @@ public:
 		SDL_Rect RectSourcePlayer;
 		SDL_Surface* pSurfacePlayer;
 
+		int xPlayer, xMissile, yPlayer, yMissile;
+
+		m_pTeamList->AllerATrieur(0);
 		for (int i = 0; i < m_pTeamList->ObtenirCompte(); i++) {
 
-			pPlayerListTmp = m_pTeamList->ObtenirElementCurseur()->obtenirListeTeam();
+			pPlayerListTmp = m_pTeamList->ObtenirElementTrieur()->obtenirListeTeam();
 
+			pPlayerListTmp->AllerATrieur(0);
 			for (int j = 0; j < pPlayerListTmp->ObtenirCompte(); j++) {
 
-				RectPlayer = pPlayerListTmp->ObtenirElementCurseur()->ObtenirRectDestination();
-				RectSourcePlayer = pPlayerListTmp->ObtenirElementCurseur()->ObtenirSpriteRepos()->ObtenirRectSource();
-				pSurfacePlayer = pPlayerListTmp->ObtenirElementCurseur()->ObtenirSpriteRepos()->ObtenirSurface();
+				RectPlayer = pPlayerListTmp->ObtenirElementTrieur()->ObtenirRectDestination();
+				RectSourcePlayer = pPlayerListTmp->ObtenirElementTrieur()->ObtenirSpriteRepos()->ObtenirRectSource();
+				pSurfacePlayer = pPlayerListTmp->ObtenirElementTrieur()->ObtenirSpriteRepos()->ObtenirSurface();
 
-				if ((_RectDestination.x >= RectPlayer.x && _RectDestination.x <= (RectPlayer.x + RectPlayer.w)) && (_RectDestination.y >= RectPlayer.y && _RectDestination.y <= (RectPlayer.y + RectPlayer.h))) {
+				if ((_RectDestination.x + _RectDestination.w >= RectPlayer.x && _RectDestination.x <= (RectPlayer.x + RectPlayer.w)) && (_RectDestination.y + _RectDestination.h >= RectPlayer.y && _RectDestination.y <= (RectPlayer.y + RectPlayer.h))) {
 
-					for (int y = 0; y < _RectDestination.h; y++) {
-						for (int x = 0; x < _RectDestination.w; x++) {
+					if (_RectDestination.x + _RectDestination.w >= RectPlayer.x && _RectDestination.x < RectPlayer.x && _RectDestination.y >= RectPlayer.y) {
+
+						xPlayer = 0;
+						yPlayer = _RectDestination.y - RectPlayer.y;
+						xMissile = RectPlayer.x - _RectDestination.x;
+						yMissile = 0;
+					}
+
+					else if (_RectDestination.x >= RectPlayer.x && _RectDestination.x + _RectDestination.w <= RectPlayer.x + RectPlayer.w && _RectDestination.y >= RectPlayer.y) {
+
+						xPlayer = RectPlayer.x - _RectDestination.x;
+						yPlayer = _RectDestination.y - RectPlayer.y;
+						xMissile = 0;
+						yMissile = 0;
+					}
+
+					else if (_RectDestination.x <= RectPlayer.x + RectPlayer.w && _RectDestination.x + _RectDestination.w > RectPlayer.x) {
+
+
+
+
+					}
+
+					for (y = _RectDestination.y - RectPlayer.y, y2 = 0; y < RectPlayer.h && y2 < _RectDestination.h; y++, y2++) {
+						for (x = abs(_RectDestination.x - RectPlayer.x), x2 = 0; x < RectPlayer.w && x2 < _RectDestination.x; x++, x2++) {
 
 							if (x >= 0 && x <= 1366 && y >= 0 && y <= 768) {
 
-								if (x <= RectPlayer.w && y <= RectPlayer.h) {
+								if (((unsigned int*)pSurfacePlayer->pixels)[(y + RectSourcePlayer.y) * pSurfacePlayer->w + (x + RectSourcePlayer.x)] != 0 && ((unsigned int*)_pSurfaceMissile->pixels)[(y2) * _pSurfaceMissile->w + (x2)] != 0) {
 
-									if (((unsigned int*)pSurfacePlayer->pixels)[(y + RectSourcePlayer.y) * pSurfacePlayer->w + (x + RectSourcePlayer.x)] != 0 && ((unsigned int*)_pSurfaceMissile->pixels)[(y) * _pSurfaceMissile->w + (x)] != 0) {
+									*_iX = x;
+									*_iY = y;
 
-										*_iX = x + _RectDestination.x;
-										*_iY = y + _RectDestination.y;
-
-										return true;
-									}
+									return true;
+									
 								}
 							}
 						}
 					}
 				}
-				pPlayerListTmp->AllerSuivantCurseur();
+				pPlayerListTmp->AllerSuivantTrieur();
 			}
 
-			m_pTeamList->AllerSuivantCurseur();
+			m_pTeamList->AllerSuivantTrieur();
 		}
 
 		return CollisionObjetMap(_pSurfaceMissile, _RectDestination, _iX, _iY);
@@ -608,13 +635,15 @@ public:
 		int iDistanceRayon;
 		float fPourcentage;
 
+		m_pTeamList->AllerATrieur(0);
 		for (int i = 0; i < m_pTeamList->ObtenirCompte(); i++) {
 
-			pPlayerList = m_pTeamList->ObtenirElementCurseur()->obtenirListeTeam();
+			pPlayerList = m_pTeamList->ObtenirElementTrieur()->obtenirListeTeam();
 
+			pPlayerList->AllerATrieur(0);
 			for (int j = 0; j < pPlayerList->ObtenirCompte(); j++) {
 
-				pPlayerTmp = pPlayerList->ObtenirElementCurseur();
+				pPlayerTmp = pPlayerList->ObtenirElementTrieur();
 				RectDestinationPlayer = pPlayerTmp->ObtenirRectDestination();
 
 				if (RectDestinationPlayer.x + RectDestinationPlayer.w >= _RectPositionExplosion.x - _iRayon && _RectPositionExplosion.x > RectDestinationPlayer.x && (_RectPositionExplosion.y - (RectDestinationPlayer.y + RectDestinationPlayer.h)) < 5 && (_RectPositionExplosion.y - (RectDestinationPlayer.y + RectDestinationPlayer.h)) > -5) {
@@ -631,39 +660,43 @@ public:
 					pPlayerTmp->SetHealth(pPlayerTmp->GetHealth() * (1 - fPourcentage));
 				}
 
-				if (pPlayerTmp->GetHealth() <= 0)
-					pPlayerList->Retirer(true);
-
-				else
-					pPlayerList->AllerSuivantCurseur();
-
-			}
-
-			pPackList = m_pGameMap->ObtenirPackList();
-
-			pPackList->AllerDebut();
-
-			for (int i = 0; i < pPackList->ObtenirCompte(); i++) {
-
-				pPackTmp = pPackList->ObtenirElementCurseur();
-				RectDestinationPack = pPackTmp->GetRectDestination();
-
-				if (RectDestinationPack.x + RectDestinationPack.w >= (_RectPositionExplosion.x - _iRayon) && _RectPositionExplosion.x >= RectDestinationPack.x) {
-
-					pPackTmp->Use(nullptr);
-					m_pGameMap->ObtenirPackList()->Retirer(true);
-				}
-
-				else if ((RectDestinationPack.x) <= (_RectPositionExplosion.x + _iRayon) && _RectPositionExplosion.x <= RectDestinationPack.x){
-
-					pPackTmp->Use(nullptr);
-					m_pGameMap->ObtenirPackList()->Retirer(true);
+				if (pPlayerTmp->GetHealth() <= 0) {
+					pPlayerList->RetirerTrieur(true);
+					if (pPlayerList->ObtenirCompte() == 0)
+						m_pTeamList->RetirerTrieur(true);
 				}
 
 				else
-					pPackList->AllerSuivantCurseur();
+					pPlayerList->AllerSuivantTrieur();
+
 			}
+			m_pTeamList->AllerSuivantTrieur();
 		}
+		pPackList = m_pGameMap->ObtenirPackList();
+
+		pPackList->AllerDebut();
+
+		for (int i = 0; i < pPackList->ObtenirCompte(); i++) {
+
+			pPackTmp = pPackList->ObtenirElementCurseur();
+			RectDestinationPack = pPackTmp->GetRectDestination();
+
+			if (RectDestinationPack.x + RectDestinationPack.w >= (_RectPositionExplosion.x - _iRayon) && _RectPositionExplosion.x >= RectDestinationPack.x) {
+
+				pPackTmp->Use(nullptr);
+				m_pGameMap->ObtenirPackList()->Retirer(true);
+			}
+
+			else if ((RectDestinationPack.x) <= (_RectPositionExplosion.x + _iRayon) && _RectPositionExplosion.x <= RectDestinationPack.x){
+
+				pPackTmp->Use(nullptr);
+				m_pGameMap->ObtenirPackList()->Retirer(true);
+			}
+
+			else
+				pPackList->AllerSuivantCurseur();
+		}
+		
 	}
 
 	double CalculerPente(CPlayer* _pPlayer) {

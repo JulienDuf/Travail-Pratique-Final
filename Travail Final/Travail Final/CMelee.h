@@ -92,13 +92,21 @@ public:
 		m_pSprite->DefinirActif(true);
    		if (_pEvent->key.keysym.scancode == SDL_SCANCODE_SPACE && !m_boSpace) {
 			m_boSpace = true;
+			m_pSprite->DefinirboBoucle(false);
 			m_pSprite->DefinirPositionDeBouclage(0, 30);
 		}
 	}
 
 	void ShowPlayer(SDL_Renderer* _pRenderer, SDL_Rect _RectPlayerDestination) {
-		if (m_pSprite->ModifierAnnimation())
+		if (m_pSprite->ModifierAnnimation()) { // Fin du tour...
 			m_pSprite->DefinirPositionDeBouclage(0, 1);
+			m_pSprite->DefinirActif(true);
+			m_pSprite->DefinirboBoucle(true);
+			m_boSpace = false;
+		}
+		_RectPlayerDestination.w += 20;
+		_RectPlayerDestination.h += 10;
+		_RectPlayerDestination.y -= 5;
 		m_pSprite->Render(_pRenderer, _RectPlayerDestination);
 	}
 
@@ -110,6 +118,10 @@ public:
 	void DefinirActif(bool _boActif) {
 
 		m_pSprite->DefinirActif(_boActif);
+	}
+
+	unsigned int ObtenirMunition() {
+		return NULL;
 	}
 
 	CSprite* ObtenirSprite(string _strNom) { return m_pSprite; }

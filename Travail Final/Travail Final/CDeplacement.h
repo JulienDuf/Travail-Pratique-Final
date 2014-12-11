@@ -164,4 +164,8 @@ public:
 			return m_pSpriteRepos;
 		}
 	}
+
+	unsigned int ObtenirMunition() {
+		return NULL;
+	}
 };

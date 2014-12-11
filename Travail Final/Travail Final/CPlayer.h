@@ -6,7 +6,7 @@
 // Modification : -Finalisation des mouvements.
 // 02 décembre 2014, gabriel beaudry (gabriel.bdry@gmail.com)
 // -Modification du reacttoevent pour la gestion des objets de la toolbar, début du jetpack, ajout de la classe jetpack
-//Fin des modifications.
+// Fin des modifications.
 
 
 class CPlayer {
@@ -59,7 +59,7 @@ public:
 		m_boStable = false;
 		m_boToolActif = false;
 		
-		m_pListeMouvement->AjouterFin(new CMelee(_strEmplacement, _pGestionnaireFont, new CSprite(_pGestionnaireSurface->ObtenirDonnee("pSurfaceMelee"), _pGestionnaireTexture->ObtenirDonnee("pTextureMelee"), _RectDestination, 30, 30, false, true, 2), _pRenderer));
+		m_pListeMouvement->AjouterFin(new CMelee(_strEmplacement, _pGestionnaireFont, new CSprite(_pGestionnaireSurface->ObtenirDonnee("pSurfaceMelee"), _pGestionnaireTexture->ObtenirDonnee("pTextureMelee"), _RectDestination, 30, 30, true, true, 2), _pRenderer));
 
 		m_pListeMouvement->AjouterFin(new CJetPack(_strEmplacement, _pGestionnaireFont, new CSprite(_pGestionnaireSurface->ObtenirDonnee("pSurfaceJetPack"), _pGestionnaireTexture->ObtenirDonnee("pTextureJetPack"), _RectDestination, 6, 80, true, false, 2), new CBarreVie(_pGestionnaireTexture, { _RectDestination.x, _RectDestination.y + _RectDestination.h - 2, 0, 0 }, 6), _pRenderer));
 		
@@ -365,6 +365,17 @@ public:
 			m_pListeTools->ObtenirElementTrieur()->UpdateDescription(false, _RectPositionSouris);
 			m_pListeTools->AllerSuivantTrieur();
 			m_pListeTools->ObtenirElementTrieur()->UpdateDescription(false, _RectPositionSouris);
+		}
+	}
+
+	unsigned int ObtenirMunition(unsigned int _uiPosition) {
+		if (_uiPosition <= 1) {
+			m_pListeTools->AllerATrieur(_uiPosition);
+			return m_pListeTools->ObtenirElementTrieur()->ObtenirMunition();
+		}
+		else if (_uiPosition == 3) {
+			m_pListeMouvement->AllerATrieur(_uiPosition - 2);
+			return m_pListeMouvement->ObtenirElementTrieur()->ObtenirMunition();
 		}
 	}
 };

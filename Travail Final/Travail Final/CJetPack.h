@@ -112,11 +112,21 @@ public:
 					_pVecteurVitesse->ModifierComposantX(10);
 					_boStable = false;
 				}
+				else
+				{
+					m_pSpriteJetPack->DefinirActif(0);
+					_boStable = false;
+				}
 				break;
 			case SDL_SCANCODE_LEFT:
 				if (_pEvent->key.type == SDL_KEYDOWN && m_boSpace) {
 					m_pSpriteJetPack->DefinirEtage(1);
 					_pVecteurVitesse->ModifierComposantX(-10);
+					_boStable = false;
+				}
+				else
+				{
+					m_pSpriteJetPack->DefinirActif(0);
 					_boStable = false;
 				}
 				break;

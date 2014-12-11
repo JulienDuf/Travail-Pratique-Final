@@ -97,6 +97,8 @@ public:
 			}
 		}
 
+		m_uiMunition = 0;
+
 		FichierDescription.close();
 
 		m_pFont = _pGestionnaireFont->ObtenirDonnee("pFontDescription");

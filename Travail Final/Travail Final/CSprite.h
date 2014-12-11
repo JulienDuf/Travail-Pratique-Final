@@ -125,6 +125,11 @@ public:
 		m_boActif = _boActif;
 	}
 
+	void DefinirboBoucle(bool _boBoucle) {
+
+		m_boBoucle = _boBoucle;
+	}
+
 	void DefinirEtage(unsigned int _uiEtage) {
 
 		m_uiEtage = _uiEtage;

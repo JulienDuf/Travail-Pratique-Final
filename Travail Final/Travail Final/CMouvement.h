@@ -11,4 +11,6 @@ public:
 	virtual void UpdateDescription(bool _boShow, SDL_Rect _RectPositionDescription) = 0;
 
 	virtual void ShowDescription(SDL_Renderer* _pRenderer) = 0;
+
+	virtual unsigned int ObtenirMunition() = 0;
 };

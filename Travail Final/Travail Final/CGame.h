@@ -102,6 +102,33 @@ public:
 
 				if (!pPlayerActif->IsStable()) {
 
+					if (pPlayerActif->ObtenirSpriteCourse()->IsActif()) {
+
+						if (!m_pVerifierCollisionJoueurMap(pPlayerActif, RectTmp, &boCorps, &boPied, &_uiX, &_uiY)) {
+
+							pPlayerActif->ObtenirVecteurPoids()->ModifierComposantY(m_pGameMap->ObtenirGravite()->ObtenirComposanteY());
+
+							*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
+							dComposanteX += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35;
+							dComposanteY += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35;
+
+						}
+
+						else {
+
+							unsigned int uim = 10;
+							unsigned int uin = 0;
+
+							while (((pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 0) && (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[RectTmp.x + pPlayerActif->ObtenirHitboxPieds().x + pPlayerActif->ObtenirHitboxPieds().w + uim + (RectTmp.y + pPlayerActif->ObtenirHitboxPieds().y + pPlayerActif->ObtenirHitboxPieds().h - uin) * m_pGameMap->ObtenirSurfaceMap()->w] == 0)) || ((pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1) && (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[RectTmp.x + pPlayerActif->ObtenirHitboxPieds().x - uim + (RectTmp.y + pPlayerActif->ObtenirHitboxPieds().y + pPlayerActif->ObtenirHitboxPieds().h - uin) * m_pGameMap->ObtenirSurfaceMap()->w] == 0)))
+								uin--;
+							
+
+						}
+
+
+					}
+
+					/*
 					pPlayerActif->ObtenirVecteurPoids()->ModifierComposantY(m_pGameMap->ObtenirGravite()->ObtenirComposanteY());
 
 					*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
@@ -127,23 +154,25 @@ public:
 					else {
 
 						if (boCorps && pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 0)
-							dComposanteX -= (pPlayerActif->ObtenirHitboxCorpsDroite().w - _uiX);
+							dComposanteX -= (pPlayerActif->ObtenirRectDestination().w - _uiX);
 
 						if (boCorps && pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1)
 							dComposanteX += _uiX;
 
 						if (boPied) {
 
-							pPlayerActif->ObtenirVecteurPoids()->ModifierComposantY(-m_pGameMap->ObtenirGravite()->ObtenirComposanteY());
+							pPlayerActif->ObtenirVecteurPoids()->ModifierComposantY(0);
 
 							if ( ((pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 0) && (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[RectTmp.x + pPlayerActif->ObtenirHitboxPieds().x + pPlayerActif->ObtenirHitboxPieds().w + 10 + (RectTmp.y + pPlayerActif->ObtenirHitboxPieds().y + pPlayerActif->ObtenirHitboxPieds().h - 20) * m_pGameMap->ObtenirSurfaceMap()->w] == 0)) || ((pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1) && (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[RectTmp.x + pPlayerActif->ObtenirHitboxPieds().x - 10 + (RectTmp.y + pPlayerActif->ObtenirHitboxPieds().y + pPlayerActif->ObtenirHitboxPieds().h - 20) * m_pGameMap->ObtenirSurfaceMap()->w] == 0)))
 								dComposanteY -= (RectTmp.h - _uiY);
 
-							else if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 0)
-								dComposanteX -= (pPlayerActif->ObtenirHitboxPieds().w - _uiX);
+							//if (_uiY)
+
+							//else if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 0)
+								//dComposanteX -= (pPlayerActif->ObtenirRectDestination().w - _uiX);
 						
-							else if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1)
-								dComposanteX += _uiX;
+							//else if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1)
+								//dComposanteX += _uiX;
 
 
 						}
@@ -153,11 +182,11 @@ public:
 						pPlayerActif->ObtenirVecteurVitesse()->ModifierComposantY(0);
 						
 					}
-
+					
 					m_pTimerPhysique->Start();
-
+				*/
 				}
-
+				
 			}
 
 		}

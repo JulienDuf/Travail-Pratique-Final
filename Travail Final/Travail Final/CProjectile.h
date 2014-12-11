@@ -2,6 +2,8 @@ class CProjectile {
 
 public:
 
+	virtual void ReactionColision(int iX, int iY) = 0;
+
 	virtual void ShowTool(SDL_Renderer* _pRenderer, SDL_Rect _RectPlayerDestination) = 0;
 
 	virtual void ReactToEvent(SDL_Event* _pEvent) = 0;
@@ -19,6 +21,8 @@ public:
 	virtual CVecteur2D* ObtenirVecteurVitesse() = 0;
 
 	virtual SDL_Rect* ObtenirRectDestination() = 0;
+	
+	virtual SDL_Surface* ObtenirSurface() = 0;
 
 	virtual void DefinirAngle(double _dAngle) = 0;
 

@@ -261,6 +261,7 @@ public:
 		CProjectile* pProjectileTmp;
 		SDL_Rect* RectTmp;
 		CVecteur2D* pVecteurVitesse;
+		int iX, iY;
 
 		if (m_pToolBar->ObtenirPositionObjetDoubleClick() == 0)  {
 
@@ -287,6 +288,12 @@ public:
 
 				if (pVecteurVitesse->ObtenirComposanteY() >= 0 && pVecteurVitesse->ObtenirComposanteX() >= 0)
 					pProjectileTmp->DefinirAngle(360 - (180 / M_PI) * atanf((((float)pVecteurVitesse->ObtenirComposanteY()) / ((float)pVecteurVitesse->ObtenirComposanteX()))));
+			
+				if (ColisionMissile(pProjectileTmp->ObtenirSurface(), *pProjectileTmp->ObtenirRectDestination(), &iX, &iY)) {
+
+					pProjectileTmp->ReactionColision(iX, iY);
+					DomageExplosion({ iX, iY }, 50);
+				}
 			}
 		}
 	}
@@ -431,12 +438,12 @@ public:
 		for (int y = 0; y < _RectDestination.h; y++) {
 			for (int x = 0; x <_RectDestination.w; x++) {
 
-				if (x >= 0 && x <= 1366 && y >= 0 && y <= 768) {
+				if (_RectDestination.x >= 0 && _RectDestination.x <= 1366 && _RectDestination.y >= 0 && _RectDestination.y <= 768) {
 
 					if ((((unsigned int*)pSDLSurfaceMap->pixels)[(y + _RectDestination.y) * pSDLSurfaceMap->w + (x + _RectDestination.x)] != 0) && (((unsigned int*)_pSDLSurface->pixels)[(y) * _pSDLSurface->w + (x)] != 0)) {
 						
-						*_iX = x;
-						*_iY = y;
+						*_iX = x + _RectDestination.x;
+						*_iY = y + _RectDestination.y;
 						
 						return true;
 					}
@@ -444,6 +451,53 @@ public:
 			}
 		}
 		return false;
+	}
+
+	bool ColisionMissile(SDL_Surface* _pSurfaceMissile, SDL_Rect _RectDestination, int* _iX, int* _iY) {
+
+		CListeDC<CPlayer*>* pPlayerListTmp;
+		SDL_Rect RectPlayer;
+		SDL_Rect RectSourcePlayer;
+		SDL_Surface* pSurfacePlayer;
+
+		for (int i = 0; i < m_pTeamList->ObtenirCompte(); i++) {
+
+			pPlayerListTmp = m_pTeamList->ObtenirElementCurseur()->obtenirListeTeam();
+
+			for (int j = 0; j < pPlayerListTmp->ObtenirCompte(); j++) {
+
+				RectPlayer = pPlayerListTmp->ObtenirElementCurseur()->ObtenirRectDestination();
+				RectSourcePlayer = pPlayerListTmp->ObtenirElementCurseur()->ObtenirSpriteRepos()->ObtenirRectSource();
+				pSurfacePlayer = pPlayerListTmp->ObtenirElementCurseur()->ObtenirSpriteRepos()->ObtenirSurface();
+
+				if ((_RectDestination.x >= RectPlayer.x && _RectDestination.x <= (RectPlayer.x + RectPlayer.w)) && (_RectDestination.y >= RectPlayer.y && _RectDestination.y <= (RectPlayer.y + RectPlayer.h))) {
+
+					for (int y = 0; y < _RectDestination.h; y++) {
+						for (int x = 0; x < _RectDestination.w; x++) {
+
+							if (x >= 0 && x <= 1366 && y >= 0 && y <= 768) {
+
+								if (x <= RectPlayer.w && y <= RectPlayer.h) {
+
+									if (((unsigned int*)pSurfacePlayer->pixels)[(y + RectSourcePlayer.y) * pSurfacePlayer->w + (x + RectSourcePlayer.x)] != 0 && ((unsigned int*)_pSurfaceMissile->pixels)[(y) * _pSurfaceMissile->w + (x)] != 0) {
+
+										*_iX = x + _RectDestination.x;
+										*_iY = y + _RectDestination.y;
+
+										return true;
+									}
+								}
+							}
+						}
+					}
+				}
+				pPlayerListTmp->AllerSuivantCurseur();
+			}
+
+			m_pTeamList->AllerSuivantCurseur();
+		}
+
+		return CollisionObjetMap(_pSurfaceMissile, _RectDestination, _iX, _iY);
 	}
 
 	/*

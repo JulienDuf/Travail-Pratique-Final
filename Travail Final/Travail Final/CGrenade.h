@@ -13,6 +13,7 @@ private:
 	CVecteur2D* m_pVecteurVitesseGrenade;
 
 	SDL_Texture* m_pTexture; //Texture de la grenade
+	SDL_Surface* m_pSurface;
 	SDL_Rect m_RectDestinationGrenade; //Position de la grenade
 
 	CLabel* m_pLblDescription; // La descripton du missile.
@@ -112,6 +113,10 @@ public:
 		m_RectDestinationGrenade.x = 0;
 	}
 	
+	void ReactionColision(int iX, int iY) {
+	
+	}
+
 	void ShowTool(SDL_Renderer* _pRenderer, SDL_Rect _RectPlayerDestination) {}
 
 	void ShowDescription(SDL_Renderer* _pRenderer) {
@@ -120,6 +125,7 @@ public:
 			m_pLblDescription->ShowControl(_pRenderer);
 		}
 	}
+	
 	void ReactToEvent(SDL_Event* _pEvent) {}
 
 	void DefinirActif(bool _boActif) {}
@@ -153,6 +159,11 @@ public:
 	SDL_Rect* ObtenirRectDestination() {
 
 		return &m_RectDestinationGrenade;
+	}
+
+	SDL_Surface* ObtenirSurface(void) {
+
+		return m_pSurface;
 	}
 
 	void DefinirAngle(double _dAngle) {

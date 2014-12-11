@@ -132,7 +132,7 @@ public:
 
 	CSprite* ObtenirSprite(string _strNom) { return nullptr; }
 
-	unsigned int ObtenirMunition() { return 0; }
+	unsigned int ObtenirMunition() { return m_uiMunition; }
 
 	void UpdateDescription(bool _boShow, SDL_Rect _RectPositionDescription) {
 

@@ -75,8 +75,29 @@ public:
 	void ReactToEvent(SDL_Event* _pEvent) {
 
 		m_pToolBar->ReactToEvent(_pEvent, m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif());
-		if (m_pToolBar->ObtenirPositionObjetDoubleClick() == 0)
-			int i = 0;
+
+		unsigned int uiMunition = m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirMunition(m_pToolBar->ObtenirPositionObjetDoubleClick());
+		switch (m_pToolBar->ObtenirPositionObjetDoubleClick()) {
+		case 0:
+
+			if (uiMunition <= 0) {
+				m_pToolBar->ReverseboShow();
+			}
+			break;
+		case 1:
+
+			if (uiMunition <= 0) {
+				m_pToolBar->ReverseboShow();
+			}
+			break;
+		case 3:
+
+			if (uiMunition <= 0) {
+				m_pToolBar->ReverseboShow();
+			}
+			break;
+		}
+
 		m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ReactToEvent(_pEvent, m_pToolBar->ObtenirPositionObjetDoubleClick());
 		
 		m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->UpdateDescription(m_pToolBar->ObtenirPositionObjetSuvol(), m_pToolBar->ObtenirRectPositionSouris());

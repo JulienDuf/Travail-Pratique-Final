@@ -100,49 +100,66 @@ public:
 				unsigned int _uiY;
 				SDL_Rect RectExplosion;
 
-				pPlayerActif->ModifierRectDestination(RectTmp);
-				pPlayerActif->ObtenirVecteurPoids()->ModifierComposantY(m_pGameMap->ObtenirGravite()->ObtenirComposanteY());
+				if (!pPlayerActif->IsStable()) {
 
-				*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
-				dComposanteX += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35;
-				dComposanteY += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35;
+					pPlayerActif->ObtenirVecteurPoids()->ModifierComposantY(m_pGameMap->ObtenirGravite()->ObtenirComposanteY());
 
-				//	double angle = RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination());
+					*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
+					dComposanteX += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35;
+					dComposanteY += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35;
 
-				RectTmp.x = dComposanteX;
-				RectTmp.y = dComposanteY;
-				DetectionCollisionPack(pPlayerActif, &boExplosion, &RectExplosion);
-				if (boExplosion) {
+					//	double angle = RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination());
 
-					DomageExplosion(RectExplosion, 45);
+					RectTmp.x = dComposanteX;
+					RectTmp.y = dComposanteY;
+					DetectionCollisionPack(pPlayerActif, &boExplosion, &RectExplosion);
+					if (boExplosion) {
+
+						DomageExplosion(RectExplosion, 45);
+					}
+
+
+					else if (!m_pVerifierCollisionJoueurMap(pPlayerActif, RectTmp, &boCorps, &boPied, &_uiX, &_uiY)) {
+						pPlayerActif->DefinirPositionX(dComposanteX);
+						pPlayerActif->DefinirPositionY(dComposanteY);
+					}
+
+					else {
+
+						if (boCorps && pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 0)
+							dComposanteX -= (pPlayerActif->ObtenirHitboxCorpsDroite().w - _uiX);
+
+						if (boCorps && pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1)
+							dComposanteX += _uiX;
+
+						if (boPied) {
+
+							pPlayerActif->ObtenirVecteurPoids()->ModifierComposantY(-m_pGameMap->ObtenirGravite()->ObtenirComposanteY());
+
+							if ( ((pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 0) && (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[RectTmp.x + pPlayerActif->ObtenirHitboxPieds().x + pPlayerActif->ObtenirHitboxPieds().w + 10 + (RectTmp.y + pPlayerActif->ObtenirHitboxPieds().y + pPlayerActif->ObtenirHitboxPieds().h - 20) * m_pGameMap->ObtenirSurfaceMap()->w] == 0)) || ((pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1) && (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[RectTmp.x + pPlayerActif->ObtenirHitboxPieds().x - 10 + (RectTmp.y + pPlayerActif->ObtenirHitboxPieds().y + pPlayerActif->ObtenirHitboxPieds().h - 20) * m_pGameMap->ObtenirSurfaceMap()->w] == 0)))
+								dComposanteY -= (RectTmp.h - _uiY);
+
+							else if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 0)
+								dComposanteX -= (pPlayerActif->ObtenirHitboxPieds().w - _uiX);
+						
+							else if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1)
+								dComposanteX += _uiX;
+
+
+						}
+
+						pPlayerActif->DefinirPositionX(dComposanteX);
+						pPlayerActif->DefinirPositionY(dComposanteY);
+						pPlayerActif->ObtenirVecteurVitesse()->ModifierComposantY(0);
+						
+					}
+
+					m_pTimerPhysique->Start();
+
 				}
-
-
-				else if (!m_pVerifierCollisionJoueurMap(pPlayerActif, RectTmp, &boCorps, &boPied, &_uiX, &_uiY)) {
-					pPlayerActif->DefinirPositionX(dComposanteX);
-					pPlayerActif->DefinirPositionY(dComposanteY);
-				}
-
-				else {
-
-					if (boCorps && pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 0)
-						dComposanteX -= (RectTmp.w - _uiX);
-
-					if (boCorps && pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1)
-						dComposanteX += _uiX;
-
-					if (boPied && !boCorps)
-						dComposanteY -= (RectTmp.h - _uiY);
-
-					pPlayerActif->DefinirPositionX(dComposanteX);
-					pPlayerActif->DefinirPositionY(dComposanteY);
-					pPlayerActif->ObtenirVecteurVitesse()->ModifierComposantY(0);
-					pPlayerActif->ModifierStabiliteJoueur(true);
-				}
-
-				m_pTimerPhysique->Start();
 
 			}
+
 		}
 		else {
 
@@ -244,7 +261,7 @@ public:
 					RectTmp.y -= RectTmp.h - iY;
 					pPackListTmp->ObtenirElementCurseur()->ModifierStabilePack(true);
 
-					pPackListTmp->ObtenirElementCurseur()->ModifierAnlge(RegressionLineaire({0,0,RectTmp.w,RectTmp.h}, RectTmp));
+					//pPackListTmp->ObtenirElementCurseur()->ModifierAnlge(RegressionLineaire({0,0,RectTmp.w,RectTmp.h}, RectTmp));
 					pPackListTmp->ObtenirElementCurseur()->ModifierPosition(RectTmp);
 				}
 
@@ -337,7 +354,7 @@ public:
 		float fY = 0; // Valeur en y pour la régression.
 		int iN = 0; // Le nombre de fois qu'il y a des "différent de transparent" Sert a savoir le milieu de la régressuion
 		SDL_Rect _RectRegression;
-		_RectRegression.x = (_RectPiedJoueur.x + _RectJoueur.w) / 2; // Le rect commence au milieu du joueur.
+		_RectRegression.x = _RectPiedJoueur.x + _RectJoueur.w / 2; // Le rect commence au milieu du joueur.
 		_RectRegression.y = _RectPiedJoueur.y + _RectPiedJoueur.h;
 		_RectRegression.w = 15; // Largeur du Rect.
 		int y = 0; // Utiliser pour ma boucle au lieu d'utiliser mon rect pour vérifier.

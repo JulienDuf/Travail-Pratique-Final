@@ -38,9 +38,10 @@ public:
 	}
 
 	void ChangerTour(TTF_Font* _pFont, SDL_Renderer* _pRenderer) {
-		m_pTeamList->ObtenirElementCurseur()->ChangerPlayerActif();
 		m_pTeamList->AllerSuivantCurseur();
+		m_pTeamList->ObtenirElementCurseur()->ChangerPlayerActif();
 		m_pGameMap->NouveauVent(_pFont, _pRenderer);
+		m_pToolBar->NouveauTour();
 	}
 
 	void ChangerTeamActive() {
@@ -121,7 +122,6 @@ public:
 				unsigned int _uiY;
 				SDL_Rect RectExplosion;
 
-				pPlayerActif->ModifierRectDestination(RectTmp);
 				pPlayerActif->ObtenirVecteurPoids()->ModifierComposantY(m_pGameMap->ObtenirGravite()->ObtenirComposanteY());
 
 				*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
@@ -181,7 +181,7 @@ public:
 
 				for (int i = 0; i < m_pTeamList->ObtenirCompte(); i++) {
 
-					pPlayerListTmp = m_pTeamList->ObtenirElementCurseur()->obtenirListeTeam();
+					pPlayerListTmp = m_pTeamList->ObtenirElementCurseur()->ObtenirListePlayer();
 
 					for (int j = 0; j < pPlayerListTmp->ObtenirCompte(); j++) {
 
@@ -280,18 +280,17 @@ public:
 
 	void PhysiqueTool(void) {
 
-		CProjectile* pProjectileTmp;
-		SDL_Rect* RectTmp;
-		CVecteur2D* pVecteurVitesse;
-		int iX, iY;
+		if (m_pToolBar->ObtenirPositionObjetDoubleClick() <= 1) {
 
-		if (m_pToolBar->ObtenirPositionObjetDoubleClick() == 0)  {
+			CProjectile* pProjectileTmp = m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirProjectile(m_pToolBar->ObtenirPositionObjetDoubleClick());
+			SDL_Rect* RectTmp;
+			CVecteur2D* pVecteurVitesse;
+			int iX, iY;
 
-			pProjectileTmp = m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirMissile();
-			RectTmp = pProjectileTmp->ObtenirRectDestination();
-			pVecteurVitesse = pProjectileTmp->ObtenirVecteurVitesse();
+			if (m_pToolBar->ObtenirPositionObjetDoubleClick() == 0 && pProjectileTmp->EstLancer())  {
 
-			if (pVecteurVitesse != nullptr) {
+				RectTmp = pProjectileTmp->ObtenirRectDestination();
+				pVecteurVitesse = pProjectileTmp->ObtenirVecteurVitesse();
 
 				RectTmp->x += pVecteurVitesse->ObtenirComposanteX() / 35;
 				RectTmp->y += pVecteurVitesse->ObtenirComposanteY() / 35;
@@ -303,19 +302,32 @@ public:
 					pProjectileTmp->DefinirAngle((180 / M_PI) * atanf(((-(float)pVecteurVitesse->ObtenirComposanteY()) / ((float)pVecteurVitesse->ObtenirComposanteX()))));
 
 				if (pVecteurVitesse->ObtenirComposanteY() >= 0 && pVecteurVitesse->ObtenirComposanteX() < 0)
-					pProjectileTmp->DefinirAngle(180  + (180 / M_PI) * atanf((((float)pVecteurVitesse->ObtenirComposanteY()) / (-(float)pVecteurVitesse->ObtenirComposanteX()))));
+					pProjectileTmp->DefinirAngle(180 + (180 / M_PI) * atanf((((float)pVecteurVitesse->ObtenirComposanteY()) / (-(float)pVecteurVitesse->ObtenirComposanteX()))));
 
 				if (pVecteurVitesse->ObtenirComposanteY() < 0 && pVecteurVitesse->ObtenirComposanteX() < 0)
 					pProjectileTmp->DefinirAngle(180 - (180 / M_PI) * atanf(((-(float)pVecteurVitesse->ObtenirComposanteY()) / (-(float)pVecteurVitesse->ObtenirComposanteX()))));
 
 				if (pVecteurVitesse->ObtenirComposanteY() >= 0 && pVecteurVitesse->ObtenirComposanteX() >= 0)
 					pProjectileTmp->DefinirAngle(360 - (180 / M_PI) * atanf((((float)pVecteurVitesse->ObtenirComposanteY()) / ((float)pVecteurVitesse->ObtenirComposanteX()))));
-			
+
 				if (ColisionMissile(pProjectileTmp->ObtenirSurface(), *pProjectileTmp->ObtenirRectDestination(), &iX, &iY)) {
 
 					pProjectileTmp->ReactionColision(pProjectileTmp->ObtenirRectDestination()->x + iX, pProjectileTmp->ObtenirRectDestination()->y + iY);
 					DomageExplosion({ pProjectileTmp->ObtenirRectDestination()->x + iX, pProjectileTmp->ObtenirRectDestination()->y }, 50);
+					//ChangerTour()
 				}
+			}
+			else if (m_pToolBar->ObtenirPositionObjetDoubleClick() == 1 && pProjectileTmp->EstLancer()) {
+
+				RectTmp = pProjectileTmp->ObtenirRectDestination();
+				pVecteurVitesse = pProjectileTmp->ObtenirVecteurVitesse();
+
+				RectTmp->x += pVecteurVitesse->ObtenirComposanteX() / 35;
+				RectTmp->y += pVecteurVitesse->ObtenirComposanteY() / 35;
+
+				*pVecteurVitesse += *m_pGameMap->ObtenirGravite();
+
+				// Regression... Still waiting...
 			}
 		}
 	}
@@ -326,7 +338,7 @@ public:
 
 	}
 
-	CListeDC<CTeam*>* ObtenirListeTeam(void) {
+	CListeDC<CTeam*>* ObtenirListePlayer(void) {
 
 		return m_pTeamList;
 
@@ -482,7 +494,7 @@ public:
 
 		for (int i = 0; i < m_pTeamList->ObtenirCompte(); i++) {
 
-			pPlayerListTmp = m_pTeamList->ObtenirElementCurseur()->obtenirListeTeam();
+			pPlayerListTmp = m_pTeamList->ObtenirElementCurseur()->ObtenirListePlayer();
 
 			for (int j = 0; j < pPlayerListTmp->ObtenirCompte(); j++) {
 
@@ -631,7 +643,7 @@ public:
 
 		for (int i = 0; i < m_pTeamList->ObtenirCompte(); i++) {
 
-			pPlayerList = m_pTeamList->ObtenirElementCurseur()->obtenirListeTeam();
+			pPlayerList = m_pTeamList->ObtenirElementCurseur()->ObtenirListePlayer();
 
 			for (int j = 0; j < pPlayerList->ObtenirCompte(); j++) {
 

@@ -8,8 +8,8 @@ class CMissile : public CProjectile {
 private:
 
 	bool m_boMissileLancer; // Si le missile est lancé
-	double m_dAngle; // L'angle de départ du missile.
-	int m_iForce; // Force de départ du missile.
+	int m_iAngle; // L'angle de départ du missile.
+	unsigned int m_uiForce; // Force de départ du missile.
 	unsigned int m_uiMunition; // Le nombre de missiles disponible.
 	CVecteur2D* m_pVecteurVitesseMissile;
 
@@ -25,8 +25,7 @@ private:
 	bool m_boShowDescription;
 
 	void(*m_pMapDestruction)(int _iRayon, int _iX, int _iY); // La destruction de la map.
-	void(*m_pCollisionMap)(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY); // Procédure déterminant 
-	double(*m_pPhysiqueMissile)(CVecteur2D* _ForceMissile, SDL_Rect* _DestinationMissile); // Physique du missile
+	void(*m_pCollisionMap)(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY); // Procédure déterminant
 	SDL_Surface* (*m_pRotation)(SDL_Surface* _pSurfaceRotation, float _fAngle); // Rotation
 
 	SDL_Surface* BlitText(string _strTexte[], unsigned int _uiNombreElementTableau, SDL_Color _Couleur) {
@@ -97,20 +96,16 @@ public:
 			}
 		}
 
-		m_uiMunition = 0;
-
 		FichierDescription.close();
 
 		m_pFont = _pGestionnaireFont->ObtenirDonnee("pFontDescription");
 
 		SDL_Surface *pSDLSurface = BlitText(m_strDescription, 8, { 0, 0, 0 });
 
-		m_pLblDescription = new CLabel(SDL_CreateTextureFromSurface(_pRenderer, pSDLSurface), { 503, 346, pSDLSurface->w, pSDLSurface->h });
-
 		m_pLblDescription = new CLabel(SDL_CreateTextureFromSurface(_pRenderer, pSDLSurface), { 0, 0, pSDLSurface->w, pSDLSurface->h });
 
-		m_dAngle = 0;
-		m_iForce = 0;
+		m_iAngle = 0;
+		m_uiForce = 0;
 
 		m_pSDLSurfaceMissile = _pGestionnaireSurface->ObtenirDonnee("pSurfaceMissile");
 		m_pSDLSurfaceMissileRotation = m_pSDLSurfaceMissile;
@@ -173,11 +168,10 @@ public:
 
 				if (_pEvent->key.keysym.scancode == SDL_SCANCODE_SPACE) {
 
-					m_dAngle = m_pBarrePuissance->ObtenirAngle();
-					m_iForce = (m_pBarrePuissance->ObtenirForce() + 3) * 100;
+					m_iAngle = m_pBarrePuissance->ObtenirAngle();
+					m_uiForce = (m_pBarrePuissance->ObtenirForce() + 3) * 100;
 					m_boMissileLancer = true;
-					float fAngle = m_dAngle;
-					m_pVecteurVitesseMissile = new CVecteur2D((float)m_iForce, fAngle);
+					m_pVecteurVitesseMissile = new CVecteur2D((float)m_uiForce, (float)m_iAngle);
 
 					m_pBarrePuissance->ObtenirPosition(&m_RectDestinationMissile.x, &m_RectDestinationMissile.y);
 				}
@@ -233,14 +227,19 @@ public:
 
 	void DefinirAngle(double _dAngle) {
 
-		m_dAngle = _dAngle;
+		m_iAngle = _dAngle;
 
-		m_pSDLSurfaceMissileRotation = m_pRotation(m_pSDLSurfaceMissile, m_dAngle);
+		m_pSDLSurfaceMissileRotation = m_pRotation(m_pSDLSurfaceMissile, m_iAngle);
 
 	}
 
 	void DefinirPosition(SDL_Rect _Rect) {
 
 		m_RectDestinationMissile = _Rect;
+	}
+
+	bool EstLancer() {
+		
+		return m_boMissileLancer;
 	}
 };

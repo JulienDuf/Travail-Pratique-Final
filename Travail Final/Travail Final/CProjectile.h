@@ -28,4 +28,5 @@ public:
 
 	virtual void DefinirPosition(SDL_Rect _Rect) = 0;
 
+	virtual bool EstLancer() = 0;
 };

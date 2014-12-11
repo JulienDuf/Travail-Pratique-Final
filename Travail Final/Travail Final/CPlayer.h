@@ -70,7 +70,7 @@ public:
 
 		m_pListeTools->AjouterFin(new CMissile(_strEmplacement, _pGestionnaireFont, _pRenderer, _pGestionnaireSurface, _pGestionnaireTexture, _MapDestruction, _CollisionObjetMap, _Rotation));
 
-		m_pListeTools->AjouterFin(new CGrenade(_strEmplacement, _pGestionnaireFont, _pRenderer));
+		m_pListeTools->AjouterFin(new CGrenade(_strEmplacement, _pGestionnaireFont, _pRenderer, _pGestionnaireSurface, _pGestionnaireTexture, _MapDestruction, _CollisionObjetMap, _Rotation));
 
 		m_pListeTools->AllerACurseur(0);
 		m_pListeTools->AllerATrieur(0);
@@ -141,6 +141,8 @@ public:
 		m_RectPlayerDestination.x = m_dPositionX;
 		m_RectPlayerDestination.y = m_dPositionY;
 		
+		m_pBarreVie->ModifierPositionBarre(m_RectPlayerDestination.x, m_RectPlayerDestination.y - 2);
+
 		if (m_pSpriteParachute->IsActif()) {
 			m_pSpriteParachute->ModifierAnnimation();
 			m_pSpriteParachute->Render(_pRenderer, m_RectParachuteDestination);
@@ -173,14 +175,6 @@ public:
 
 
 		m_pBarreVie->ModifierPourcentageVie(_fHealth);
-	}
-
-	void ModifierRectDestination(SDL_Rect _RectDestination) {
-
-		m_RectPlayerDestination = _RectDestination;
-
-		m_pBarreVie->ModifierPositionBarre(m_RectPlayerDestination.x, m_RectPlayerDestination.y - 2);
-
 	}
 
 	void ModifierRectDestinationParachute(SDL_Rect _RectDestination) {
@@ -313,9 +307,9 @@ public:
 
 	}
 
-	CProjectile* ObtenirMissile(void) {
+	CProjectile* ObtenirProjectile(unsigned int _uiPosition) {
 
-		m_pListeTools->AllerACurseur(0);
+		m_pListeTools->AllerACurseur(_uiPosition);
 		return m_pListeTools->ObtenirElementCurseur();
 	}
 

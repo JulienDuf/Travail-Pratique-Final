@@ -20,17 +20,13 @@ public:
 
 		for (int i = _iNombreJoueur; i > 0; i--) {
 
-			iX = rand() % 1298;
-
-
+			iX = rand() % (1366 - _pGestionnaireSurface->ObtenirDonnee("pSurfaceParachute")->w/24);
 			m_pPlayerList->AjouterFin(new CPlayer( _strEmplacement, _pRenderer, _pGestionnaireFont, _pGestionnaireSurface, _pGestionnaireTexture, _uiIDTeam, {iX, 5, 0, 0}, _MapDestruction, _CollisionObjetMap, _Rotation));
-
-
 		}
 		m_pPlayerList->AllerDebut();
 	}
 
-	CListeDC<CPlayer*>* obtenirListeTeam(void) {
+	CListeDC<CPlayer*>* ObtenirListePlayer(void) {
 
 		return m_pPlayerList;
 

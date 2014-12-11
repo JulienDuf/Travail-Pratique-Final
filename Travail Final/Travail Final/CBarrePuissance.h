@@ -7,8 +7,8 @@ class CBarrePuissance {
 
 private:
 
-	double m_dAngle; // L'angle de la barre.
-	int m_iForce; // La force affiché par la barre.
+	int m_iAngle; // L'angle de la barre.
+	unsigned int m_uiForce; // La force affiché par la barre.
 
 	SDL_Point m_PointRotation; // Le point de rotation.
 	SDL_Texture* m_pSDLTextureBarrre; // La texture de la barre.
@@ -23,7 +23,7 @@ public:
 	// Param2: Le renderer de la fenêtre.
 	CBarrePuissance(CGestionaire<SDL_Texture*>* _pGestionnaireTexture) {
 
-		m_iForce = 0;
+		m_uiForce = 0;
 
 		m_pSDLTextureBarrre = _pGestionnaireTexture->ObtenirDonnee("pTextureBarrePuissance");
 
@@ -44,19 +44,16 @@ public:
 
 		m_RectDestinationBarre.x = _RectBarreDestination.x + _RectBarreDestination.w;
 		m_RectDestinationBarre.y = _RectBarreDestination.y;
-
-		SDL_RenderCopyEx(_pRenderer, m_pSDLTextureBarrre, &m_RectSourceBarre, &m_RectDestinationBarre, m_dAngle, &m_PointRotation, SDL_FLIP_VERTICAL);
+		SDL_RenderCopyEx(_pRenderer, m_pSDLTextureBarrre, &m_RectSourceBarre, &m_RectDestinationBarre, m_iAngle, &m_PointRotation, SDL_FLIP_NONE);
 	}
 
 	void ModifierForceBarre(int _iForce) {
 
-		m_iForce = _iForce;
-		m_RectSourceBarre.x = m_iForce * m_RectDestinationBarre.w;
+		m_uiForce = _iForce;
+		m_RectSourceBarre.x = m_uiForce * m_RectDestinationBarre.w;
 	}
 
 	void ReactToEvent(SDL_Event* _pEvent) {
-
-		int iAngleTmp;
 
 		switch (_pEvent->type) {
 
@@ -66,32 +63,29 @@ public:
 
 			case SDL_SCANCODE_RIGHT:
 
-				m_iForce = (m_iForce + 1) % 4;
-				m_RectSourceBarre.x = m_iForce * m_RectDestinationBarre.w;
+				m_uiForce = (m_uiForce + 1) % 4;
+				m_RectSourceBarre.x = m_uiForce * m_RectDestinationBarre.w;
 				break;
 
 			case SDL_SCANCODE_LEFT:
 
-				m_iForce--;
-				if (m_iForce < 0)
-					m_iForce = 3;
-				m_RectSourceBarre.x = m_iForce * m_RectDestinationBarre.w;
+				m_uiForce--;
+				if (m_uiForce < 0)
+					m_uiForce = 3;
+				m_RectSourceBarre.x = m_uiForce * m_RectDestinationBarre.w;
 				break;
 
 			case SDL_SCANCODE_DOWN:
 
-				iAngleTmp = m_dAngle;
-				iAngleTmp = (iAngleTmp + 5) % 360;
-				m_dAngle = iAngleTmp;
-
+				m_iAngle = (m_iAngle + 5) % 360;
 				break;
 
 			case SDL_SCANCODE_UP:
 
-				m_dAngle -= 5;
-				if (m_dAngle == -5)
-					m_dAngle = 355;
-
+				m_iAngle -= 5;
+				if (m_iAngle < 0) {
+					m_iAngle = 355;
+				}
 				break;
 
 			}
@@ -105,12 +99,12 @@ public:
 
 	double ObtenirAngle(void) {
 
-		return m_dAngle;
+		return m_iAngle;
 	}
 
 	int ObtenirForce(void) {
 
-		return m_iForce;
+		return m_uiForce;
 	}
 
 	void ObtenirPosition(int* _iX, int* _iY) {

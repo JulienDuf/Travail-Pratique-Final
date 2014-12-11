@@ -549,6 +549,11 @@ void Start(char* _strApplicationFilename) {
 	strEmplacement.append("Armes et Packs\\Missile.png");
 	pGestionaireSurface->AjouterDonnee(IMG_Load(strEmplacement.c_str()), "pSurfaceMissile");
 
+	// Chargement de la surface de la grenade...
+	strEmplacement = strApplicationPath;
+	strEmplacement.append("Armes et Packs\\Grenade.png");
+	pGestionaireSurface->AjouterDonnee(IMG_Load(strEmplacement.c_str()), "pSurfaceGrenade");
+
 	// L'attaque de mélée...
 	strEmplacement = strApplicationPath;
 	strEmplacement.append("Personnage\\Melee.png");

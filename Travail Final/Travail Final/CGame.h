@@ -101,7 +101,7 @@ public:
 				SDL_Rect RectExplosion;
 
 				if (!pPlayerActif->IsStable()) {
-
+					/*
 					if (pPlayerActif->ObtenirSpriteCourse()->IsActif()) {
 
 						if (!m_pVerifierCollisionJoueurMap(pPlayerActif, RectTmp, &boCorps, &boPied, &_uiX, &_uiY)) {
@@ -127,8 +127,8 @@ public:
 
 
 					}
-
-					/*
+					*/
+					
 					pPlayerActif->ObtenirVecteurPoids()->ModifierComposantY(m_pGameMap->ObtenirGravite()->ObtenirComposanteY());
 
 					*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
@@ -184,7 +184,7 @@ public:
 					}
 					
 					m_pTimerPhysique->Start();
-				*/
+				
 				}
 				
 			}

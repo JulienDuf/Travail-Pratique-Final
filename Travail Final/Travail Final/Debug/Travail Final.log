@@ -1,4 +1,4 @@
-﻿Build started 2014-12-11 4:57:17 PM.
+﻿Build started 2014-12-12 6:49:22 PM.
      1>Project "C:\Users\Nicolas\Documents\GitHub\Travail-Pratique-Final\Travail Final\Travail Final\Travail Final.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
@@ -47,30 +47,30 @@
      1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cteam.h(61): warning C4018: '<' : signed/unsigned mismatch
      1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cmap.h(117): warning C4018: '<' : signed/unsigned mismatch
      1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(65): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(109): warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(196): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(200): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(206): warning C4244: '+=' : conversion from 'double' to 'int', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(101): warning C4101: 'RectExplosion' : unreferenced local variable
+     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(132): warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(140): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
+     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(141): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
+     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(207): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(211): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(217): warning C4244: '+=' : conversion from 'double' to 'int', possible loss of data
      1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(95): warning C4101: 'dAngle' : unreferenced local variable
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(98): warning C4101: 'boExplosion' : unreferenced local variable
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(270): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(275): warning C4244: '+=' : conversion from 'double' to 'int', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(309): warning C4244: '+=' : conversion from 'double' to 'int', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(310): warning C4244: '+=' : conversion from 'double' to 'int', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(354): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(469): warning C4101: 'ix' : unreferenced local variable
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(469): warning C4101: 'iy' : unreferenced local variable
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(498): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(502): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(608): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(555): warning C4101: 'TmpSDLRectPlayerHitboxCorps' : unreferenced local variable
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(647): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(651): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(682): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(742): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(761): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(714): warning C4101: 'TmpSDLRectPlayerHitboxCorps' : unreferenced local variable
+     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(281): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(286): warning C4244: '+=' : conversion from 'double' to 'int', possible loss of data
+     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(320): warning C4244: '+=' : conversion from 'double' to 'int', possible loss of data
+     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(321): warning C4244: '+=' : conversion from 'double' to 'int', possible loss of data
+     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(365): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(480): warning C4101: 'ix' : unreferenced local variable
+     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(480): warning C4101: 'iy' : unreferenced local variable
+     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(509): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(513): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(619): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(566): warning C4101: 'TmpSDLRectPlayerHitboxCorps' : unreferenced local variable
+     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(658): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(662): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(693): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(753): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(772): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(725): warning C4101: 'TmpSDLRectPlayerHitboxCorps' : unreferenced local variable
      1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cwindow.h(51): warning C4018: '<' : signed/unsigned mismatch
      1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cwindow.h(65): warning C4018: '<' : signed/unsigned mismatch
      1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\main.cpp(148): warning C4018: '<' : signed/unsigned mismatch
@@ -92,18 +92,20 @@
      1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\clistedc.h(210): warning C4552: '-' : operator has no effect; expected operator with side-effect
      1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\clistedc.h(219): warning C4552: '-' : operator has no effect; expected operator with side-effect
      1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\carbreavl.h(226): warning C4715: 'CArbreAVL<SDL_Texture *>::Rechercher' : not all control paths return a value
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(633): warning C4715: 'CGame::DetectionCollisionPack' : not all control paths return a value
+     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(644): warning C4715: 'CGame::DetectionCollisionPack' : not all control paths return a value
      1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\clabelleftright.h(152): warning C4715: 'CLabelLeftRight::ObtenirElement' : not all control paths return a value
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cdeplacement.h(151): warning C4715: 'CDeplacement::ObtenirSprite' : not all control paths return a value
      1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\carbreavl.h(226): warning C4715: 'CArbreAVL<SDL_Surface *>::Rechercher' : not all control paths return a value
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\carbreavl.h(226): warning C4715: 'CArbreAVL<CControl *>::Rechercher' : not all control paths return a value
      1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\carbreavl.h(226): warning C4715: 'CArbreAVL<_TTF_Font *>::Rechercher' : not all control paths return a value
+     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cdeplacement.h(151): warning C4715: 'CDeplacement::ObtenirSprite' : not all control paths return a value
+     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\carbreavl.h(226): warning C4715: 'CArbreAVL<CControl *>::Rechercher' : not all control paths return a value
      1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\carbreavl.h(226): warning C4715: 'CArbreAVL<CMenu *>::Rechercher' : not all control paths return a value
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Nicolas\Documents\GitHub\Travail-Pratique-Final\Travail Final\Debug\Travail Final.exe" /INCREMENTAL /NOLOGO SDL2.lib SDL2main.lib SDL2_ttf.lib SDL2_image.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Nicolas\Documents\GitHub\Travail-Pratique-Final\Travail Final\Debug\Travail Final.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Nicolas\Documents\GitHub\Travail-Pratique-Final\Travail Final\Debug\Travail Final.lib" /MACHINE:X86 Debug\main.obj
+         LINK : C:\Users\Nicolas\Documents\GitHub\Travail-Pratique-Final\Travail Final\Debug\Travail Final.exe not found or not built by the last incremental link; performing full link
+     1>MSVCRTD.lib(cinitexe.obj) : warning LNK4098: defaultlib 'msvcrt.lib' conflicts with use of other libs; use /NODEFAULTLIB:library
          Travail Final.vcxproj -> C:\Users\Nicolas\Documents\GitHub\Travail-Pratique-Final\Travail Final\Debug\Travail Final.exe
      1>Done Building Project "C:\Users\Nicolas\Documents\GitHub\Travail-Pratique-Final\Travail Final\Travail Final\Travail Final.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:02.43
+Time Elapsed 00:00:02.75

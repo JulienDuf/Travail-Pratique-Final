@@ -79,6 +79,7 @@ public:
 		if (m_boActif) {
 
 			SDL_RenderCopy(_Renderer, m_pTextureSprite, &m_RectSource, &_RectDestination);		// On rends le cadre actuel dans la fenêtre.
+			//SDL_RenderPresent(_Renderer);
 		}
 	}
 

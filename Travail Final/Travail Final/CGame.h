@@ -611,7 +611,7 @@ public:
 
 							*_boExplosion = pPackTmp->Use(_pPlayer);
 							*_RectExplosion = pPackTmp->GetRectDestination();
-							m_pGameMap->ObtenirPackList()->Retirer(true);
+							//m_pGameMap->ObtenirPackList()->Retirer(true);
 							return true;
 
 						}
@@ -653,7 +653,7 @@ public:
 					pPlayerTmp->SetHealth(pPlayerTmp->GetHealth() * (1 - fPourcentage));
 				}
 
-				else if (RectDestinationPlayer.x <= _RectPositionExplosion.x + _iRayon && _RectPositionExplosion.x < RectDestinationPlayer.x && (_RectPositionExplosion.y - (RectDestinationPlayer.y + RectDestinationPlayer.h)) < 5 && (_RectPositionExplosion.y - (RectDestinationPlayer.y + RectDestinationPlayer.h)) > -5) {
+				else if ((RectDestinationPlayer.x <= _RectPositionExplosion.x + _iRayon) && (_RectPositionExplosion.x < RectDestinationPlayer.x) && (_RectPositionExplosion.y - (RectDestinationPlayer.y + RectDestinationPlayer.h)) < 5 && (_RectPositionExplosion.y - (RectDestinationPlayer.y + RectDestinationPlayer.h)) > -5) {
 
 					iDistanceRayon = RectDestinationPlayer.x - _RectPositionExplosion.x;
 					fPourcentage = ((float)iDistanceRayon / (float)_iRayon);
@@ -683,9 +683,13 @@ public:
 
 			if (RectDestinationPack.x + RectDestinationPack.w >= (_RectPositionExplosion.x - _iRayon) && _RectPositionExplosion.x >= RectDestinationPack.x) {
 
+<<<<<<< HEAD
 				pPackTmp->Use(nullptr);
 				m_pGameMap->ObtenirPackList()->Retirer(true);
 			}
+=======
+				else if ((RectDestinationPack.x <= (_RectPositionExplosion.x + _iRayon) && _RectPositionExplosion.x <= RectDestinationPack.x) && (_RectPositionExplosion.y - (RectDestinationPack.y + RectDestinationPack.h)) <5  && (_RectPositionExplosion.y - (RectDestinationPack.y + RectDestinationPack.h)) > -5){
+>>>>>>> origin/Branche-Correction-Mine
 
 			else if ((RectDestinationPack.x) <= (_RectPositionExplosion.x + _iRayon) && _RectPositionExplosion.x <= RectDestinationPack.x){
 

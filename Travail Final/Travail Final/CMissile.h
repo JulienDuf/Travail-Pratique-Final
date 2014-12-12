@@ -174,6 +174,7 @@ public:
 					m_pVecteurVitesseMissile = new CVecteur2D((float)m_uiForce, (float)m_iAngle);
 
 					m_pBarrePuissance->ObtenirPosition(&m_RectDestinationMissile.x, &m_RectDestinationMissile.y);
+					m_RectDestinationMissile.y -= m_RectDestinationMissile.h;
 				}
 				break;
 			}

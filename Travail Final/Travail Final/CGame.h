@@ -500,15 +500,15 @@ public:
 
 					}
 
-					for (y = _RectDestination.y - RectPlayer.y, y2 = 0; y < RectPlayer.h && y2 < _RectDestination.h; y++, y2++) {
-						for (x = abs(_RectDestination.x - RectPlayer.x), x2 = 0; x < RectPlayer.w && x2 < _RectDestination.x; x++, x2++) {
+					for (; yPlayer < RectPlayer.h && yMissile < _RectDestination.h; yPlayer++, yMissile++) {
+						for (; xPlayer < RectPlayer.w && xMissile < _RectDestination.x; xPlayer++, xMissile++) {
 
-							if (x >= 0 && x <= 1366 && y >= 0 && y <= 768) {
+							if (xPlayer >= 0 && xPlayer <= 1366 && yPlayer >= 0 && yPlayer <= 768) {
 
-								if (((unsigned int*)pSurfacePlayer->pixels)[(y + RectSourcePlayer.y) * pSurfacePlayer->w + (x + RectSourcePlayer.x)] != 0 && ((unsigned int*)_pSurfaceMissile->pixels)[(y2) * _pSurfaceMissile->w + (x2)] != 0) {
+								if (((unsigned int*)pSurfacePlayer->pixels)[(yPlayer + RectSourcePlayer.y) * pSurfacePlayer->w + (xPlayer + RectSourcePlayer.x)] != 0 && ((unsigned int*)_pSurfaceMissile->pixels)[(yMissile)* _pSurfaceMissile->w + (xMissile)] != 0) {
 
-									*_iX = x;
-									*_iY = y;
+									*_iX = xPlayer;
+									*_iY = yPlayer;
 
 									return true;
 									
@@ -683,15 +683,12 @@ public:
 
 			if (RectDestinationPack.x + RectDestinationPack.w >= (_RectPositionExplosion.x - _iRayon) && _RectPositionExplosion.x >= RectDestinationPack.x) {
 
-<<<<<<< HEAD
+
 				pPackTmp->Use(nullptr);
 				m_pGameMap->ObtenirPackList()->Retirer(true);
 			}
-=======
-				else if ((RectDestinationPack.x <= (_RectPositionExplosion.x + _iRayon) && _RectPositionExplosion.x <= RectDestinationPack.x) && (_RectPositionExplosion.y - (RectDestinationPack.y + RectDestinationPack.h)) <5  && (_RectPositionExplosion.y - (RectDestinationPack.y + RectDestinationPack.h)) > -5){
->>>>>>> origin/Branche-Correction-Mine
 
-			else if ((RectDestinationPack.x) <= (_RectPositionExplosion.x + _iRayon) && _RectPositionExplosion.x <= RectDestinationPack.x){
+			else if ((RectDestinationPack.x <= (_RectPositionExplosion.x + _iRayon) && _RectPositionExplosion.x <= RectDestinationPack.x) && (_RectPositionExplosion.y - (RectDestinationPack.y + RectDestinationPack.h)) <5  && (_RectPositionExplosion.y - (RectDestinationPack.y + RectDestinationPack.h)) > -5){
 
 				pPackTmp->Use(nullptr);
 				m_pGameMap->ObtenirPackList()->Retirer(true);

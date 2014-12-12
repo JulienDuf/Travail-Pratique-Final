@@ -499,11 +499,7 @@ public:
 		m_pTeamList->AllerATrieur(0);
 		for (int i = 0; i < m_pTeamList->ObtenirCompte(); i++) {
 
-<<<<<<< HEAD
-			pPlayerListTmp = m_pTeamList->ObtenirElementCurseur()->ObtenirListePlayer();
-=======
-			pPlayerListTmp = m_pTeamList->ObtenirElementTrieur()->obtenirListeTeam();
->>>>>>> origin/Branche-Julien
+			pPlayerListTmp = m_pTeamList->ObtenirElementTrieur()->ObtenirListePlayer();
 
 			pPlayerListTmp->AllerATrieur(0);
 			for (int j = 0; j < pPlayerListTmp->ObtenirCompte(); j++) {
@@ -675,11 +671,8 @@ public:
 		m_pTeamList->AllerATrieur(0);
 		for (int i = 0; i < m_pTeamList->ObtenirCompte(); i++) {
 
-<<<<<<< HEAD
-			pPlayerList = m_pTeamList->ObtenirElementCurseur()->ObtenirListePlayer();
-=======
-			pPlayerList = m_pTeamList->ObtenirElementTrieur()->obtenirListeTeam();
->>>>>>> origin/Branche-Julien
+			pPlayerList = m_pTeamList->ObtenirElementTrieur()->ObtenirListePlayer();
+
 
 			pPlayerList->AllerATrieur(0);
 			for (int j = 0; j < pPlayerList->ObtenirCompte(); j++) {

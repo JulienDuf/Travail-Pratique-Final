@@ -109,7 +109,7 @@ public:
 				*_boStable = false;
 
 			}
-			else if (_pEvent->type == SDL_KEYUP && m_pSpriteSaut->IsActif())
+			else if (m_pSpriteSaut->IsActif())
 				m_boSpace = false;
 
 			break;

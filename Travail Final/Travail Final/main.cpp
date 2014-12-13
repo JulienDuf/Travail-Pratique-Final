@@ -617,6 +617,11 @@ void Start(char* _strApplicationFilename) {
 	strEmplacement.append("Armes et Packs\\BarrePuissance.png");
 	pGestionnaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTextureBarrePuissance");
 
+	// Chargement de la texture des explosions...
+	strEmplacement = strApplicationPath;
+	strEmplacement.append("Armes et Packs\\Explosion.png");
+	pGestionnaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTextureExplosion");
+
 	// Chargement des textures de la barre de vie...
 	strEmplacement = strApplicationPath;
 	strEmplacement.append("Personnage\\Barre.png");

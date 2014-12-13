@@ -28,5 +28,9 @@ public:
 
 	virtual void DefinirPosition(SDL_Rect _Rect) = 0;
 
+	virtual void DefinierExplosion(bool _boExplosion) = 0;
+
 	virtual bool EstLancer() = 0;
+
+	virtual bool ExplosionEnCours() = 0;
 };

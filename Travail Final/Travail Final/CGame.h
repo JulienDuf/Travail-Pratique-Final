@@ -336,6 +336,12 @@ public:
 			CVecteur2D* pVecteurVitesse;
 			int iX, iY;
 
+			if (!pProjectileTmp->ObtenirSprite("")->IsActif() && pProjectileTmp->ExplosionEnCours()) {
+				m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->DefinirToolActif(false);
+				ChangerTour(_pRenderer);
+				pProjectileTmp->DefinierExplosion(false);
+			}
+
 			if (m_pToolBar->ObtenirPositionObjetDoubleClick() == 0 && pProjectileTmp->EstLancer())  {
 
 				RectTmp = pProjectileTmp->ObtenirRectDestination();
@@ -345,18 +351,16 @@ public:
 
 					pProjectileTmp->ReactionColision(pProjectileTmp->ObtenirRectDestination()->x + iX, pProjectileTmp->ObtenirRectDestination()->y + iY);
 					DomageExplosion({ pProjectileTmp->ObtenirRectDestination()->x + iX, pProjectileTmp->ObtenirRectDestination()->y }, 50);
-					m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->DefinirToolActif(false);
-					ChangerTour(_pRenderer);
 				}
+
+				else if (RectTmp->x >= 1366 || RectTmp->x + RectTmp->w <= 0 || RectTmp->y >= 768)
+					pProjectileTmp->ReactionColision(0, 0);
 
 				RectTmp->x += pVecteurVitesse->ObtenirComposanteX() / 35;
 				RectTmp->y += pVecteurVitesse->ObtenirComposanteY() / 35;
 
-
-				if (RectTmp->x >= 1366 || RectTmp->x + RectTmp->w <= 0 || RectTmp->y >= 768)
-					pProjectileTmp->ReactionColision(0, 0);
-
 				*pVecteurVitesse += *m_pGameMap->ObtenirGravite();
+				*pVecteurVitesse += *m_pGameMap->ObtenirVecteurVent();
 
 				if (pVecteurVitesse->ObtenirComposanteY() < 0 && pVecteurVitesse->ObtenirComposanteX() >= 0)
 					pProjectileTmp->DefinirAngle((180 / M_PI) * atanf(((-(float)pVecteurVitesse->ObtenirComposanteY()) / ((float)pVecteurVitesse->ObtenirComposanteX()))));

@@ -1,6 +1,7 @@
 // 29 novembre 2014 par Gabriel Beaudry(gabriel.bdry@gmail.com)
 // Ajout de la procédure changertour().
 
+#include <Windows.h>
 class CGame {
 
 private:
@@ -206,10 +207,9 @@ public:
 						pPlayerActif->ObtenirVecteurVitesse()->ModifierComposantY(0);
 						
 					}
-					
-					m_pTimerPhysique->Start();
 				
 				}
+				m_pTimerPhysique->Start();
 				
 			}
 
@@ -363,8 +363,10 @@ public:
 
 				if (ColisionMissile(pProjectileTmp->ObtenirSurface(), *pProjectileTmp->ObtenirRectDestination(), &iX, &iY)) {
 
-					pProjectileTmp->ReactionColision(pProjectileTmp->ObtenirRectDestination()->x + iX, pProjectileTmp->ObtenirRectDestination()->y + iY);
-					DomageExplosion({ pProjectileTmp->ObtenirRectDestination()->x + iX, pProjectileTmp->ObtenirRectDestination()->y }, 50);
+					pProjectileTmp->ObtenirVecteurVitesse()->ModifierOrientation(270);
+
+					//pProjectileTmp->ReactionColision(pProjectileTmp->ObtenirRectDestination()->x + iX, pProjectileTmp->ObtenirRectDestination()->y + iY);
+					//DomageExplosion({ pProjectileTmp->ObtenirRectDestination()->x + iX, pProjectileTmp->ObtenirRectDestination()->y }, 50);
 					//ChangerTour()
 				}
 			}
@@ -373,12 +375,31 @@ public:
 				RectTmp = pProjectileTmp->ObtenirRectDestination();
 				pVecteurVitesse = pProjectileTmp->ObtenirVecteurVitesse();
 
-				RectTmp->x += pVecteurVitesse->ObtenirComposanteX() / 35;
-				RectTmp->y += pVecteurVitesse->ObtenirComposanteY() / 35;
+				if (CollisionGrenadeJoueur(pProjectileTmp->ObtenirSurface(), *pProjectileTmp->ObtenirRectDestination(), &iX, &iY)) {
+
+					pProjectileTmp->ObtenirVecteurVitesse()->ModifierVecteur(0, 0);
+					//pProjectileTmp->ReactionColision(pProjectileTmp->ObtenirRectDestination()->x + iX, pProjectileTmp->ObtenirRectDestination()->y + iY);
+					//DomageExplosion({ pProjectileTmp->ObtenirRectDestination()->x + iX, pProjectileTmp->ObtenirRectDestination()->y }, 40);
+					//ChangerTour()
+				}
+
 
 				*pVecteurVitesse += *m_pGameMap->ObtenirGravite();
 
-				// Regression... Still waiting...
+				RectTmp->x += pVecteurVitesse->ObtenirComposanteX() / 35;
+				RectTmp->y += pVecteurVitesse->ObtenirComposanteY() / 35;
+
+				if (RectTmp->x >= 1366 || RectTmp->x + RectTmp->w <= 0 || RectTmp->y >= 768)
+					pProjectileTmp->ReactionColision(0, 0);
+
+				/* Regression... Still waiting...
+				int iX, iY;
+				if (CollisionObjetMap(pProjectileTmp->ObtenirSurface(), *pProjectileTmp->ObtenirRectDestination(), &iX, &iY)) {
+					double dAngle = RegressionLineaire({ 0, 0, 0, 0 }, *pProjectileTmp->ObtenirRectDestination());
+					dAngle -= 90;
+					pProjectileTmp->ObtenirVecteurVitesse()->ModifierOrientation(dAngle);
+				}
+				*/
 			}
 		}
 	}
@@ -411,6 +432,7 @@ public:
 
 		return true;
 	}
+
 	// Procédure qui retourne la pente 
 	// Paramètre : _RectPiedJoueur : Le rect pied du joueur acitf.
 	// Retour : integer double qui représente l'angle de la pente.
@@ -608,6 +630,59 @@ public:
 		}
 
 		return CollisionObjetMap(_pSurfaceMissile, _RectDestination, _iX, _iY);
+	}
+
+	bool CollisionGrenadeJoueur(SDL_Surface* _pSurfaceGrenade, SDL_Rect _RectDestinationGrenade, int* iX, int* iY) {
+
+		SDL_Rect RectPlayer;
+		SDL_Rect RectSourcePlayer;
+		SDL_Surface* pSurfacePlayer;
+
+		// Boucle des teams
+		for (int i = 0; i < m_pTeamList->ObtenirCompte(); i++) {
+
+			m_pTeamList->AllerATrieur(i);
+
+			// Boucle des players
+			for (int j = 0; j < m_pTeamList->ObtenirElementTrieur()->ObtenirListePlayer()->ObtenirCompte(); j++) {
+
+				m_pTeamList->ObtenirElementTrieur()->ObtenirListePlayer()->AllerATrieur(j);
+
+				RectPlayer = m_pTeamList->ObtenirElementTrieur()->ObtenirListePlayer()->ObtenirElementTrieur()->ObtenirRectDestination();
+				RectSourcePlayer = m_pTeamList->ObtenirElementTrieur()->ObtenirListePlayer()->ObtenirElementTrieur()->ObtenirSpriteRepos()->ObtenirRectSource();
+				pSurfacePlayer = m_pTeamList->ObtenirElementTrieur()->ObtenirListePlayer()->ObtenirElementTrieur()->ObtenirSpriteRepos()->ObtenirSurface();
+
+				// Voir Si les deux rects sont en contact...
+				if ((_RectDestinationGrenade.x >= RectPlayer.x && _RectDestinationGrenade.x <= RectPlayer.x + RectPlayer.w) && (_RectDestinationGrenade.y >= RectPlayer.y && _RectDestinationGrenade.y <= RectPlayer.y + RectPlayer.h) || (RectPlayer.x >= _RectDestinationGrenade.x && RectPlayer.x <= _RectDestinationGrenade.x + _RectDestinationGrenade.w) && (RectPlayer.y >= _RectDestinationGrenade.y && RectPlayer.y <= _RectDestinationGrenade.y + _RectDestinationGrenade.h)) {
+					
+					// Tous les y
+					for (int y = 0; y < _RectDestinationGrenade.h; y++) {
+						// Tous les x
+						for (int x = 0; x < _RectDestinationGrenade.w; x++) {
+							if (((unsigned int*)_pSurfaceGrenade->pixels)[y * _pSurfaceGrenade->w + x] != 0 && ((unsigned int*)_pSurfaceGrenade->pixels)[y * _pSurfaceGrenade->w + x] != TRANSPARENCE32BIT) {
+								// Position de la pixel dans la map
+								int iPixelGrenadeX = _RectDestinationGrenade.x + x;
+								int iPixelGrenadeY = _RectDestinationGrenade.y + y;
+								// Si la pixel est dans le rect du joueur...
+								if ((iPixelGrenadeX >= RectPlayer.x && iPixelGrenadeX <= RectPlayer.x + RectPlayer.w) && (iPixelGrenadeY >= RectPlayer.y && iPixelGrenadeY <= RectPlayer.y + RectPlayer.h)) {
+									// Position de la pixel dans le rect du joueur
+									int iPixelJoueurX = iPixelGrenadeX - RectPlayer.x;
+									int iPixelJoueurY = iPixelGrenadeY - RectPlayer.y;
+									// Vérifier Transparence
+									if (((unsigned int*)pSurfacePlayer->pixels)[(iPixelJoueurY)* pSurfacePlayer->w + iPixelJoueurX] != 0 && ((unsigned int*)pSurfacePlayer->pixels)[(iPixelJoueurY)* pSurfacePlayer->w + iPixelJoueurX] != TRANSPARENCE32BIT) {
+										*iX = iPixelGrenadeX;
+										*iY = iPixelGrenadeY;
+										return true;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return false;
 	}
 
 	/*

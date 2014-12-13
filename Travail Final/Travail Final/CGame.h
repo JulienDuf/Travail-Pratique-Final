@@ -60,7 +60,7 @@ public:
 
 		m_pGameMap->ShowMap(_pRenderer);
 
-		PhysiquePlayer();
+		PhysiquePlayer(_pRenderer);
 		PhysiquePack();
 
 
@@ -105,12 +105,11 @@ public:
 		m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->UpdateDescription(m_pToolBar->ObtenirPositionObjetSuvol(), m_pToolBar->ObtenirRectPositionSouris());
 	}
 
-	void PhysiquePlayer(void) {
+	void PhysiquePlayer(SDL_Renderer* _pRenderer) {
 
 		if (!m_boDebutPartie) {
 
 			if (m_pTimerPhysique->IsDone()) {
-				PhysiqueTool();
 				CPlayer* pPlayerActif = m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif();
 				SDL_Rect RectTmp = pPlayerActif->ObtenirRectDestination();
 				double dComposanteX = pPlayerActif->ObtenirPositionX();
@@ -123,8 +122,10 @@ public:
 				unsigned int _uiY;
 				SDL_Rect RectExplosion;
 
+				if (pPlayerActif->IsUsingTool())
+					PhysiqueTool(_pRenderer);
 
-				if (!pPlayerActif->IsStable()) {
+				else if (!pPlayerActif->IsStable()) {
 					/*
 					if (pPlayerActif->ObtenirSpriteCourse()->IsActif()) {
 
@@ -210,7 +211,10 @@ public:
 				
 				}
 				m_pTimerPhysique->Start();
+<<<<<<< HEAD
 				
+=======
+>>>>>>> origin/Branche-Julien
 			}
 
 		}
@@ -327,7 +331,7 @@ public:
 		}
 	}
 
-	void PhysiqueTool(void) {
+	void PhysiqueTool(SDL_Renderer* _pRenderer) {
 
 		if (m_pToolBar->ObtenirPositionObjetDoubleClick() <= 1) {
 
@@ -343,6 +347,14 @@ public:
 
 				RectTmp->x += pVecteurVitesse->ObtenirComposanteX() / 35;
 				RectTmp->y += pVecteurVitesse->ObtenirComposanteY() / 35;
+
+				if (ColisionMissile(pProjectileTmp->ObtenirSurface(), *pProjectileTmp->ObtenirRectDestination(), &iX, &iY)) {
+
+					pProjectileTmp->ReactionColision(pProjectileTmp->ObtenirRectDestination()->x + iX, pProjectileTmp->ObtenirRectDestination()->y + iY);
+					DomageExplosion({ pProjectileTmp->ObtenirRectDestination()->x + iX, pProjectileTmp->ObtenirRectDestination()->y }, 50);
+					m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->DefinirToolActif(false);
+					ChangerTour(_pRenderer);
+				}
 
 				if (RectTmp->x >= 1366 || RectTmp->x + RectTmp->w <= 0 || RectTmp->y >= 768)
 					pProjectileTmp->ReactionColision(0, 0);
@@ -360,6 +372,7 @@ public:
 
 				if (pVecteurVitesse->ObtenirComposanteY() >= 0 && pVecteurVitesse->ObtenirComposanteX() >= 0)
 					pProjectileTmp->DefinirAngle(360 - (180 / M_PI) * atanf((((float)pVecteurVitesse->ObtenirComposanteY()) / ((float)pVecteurVitesse->ObtenirComposanteX()))));
+<<<<<<< HEAD
 
 				if (ColisionMissile(pProjectileTmp->ObtenirSurface(), *pProjectileTmp->ObtenirRectDestination(), &iX, &iY)) {
 
@@ -369,6 +382,8 @@ public:
 					//DomageExplosion({ pProjectileTmp->ObtenirRectDestination()->x + iX, pProjectileTmp->ObtenirRectDestination()->y }, 50);
 					//ChangerTour()
 				}
+=======
+>>>>>>> origin/Branche-Julien
 			}
 			else if (m_pToolBar->ObtenirPositionObjetDoubleClick() == 1 && pProjectileTmp->EstLancer()) {
 
@@ -552,6 +567,7 @@ public:
 		return 362;
 
 	}
+
 	// Procédure déterminant la position d'une collision entre un objet et la map, si il y en a une.
 	// En entrée:
 	// Param1: La surface de l'objet.
@@ -590,7 +606,9 @@ public:
 		SDL_Rect RectSourcePlayer;
 		SDL_Surface* pSurfacePlayer;
 
-		int xPlayer, xMissile, yPlayer, yMissile;
+		int xPlayer, xMissile, yPlayer, yMissile, FinY, FinX;
+		int XPlayer, XMissile, YPlayer, YMissile;
+		bool boCollsionJoeur;
 
 		m_pTeamList->AllerATrieur(0);
 		for (int i = 0; i < m_pTeamList->ObtenirCompte(); i++) {
@@ -604,49 +622,90 @@ public:
 				RectSourcePlayer = pPlayerListTmp->ObtenirElementTrieur()->ObtenirSpriteRepos()->ObtenirRectSource();
 				pSurfacePlayer = pPlayerListTmp->ObtenirElementTrieur()->ObtenirSpriteRepos()->ObtenirSurface();
 
-				if ((_RectDestination.x + _RectDestination.w >= RectPlayer.x && _RectDestination.x <= (RectPlayer.x + RectPlayer.w)) && (_RectDestination.y + _RectDestination.h >= RectPlayer.y && _RectDestination.y <= (RectPlayer.y + RectPlayer.h))) {
+				//1
+				if (_RectDestination.x + _RectDestination.w >= RectPlayer.x && _RectDestination.x < RectPlayer.x && _RectDestination.y >= RectPlayer.y && _RectDestination.y + _RectDestination.h <= (RectPlayer.y + RectPlayer.h)) {
 
-					if (_RectDestination.x + _RectDestination.w >= RectPlayer.x && _RectDestination.x < RectPlayer.x && _RectDestination.y >= RectPlayer.y) {
+					xPlayer = 0;
+					yPlayer = _RectDestination.y - RectPlayer.y;
+					xMissile = RectPlayer.x - _RectDestination.x;
+					yMissile = 0;
+					FinX = _RectDestination.w;
+					FinY = _RectDestination.h;
+					boCollsionJoeur = true;
+				}
 
-						xPlayer = 0;
-						yPlayer = _RectDestination.y - RectPlayer.y;
-						xMissile = RectPlayer.x - _RectDestination.x;
-						yMissile = 0;
-					}
+				//5
+				else if (_RectDestination.x >= RectPlayer.x && _RectDestination.x + _RectDestination.w <= RectPlayer.x + RectPlayer.w && _RectDestination.y >= RectPlayer.y && _RectDestination.y + _RectDestination.h <= (RectPlayer.y + RectPlayer.h)) {
 
-					else if (_RectDestination.x >= RectPlayer.x && _RectDestination.x + _RectDestination.w <= RectPlayer.x + RectPlayer.w && _RectDestination.y >= RectPlayer.y) {
+					xPlayer = _RectDestination.x - RectPlayer.x;
+					yPlayer = _RectDestination.y - RectPlayer.y;
+					xMissile = 0;
+					yMissile = 0;
+					FinX = _RectDestination.w;
+					FinY = _RectDestination.h;
+					boCollsionJoeur = true;
+				}
+				//2
+				else if (_RectDestination.x <= RectPlayer.x + RectPlayer.w && _RectDestination.x + _RectDestination.w > RectPlayer.x + RectPlayer.w && _RectDestination.y >= RectPlayer.y && _RectDestination.y + _RectDestination.h <= (RectPlayer.y + RectPlayer.h)) {
 
-						xPlayer = RectPlayer.x - _RectDestination.x;
-						yPlayer = _RectDestination.y - RectPlayer.y;
-						xMissile = 0;
-						yMissile = 0;
-					}
+					xPlayer = RectPlayer.w - ((RectPlayer.x + RectPlayer.w) - _RectDestination.x);
+					yPlayer = _RectDestination.y - RectPlayer.y;
+					xMissile = 0;
+					yMissile = 0;
+					FinX = (RectPlayer.x + RectPlayer.w) - _RectDestination.x;
+					FinY = _RectDestination.h;
+					boCollsionJoeur = true;
+				}
+				//3
+				else if (_RectDestination.x >= RectPlayer.x && _RectDestination.x + _RectDestination.w <= RectPlayer.x + RectPlayer.w && _RectDestination.y < RectPlayer.y && _RectDestination.y + _RectDestination.h >= RectPlayer.y) {
 
-					else if (_RectDestination.x <= RectPlayer.x + RectPlayer.w && _RectDestination.x + _RectDestination.w > RectPlayer.x) {
+					xPlayer = _RectDestination.x - RectPlayer.x;
+					yPlayer = 0;
+					xMissile = 0;
+					yMissile = RectPlayer.y - _RectDestination.y;
+					FinX = _RectDestination.w;
+					FinY = _RectDestination.h;
+					boCollsionJoeur = true;
+				}
+				//4
+				else if (_RectDestination.x >= RectPlayer.x && _RectDestination.x + _RectDestination.w <= RectPlayer.x + RectPlayer.w && _RectDestination.y < RectPlayer.y + RectPlayer.w && _RectDestination.y + _RectDestination.h > RectPlayer.y + RectPlayer.h) {
 
+					xPlayer = _RectDestination.x - RectPlayer.x;
+					yPlayer = RectPlayer.h - ((RectPlayer.y + RectPlayer.h) - _RectDestination.y);
+					xMissile = 0;
+					yMissile = 0;
+					FinX = _RectDestination.w;
+					FinY = (RectPlayer.y + RectPlayer.h) - _RectDestination.y;
+					boCollsionJoeur = true;
+				}
 
+				else {
 
+					boCollsionJoeur = false;
+				}
 
-					}
-
-					for (; yPlayer < RectPlayer.h && yMissile < _RectDestination.h; yPlayer++, yMissile++) {
-						for (; xPlayer < RectPlayer.w && xMissile < _RectDestination.x; xPlayer++, xMissile++) {
+				if (boCollsionJoeur) {
+					for (; yMissile < FinY; yPlayer++, yMissile++) {
+						for (XPlayer = xPlayer, XMissile = xMissile; XMissile < FinX; XPlayer++, XMissile++) {
 
 							if (xPlayer >= 0 && xPlayer <= 1366 && yPlayer >= 0 && yPlayer <= 768) {
 
-								if (((unsigned int*)pSurfacePlayer->pixels)[(yPlayer + RectSourcePlayer.y) * pSurfacePlayer->w + (xPlayer + RectSourcePlayer.x)] != 0 && ((unsigned int*)_pSurfaceMissile->pixels)[(yMissile)* _pSurfaceMissile->w + (xMissile)] != 0) {
+								if (((unsigned int*)pSurfacePlayer->pixels)[(yPlayer + RectSourcePlayer.y) * pSurfacePlayer->w + (XPlayer + RectSourcePlayer.x)] != 0) 
+									
+									if (((unsigned int*)_pSurfaceMissile->pixels)[(yMissile)* _pSurfaceMissile->w + (XMissile)] != 0) {
 
 									*_iX = xPlayer;
 									*_iY = yPlayer;
-
+									pPlayerListTmp->RetirerTrieur(true);
 									return true;
-									
+
 								}
 							}
 						}
 					}
 				}
-				pPlayerListTmp->AllerSuivantTrieur();
+
+			pPlayerListTmp->AllerSuivantTrieur();
 			}
 
 			m_pTeamList->AllerSuivantTrieur();

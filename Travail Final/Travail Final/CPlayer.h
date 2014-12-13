@@ -207,6 +207,11 @@ public:
 		m_dPositionY = _dY;
 	}
 
+	void DefinirToolActif(bool _boActif){
+
+		m_boToolActif = _boActif;
+	}
+
 	CSprite* ObtenirSpriteCourse() {
 		m_pListeMouvement->AllerATrieur(2);
 		return m_pListeMouvement->ObtenirElementTrieur()->ObtenirSprite("Course");
@@ -275,6 +280,10 @@ public:
 		return m_boChuteLibre;
 	}
 
+	bool IsUsingTool(void) {
+
+		return m_boToolActif;
+	}
 
 	double ObtenirPositionX(void) {
 

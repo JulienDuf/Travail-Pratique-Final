@@ -21,7 +21,6 @@ private:
 
 	CLabel* m_pLblDescription; // La descripton du missile.
 	string m_strDescription[8];
-	TTF_Font* m_pFont;
 	bool m_boShowDescription;
 
 	void(*m_pMapDestruction)(int _iRayon, int _iX, int _iY); // La destruction de la map.
@@ -35,7 +34,7 @@ private:
 
 		SDL_Rect Rect = { 0, 0, 0, 0 };
 
-		pSurfaceBlitSource = TTF_RenderText_Blended(m_pFont, _strTexte[0].c_str(), { 0, 0, 0 });
+		pSurfaceBlitSource = TTF_RenderText_Blended(pGestionnaireFont->ObtenirDonnee("pFontDescription"), _strTexte[0].c_str(), { 0, 0, 0 });
 		unsigned int uiH = pSurfaceBlitSource->h;
 
 		pSurfaceBlitin = SDL_CreateRGBSurface(pSurfaceBlitSource->flags, 300, pSurfaceBlitSource->h * _uiNombreElementTableau, pSurfaceBlitSource->format->BitsPerPixel, 0, 0, 0, 0);
@@ -44,7 +43,7 @@ private:
 		SDL_BlitSurface(pSurfaceBlitSource, NULL, pSurfaceBlitin, &Rect);
 
 		for (int i = 1; i < _uiNombreElementTableau; i++) {
-			pSurfaceBlitSource = TTF_RenderText_Blended(m_pFont, _strTexte[i].c_str(), { 0, 0, 0 });
+			pSurfaceBlitSource = TTF_RenderText_Blended(pGestionnaireFont->ObtenirDonnee("pFontDescription"), _strTexte[i].c_str(), { 0, 0, 0 });
 			Rect.y = uiH * i;
 			SDL_BlitSurface(pSurfaceBlitSource, NULL, pSurfaceBlitin, &Rect);
 		}
@@ -64,7 +63,7 @@ private:
 
 public:
 
-	CMissile(string _strEmplacement, CGestionaire<TTF_Font*>* _pGestionnaireFont, SDL_Renderer* _pRenderer, CGestionaire<SDL_Surface*>* _pGestionnaireSurface, CGestionaire<SDL_Texture*>* _pGestionnaireTexture, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), SDL_Surface* _Rotation(SDL_Surface* _pSurfaceRotation, float _fAngle)) {
+	CMissile(string _strEmplacement, SDL_Renderer* _pRenderer, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), SDL_Surface* _Rotation(SDL_Surface* _pSurfaceRotation, float _fAngle)) {
 
 		m_boShowDescription = false;
 
@@ -98,8 +97,6 @@ public:
 
 		FichierDescription.close();
 
-		m_pFont = _pGestionnaireFont->ObtenirDonnee("pFontDescription");
-
 		SDL_Surface *pSDLSurface = BlitText(m_strDescription, 8, { 0, 0, 0 });
 
 		m_pLblDescription = new CLabel(SDL_CreateTextureFromSurface(_pRenderer, pSDLSurface), { 0, 0, pSDLSurface->w, pSDLSurface->h });
@@ -107,13 +104,13 @@ public:
 		m_iAngle = 0;
 		m_uiForce = 0;
 
-		m_pSDLSurfaceMissile = _pGestionnaireSurface->ObtenirDonnee("pSurfaceMissile");
+		m_pSDLSurfaceMissile = pGestionnaireSurface->ObtenirDonnee("pSurfaceMissile");
 		m_pSDLSurfaceMissileRotation = m_pSDLSurfaceMissile;
 
 		m_RectDestinationMissile = { 0, 0, 0, 0 };
 		m_RectDestinationMissile.w = m_pSDLSurfaceMissile->w;
 		m_RectDestinationMissile.h = m_pSDLSurfaceMissile->h;
-		m_pBarrePuissance = new CBarrePuissance(_pGestionnaireTexture);
+		m_pBarrePuissance = new CBarrePuissance();
 
 		m_pMapDestruction = _MapDestruction;
 		m_pCollisionMap = _CollisionMap;

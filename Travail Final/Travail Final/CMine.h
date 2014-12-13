@@ -15,9 +15,9 @@ private:
 	void(*m_pMapDestruction)(int _iRayon, int _iX, int _iY);
 
 public:
-	CMine(CGestionaire<SDL_Surface*>* _pGestionnaireSurface, SDL_Renderer* _Renderer, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY)){
+	CMine(SDL_Renderer* _Renderer, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY)){
 		//initialisation de la texture.
-		m_pSurface = _pGestionnaireSurface->ObtenirDonnee("pSurfaceMine");		
+		m_pSurface = pGestionnaireSurface->ObtenirDonnee("pSurfaceMine");		
 		m_pTexture = SDL_CreateTextureFromSurface(_Renderer, m_pSurface);
 		
 		
@@ -32,7 +32,7 @@ public:
 		m_RectExplosion.x = m_RectDestination.x;
 		m_RectExplosion.y = 0;
 
-		m_pSpriteExplosion = new CSprite(_pGestionnaireSurface->ObtenirDonnee("pSurfaceExplosion"), SDL_CreateTextureFromSurface(_Renderer, _pGestionnaireSurface->ObtenirDonnee("pSurfaceExplosion")), m_RectExplosion, 9, 300, false, false, 1);
+		m_pSpriteExplosion = new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceExplosion"), SDL_CreateTextureFromSurface(_Renderer, pGestionnaireSurface->ObtenirDonnee("pSurfaceExplosion")), m_RectExplosion, 9, 300, false, false, 1);
 
 		m_pCollisionMap = _CollisionMap;
 		m_pMapDestruction = _MapDestruction;

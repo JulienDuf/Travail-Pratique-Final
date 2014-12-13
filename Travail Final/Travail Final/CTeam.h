@@ -12,7 +12,7 @@ private:
 
 public:
 
-	CTeam(string _strEmplacement, SDL_Renderer* _pRenderer, CGestionaire<TTF_Font*>* _pGestionnaireFont, CGestionaire<SDL_Surface*>* _pGestionnaireSurface, CGestionaire<SDL_Texture*>* _pGestionnaireTexture, unsigned int _uiIDTeam, int _iNombreJoueur, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), SDL_Surface* _Rotation(SDL_Surface* _pSurfaceRotation, float _fAngle)) {
+	CTeam(string _strEmplacement, SDL_Renderer* _pRenderer, unsigned int _uiIDTeam, int _iNombreJoueur, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), SDL_Surface* _Rotation(SDL_Surface* _pSurfaceRotation, float _fAngle)) {
 
 		m_pPlayerList = new CListeDC<CPlayer*>();
 
@@ -20,8 +20,8 @@ public:
 
 		for (int i = _iNombreJoueur; i > 0; i--) {
 
-			iX = rand() % (1366 - _pGestionnaireSurface->ObtenirDonnee("pSurfaceParachute")->w/24);
-			m_pPlayerList->AjouterFin(new CPlayer( _strEmplacement, _pRenderer, _pGestionnaireFont, _pGestionnaireSurface, _pGestionnaireTexture, _uiIDTeam, {iX, 5, 0, 0}, _MapDestruction, _CollisionObjetMap, _Rotation));
+			iX = rand() % (1366 - pGestionnaireSurface->ObtenirDonnee("pSurfaceParachute")->w/24);
+			m_pPlayerList->AjouterFin(new CPlayer( _strEmplacement, _pRenderer, _uiIDTeam, {iX, 5, 0, 0}, _MapDestruction, _CollisionObjetMap, _Rotation));
 		}
 		m_pPlayerList->AllerDebut();
 	}

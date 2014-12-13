@@ -20,6 +20,7 @@ public:
 	// Param2; Nombre de Contrôles à ajouter.
 	// Param3...; Contrôles à ajouter.
 	CMenu(bool _boShow, SDL_Rect _RectDestination, SDL_Renderer* _pRenderer, SDL_Color _CouleurBackGround, unsigned int argc, ...) {
+
 		m_boShow = _boShow;
 		m_pArbreControl = new CArbreAVL<CControl*>();
 

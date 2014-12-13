@@ -21,11 +21,11 @@ public:
 	// En entrée:
 	// Param1: L'emplacement des fichiers.
 	// Param2: Le renderer de la fenêtre.
-	CBarrePuissance(CGestionaire<SDL_Texture*>* _pGestionnaireTexture) {
+	CBarrePuissance() {
 
 		m_uiForce = 0;
 
-		m_pSDLTextureBarrre = _pGestionnaireTexture->ObtenirDonnee("pTextureBarrePuissance");
+		m_pSDLTextureBarrre = pGestionnaireTexture->ObtenirDonnee("pTextureBarrePuissance");
 
 		m_RectDestinationBarre = { 0, 0, 0, 0 };
 		SDL_QueryTexture(m_pSDLTextureBarrre, NULL, NULL, &m_RectDestinationBarre.w, &m_RectDestinationBarre.h);

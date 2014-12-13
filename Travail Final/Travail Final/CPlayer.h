@@ -51,7 +51,7 @@ public:
 	// Paramètre: _strName, contient le nom que l'on veut donner au joueur.
 	// Retour: Rien (constructeur).
 
-	CPlayer(string _strEmplacement, SDL_Renderer* _pRenderer, CGestionaire<TTF_Font*>* _pGestionnaireFont, CGestionaire<SDL_Surface*>* _pGestionnaireSurface, CGestionaire<SDL_Texture*>* _pGestionnaireTexture, unsigned int _uiIDTeam, SDL_Rect _RectDestination, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), SDL_Surface* _Rotation(SDL_Surface* _pSurfaceRotation, float _fAngle)) {
+	CPlayer(string _strEmplacement, SDL_Renderer* _pRenderer, unsigned int _uiIDTeam, SDL_Rect _RectDestination, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), SDL_Surface* _Rotation(SDL_Surface* _pSurfaceRotation, float _fAngle)) {
 		
 		m_pListeTools = new CListeDC<CProjectile*>();
 		m_pListeMouvement = new CListeDC<CMouvement*>();
@@ -59,23 +59,23 @@ public:
 		m_boStable = false;
 		m_boToolActif = false;
 		
-		m_pListeMouvement->AjouterFin(new CMelee(_strEmplacement, _pGestionnaireFont, new CSprite(_pGestionnaireSurface->ObtenirDonnee("pSurfaceMelee"), _pGestionnaireTexture->ObtenirDonnee("pTextureMelee"), _RectDestination, 30, 30, true, true, 2), _pRenderer));
+		m_pListeMouvement->AjouterFin(new CMelee(_strEmplacement, new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceMelee"), pGestionnaireTexture->ObtenirDonnee("pTextureMelee"), _RectDestination, 30, 30, true, true, 2), _pRenderer));
 
-		m_pListeMouvement->AjouterFin(new CJetPack(_strEmplacement, _pGestionnaireFont, new CSprite(_pGestionnaireSurface->ObtenirDonnee("pSurfaceJetPack"), _pGestionnaireTexture->ObtenirDonnee("pTextureJetPack"), _RectDestination, 6, 80, true, false, 2), new CBarreVie(_pGestionnaireTexture, { _RectDestination.x, _RectDestination.y + _RectDestination.h - 2, 0, 0 }, 6), _pRenderer));
+		m_pListeMouvement->AjouterFin(new CJetPack(_strEmplacement, new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceJetPack"), pGestionnaireTexture->ObtenirDonnee("pTextureJetPack"), _RectDestination, 6, 80, true, false, 2), new CBarreVie({ _RectDestination.x, _RectDestination.y + _RectDestination.h - 2, 0, 0 }, 6), _pRenderer));
 		
-		m_pListeMouvement->AjouterFin(new CDeplacement(_pGestionnaireSurface, _pGestionnaireTexture, _RectDestination));
+		m_pListeMouvement->AjouterFin(new CDeplacement(_RectDestination));
 
 		m_pListeMouvement->AllerACurseur(2);
 		m_pListeMouvement->AllerATrieur(0);
 
-		m_pListeTools->AjouterFin(new CMissile(_strEmplacement, _pGestionnaireFont, _pRenderer, _pGestionnaireSurface, _pGestionnaireTexture, _MapDestruction, _CollisionObjetMap, _Rotation));
+		m_pListeTools->AjouterFin(new CMissile(_strEmplacement, _pRenderer, _MapDestruction, _CollisionObjetMap, _Rotation));
 
-		m_pListeTools->AjouterFin(new CGrenade(_strEmplacement, _pGestionnaireFont, _pRenderer, _pGestionnaireSurface, _pGestionnaireTexture, _MapDestruction, _CollisionObjetMap, _Rotation));
+		m_pListeTools->AjouterFin(new CGrenade(_strEmplacement, _pRenderer, _MapDestruction, _CollisionObjetMap, _Rotation));
 
 		m_pListeTools->AllerACurseur(0);
 		m_pListeTools->AllerATrieur(0);
 
-		m_pSpriteParachute = new CSprite(_pGestionnaireSurface->ObtenirDonnee("pSurfaceParachute"), _pGestionnaireTexture->ObtenirDonnee("pTextureParachute"), _RectDestination, 24, 20, true, true, 1);
+		m_pSpriteParachute = new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceParachute"), pGestionnaireTexture->ObtenirDonnee("pTextureParachute"), _RectDestination, 24, 20, true, true, 1);
 
 		m_RectPlayerDestination = _RectDestination;
 		m_RectPlayerDestination.w = ObtenirSpriteCourse()->ObtenirRectSource().w;
@@ -105,7 +105,7 @@ public:
 		m_RectHitboxPiedsParachute.w = 58;
 		m_RectHitboxPiedsParachute.h = 19;
 
-		m_pBarreVie = new CBarreVie(_pGestionnaireTexture, { _RectDestination.x, _RectDestination.y - 2, 0, 0 }, _uiIDTeam);
+		m_pBarreVie = new CBarreVie({ _RectDestination.x, _RectDestination.y - 2, 0, 0 }, _uiIDTeam);
 
 		m_pVecteurVitesse = new CVecteur2D(0, 0.0f);
 		m_pVecteurPoids = new CVecteur2D(0, 0.0f);

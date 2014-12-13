@@ -19,17 +19,17 @@ private:
 	*/
 public:
 
-	CDeplacement(CGestionaire<SDL_Surface*>* _pGestionnaireSurface, CGestionaire<SDL_Texture*>* _pGestionnaireTexture, SDL_Rect _RectDestination) {
+	CDeplacement(SDL_Rect _RectDestination) {
 
 		m_uiCompte = 0;
 
 		m_boSpace = false;
 
-		m_pSpriteCourse = new CSprite(_pGestionnaireSurface->ObtenirDonnee("pSurfaceCourse"), _pGestionnaireTexture->ObtenirDonnee("pTextureCourse"), _RectDestination, 9, 50, true, false, 2);
+		m_pSpriteCourse = new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceCourse"), pGestionnaireTexture->ObtenirDonnee("pTextureCourse"), _RectDestination, 9, 50, true, false, 2);
 
-		m_pSpriteSaut = new CSprite(_pGestionnaireSurface->ObtenirDonnee("pSurfaceSaut"), _pGestionnaireTexture->ObtenirDonnee("pTextureSaut"), _RectDestination, 9, 100, false, false, 2);
+		m_pSpriteSaut = new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceSaut"), pGestionnaireTexture->ObtenirDonnee("pTextureSaut"), _RectDestination, 9, 100, false, false, 2);
 
-		m_pSpriteRepos = new CSprite(_pGestionnaireSurface->ObtenirDonnee("pSurfaceRepos"), _pGestionnaireTexture->ObtenirDonnee("pTextureRepos"), _RectDestination, 1, 50, true, false, 2);
+		m_pSpriteRepos = new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceRepos"), pGestionnaireTexture->ObtenirDonnee("pTextureRepos"), _RectDestination, 1, 50, true, false, 2);
 	}
 
 	void ReactToEvent(SDL_Event* _pEvent, CVecteur2D* _pVecteurVitesse, bool* _boStable) {

@@ -10,16 +10,27 @@
 using namespace std;
 
 #include "CArbreAVL.h"
+#include "CGestionaire.h"
+
+CGestionaire<SDL_Texture*>* pGestionnaireTexture; // Le gestionaire des textures.
+CGestionaire<SDL_Surface*>* pGestionnaireSurface; // Le gestionaire des surfaces.
+CGestionaire<TTF_Font*>* pGestionnaireFont; // Le gestionaire des fonts.
+
 #include "CListeDC.h"
 #include "Pointeur Fonction.h"
 #include "CTimer.h"
 #include "CVecteur2D.h"
 #include "CSprite.h"
 #include "CControl.h"
+
+CGestionaire<CControl*>* pGestionnaireControl; // Le gestionaire des controls.
+
 #include "CButton.h"
 #include "CLabel.h"
 #include "CMenu.h"
-#include "CGestionaire.h"
+
+CGestionaire<CMenu*>* pGestionnaireMenu; // Le gestionaire des menus.
+
 #include "CScrollBar.h"
 #include "CBarrePuissance.h"
 #include "CProjectile.h"
@@ -50,12 +61,6 @@ string strEmplacementFichier; // L'emplacement de nos fichiers.
 SDL_Event* pEvent; // Les événemens du programme;
 
 CWindow* pWindowJeu; // La fenêtre de jeu.
-
-CGestionaire<SDL_Texture*>* pGestionaireTexture; // Le gestionaire des textures.
-CGestionaire<SDL_Surface*>* pGestionaireSurface; // Le gestionaire des surfaces.
-CGestionaire<TTF_Font*>* pGestionaireFont; // Le gestionaire des fonts.
-CGestionaire<CControl*>* pGestionaireControl; // Le gestionaire des controls.
-CGestionaire<CMenu*>* pGestionaireMenu; // Le gestionaire des menus.
 
 SDL_Surface* pSurfaceGabarie; // Le gabarie pour les destructions.
 
@@ -274,15 +279,15 @@ void CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int
 // Procédure pour le click sur le bouton nouvelle partie...
 void ClickBoutonNouvellePartie(void) {
 
-	pGestionaireMenu->ObtenirDonnee("pMenuNouvellePartie")->DefinirboShow(true);
-	pGestionaireMenu->ObtenirDonnee("pMenuPrincipal")->DefinirboShow(false);
+	pGestionnaireMenu->ObtenirDonnee("pMenuNouvellePartie")->DefinirboShow(true);
+	pGestionnaireMenu->ObtenirDonnee("pMenuPrincipal")->DefinirboShow(false);
 }
 
 // Procédure pour le click sur le bouton retour dans le menu nouvelle partie...
 void ClickBoutonRetour(void) {
 
-	pGestionaireMenu->ObtenirDonnee("pMenuNouvellePartie")->DefinirboShow(false);
-	pGestionaireMenu->ObtenirDonnee("pMenuPrincipal")->DefinirboShow(true);
+	pGestionnaireMenu->ObtenirDonnee("pMenuNouvellePartie")->DefinirboShow(false);
+	pGestionnaireMenu->ObtenirDonnee("pMenuPrincipal")->DefinirboShow(true);
 }
 
 // Procédure pour le click sur le bouton début partie...
@@ -295,26 +300,26 @@ void ClickBoutonDebutPartie(void) {
 	// Load des texture pour la toolbar...
 	string strBazookaToolPath = strEmplacementFichier;
 	strBazookaToolPath.append("Armes et Packs\\bazookatool.png");
-	pGestionaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strBazookaToolPath.c_str()), "BazookaTool");
+	pGestionnaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strBazookaToolPath.c_str()), "BazookaTool");
 
 	string strGrenadaToolPath = strEmplacementFichier;
 	strGrenadaToolPath.append("Armes et Packs\\grenadetool.png");
-	pGestionaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strGrenadaToolPath.c_str()), "GrenadaTool");
+	pGestionnaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strGrenadaToolPath.c_str()), "GrenadaTool");
 
 	string strSwordToolPath = strEmplacementFichier;
 	strSwordToolPath.append("Armes et Packs\\swordtool.png");
-	pGestionaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strSwordToolPath.c_str()), "SwordTool");
+	pGestionnaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strSwordToolPath.c_str()), "SwordTool");
 
 	string strJetPackToolPath = strEmplacementFichier;
 	strJetPackToolPath.append("Armes et Packs\\jetpacktool.png");
-	pGestionaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strJetPackToolPath.c_str()), "JetPackTool");
+	pGestionnaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strJetPackToolPath.c_str()), "JetPackTool");
 
-	pGestionaireMenu->ObtenirDonnee("pMenuNouvellePartie")->DefinirboShow(false);
-	pGestionaireMenu->ObtenirDonnee("pMenuPrincipal")->DefinirboShow(false);
+	pGestionnaireMenu->ObtenirDonnee("pMenuNouvellePartie")->DefinirboShow(false);
+	pGestionnaireMenu->ObtenirDonnee("pMenuPrincipal")->DefinirboShow(false);
 
 	strTmp.append("Maps\\");
 
-	switch (pGestionaireControl->ObtenirDonnee("pLblLRChoixMap")->ObtenirElement("PositionLabel")) {
+	switch (pGestionnaireControl->ObtenirDonnee("pLblLRChoixMap")->ObtenirElement("PositionLabel")) {
 
 	case 0:
 		strTmp.append("arcaderoom\\");
@@ -345,10 +350,10 @@ void ClickBoutonDebutPartie(void) {
 		break;
 	}
 
-	iNombreEquipe = pGestionaireControl->ObtenirDonnee("pLblLRChoixNbrEquipe")->ObtenirElement("PositionLabel") + 2;
-	iNombreJoueur = pGestionaireControl->ObtenirDonnee("pLblLRChoixNbrJoueurEquipe")->ObtenirElement("PositionLabel") + 4;
+	iNombreEquipe = pGestionnaireControl->ObtenirDonnee("pLblLRChoixNbrEquipe")->ObtenirElement("PositionLabel") + 2;
+	iNombreJoueur = pGestionnaireControl->ObtenirDonnee("pLblLRChoixNbrJoueurEquipe")->ObtenirElement("PositionLabel") + 4;
 
-	pWindowJeu->CreateGame(strTmp, pGestionaireFont, pGestionaireSurface, pGestionaireTexture, iNombreEquipe, iNombreJoueur, new CVent(pGestionaireFont->ObtenirDonnee("pFontBouton"), "250 km/h", CouleurTexte, pGestionaireTexture->ObtenirDonnee("pFlecheVent"), { 1200, 30, 117, 63 }, 180, pWindowJeu->ObtenirRenderer()),  VerifierCollisionJoueurMap, MapDestruction, CollisionObjetMap, Rotation);
+	pWindowJeu->CreateGame(strTmp, iNombreEquipe, iNombreJoueur, new CVent(pGestionnaireFont->ObtenirDonnee("pFontBouton"), "250 km/h", CouleurTexte, pGestionnaireTexture->ObtenirDonnee("pFlecheVent"), { 1200, 30, 117, 63 }, 180, pWindowJeu->ObtenirRenderer()),  VerifierCollisionJoueurMap, MapDestruction, CollisionObjetMap, Rotation);
 }
 
 // Procédure pour le click sur le bouton quitter...
@@ -360,27 +365,27 @@ void ClickBoutonQuitter(void) {
 // Procédure pour le click sur le bouton droit du labelLeftRight de choix de la map...
 void ClickBoutonDroitChoixMap(void) {
 
-	pGestionaireControl->ObtenirDonnee("pLblDescriptionMap")->ChangeTexture(true);
+	pGestionnaireControl->ObtenirDonnee("pLblDescriptionMap")->ChangeTexture(true);
 
 }
 
 // Procédure pour le click sur le bouton gauche du labelLeftRight de choix de la map...
 void ClickBoutonGaucheChoixMap(void) {
 
-	pGestionaireControl->ObtenirDonnee("pLblDescriptionMap")->ChangeTexture(false);
+	pGestionnaireControl->ObtenirDonnee("pLblDescriptionMap")->ChangeTexture(false);
 
 }
 
 // Procédure qui résume la partie lorsquelle est sur pause...
 void ClickBoutonResumer(void) {
-	pGestionaireMenu->ObtenirDonnee("pMenuPause")->DefinirboShow(false);
+	pGestionnaireMenu->ObtenirDonnee("pMenuPause")->DefinirboShow(false);
 }
 
 // Procédure qui quitter une partie en cours et la détruit...
 void ClickBoutonQuitterJeu(void) {
 	pWindowJeu->FinDePartie();
-	pGestionaireMenu->ObtenirDonnee("pMenuPause")->DefinirboShow(false);
-	pGestionaireMenu->ObtenirDonnee("pMenuPrincipal")->DefinirboShow(true);
+	pGestionnaireMenu->ObtenirDonnee("pMenuPause")->DefinirboShow(false);
+	pGestionnaireMenu->ObtenirDonnee("pMenuPrincipal")->DefinirboShow(true);
 }
 
 // ]
@@ -436,12 +441,12 @@ void ReadMapInfo(string _strEmplacement) {
 		FichierMap.close();
 	}
 
-	SDL_Surface* pSDLSurface = TTF_RenderText_Blended(pGestionaireFont->ObtenirDonnee("pFontBouton"), strTmp[0].c_str(), CouleurTexte);
+	SDL_Surface* pSDLSurface = TTF_RenderText_Blended(pGestionnaireFont->ObtenirDonnee("pFontBouton"), strTmp[0].c_str(), CouleurTexte);
 	pSDLSurface = SDL_CreateRGBSurface(pSDLSurface->flags, 500, pSDLSurface->h * 5, pSDLSurface->format->BitsPerPixel, pSDLSurface->format->Rmask, pSDLSurface->format->Gmask, pSDLSurface->format->Bmask, pSDLSurface->format->Amask);
 
 	// Ajoute ce qui a été lu dans le label.
-	BlitTexte(strTmp, 5, pGestionaireFont->ObtenirDonnee("pFontBouton"), CouleurTexte, pSDLSurface);
-	pGestionaireControl->ObtenirDonnee("pLblDescriptionMap")->AjouterTexture(1, SDL_CreateTextureFromSurface(pWindowJeu->ObtenirRenderer(), pSDLSurface));
+	BlitTexte(strTmp, 5, pGestionnaireFont->ObtenirDonnee("pFontBouton"), CouleurTexte, pSDLSurface);
+	pGestionnaireControl->ObtenirDonnee("pLblDescriptionMap")->AjouterTexture(1, SDL_CreateTextureFromSurface(pWindowJeu->ObtenirRenderer(), pSDLSurface));
 
 }
 
@@ -504,11 +509,11 @@ void Start(char* _strApplicationFilename) {
 	pWindowJeu = new CWindow(1366, 768);
 	pWindowJeu->GetSize(&iW, &iH);
 	
-	pGestionaireTexture = new CGestionaire<SDL_Texture*>();
-	pGestionaireSurface = new CGestionaire<SDL_Surface*>();
-	pGestionaireFont = new CGestionaire<TTF_Font*>();
-	pGestionaireControl = new CGestionaire<CControl*>();
-	pGestionaireMenu = new CGestionaire<CMenu*>();
+	pGestionnaireTexture = new CGestionaire<SDL_Texture*>();
+	pGestionnaireSurface = new CGestionaire<SDL_Surface*>();
+	pGestionnaireFont = new CGestionaire<TTF_Font*>();
+	pGestionnaireControl = new CGestionaire<CControl*>();
+	pGestionnaireMenu = new CGestionaire<CMenu*>();
 
 	pTimerPhysique = new CTimer(1000);
 
@@ -522,120 +527,120 @@ void Start(char* _strApplicationFilename) {
 	// La course...
 	strEmplacement = strApplicationPath;
 	strEmplacement.append("Personnage\\Course.png");
-	pGestionaireSurface->AjouterDonnee(IMG_Load(strEmplacement.c_str()), "pSurfaceCourse");
+	pGestionnaireSurface->AjouterDonnee(IMG_Load(strEmplacement.c_str()), "pSurfaceCourse");
 
 	// Le saut...
 	strEmplacement = strApplicationPath;
 	strEmplacement.append("Personnage\\Saut.png");
-	pGestionaireSurface->AjouterDonnee(IMG_Load(strEmplacement.c_str()), "pSurfaceSaut");
+	pGestionnaireSurface->AjouterDonnee(IMG_Load(strEmplacement.c_str()), "pSurfaceSaut");
 
 	// Le parachute...
 	strEmplacement = strApplicationPath;
 	strEmplacement.append("Personnage\\Parachute.png");
-	pGestionaireSurface->AjouterDonnee(IMG_Load(strEmplacement.c_str()), "pSurfaceParachute");
+	pGestionnaireSurface->AjouterDonnee(IMG_Load(strEmplacement.c_str()), "pSurfaceParachute");
 
 	// Au repos...
 	strEmplacement = strApplicationPath;
 	strEmplacement.append("Personnage\\Repos.png");
-	pGestionaireSurface->AjouterDonnee(IMG_Load(strEmplacement.c_str()), "pSurfaceRepos");
+	pGestionnaireSurface->AjouterDonnee(IMG_Load(strEmplacement.c_str()), "pSurfaceRepos");
 
 	// Le jetpack...
 	strEmplacement = strApplicationPath;
 	strEmplacement.append("Personnage\\jetpack.png");
-	pGestionaireSurface->AjouterDonnee(IMG_Load(strEmplacement.c_str()), "pSurfaceJetPack");
+	pGestionnaireSurface->AjouterDonnee(IMG_Load(strEmplacement.c_str()), "pSurfaceJetPack");
 
 	// Chargement de la surface du missile...
 	strEmplacement = strApplicationPath;
 	strEmplacement.append("Armes et Packs\\Missile.png");
-	pGestionaireSurface->AjouterDonnee(IMG_Load(strEmplacement.c_str()), "pSurfaceMissile");
+	pGestionnaireSurface->AjouterDonnee(IMG_Load(strEmplacement.c_str()), "pSurfaceMissile");
 
 	// Chargement de la surface de la grenade...
 	strEmplacement = strApplicationPath;
 	strEmplacement.append("Armes et Packs\\Grenade.png");
-	pGestionaireSurface->AjouterDonnee(IMG_Load(strEmplacement.c_str()), "pSurfaceGrenade");
+	pGestionnaireSurface->AjouterDonnee(IMG_Load(strEmplacement.c_str()), "pSurfaceGrenade");
 
 	// L'attaque de mélée...
 	strEmplacement = strApplicationPath;
 	strEmplacement.append("Personnage\\Melee.png");
-	pGestionaireSurface->AjouterDonnee(IMG_Load(strEmplacement.c_str()), "pSurfaceMelee");
+	pGestionnaireSurface->AjouterDonnee(IMG_Load(strEmplacement.c_str()), "pSurfaceMelee");
 
 	// Chargement de la surface des mines...
 	strEmplacement = strApplicationPath;
 	strEmplacement.append("Armes et Packs\\Mine.png");
-	pGestionaireSurface->AjouterDonnee(IMG_Load(strEmplacement.c_str()), "pSurfaceMine");
+	pGestionnaireSurface->AjouterDonnee(IMG_Load(strEmplacement.c_str()), "pSurfaceMine");
 
 	// Chargement de la surface des explosions...
 	strEmplacement = strApplicationPath;
 	strEmplacement.append("Armes et Packs\\Explosion.png");
-	pGestionaireSurface->AjouterDonnee(IMG_Load(strEmplacement.c_str()), "pSurfaceExplosion");
+	pGestionnaireSurface->AjouterDonnee(IMG_Load(strEmplacement.c_str()), "pSurfaceExplosion");
 
 	// Chargement de font du texte des boutons et label de description...
 	strEmplacement = strApplicationPath;
 	strEmplacement.append("calibri.ttf");
-	pGestionaireFont->AjouterDonnee(TTF_OpenFont(strEmplacement.c_str(), 30), "pFontBouton");
-	pGestionaireFont->AjouterDonnee(TTF_OpenFont(strEmplacement.c_str(), 12), "pFontDescription");
+	pGestionnaireFont->AjouterDonnee(TTF_OpenFont(strEmplacement.c_str(), 30), "pFontBouton");
+	pGestionnaireFont->AjouterDonnee(TTF_OpenFont(strEmplacement.c_str(), 12), "pFontDescription");
 
 	// Chargement des textures des personnages...
 
 	// La course...
 	strEmplacement = strApplicationPath;
 	strEmplacement.append("Personnage\\Course.png");
-	pGestionaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTextureCourse");
+	pGestionnaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTextureCourse");
 
 	// Le saut...
 	strEmplacement = strApplicationPath;
 	strEmplacement.append("Personnage\\Saut.png");
-	pGestionaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTextureSaut");
+	pGestionnaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTextureSaut");
 
 	// Le parachute...
 	strEmplacement = strApplicationPath;
 	strEmplacement.append("Personnage\\Parachute.png");
-	pGestionaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTextureParachute");
+	pGestionnaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTextureParachute");
 
 	// Au repos...
 	strEmplacement = strApplicationPath;
 	strEmplacement.append("Personnage\\Repos.png");
-	pGestionaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTextureRepos");
+	pGestionnaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTextureRepos");
 
 	// Le jetpack...
 	strEmplacement = strApplicationPath;
 	strEmplacement.append("Personnage\\jetpack.png");
-	pGestionaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTextureJetPack");
+	pGestionnaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTextureJetPack");
 	
 	// L'attaque de mélée...
 	strEmplacement = strApplicationPath;
 	strEmplacement.append("Personnage\\Melee.png");
-	pGestionaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTextureMelee");
+	pGestionnaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTextureMelee");
 
 	// Chargement de la texture de la barre de puissance
 	strEmplacement = strApplicationPath;
 	strEmplacement.append("Armes et Packs\\BarrePuissance.png");
-	pGestionaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTextureBarrePuissance");
+	pGestionnaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTextureBarrePuissance");
 
 	// Chargement des textures de la barre de vie...
 	strEmplacement = strApplicationPath;
 	strEmplacement.append("Personnage\\Barre.png");
-	pGestionaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTextureBarreVie");
+	pGestionnaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTextureBarreVie");
 
 	strEmplacement = strApplicationPath;
 	strEmplacement.append("Personnage\\ContourBarre.png");
-	pGestionaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTextureContourBarreVie");
+	pGestionnaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTextureContourBarreVie");
 
 
 	// Chargements de la texture pour le bouton droit d'un LabelLeftRight.
 	strEmplacement = strApplicationPath;
 	strEmplacement.append("Bouton\\FlecheDroite.png");
-	pGestionaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pFlecheDroite");
+	pGestionnaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pFlecheDroite");
 
 	// Chargements de la texture pour le bouton gauche d'un LabelLeftRight.
 	strEmplacement = strApplicationPath;
 	strEmplacement.append("Bouton\\FlecheGauche.png");
-	pGestionaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pFlecheGauche");
+	pGestionnaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pFlecheGauche");
 
 	// Chargements de la texture pour le bouton gauche d'un LabelLeftRight.
 	strEmplacement = strApplicationPath;
 	strEmplacement.append("FlecheVent.png");
-	pGestionaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pFlecheVent");
+	pGestionnaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pFlecheVent");
 
 
 	CouleurTexte = { 0, 0, 0, 0 }; // Met la couleur noir.
@@ -643,63 +648,63 @@ void Start(char* _strApplicationFilename) {
 	// Créé les boutons avec l'emplacement de l'image des boutons...
 	strEmplacement = strApplicationPath;
 	strEmplacement.append("Bouton\\BoutonMettreTexte.png");
-	pGestionaireControl->AjouterDonnee(new CButton("Nouvelle Partie", pGestionaireFont->ObtenirDonnee("pFontBouton"), CouleurTexte, strEmplacement.c_str(), { (iW - 500) / 2, 250, 500, 60 }, 3, 0, pWindowJeu->ObtenirRenderer(), ClickBoutonNouvellePartie), "pBtnNouvellePartie");
-	pGestionaireControl->AjouterDonnee(new CButton("Quitter", pGestionaireFont->ObtenirDonnee("pFontBouton"), CouleurTexte, strEmplacement.c_str(), { (iW - 500) / 2, 320, 500, 60 }, 3, 0, pWindowJeu->ObtenirRenderer(), ClickBoutonQuitter), "pBtnQuitter");
-	pGestionaireControl->AjouterDonnee(new CButton("Debuter la partie", pGestionaireFont->ObtenirDonnee("pFontBouton"), CouleurTexte, strEmplacement.c_str(), { 790, 530, 500, 60 }, 3, 0, pWindowJeu->ObtenirRenderer(), ClickBoutonDebutPartie), "pBtnDebutPartie");
-	pGestionaireControl->AjouterDonnee(new CButton("Retour", pGestionaireFont->ObtenirDonnee("pFontBouton"), CouleurTexte, strEmplacement.c_str(), { 790, 600, 500, 60 }, 3, 0, pWindowJeu->ObtenirRenderer(), ClickBoutonRetour), "pBtnRetour");
-	pGestionaireControl->AjouterDonnee(new CButton("Resumer", pGestionaireFont->ObtenirDonnee("pFontBouton"), CouleurTexte, strEmplacement.c_str(), { 503, 284, 360, 60 }, 3, 0, pWindowJeu->ObtenirRenderer(), ClickBoutonResumer), "pBtnResumer");
-	pGestionaireControl->AjouterDonnee(new CButton("Quitter", pGestionaireFont->ObtenirDonnee("pFontBouton"), CouleurTexte, strEmplacement.c_str(), { 503, 444, 360, 60 }, 3, 0, pWindowJeu->ObtenirRenderer(), ClickBoutonQuitterJeu), "pBtnQuitterGame");
+	pGestionnaireControl->AjouterDonnee(new CButton("Nouvelle Partie", pGestionnaireFont->ObtenirDonnee("pFontBouton"), CouleurTexte, strEmplacement.c_str(), { (iW - 500) / 2, 250, 500, 60 }, 3, 0, pWindowJeu->ObtenirRenderer(), ClickBoutonNouvellePartie), "pBtnNouvellePartie");
+	pGestionnaireControl->AjouterDonnee(new CButton("Quitter", pGestionnaireFont->ObtenirDonnee("pFontBouton"), CouleurTexte, strEmplacement.c_str(), { (iW - 500) / 2, 320, 500, 60 }, 3, 0, pWindowJeu->ObtenirRenderer(), ClickBoutonQuitter), "pBtnQuitter");
+	pGestionnaireControl->AjouterDonnee(new CButton("Debuter la partie", pGestionnaireFont->ObtenirDonnee("pFontBouton"), CouleurTexte, strEmplacement.c_str(), { 790, 530, 500, 60 }, 3, 0, pWindowJeu->ObtenirRenderer(), ClickBoutonDebutPartie), "pBtnDebutPartie");
+	pGestionnaireControl->AjouterDonnee(new CButton("Retour", pGestionnaireFont->ObtenirDonnee("pFontBouton"), CouleurTexte, strEmplacement.c_str(), { 790, 600, 500, 60 }, 3, 0, pWindowJeu->ObtenirRenderer(), ClickBoutonRetour), "pBtnRetour");
+	pGestionnaireControl->AjouterDonnee(new CButton("Resumer", pGestionnaireFont->ObtenirDonnee("pFontBouton"), CouleurTexte, strEmplacement.c_str(), { 503, 284, 360, 60 }, 3, 0, pWindowJeu->ObtenirRenderer(), ClickBoutonResumer), "pBtnResumer");
+	pGestionnaireControl->AjouterDonnee(new CButton("Quitter", pGestionnaireFont->ObtenirDonnee("pFontBouton"), CouleurTexte, strEmplacement.c_str(), { 503, 444, 360, 60 }, 3, 0, pWindowJeu->ObtenirRenderer(), ClickBoutonQuitterJeu), "pBtnQuitterGame");
 
 	// Création des labels...
-	pGestionaireControl->AjouterDonnee(new CLabel(pWindowJeu->ObtenirRenderer(), "Nombre d equipes", pGestionaireFont->ObtenirDonnee("pFontBouton"), CouleurTexte, { 180, 520, 231, 32 }), "pLblNombreEquipe");
-	pGestionaireControl->AjouterDonnee(new CLabel(pWindowJeu->ObtenirRenderer(), "Nombre de joueurs par equipe", pGestionaireFont->ObtenirDonnee("pFontBouton"), CouleurTexte, { 100, 620, 407, 32 }), "pLblNombreJoueurEquipe");
-	pGestionaireControl->AjouterDonnee(new CLabel(pWindowJeu->ObtenirRenderer(), { 900, 130, 500, 32 * 5 }), "pLblDescriptionMap");
+	pGestionnaireControl->AjouterDonnee(new CLabel(pWindowJeu->ObtenirRenderer(), "Nombre d equipes", pGestionnaireFont->ObtenirDonnee("pFontBouton"), CouleurTexte, { 180, 520, 231, 32 }), "pLblNombreEquipe");
+	pGestionnaireControl->AjouterDonnee(new CLabel(pWindowJeu->ObtenirRenderer(), "Nombre de joueurs par equipe", pGestionnaireFont->ObtenirDonnee("pFontBouton"), CouleurTexte, { 100, 620, 407, 32 }), "pLblNombreJoueurEquipe");
+	pGestionnaireControl->AjouterDonnee(new CLabel(pWindowJeu->ObtenirRenderer(), { 900, 130, 500, 32 * 5 }), "pLblDescriptionMap");
 
 	// Créations des lableLeftRight...
-	pGestionaireControl->AjouterDonnee(new CLabelLeftRight(pGestionaireFont->ObtenirDonnee("pFontBouton"), CouleurTexte, { 270, 550, 50, 50 }, pWindowJeu->ObtenirRenderer(), new CButton(pGestionaireTexture->ObtenirDonnee("pFlecheGauche"), { 225, 554, 35, 35 }, 4, 1, NULL), new CButton(pGestionaireTexture->ObtenirDonnee("pFlecheDroite"), { 325, 554, 35, 35 }, 4, 1, NULL), 3, "2", "3", "4"), "pLblLRChoixNbrEquipe");
-	pGestionaireControl->AjouterDonnee(new CLabelLeftRight(pGestionaireFont->ObtenirDonnee("pFontBouton"), CouleurTexte, { 270, 650, 50, 50 }, pWindowJeu->ObtenirRenderer(), new CButton(pGestionaireTexture->ObtenirDonnee("pFlecheGauche"), { 225, 654, 35, 35 }, 4, 1, NULL), new CButton(pGestionaireTexture->ObtenirDonnee("pFlecheDroite"), { 325, 654, 35, 35 }, 4, 1, NULL), 3, "4", "5", "6"), "pLblLRChoixNbrJoueurEquipe");
-	pGestionaireControl->AjouterDonnee(new CLabelLeftRight({ 120, 50, 623, 367 }, new CButton(pGestionaireTexture->ObtenirDonnee("pFlecheGauche"), { 20, 199, 80, 80 }, 4, 1, ClickBoutonGaucheChoixMap), new CButton(pGestionaireTexture->ObtenirDonnee("pFlecheDroite"), { 760, 199, 80, 80 }, 4, 1, ClickBoutonDroitChoixMap), 0), "pLblLRChoixMap");
+	pGestionnaireControl->AjouterDonnee(new CLabelLeftRight(pGestionnaireFont->ObtenirDonnee("pFontBouton"), CouleurTexte, { 270, 550, 50, 50 }, pWindowJeu->ObtenirRenderer(), new CButton(pGestionnaireTexture->ObtenirDonnee("pFlecheGauche"), { 225, 554, 35, 35 }, 4, 1, NULL), new CButton(pGestionnaireTexture->ObtenirDonnee("pFlecheDroite"), { 325, 554, 35, 35 }, 4, 1, NULL), 3, "2", "3", "4"), "pLblLRChoixNbrEquipe");
+	pGestionnaireControl->AjouterDonnee(new CLabelLeftRight(pGestionnaireFont->ObtenirDonnee("pFontBouton"), CouleurTexte, { 270, 650, 50, 50 }, pWindowJeu->ObtenirRenderer(), new CButton(pGestionnaireTexture->ObtenirDonnee("pFlecheGauche"), { 225, 654, 35, 35 }, 4, 1, NULL), new CButton(pGestionnaireTexture->ObtenirDonnee("pFlecheDroite"), { 325, 654, 35, 35 }, 4, 1, NULL), 3, "4", "5", "6"), "pLblLRChoixNbrJoueurEquipe");
+	pGestionnaireControl->AjouterDonnee(new CLabelLeftRight({ 120, 50, 623, 367 }, new CButton(pGestionnaireTexture->ObtenirDonnee("pFlecheGauche"), { 20, 199, 80, 80 }, 4, 1, ClickBoutonGaucheChoixMap), new CButton(pGestionnaireTexture->ObtenirDonnee("pFlecheDroite"), { 760, 199, 80, 80 }, 4, 1, ClickBoutonDroitChoixMap), 0), "pLblLRChoixMap");
 	 
 	// Met les map en une texture...
 
 	PutMapToTexture(strApplicationPath + "Maps\\arcaderoom", &pTextureTmp);
-	pGestionaireControl->ObtenirDonnee("pLblLRChoixMap")->AjouterTexture(1, pTextureTmp);
+	pGestionnaireControl->ObtenirDonnee("pLblLRChoixMap")->AjouterTexture(1, pTextureTmp);
 	pTextureTmp = nullptr;
 
 	PutMapToTexture(strApplicationPath + "Maps\\country", &pTextureTmp);
-	pGestionaireControl->ObtenirDonnee("pLblLRChoixMap")->AjouterTexture(1, pTextureTmp);
+	pGestionnaireControl->ObtenirDonnee("pLblLRChoixMap")->AjouterTexture(1, pTextureTmp);
 	pTextureTmp = nullptr;
 
 	PutMapToTexture(strApplicationPath + "Maps\\desert", &pTextureTmp);
-	pGestionaireControl->ObtenirDonnee("pLblLRChoixMap")->AjouterTexture(1, pTextureTmp);
+	pGestionnaireControl->ObtenirDonnee("pLblLRChoixMap")->AjouterTexture(1, pTextureTmp);
 	pTextureTmp = nullptr;
 
 	PutMapToTexture(strApplicationPath + "Maps\\easterisland", &pTextureTmp);
-	pGestionaireControl->ObtenirDonnee("pLblLRChoixMap")->AjouterTexture(1, pTextureTmp);
+	pGestionnaireControl->ObtenirDonnee("pLblLRChoixMap")->AjouterTexture(1, pTextureTmp);
 	pTextureTmp = nullptr;
 
 	PutMapToTexture(strApplicationPath + "Maps\\farm", &pTextureTmp);
-	pGestionaireControl->ObtenirDonnee("pLblLRChoixMap")->AjouterTexture(1, pTextureTmp);
+	pGestionnaireControl->ObtenirDonnee("pLblLRChoixMap")->AjouterTexture(1, pTextureTmp);
 	pTextureTmp = nullptr;
 
 	PutMapToTexture(strApplicationPath + "Maps\\pirates", &pTextureTmp);
-	pGestionaireControl->ObtenirDonnee("pLblLRChoixMap")->AjouterTexture(1, pTextureTmp);
+	pGestionnaireControl->ObtenirDonnee("pLblLRChoixMap")->AjouterTexture(1, pTextureTmp);
 	pTextureTmp = nullptr;
 
 	PutMapToTexture(strApplicationPath + "Maps\\snow", &pTextureTmp);
-	pGestionaireControl->ObtenirDonnee("pLblLRChoixMap")->AjouterTexture(1, pTextureTmp);
+	pGestionnaireControl->ObtenirDonnee("pLblLRChoixMap")->AjouterTexture(1, pTextureTmp);
 	pTextureTmp = nullptr;
 	//......
 
 	strEmplacementFichier = strApplicationPath;
 
 	// Création des menus...
-	pGestionaireMenu->AjouterDonnee(new CMenu(true, { 0, 0, iW, iH }, pWindowJeu->ObtenirRenderer(), { 255, 255, 255, 255 }, 2, pGestionaireControl->ObtenirDonnee("pBtnNouvellePartie"), pGestionaireControl->ObtenirDonnee("pBtnQuitter")), "pMenuPrincipal"); // Crée le menu principal.
-	pGestionaireMenu->AjouterDonnee(new CMenu(false, { 0, 0, iW, iH }, pWindowJeu->ObtenirRenderer(), { 255, 255, 255, 255 }, 8, pGestionaireControl->ObtenirDonnee("pBtnDebutPartie"), pGestionaireControl->ObtenirDonnee("pBtnRetour"), pGestionaireControl->ObtenirDonnee("pLblDescriptionMap"), pGestionaireControl->ObtenirDonnee("pLblNombreJoueurEquipe"), pGestionaireControl->ObtenirDonnee("pLblNombreEquipe"), pGestionaireControl->ObtenirDonnee("pLblLRChoixNbrEquipe"), pGestionaireControl->ObtenirDonnee("pLblLRChoixNbrJoueurEquipe"), pGestionaireControl->ObtenirDonnee("pLblLRChoixMap")), "pMenuNouvellePartie"); // Créé le menu nouvelle partie.
-	pGestionaireMenu->AjouterDonnee(new CMenu(false, { 341, 192, 683, 384 }, pWindowJeu->ObtenirRenderer(), { 128, 128, 128, 165 }, 2, pGestionaireControl->ObtenirDonnee("pBtnResumer"), pGestionaireControl->ObtenirDonnee("pBtnQuitterGame")), "pMenuPause");
+	pGestionnaireMenu->AjouterDonnee(new CMenu(true, { 0, 0, iW, iH }, pWindowJeu->ObtenirRenderer(), { 255, 255, 255, 255 }, 2, pGestionnaireControl->ObtenirDonnee("pBtnNouvellePartie"), pGestionnaireControl->ObtenirDonnee("pBtnQuitter")), "pMenuPrincipal"); // Crée le menu principal.
+	pGestionnaireMenu->AjouterDonnee(new CMenu(false, { 0, 0, iW, iH }, pWindowJeu->ObtenirRenderer(), { 255, 255, 255, 255 }, 8, pGestionnaireControl->ObtenirDonnee("pBtnDebutPartie"), pGestionnaireControl->ObtenirDonnee("pBtnRetour"), pGestionnaireControl->ObtenirDonnee("pLblDescriptionMap"), pGestionnaireControl->ObtenirDonnee("pLblNombreJoueurEquipe"), pGestionnaireControl->ObtenirDonnee("pLblNombreEquipe"), pGestionnaireControl->ObtenirDonnee("pLblLRChoixNbrEquipe"), pGestionnaireControl->ObtenirDonnee("pLblLRChoixNbrJoueurEquipe"), pGestionnaireControl->ObtenirDonnee("pLblLRChoixMap")), "pMenuNouvellePartie"); // Créé le menu nouvelle partie.
+	pGestionnaireMenu->AjouterDonnee(new CMenu(false, { 341, 192, 683, 384 }, pWindowJeu->ObtenirRenderer(), { 128, 128, 128, 165 }, 2, pGestionnaireControl->ObtenirDonnee("pBtnResumer"), pGestionnaireControl->ObtenirDonnee("pBtnQuitterGame")), "pMenuPause");
 
 	// Ajoue des menus dans la fenêtre.
-	pWindowJeu->AjouterMenu(3, pGestionaireMenu->ObtenirDonnee("pMenuPrincipal"), pGestionaireMenu->ObtenirDonnee("pMenuNouvellePartie"), pGestionaireMenu->ObtenirDonnee("pMenuPause"));
+	pWindowJeu->AjouterMenu(3, pGestionnaireMenu->ObtenirDonnee("pMenuPrincipal"), pGestionnaireMenu->ObtenirDonnee("pMenuNouvellePartie"), pGestionnaireMenu->ObtenirDonnee("pMenuPause"));
 
 	boExecution = true;
 	pEvent = new SDL_Event(); // Créé le pointeur.
@@ -738,9 +743,9 @@ int main(int argc, char* argv[]) {
 		// Tant qu'il y a des événements à gérer.
 		while (SDL_PollEvent(pEvent)) {
 
-			pGestionaireMenu->ObtenirDonnee("pMenuPrincipal")->ReactToEvent(pEvent);
-			pGestionaireMenu->ObtenirDonnee("pMenuNouvellePartie")->ReactToEvent(pEvent);
-			pGestionaireMenu->ObtenirDonnee("pMenuPause")->ReactToEvent(pEvent);
+			pGestionnaireMenu->ObtenirDonnee("pMenuPrincipal")->ReactToEvent(pEvent);
+			pGestionnaireMenu->ObtenirDonnee("pMenuNouvellePartie")->ReactToEvent(pEvent);
+			pGestionnaireMenu->ObtenirDonnee("pMenuPause")->ReactToEvent(pEvent);
 			if (pWindowJeu->ObtenirGame() != nullptr) {
 				pWindowJeu->ObtenirGame()->ReactToEvent(pEvent);
 			}
@@ -755,13 +760,13 @@ int main(int argc, char* argv[]) {
 				switch (pEvent->key.keysym.scancode) {
 				case SDL_SCANCODE_ESCAPE:
 					if (pWindowJeu->ObtenirGame() != nullptr) {
-						pGestionaireMenu->ObtenirDonnee("pMenuPause")->DefinirboShow(true);
+						pGestionnaireMenu->ObtenirDonnee("pMenuPause")->DefinirboShow(true);
 					}
 					else
 						boExecution = !(pEvent->key.keysym.scancode == SDL_SCANCODE_ESCAPE);
 					break;
 				case SDL_SCANCODE_T:
-					//pWindowJeu->ObtenirGame()->ChangerTour(pGestionaireFont->ObtenirDonnee("pFontBouton"), pWindowJeu->ObtenirRenderer());
+					//pWindowJeu->ObtenirGame()->ChangerTour(pGestionnaireFont->ObtenirDonnee("pFontBouton"), pWindowJeu->ObtenirRenderer());
 					if (!pWindowJeu->ObtenirGame()->IsDebut())
 						pWindowJeu->ObtenirGame()->ReverseShowToolBar();
 					break;

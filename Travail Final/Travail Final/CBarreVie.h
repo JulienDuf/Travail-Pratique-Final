@@ -17,11 +17,11 @@ private:
 
 public:
 
-	CBarreVie(CGestionaire<SDL_Texture*>* _pGestionnaireTexture, SDL_Rect _RectDestination, unsigned int _uiIDTeam) {
+	CBarreVie(SDL_Rect _RectDestination, unsigned int _uiIDTeam) {
 
-		m_pTextureInterieurBarre = _pGestionnaireTexture->ObtenirDonnee("pTextureBarreVie");
+		m_pTextureInterieurBarre = pGestionnaireTexture->ObtenirDonnee("pTextureBarreVie");
 
-		m_pTextureContourBarre = _pGestionnaireTexture->ObtenirDonnee("pTextureContourBarreVie");
+		m_pTextureContourBarre = pGestionnaireTexture->ObtenirDonnee("pTextureContourBarreVie");
 
 		m_RectDestinationContour = _RectDestination;
 		SDL_QueryTexture(m_pTextureContourBarre, NULL, NULL, &m_RectDestinationContour.w, &m_RectDestinationContour.h);

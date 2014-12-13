@@ -211,10 +211,6 @@ public:
 				
 				}
 				m_pTimerPhysique->Start();
-<<<<<<< HEAD
-				
-=======
->>>>>>> origin/Branche-Julien
 			}
 
 		}
@@ -316,7 +312,7 @@ public:
 				if (CollisionObjetMap(pPackListTmp->ObtenirElementCurseur()->GetSurface(), RectTmp, &iX, &iY)) {
 
 					RectTmp.y -= RectTmp.h - iY;
-					pPackListTmp->ObtenirElementCurseur()->ModifierAnlge(RegressionLineaire({ 0, 0, RectTmp.w, RectTmp.h }, RectTmp));
+					pPackListTmp->ObtenirElementCurseur()->ModifierAnlge(RegressionLineaire({ 0, 0, RectTmp.w, RectTmp.h }, RectTmp, true));
 					pPackListTmp->ObtenirElementCurseur()->ModifierStabilePack(true);
 
 					//pPackListTmp->ObtenirElementCurseur()->ModifierAnlge(RegressionLineaire({0,0,RectTmp.w,RectTmp.h}, RectTmp));
@@ -345,9 +341,6 @@ public:
 				RectTmp = pProjectileTmp->ObtenirRectDestination();
 				pVecteurVitesse = pProjectileTmp->ObtenirVecteurVitesse();
 
-				RectTmp->x += pVecteurVitesse->ObtenirComposanteX() / 35;
-				RectTmp->y += pVecteurVitesse->ObtenirComposanteY() / 35;
-
 				if (ColisionMissile(pProjectileTmp->ObtenirSurface(), *pProjectileTmp->ObtenirRectDestination(), &iX, &iY)) {
 
 					pProjectileTmp->ReactionColision(pProjectileTmp->ObtenirRectDestination()->x + iX, pProjectileTmp->ObtenirRectDestination()->y + iY);
@@ -355,6 +348,10 @@ public:
 					m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->DefinirToolActif(false);
 					ChangerTour(_pRenderer);
 				}
+
+				RectTmp->x += pVecteurVitesse->ObtenirComposanteX() / 35;
+				RectTmp->y += pVecteurVitesse->ObtenirComposanteY() / 35;
+
 
 				if (RectTmp->x >= 1366 || RectTmp->x + RectTmp->w <= 0 || RectTmp->y >= 768)
 					pProjectileTmp->ReactionColision(0, 0);
@@ -372,18 +369,7 @@ public:
 
 				if (pVecteurVitesse->ObtenirComposanteY() >= 0 && pVecteurVitesse->ObtenirComposanteX() >= 0)
 					pProjectileTmp->DefinirAngle(360 - (180 / M_PI) * atanf((((float)pVecteurVitesse->ObtenirComposanteY()) / ((float)pVecteurVitesse->ObtenirComposanteX()))));
-<<<<<<< HEAD
 
-				if (ColisionMissile(pProjectileTmp->ObtenirSurface(), *pProjectileTmp->ObtenirRectDestination(), &iX, &iY)) {
-
-					pProjectileTmp->ObtenirVecteurVitesse()->ModifierOrientation(270);
-
-					//pProjectileTmp->ReactionColision(pProjectileTmp->ObtenirRectDestination()->x + iX, pProjectileTmp->ObtenirRectDestination()->y + iY);
-					//DomageExplosion({ pProjectileTmp->ObtenirRectDestination()->x + iX, pProjectileTmp->ObtenirRectDestination()->y }, 50);
-					//ChangerTour()
-				}
-=======
->>>>>>> origin/Branche-Julien
 			}
 			else if (m_pToolBar->ObtenirPositionObjetDoubleClick() == 1 && pProjectileTmp->EstLancer()) {
 

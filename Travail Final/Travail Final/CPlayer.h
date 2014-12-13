@@ -97,7 +97,7 @@ public:
 
 		m_RectHitboxPieds.x = 0;
 		m_RectHitboxPieds.y = 45;
-		m_RectHitboxPieds.w = 36;
+		m_RectHitboxPieds.w = 40;
 		m_RectHitboxPieds.h = 10;
 
 		m_RectHitboxPiedsParachute.x = 0;

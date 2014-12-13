@@ -434,68 +434,78 @@ public:
 	}
 
 	// Procédure qui retourne la pente 
-	// Paramètre : _RectPiedJoueur : Le rect pied du joueur acitf.
+	// Paramètre : _RectPiedJoueur : Le rect pied du joueur acitf. Si c'est des mines ou des objets le mettre à 0.
+	//			 : _RectJoueur -> L'emplacement de l'objet ou le joueur dans la maop.
+	//			 : _boObjet -> Si c'est un objet ou non.
 	// Retour : integer double qui représente l'angle de la pente.
-	double RegressionLineaire(SDL_Rect _RectPiedJoueur, SDL_Rect _RectJoueur) {
+	double RegressionLineaire(SDL_Rect _RectPiedJoueur, SDL_Rect _RectJoueur, bool _boObjet) {
 		float fPente = 0;
 		float iCov = 0; // Variable en y moyenne.
 		float iVar = 0; // Variable en x moyen.
 		float fX = 0; // Valeur en x pour la régression.
 		float fY = 0; // Valeur en y pour la régression.
-		int iN = 0; // Le nombre de fois qu'il y a des "différent de transparent" Sert a savoir le milieu de la régressuion
+		int iN = 0; // Le nombre de fois qu'il y a des "différent de transparent" Sert a savoir le milieu de la régressuion.
 		SDL_Rect _RectRegression;
+		if (!_boObjet) {
+			_RectRegression.x = _RectPiedJoueur.x + (_RectJoueur.w / 2); // Le rect commence au milieu du joueur.
+			_RectRegression.y = _RectPiedJoueur.y + _RectPiedJoueur.h;
+			_RectRegression.w = 15; // Largeur du Rect.
+			int y = 0; // Utiliser pour ma boucle au lieu d'utiliser mon rect pour vérifier.
+			if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 1) {
+				_RectRegression.x = _RectRegression.x - (_RectRegression.w / 2);
+				while (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(_RectRegression.x + _RectJoueur.x) + ((y + _RectRegression.y + _RectJoueur.y) * m_pGameMap->ObtenirSurfaceMap()->w)] == 0) {
+					y++;
+					_RectRegression.h = y;
 
-		_RectRegression.x = _RectPiedJoueur.x + _RectJoueur.w / 2; // Le rect commence au milieu du joueur.
-		_RectRegression.y = _RectPiedJoueur.y + _RectPiedJoueur.h;
+				}
+				y = 0; // Au cas qu'il est entrer dans la premiere boucle.
+				while (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(_RectRegression.x + _RectJoueur.x) + ((y + _RectRegression.y + _RectJoueur.y) * m_pGameMap->ObtenirSurfaceMap()->w)] != 0) {
+					y--;
+					_RectRegression.h = abs(y);
 
-		_RectRegression.w = 15; // Largeur du Rect.
-		int y = 0; // Utiliser pour ma boucle au lieu d'utiliser mon rect pour vérifier.
-		if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 1) {
-			_RectRegression.x = _RectRegression.x - _RectRegression.w;
-			while (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(_RectRegression.x + _RectJoueur.x) + ((y + _RectRegression.y + _RectJoueur.y) * m_pGameMap->ObtenirSurfaceMap()->w)] == 0) {
-
-				_RectRegression.h = y;
-				y++;
+				}
 			}
-			y = 0; // Au cas qu'il est entrer dans la premiere boucle.
-			while (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(_RectRegression.x + _RectJoueur.x) + ((y + _RectRegression.y + _RectJoueur.y) * m_pGameMap->ObtenirSurfaceMap()->w)] != 0) {
 
-				_RectRegression.h = abs(y);
-				y--;
+			else if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 0) {
+				while (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(_RectRegression.w + _RectRegression.x + _RectJoueur.x) + ((y + _RectRegression.y + _RectJoueur.y) * m_pGameMap->ObtenirSurfaceMap()->w)] == 0) {
+					y++;
+					_RectRegression.h = y;
+
+				}
+				y = 0; // Au cas qu'il est entrer dans la premiere boucle.
+				while (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(_RectRegression.w + _RectRegression.x + _RectJoueur.x) + ((y + _RectRegression.y + _RectJoueur.y) * m_pGameMap->ObtenirSurfaceMap()->w)] != 0) {
+					y--;
+					_RectRegression.h = abs(y);
+
+				}
 			}
 		}
 
-		else if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 0) {
-			while (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(_RectRegression.w + _RectRegression.x + _RectJoueur.x) + ((y + _RectRegression.y + _RectJoueur.y) * m_pGameMap->ObtenirSurfaceMap()->w)] == 0) {
-
-				_RectRegression.h = y;
-				y++;
-			}
-			y = 0; // Au cas qu'il est entrer dans la premiere boucle.
-			while (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(_RectRegression.w + _RectRegression.x + _RectJoueur.x) + ((y + _RectRegression.y + _RectJoueur.y) * m_pGameMap->ObtenirSurfaceMap()->w)] != 0) {
-
-				_RectRegression.h = abs(y);
-				y--;
-			}
+		else {
+			_RectRegression = _RectPiedJoueur;
+			_RectRegression.y += _RectPiedJoueur.h / 2;
 		}
-		int* iTableau = new int[_RectRegression.w, _RectRegression.h]; // Tableau.
+
+		int iTableau[28][18]; // Tableau.
 		for (int j = 0; j < _RectRegression.h; j++) { // Boucler sur toute le rect du pied dans la position de la map.
 			for (int i = 0; i < _RectRegression.w; i++) {
-				if (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(i + _RectRegression.x) + ((j + _RectRegression.y) * m_pGameMap->ObtenirSurfaceMap()->w)] = 0) { // Si le pixel est différent de transparent.
-					iTableau[i, j] = 1; // Mettre 1 dans mon tableau.
+				if (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(i + _RectRegression.x + _RectJoueur.x) + ((j + _RectRegression.y + _RectJoueur.y) * (m_pGameMap->ObtenirSurfaceMap()->w))] != 0)  { // Si le pixel est transparent.
+					iTableau[i][j] = 1; // Mettre 1 dans mon tableau.
 					fX += i; // fX va servir a faire la moyenne des X.
-					fY += j; // fX va servir a faire la moyenne des Y.
+					fY += j; // fY va servir a faire la moyenne des Y.
 					iN += 1; // Pour diviser le nombre d'éléments.
 				}
+				else
+					iTableau[i][j] = 0;
 			}
 		}
 		if (fX != 0 && fY != 0) {
 			fX = fX / iN; // moyenne
 			fY = fY / iN; // moyenne
 		}
-		for (int j = 0; j < _RectRegression.w; j++) {
-			for (int i = 0; i < _RectRegression.h; i++) {
-				if (iTableau[i, j] == 1) {
+		for (int j = 0; j < 18; j++) {
+			for (int i = 0; i < 28; i++) {
+				if (iTableau[i][j] == 1) {
 					iCov += ((i - fX) * (j - fY)); // Calcul pour Y moyens avec le Y moyens.
 					iVar += pow((i - fX), 2);    // Calcul pour X moyens avec le X moyens.
 				}
@@ -504,26 +514,39 @@ public:
 
 		if (iCov != 0 && iVar != 0) {
 			iCov = (iCov / iN); //moyenne
-			iCov -= 2 * iCov;
+			iCov = -iCov;
 			iVar = (iVar / iN); //moyenne
 		}
 
-		delete[] iTableau;
+
 
 		fPente = iCov / iVar; // Donne la pente. iCov = y , iVar = x.
+		if (!_boObjet) {
+			if (iCov != 0 && iVar != 0) {
+				if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 0 && fPente > 0) { // Le joueur se déplace vers la droite et la pente est positive.
+					fPente = (180 / M_PI) * atanf(fPente);
+					return fPente;
+				}
 
-		if (iCov != 0 && iVar != 0) {
-			if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 0 && fPente > 0) // Le joueur se déplace vers la droite et la pente est positive.
-				return (180 / M_PI) * atanf(fPente);
-
-			if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 0 && fPente < 0) // Le joueur se déplace vers la droite et la pente est négative.
-				return 360 - ((180 / M_PI) * atanf(-fPente));
-
-			if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 1 && fPente > 0) // Le joueur se déplace vers la gauche et la pente est positive.
-				return 180 + (180 / M_PI) * atanf(fPente);
-
-			if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 1 && fPente < 0) // Le joueur se déplace vers la gauche et la pente est négative.
-				return 90 + (180 / M_PI) * atanf(-fPente);
+				if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 0 && fPente < 0) { // Le joueur se déplace vers la droite et la pente est négative.
+					fPente = 360 - ((180 / M_PI) * atanf(-fPente));
+					return fPente;
+				}
+				if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 1 && fPente > 0) { // Le joueur se déplace vers la gauche et la pente est positive.
+					fPente = 180 + (180 / M_PI) * atanf(fPente);
+					return fPente;
+				}
+				if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 1 && fPente < 0) { // Le joueur se déplace vers la gauche et la pente est négative.
+					fPente = 90 + (180 / M_PI) * atanf(-fPente);
+					return fPente;
+				}
+			}
+		}
+		else {
+			if (fPente > 0)
+				return -(180 / M_PI) * atanf(fPente);
+			else if (fPente < 0)
+				return -(180 / M_PI) * atanf(fPente);
 		}
 
 		return 362;

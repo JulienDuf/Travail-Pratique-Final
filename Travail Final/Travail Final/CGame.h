@@ -160,7 +160,7 @@ public:
 					dComposanteX += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35;
 					dComposanteY += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35;
 
-					//	double angle = RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination());
+					//double angle = RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination());
 
 					RectTmp.x = dComposanteX;
 					RectTmp.y = dComposanteY;
@@ -233,7 +233,7 @@ public:
 
 					for (int j = 0; j < pPlayerListTmp->ObtenirCompte(); j++) {
 
-						pPlayer = pPlayerListTmp->ObtenirElementCurseur();
+						pPlayer = pPlayerListTmp->ObtenirElementCurseur(); // Quand je débogais, il y a eu une violation d'accès l'objet au curseur était à ??????? (deleted)
 
 						if (pPlayer->ObtenirSpriteRepos()->IsActif() && !pPlayer->IsStable()) {
 							RectPlayer = pPlayer->ObtenirRectDestination();
@@ -310,11 +310,8 @@ public:
 				if (CollisionObjetMapChuteLibre(pPackListTmp->ObtenirElementCurseur()->GetSurface(), RectTmp, &iX, &iY)) {
 
 					RectTmp.y = iY;
-					//RectTmp.y -= RectTmp.h - iY;
-					pPackListTmp->ObtenirElementCurseur()->ModifierAnlge(RegressionLineaireee({ 0, 0, RectTmp.w, RectTmp.h }, RectTmp, true));
+					pPackListTmp->ObtenirElementCurseur()->ModifierAnlge(RegressionLineaire({ 0, 0, RectTmp.w, RectTmp.h }, RectTmp, true));
 					pPackListTmp->ObtenirElementCurseur()->ModifierStabilePack(true);
-
-					//pPackListTmp->ObtenirElementCurseur()->ModifierAnlge(RegressionLineaire({0,0,RectTmp.w,RectTmp.h}, RectTmp));
 					pPackListTmp->ObtenirElementCurseur()->ModifierPosition(RectTmp);
 				}
 				else {
@@ -339,7 +336,7 @@ public:
 			if (!pProjectileTmp->ObtenirSprite("")->IsActif() && pProjectileTmp->ExplosionEnCours()) {
 				m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->DefinirToolActif(false);
 				ChangerTour(_pRenderer);
-				pProjectileTmp->DefinierExplosion(false);
+				pProjectileTmp->DefinirExplosion(false);
 			}
 
 			if (m_pToolBar->ObtenirPositionObjetDoubleClick() == 0 && pProjectileTmp->EstLancer())  {
@@ -349,12 +346,12 @@ public:
 
 				if (ColisionMissile(pProjectileTmp->ObtenirSurface(), *pProjectileTmp->ObtenirRectDestination(), &iX, &iY)) {
 
-					pProjectileTmp->ReactionColision(pProjectileTmp->ObtenirRectDestination()->x + iX, pProjectileTmp->ObtenirRectDestination()->y + iY);
+					pProjectileTmp->ReactionExplosion(pProjectileTmp->ObtenirRectDestination()->x + iX, pProjectileTmp->ObtenirRectDestination()->y + iY);
 					DomageExplosion({ pProjectileTmp->ObtenirRectDestination()->x + iX, pProjectileTmp->ObtenirRectDestination()->y }, 50);
 				}
 
 				else if (RectTmp->x >= 1366 || RectTmp->x + RectTmp->w <= 0 || RectTmp->y >= 768)
-					pProjectileTmp->ReactionColision(0, 0);
+					pProjectileTmp->ReactionExplosion(0, 0);
 
 				RectTmp->x += pVecteurVitesse->ObtenirComposanteX() / 35;
 				RectTmp->y += pVecteurVitesse->ObtenirComposanteY() / 35;
@@ -378,34 +375,43 @@ public:
 			else if (m_pToolBar->ObtenirPositionObjetDoubleClick() == 1 && pProjectileTmp->EstLancer()) {
 
 				RectTmp = pProjectileTmp->ObtenirRectDestination();
-				pVecteurVitesse = pProjectileTmp->ObtenirVecteurVitesse();
 
-				if (CollisionGrenadeJoueur(pProjectileTmp->ObtenirSurface(), *pProjectileTmp->ObtenirRectDestination(), &iX, &iY)) {
-
-					pVecteurVitesse->ModifierVecteur(m_pGameMap->ObtenirGravite()->ObtenirComposanteY(), 270);
-					//pProjectileTmp->ReactionColision(pProjectileTmp->ObtenirRectDestination()->x + iX, pProjectileTmp->ObtenirRectDestination()->y + iY);
-					//DomageExplosion({ pProjectileTmp->ObtenirRectDestination()->x + iX, pProjectileTmp->ObtenirRectDestination()->y }, 40);
-					//ChangerTour()
+				// AutoDesctruction de la grenade...
+				if (pProjectileTmp->ReactionExplosion(0, 0)) {
+					RectTmp = pProjectileTmp->ObtenirRectDestination();
+					DomageExplosion({ RectTmp->x, RectTmp->y }, RectTmp->w / 2);
 				}
-
-				if (CollisionObjetMapChuteLibre(pProjectileTmp->ObtenirSurface(), *pProjectileTmp->ObtenirRectDestination(), &iX, &iY)) {
-					double dAngle = RegressionLineaireee(*pProjectileTmp->ObtenirRectDestination(), *pProjectileTmp->ObtenirRectDestination(), true);
-					if (pVecteurVitesse->ObtenirComposanteX() < 0) {
-						pVecteurVitesse->ModifierOrientation((pVecteurVitesse->ObtenirOrientation() - dAngle) - 2*pVecteurVitesse->ObtenirOrientation());
-					}
-					else
-					{
-						pVecteurVitesse->ModifierOrientation((pVecteurVitesse->ObtenirOrientation()  - dAngle) + 2 * pVecteurVitesse->ObtenirOrientation());
-					}
-					CVecteur2D VecteurRebond = CVecteur2D(pVecteurVitesse->ObtenirNorme(), dAngle);
+				else if (RectTmp->x >= 1366 || RectTmp->x + RectTmp->w <= 0 || RectTmp->y >= 768) {
+					pProjectileTmp->DestructionProjectile();
 				}
+				else
+				{
+					pVecteurVitesse = pProjectileTmp->ObtenirVecteurVitesse();
 
-				RectTmp->x += pVecteurVitesse->ObtenirComposanteX() / 35;
-				RectTmp->y += pVecteurVitesse->ObtenirComposanteY() / 35;
-				*pVecteurVitesse += *m_pGameMap->ObtenirGravite();
+					if (CollisionGrenadeJoueur(pProjectileTmp->ObtenirSurface(), *pProjectileTmp->ObtenirRectDestination(), &iX, &iY)) {
 
-				if (RectTmp->x >= 1366 || RectTmp->x + RectTmp->w <= 0 || RectTmp->y >= 768)
-					pProjectileTmp->ReactionColision(0, 0);
+						pVecteurVitesse->ModifierVecteur(m_pGameMap->ObtenirGravite()->ObtenirComposanteY(), 270);
+						//pProjectileTmp->ReactionColision(pProjectileTmp->ObtenirRectDestination()->x + iX, pProjectileTmp->ObtenirRectDestination()->y + iY);
+						//DomageExplosion({ pProjectileTmp->ObtenirRectDestination()->x + iX, pProjectileTmp->ObtenirRectDestination()->y }, 40);
+						//ChangerTour()
+					}
+
+					if (CollisionObjetMapChuteLibre(pProjectileTmp->ObtenirSurface(), *pProjectileTmp->ObtenirRectDestination(), &iX, &iY)) {
+						double dAngle = RegressionLineaire(*pProjectileTmp->ObtenirRectDestination(), *pProjectileTmp->ObtenirRectDestination(), true);
+						if (pVecteurVitesse->ObtenirComposanteX() < 0) {
+							pVecteurVitesse->ModifierOrientation((pVecteurVitesse->ObtenirOrientation() - dAngle) - 2 * pVecteurVitesse->ObtenirOrientation());
+						}
+						else
+						{
+							pVecteurVitesse->ModifierOrientation((pVecteurVitesse->ObtenirOrientation() - dAngle) + 2 * pVecteurVitesse->ObtenirOrientation());
+						}
+						CVecteur2D VecteurRebond = CVecteur2D(pVecteurVitesse->ObtenirNorme(), dAngle);
+					}
+
+					RectTmp->x += pVecteurVitesse->ObtenirComposanteX() / 35;
+					RectTmp->y += pVecteurVitesse->ObtenirComposanteY() / 35;
+					*pVecteurVitesse += *m_pGameMap->ObtenirGravite();
+				}
 			}
 		}
 	}
@@ -444,7 +450,7 @@ public:
 	//			 : _RectJoueur -> L'emplacement de l'objet ou le joueur dans la maop.
 	//			 : _boObjet -> Si c'est un objet ou non.
 	// Retour : integer double qui représente l'angle de la pente.
-	double RegressionLineaireee(SDL_Rect _RectPiedJoueur, SDL_Rect _RectJoueur, bool _boObjet) {
+	double RegressionLineaire2(SDL_Rect _RectPiedJoueur, SDL_Rect _RectJoueur, bool _boObjet) {
 		float fPente = 0;
 		float fCov = 0; // Variable en y moyenne.
 		float fVar = 0; // Variable en x moyen.
@@ -645,7 +651,7 @@ public:
 	// Param4: La position en Y qui sera retourné.
 	bool CollisionObjetMapChuteLibre(SDL_Surface* _pSurfaceObjet, SDL_Rect _RectDestinationObjet, int* _iX, int* _iY) {
 
-		if (_RectDestinationObjet.x <= 1366 && _RectDestinationObjet.x + _RectDestinationObjet.w >= 0 && _RectDestinationObjet.y <= 768) {
+		if (_RectDestinationObjet.x <= 1366 && _RectDestinationObjet.x + _RectDestinationObjet.w >= 0 && _RectDestinationObjet.y <= 768 && _RectDestinationObjet.y + _RectDestinationObjet.h > 0) {
 			int iY = _RectDestinationObjet.h - 1;
 			int iX = _RectDestinationObjet.w / 2;
 

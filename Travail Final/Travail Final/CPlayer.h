@@ -68,7 +68,7 @@ public:
 		m_pListeMouvement->AllerACurseur(2);
 		m_pListeMouvement->AllerATrieur(0);
 
-		m_pListeTools->AjouterFin(new CMissile(_strEmplacement, _pRenderer, _MapDestruction, _CollisionObjetMap, _Rotation));
+		m_pListeTools->AjouterFin(new CMissile(_strEmplacement, _pRenderer, _MapDestruction, _Rotation));
 
 		m_pListeTools->AjouterFin(new CGrenade(_strEmplacement, _pRenderer, _MapDestruction, _CollisionObjetMap, _Rotation));
 

@@ -33,7 +33,7 @@ public:
 		m_RectExplosion.y = 0;
 
 		m_pSpriteExplosion = new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceExplosion"), SDL_CreateTextureFromSurface(_Renderer, pGestionnaireSurface->ObtenirDonnee("pSurfaceExplosion")), m_RectExplosion, 9, 300, false, false, 1);
-
+		
 		m_pCollisionMap = _CollisionMap;
 		m_pMapDestruction = _MapDestruction;
 

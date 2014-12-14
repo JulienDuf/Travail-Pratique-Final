@@ -290,8 +290,17 @@ public:
 		m_RectDestinationGrenade = _Rect;
 	}
 
+	void DefinierExplosion(bool _boExplosion) {
+
+
+	}
+
 	bool EstLancer() {
 
 		return m_boGrenadeLancer;
+	}
+
+	bool ExplosionEnCours(void) {
+		return true;
 	}
 };

@@ -83,13 +83,18 @@ public:
 		m_iAngle = _iAngle;
 	}
 
-	void ModifierVecteurVent(double _forceVent, float _fAngle) {
+	void ModifierVecteurVent(double _dforceVent, float _fAngle) {
 
-
+		m_pVecteurVitesseVent->ModifierVecteur(_dforceVent, _fAngle);
 	}
 
 	void ShowVent(SDL_Renderer* _pSDLRenderer) {
 		SDL_RenderCopyEx(_pSDLRenderer, m_pDirectionVent, NULL, &m_RectDestinationFleche, m_iAngle, m_RotPoint, SDL_FLIP_NONE);
 		SDL_RenderCopy(_pSDLRenderer, m_pForceVent, NULL, &m_RectDestinationText);
+	}
+
+	CVecteur2D* ObtenirVecteurVent(void) {
+
+		return m_pVecteurVitesseVent;
 	}
 };

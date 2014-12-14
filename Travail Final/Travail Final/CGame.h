@@ -657,20 +657,21 @@ public:
 
 
 
-		if (_RectDestinationObjet.x <= 1366 || _RectDestinationObjet.x + _RectDestinationObjet.w >= 0 || _RectDestinationObjet.y <= 768) {
+		if (_RectDestinationObjet.x <= 1366 && _RectDestinationObjet.x + _RectDestinationObjet.w >= 0 && _RectDestinationObjet.y <= 768) {
 			// Tous les y
 			for (int y = 0; y < _RectDestinationObjet.h; y++) {
 				// Tous les x
 				for (int x = 0; x < _RectDestinationObjet.w; x++) {
+					// Si dans la surface de l'objet, c'est pas transparent...
 					if (((unsigned int*)_pSurfaceObjet->pixels)[y * _pSurfaceObjet->w + x] != 0 && ((unsigned int*)_pSurfaceObjet->pixels)[y * _pSurfaceObjet->w + x] != TRANSPARENCE32BIT) {
 
 						// Position de la pixel dans le rect du joueur
 						int iPixelObjetMapX = _RectDestinationObjet.x + x;
 						int iPixelObjetMapY = _RectDestinationObjet.y + y;
 						// Vérifier Transparence
-						if (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(iPixelObjetMapY)* m_pGameMap->ObtenirSurfaceMap()->w + iPixelObjetMapX] != 0 && ((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(iPixelObjetMapY)* m_pGameMap->ObtenirSurfaceMap()->w + iPixelObjetMapX] != TRANSPARENCE32BIT) {
-							*_iX = iPixelObjetMapX;
-							*_iY = iPixelObjetMapY;
+						if (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(iPixelObjetMapY - 1) * m_pGameMap->ObtenirSurfaceMap()->w + iPixelObjetMapX] != 0 && ((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(iPixelObjetMapY - 1)* m_pGameMap->ObtenirSurfaceMap()->w + iPixelObjetMapX] != TRANSPARENCE32BIT) {
+							*_iX = iPixelObjetMapX - _RectDestinationObjet.x;
+							*_iY = iPixelObjetMapY - _RectDestinationObjet.y;
 							return true;
 						}
 					}

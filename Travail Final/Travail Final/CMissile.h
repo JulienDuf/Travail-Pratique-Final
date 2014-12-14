@@ -132,13 +132,13 @@ public:
 
 		// Création des autres pointeurs.
 		m_pBarrePuissance = new CBarrePuissance();
-		m_pSpriteExplosion = new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceExplosion"), pGestionnaireTexture->ObtenirDonnee("pTextureExplosion"), m_RectDestinationExplosion, 9, 100, false, false, 1);
+		m_pSpriteExplosion = new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceExplosionMissile"), pGestionnaireTexture->ObtenirDonnee("pTextureExplosionMissile"), m_RectDestinationExplosion, 9, 100, false, false, 1);
 	}
 
 	// Procédure réagissnat à une collision.
 	// Param1: La position en X de la collision.
 	// Param2: Le position en Y de la collision.
-	void ReactionColision(int iX, int iY) {
+	bool ReactionExplosion(int iX, int iY) {
 	
 		// Détruit la map avec la position et la rayon de 50, met le missile inactif.
 		m_pMapDestruction(50, iX, iY);
@@ -151,6 +151,7 @@ public:
 		// Détruit le vecteur vitesse.
 		delete m_pVecteurVitesseMissile;
 		m_pVecteurVitesseMissile = nullptr;
+		return false;
 	}
 
 	// Procédure affichant le missile selon une position.
@@ -288,9 +289,13 @@ public:
 		m_RectDestinationMissile = _Rect;
 	}
 
-	void DefinierExplosion(bool _boExplosion) {
+	void DefinirExplosion(bool _boExplosion) {
 
 		m_boExplosion = _boExplosion;
+	}
+
+	void DestructionProjectile() {
+
 	}
 
 	bool EstLancer() {

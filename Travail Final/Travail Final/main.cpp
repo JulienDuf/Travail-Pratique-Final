@@ -569,10 +569,15 @@ void Start(char* _strApplicationFilename) {
 	strEmplacement.append("Armes et Packs\\Mine.png");
 	pGestionnaireSurface->AjouterDonnee(IMG_Load(strEmplacement.c_str()), "pSurfaceMine");
 
-	// Chargement de la surface des explosions...
+	// Chargement de la surface de l'explosion du missile...
 	strEmplacement = strApplicationPath;
-	strEmplacement.append("Armes et Packs\\Explosion.png");
-	pGestionnaireSurface->AjouterDonnee(IMG_Load(strEmplacement.c_str()), "pSurfaceExplosion");
+	strEmplacement.append("Armes et Packs\\ExplosionMissile.png");
+	pGestionnaireSurface->AjouterDonnee(IMG_Load(strEmplacement.c_str()), "pSurfaceExplosionMissile");
+
+	// Chargement de la surface de l'explosion de la grenade...
+	strEmplacement = strApplicationPath;
+	strEmplacement.append("Armes et Packs\\ExplosionGrenade.png");
+	pGestionnaireSurface->AjouterDonnee(IMG_Load(strEmplacement.c_str()), "pSurfaceExplosionGrenade");
 
 	// Chargement de font du texte des boutons et label de description...
 	strEmplacement = strApplicationPath;
@@ -617,10 +622,15 @@ void Start(char* _strApplicationFilename) {
 	strEmplacement.append("Armes et Packs\\BarrePuissance.png");
 	pGestionnaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTextureBarrePuissance");
 
-	// Chargement de la texture des explosions...
+	// Chargement de la texture de l'explosion du missile...
 	strEmplacement = strApplicationPath;
-	strEmplacement.append("Armes et Packs\\Explosion.png");
-	pGestionnaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTextureExplosion");
+	strEmplacement.append("Armes et Packs\\ExplosionMissile.png");
+	pGestionnaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTextureExplosionMissile");
+
+	// Chargement de la texture de l'explosion du missile...
+	strEmplacement = strApplicationPath;
+	strEmplacement.append("Armes et Packs\\ExplosionGrenade.png");
+	pGestionnaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTextureExplosionGrenade");
 
 	// Chargement des textures de la barre de vie...
 	strEmplacement = strApplicationPath;

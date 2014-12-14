@@ -35,7 +35,7 @@ public:
 
 		m_PointRotation = { m_pSurface->w / 2, m_pSurface->h };
 
-		m_pSpriteExplosion = new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceExplosion"), SDL_CreateTextureFromSurface(_Renderer, pGestionnaireSurface->ObtenirDonnee("pSurfaceExplosion")), m_RectExplosion, 9, 300, false, false, 1);
+		m_pSpriteExplosion = new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceExplosionMissile"), pGestionnaireTexture->ObtenirDonnee("pTextureExplosionMissile"), m_RectExplosion, 9, 300, false, false, 1);
 		
 		m_pCollisionMap = _CollisionMap;
 		m_pMapDestruction = _MapDestruction;

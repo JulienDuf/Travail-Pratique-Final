@@ -2,7 +2,7 @@ class CProjectile {
 
 public:
 
-	virtual void ReactionColision(int iX, int iY) = 0;
+	virtual bool ReactionExplosion(int iX, int iY) = 0;
 
 	virtual void ShowTool(SDL_Renderer* _pRenderer, SDL_Rect _RectPlayerDestination) = 0;
 
@@ -28,7 +28,9 @@ public:
 
 	virtual void DefinirPosition(SDL_Rect _Rect) = 0;
 
-	virtual void DefinierExplosion(bool _boExplosion) = 0;
+	virtual void DefinirExplosion(bool _boExplosion) = 0;
+
+	virtual void DestructionProjectile() = 0;
 
 	virtual bool EstLancer() = 0;
 

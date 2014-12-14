@@ -3,6 +3,7 @@
 
 class CMine : public CPack{
 private:
+	SDL_Point m_PointRotation;
 	SDL_Rect m_RectDestination; //position de la mine sur la map
 	SDL_Rect m_RectExplosion; //Position de l'explosion
 	SDL_Surface* m_pSurface; //Texture du pack
@@ -31,6 +32,8 @@ public:
 		m_RectExplosion.w = 260;
 		m_RectExplosion.x = m_RectDestination.x;
 		m_RectExplosion.y = 0;
+
+		m_PointRotation = { m_pSurface->w / 2, m_pSurface->h };
 
 		m_pSpriteExplosion = new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceExplosion"), SDL_CreateTextureFromSurface(_Renderer, pGestionnaireSurface->ObtenirDonnee("pSurfaceExplosion")), m_RectExplosion, 9, 300, false, false, 1);
 		
@@ -67,7 +70,7 @@ public:
 			m_pSpriteExplosion->Render(_Renderer, m_RectExplosion);
 		}
 		else{
-			SDL_RenderCopyEx(_Renderer, m_pTexture, NULL, &m_RectDestination, m_dAnglemine, NULL, SDL_FLIP_NONE);
+			SDL_RenderCopyEx(_Renderer, m_pTexture, NULL, &m_RectDestination, m_dAnglemine, &m_PointRotation, SDL_FLIP_NONE);
 		}
 	}
 

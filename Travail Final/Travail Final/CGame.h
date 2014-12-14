@@ -307,7 +307,7 @@ public:
 
 				RectTmp = pPackListTmp->ObtenirElementCurseur()->GetRectDestination();
 
-				if (CollisionObjetMap(pPackListTmp->ObtenirElementCurseur()->GetSurface(), RectTmp, &iX, &iY)) {
+				if (CollisionObjetMapChuteLibre(pPackListTmp->ObtenirElementCurseur()->GetSurface(), RectTmp, &iX, &iY)) {
 
 					RectTmp.y = iY;
 					//RectTmp.y -= RectTmp.h - iY;
@@ -456,7 +456,10 @@ public:
 		SDL_Surface* pSurfaceMap = m_pGameMap->ObtenirSurfaceMap();
 		int iTableau[18][28]; // Tableau.
 		int iPrecision = 0;
-		while (iPrecision < 200) {
+		_RectJoueur.y += 5;
+
+		// Construction du tableau...
+		while (iPrecision < 100) {
 			iPrecision = 0;
 			for (int j = 0; j < _RectRegression.h; j++) { // Boucler sur toute le rect du pied dans la position de la map.
 				for (int i = 0; i < _RectRegression.w; i++) {
@@ -470,65 +473,44 @@ public:
 						iTableau[j][i] = 0;
 				}
 			}
-			if (iPrecision < 200)
+			if (iPrecision < 100)
 				_RectJoueur.y += 1;
 		}
-		if (fX != 0 && fY != 0) {
-			fX = fX / iN; // moyenne
-			fY = fY / iN; // moyenne
-		}
 
+		float fMoyenneX = 0;
+		float fMoyenneY = 0;
 		int iRepetition = 0;
 		for (int j = 0; j < 18; j++) {
 			for (int i = 0; i < 28; i++) {
 				if (iTableau[j][i] == 1) {
-					fCov += i;
-					fVar += 18 - j;
+					fMoyenneX += i;
+					fMoyenneY += 18 - j;
 					iRepetition++;
+					if (iTableau[j][i - 2] == 0 || iTableau[j][i + 2] == 0) {
+						fCov += i;
+						if (iTableau[j][i - 1] == 0 || iTableau[j][i + 1] == 0)
+							fVar += 18 - j;
+					}
 				}
 			}
 		}
 
 		fPente = fVar / fCov; // Donne la pente. fCov = y , fVar = x.
 
-		if (fCov != 0 && fVar != 0 && iN != 0) {
-			fCov = (fCov / iN); //moyenne
-			fCov = -fCov;
-			fVar = (fVar / iN); //moyenne
-		}
-
-		float fMoyenneX = fCov / iRepetition;
-		float fMoyenneY = fVar / iRepetition;
+		fMoyenneX = fMoyenneX / iRepetition;
+		fMoyenneY = fMoyenneY / iRepetition;
 
 		if (fMoyenneY >= _RectPiedJoueur.h / 2 && fMoyenneX >= _RectPiedJoueur.w / 2)
 			fPente *= -1;
 		else if (fMoyenneY <= _RectPiedJoueur.h / 2 && fMoyenneX <= _RectPiedJoueur.w / 2)
 			fPente *= -1;
 		
-		if (!_boObjet) {
-			if (fCov != 0 && fVar != 0) {
-				if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 0 && fPente > 0) { // Le joueur se déplace vers la droite et la pente est positive.
-					fPente = (180 / M_PI) * atanf(fPente);
-					return fPente;
-				}
-
-				if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 0 && fPente < 0) { // Le joueur se déplace vers la droite et la pente est négative.
-					fPente = 360 - ((180 / M_PI) * atanf(-fPente));
-					return fPente;
-				}
-				if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 1 && fPente > 0) { // Le joueur se déplace vers la gauche et la pente est positive.
-					fPente = 180 + (180 / M_PI) * atanf(fPente);
-					return fPente;
-				}
-				if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 1 && fPente < 0) { // Le joueur se déplace vers la gauche et la pente est négative.
-					fPente = 90 + (180 / M_PI) * atanf(-fPente);
-					return fPente;
-				}
-			}
-		}
-		else {
+		if (_boObjet) {
 			fPente = atan((fPente)) * 180 / M_PI;
 			return -fPente;
+		}
+		else {
+			return 362;
 		}
 
 		return 362;
@@ -684,6 +666,41 @@ public:
 			*_iY = iPixelObjetMapY - iY;
 			return boCollision;
 		}
+		return false;
+	}
+
+	// Procédure déterminant la position d'une collision entre un objet et la map, si il y en a une.
+	// En entrée:
+	// Param1: La surface de l'objet.
+	// Param2: La destination de l'objet.
+	// Param3: La position en X qui sera retourné.
+	// Param4: La position en Y qui sera retourné.
+	bool CollisionObjetMap(SDL_Surface* _pSurfaceObjet, SDL_Rect _RectDestinationObjet, int* _iX, int* _iY) {
+
+
+
+		if (_RectDestinationObjet.x <= 1366 && _RectDestinationObjet.x + _RectDestinationObjet.w >= 0 && _RectDestinationObjet.y <= 768) {
+			// Tous les y
+			for (int y = 0; y < _RectDestinationObjet.h; y++) {
+				// Tous les x
+				for (int x = 0; x < _RectDestinationObjet.w; x++) {
+					// Si dans la surface de l'objet, c'est pas transparent...
+					if (((unsigned int*)_pSurfaceObjet->pixels)[y * _pSurfaceObjet->w + x] != 0 && ((unsigned int*)_pSurfaceObjet->pixels)[y * _pSurfaceObjet->w + x] != TRANSPARENCE32BIT) {
+
+						// Position de la pixel dans le rect du joueur
+						int iPixelObjetMapX = _RectDestinationObjet.x + x;
+						int iPixelObjetMapY = _RectDestinationObjet.y + y;
+						// Vérifier Transparence
+						if (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(iPixelObjetMapY - 1) * m_pGameMap->ObtenirSurfaceMap()->w + iPixelObjetMapX] != 0 && ((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(iPixelObjetMapY - 1)* m_pGameMap->ObtenirSurfaceMap()->w + iPixelObjetMapX] != TRANSPARENCE32BIT) {
+							*_iX = iPixelObjetMapX - _RectDestinationObjet.x;
+							*_iY = iPixelObjetMapY - _RectDestinationObjet.y;
+							return true;
+						}
+					}
+				}
+			}
+		}
+
 		return false;
 	}
 

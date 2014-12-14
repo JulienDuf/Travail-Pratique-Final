@@ -1,6 +1,7 @@
 //
 // Classe représentant une vecteur 2D
 // Créé par Julien Dufresne (dufresne_julien@hotmail.ca) le 18 novembre 2014
+// Ajout de ObtenirNorme par Gabriel Beaudry.
 //
 
 class CVecteur2D {
@@ -67,6 +68,15 @@ public:
 		return m_dComposanteY;
 	}
 
+	double ObtenirNorme(void) {
+
+		return sqrt(pow(m_dComposanteX, 2) + pow(m_dComposanteY, 2));
+	}
+
+	double ObtenirOrientation(void) {
+
+		return atan(m_dComposanteY / m_dComposanteX);
+	}
 	void ModifierOrientation(double _dOrientation) {
 
 		if (_dOrientation <= 360) {

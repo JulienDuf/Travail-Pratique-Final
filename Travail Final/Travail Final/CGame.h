@@ -75,7 +75,6 @@ public:
 	}
 
 	void ReactToEvent(SDL_Event* _pEvent) {
-
 		m_pToolBar->ReactToEvent(_pEvent, m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif());
 
 		unsigned int uiMunition = m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirMunition(m_pToolBar->ObtenirPositionObjetDoubleClick());
@@ -101,7 +100,7 @@ public:
 		}
 
 		m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ReactToEvent(_pEvent, m_pToolBar->ObtenirPositionObjetDoubleClick());
-		
+
 		m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->UpdateDescription(m_pToolBar->ObtenirPositionObjetSuvol(), m_pToolBar->ObtenirRectPositionSouris());
 	}
 
@@ -130,31 +129,31 @@ public:
 					if (pPlayerActif->ObtenirSpriteCourse()->IsActif()) {
 
 
-						if (!m_pVerifierCollisionJoueurMap(pPlayerActif, RectTmp, &boCorps, &boPied, &_uiX, &_uiY)) {
+					if (!m_pVerifierCollisionJoueurMap(pPlayerActif, RectTmp, &boCorps, &boPied, &_uiX, &_uiY)) {
 
-							pPlayerActif->ObtenirVecteurPoids()->ModifierComposantY(m_pGameMap->ObtenirGravite()->ObtenirComposanteY());
+					pPlayerActif->ObtenirVecteurPoids()->ModifierComposantY(m_pGameMap->ObtenirGravite()->ObtenirComposanteY());
 
-							*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
-							dComposanteX += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35;
-							dComposanteY += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35;
+					*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
+					dComposanteX += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35;
+					dComposanteY += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35;
 
-						}
+					}
 
-						else {
+					else {
 
-							unsigned int uim = 10;
-							unsigned int uin = 0;
+					unsigned int uim = 10;
+					unsigned int uin = 0;
 
-							while (((pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 0) && (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[RectTmp.x + pPlayerActif->ObtenirHitboxPieds().x + pPlayerActif->ObtenirHitboxPieds().w + uim + (RectTmp.y + pPlayerActif->ObtenirHitboxPieds().y + pPlayerActif->ObtenirHitboxPieds().h - uin) * m_pGameMap->ObtenirSurfaceMap()->w] == 0)) || ((pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1) && (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[RectTmp.x + pPlayerActif->ObtenirHitboxPieds().x - uim + (RectTmp.y + pPlayerActif->ObtenirHitboxPieds().y + pPlayerActif->ObtenirHitboxPieds().h - uin) * m_pGameMap->ObtenirSurfaceMap()->w] == 0)))
-								uin--;
-							
+					while (((pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 0) && (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[RectTmp.x + pPlayerActif->ObtenirHitboxPieds().x + pPlayerActif->ObtenirHitboxPieds().w + uim + (RectTmp.y + pPlayerActif->ObtenirHitboxPieds().y + pPlayerActif->ObtenirHitboxPieds().h - uin) * m_pGameMap->ObtenirSurfaceMap()->w] == 0)) || ((pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1) && (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[RectTmp.x + pPlayerActif->ObtenirHitboxPieds().x - uim + (RectTmp.y + pPlayerActif->ObtenirHitboxPieds().y + pPlayerActif->ObtenirHitboxPieds().h - uin) * m_pGameMap->ObtenirSurfaceMap()->w] == 0)))
+					uin--;
 
-						}
+
+					}
 
 
 					}
 					*/
-					
+
 					pPlayerActif->ObtenirVecteurPoids()->ModifierComposantY(m_pGameMap->ObtenirGravite()->ObtenirComposanteY());
 
 					*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
@@ -189,16 +188,16 @@ public:
 
 							pPlayerActif->ObtenirVecteurPoids()->ModifierComposantY(0);
 
-							if ( ((pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 0) && (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[RectTmp.x + pPlayerActif->ObtenirHitboxPieds().x + pPlayerActif->ObtenirHitboxPieds().w + 10 + (RectTmp.y + pPlayerActif->ObtenirHitboxPieds().y + pPlayerActif->ObtenirHitboxPieds().h - 20) * m_pGameMap->ObtenirSurfaceMap()->w] == 0)) || ((pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1) && (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[RectTmp.x + pPlayerActif->ObtenirHitboxPieds().x - 10 + (RectTmp.y + pPlayerActif->ObtenirHitboxPieds().y + pPlayerActif->ObtenirHitboxPieds().h - 20) * m_pGameMap->ObtenirSurfaceMap()->w] == 0)))
+							if (((pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 0) && (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[RectTmp.x + pPlayerActif->ObtenirHitboxPieds().x + pPlayerActif->ObtenirHitboxPieds().w + 10 + (RectTmp.y + pPlayerActif->ObtenirHitboxPieds().y + pPlayerActif->ObtenirHitboxPieds().h - 20) * m_pGameMap->ObtenirSurfaceMap()->w] == 0)) || ((pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1) && (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[RectTmp.x + pPlayerActif->ObtenirHitboxPieds().x - 10 + (RectTmp.y + pPlayerActif->ObtenirHitboxPieds().y + pPlayerActif->ObtenirHitboxPieds().h - 20) * m_pGameMap->ObtenirSurfaceMap()->w] == 0)))
 								dComposanteY -= (RectTmp.h - _uiY);
 
 							//if (_uiY)
 
 							//else if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 0)
-								//dComposanteX -= (pPlayerActif->ObtenirRectDestination().w - _uiX);
-						
+							//dComposanteX -= (pPlayerActif->ObtenirRectDestination().w - _uiX);
+
 							//else if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1)
-								//dComposanteX += _uiX;
+							//dComposanteX += _uiX;
 
 
 						}
@@ -206,9 +205,9 @@ public:
 						pPlayerActif->DefinirPositionX(dComposanteX);
 						pPlayerActif->DefinirPositionY(dComposanteY);
 						pPlayerActif->ObtenirVecteurVitesse()->ModifierComposantY(0);
-						
+
 					}
-				
+
 				}
 				m_pTimerPhysique->Start();
 			}
@@ -378,29 +377,30 @@ public:
 
 				if (CollisionGrenadeJoueur(pProjectileTmp->ObtenirSurface(), *pProjectileTmp->ObtenirRectDestination(), &iX, &iY)) {
 
-					pProjectileTmp->ObtenirVecteurVitesse()->ModifierVecteur(0, 0);
+					pVecteurVitesse->ModifierVecteur(m_pGameMap->ObtenirGravite()->ObtenirComposanteY(), 270);
 					//pProjectileTmp->ReactionColision(pProjectileTmp->ObtenirRectDestination()->x + iX, pProjectileTmp->ObtenirRectDestination()->y + iY);
 					//DomageExplosion({ pProjectileTmp->ObtenirRectDestination()->x + iX, pProjectileTmp->ObtenirRectDestination()->y }, 40);
 					//ChangerTour()
 				}
 
-
-				*pVecteurVitesse += *m_pGameMap->ObtenirGravite();
+				if (CollisionObjetMap(pProjectileTmp->ObtenirSurface(), *pProjectileTmp->ObtenirRectDestination(), &iX, &iY)) {
+					double dAngle = RegressionLineaireee(*pProjectileTmp->ObtenirRectDestination(), *pProjectileTmp->ObtenirRectDestination(), true);
+					if (pVecteurVitesse->ObtenirComposanteX() < 0) {
+						pVecteurVitesse->ModifierOrientation((pVecteurVitesse->ObtenirOrientation() - dAngle) - 2*pVecteurVitesse->ObtenirOrientation());
+					}
+					else
+					{
+						pVecteurVitesse->ModifierOrientation((pVecteurVitesse->ObtenirOrientation()  - dAngle) + 2 * pVecteurVitesse->ObtenirOrientation());
+					}
+					CVecteur2D VecteurRebond = CVecteur2D(pVecteurVitesse->ObtenirNorme(), dAngle);
+				}
 
 				RectTmp->x += pVecteurVitesse->ObtenirComposanteX() / 35;
 				RectTmp->y += pVecteurVitesse->ObtenirComposanteY() / 35;
+				*pVecteurVitesse += *m_pGameMap->ObtenirGravite();
 
 				if (RectTmp->x >= 1366 || RectTmp->x + RectTmp->w <= 0 || RectTmp->y >= 768)
 					pProjectileTmp->ReactionColision(0, 0);
-
-				/* Regression... Still waiting...
-				int iX, iY;
-				if (CollisionObjetMap(pProjectileTmp->ObtenirSurface(), *pProjectileTmp->ObtenirRectDestination(), &iX, &iY)) {
-					double dAngle = RegressionLineaire({ 0, 0, 0, 0 }, *pProjectileTmp->ObtenirRectDestination());
-					dAngle -= 90;
-					pProjectileTmp->ObtenirVecteurVitesse()->ModifierOrientation(dAngle);
-				}
-				*/
 			}
 		}
 	}
@@ -432,6 +432,99 @@ public:
 		}
 
 		return true;
+	}
+
+	// Procédure qui retourne la pente 
+	// Paramètre : _RectPiedJoueur : Le rect pied du joueur acitf. Si c'est des mines ou des objets le mettre à 0.
+	//			 : _RectJoueur -> L'emplacement de l'objet ou le joueur dans la maop.
+	//			 : _boObjet -> Si c'est un objet ou non.
+	// Retour : integer double qui représente l'angle de la pente.
+	double RegressionLineaireee(SDL_Rect _RectPiedJoueur, SDL_Rect _RectJoueur, bool _boObjet) {
+		float fPente = 0;
+		float fCov = 0; // Variable en y moyenne.
+		float fVar = 0; // Variable en x moyen.
+		float fX = 0; // Valeur en x pour la régression.
+		float fY = 0; // Valeur en y pour la régression.
+		int iN = 0; // Le nombre de fois qu'il y a des "différent de transparent" Sert a savoir le milieu de la régressuion.
+		SDL_Rect _RectRegression;
+		_RectRegression = _RectPiedJoueur;
+		_RectRegression.y += _RectPiedJoueur.h / 2;
+		SDL_Surface* pSurfaceMap = m_pGameMap->ObtenirSurfaceMap();
+		
+		int iTableau[29][27]; // Tableau.
+		for (int j = 0; j < _RectRegression.h; j++) { // Boucler sur toute le rect du pied dans la position de la map.
+			for (int i = 0; i < _RectRegression.w; i++) {
+				int iPositionPixelX = _RectJoueur.x + i;
+				int iPositionPixelY = _RectJoueur.y + j;
+				if (((unsigned int*)pSurfaceMap->pixels)[iPositionPixelY*pSurfaceMap->w + iPositionPixelX] != 0 && ((unsigned int*)pSurfaceMap->pixels)[iPositionPixelY*pSurfaceMap->w + iPositionPixelX] != TRANSPARENCE32BIT)
+					iTableau[j][i] = 1;
+				else
+					iTableau[j][i] = 0;
+				/*
+				int iTest = (i + _RectRegression.x + _RectJoueur.x) + ((j + _RectRegression.y + _RectJoueur.y) * (m_pGameMap->ObtenirSurfaceMap()->w));
+				int iY = iTest / m_pGameMap->ObtenirSurfaceMap()->w;
+				int iX = iTest - (iY * m_pGameMap->ObtenirSurfaceMap()->w);
+				if (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(i + _RectRegression.x + _RectJoueur.x) + ((j + _RectRegression.y + _RectJoueur.y) * (m_pGameMap->ObtenirSurfaceMap()->w))] != 0)  { // Si le pixel est transparent.
+					iTableau[j][i] = 1; // Mettre 1 dans mon tableau.
+					fX += i; // fX va servir a faire la moyenne des X.
+					fY += j; // fY va servir a faire la moyenne des Y.
+					iN += 1; // Pour diviser le nombre d'éléments.
+				}
+				else
+					iTableau[j][i] = 0;
+					*/
+			}
+		}
+		if (fX != 0 && fY != 0) {
+			fX = fX / iN; // moyenne
+			fY = fY / iN; // moyenne
+		}
+		for (int j = 0; j < 29; j++) {
+			for (int i = 0; i < 27; i++) {
+				if (iTableau[j][i] == 1) {
+					fCov += i;
+					fVar += 29 - j;
+				}
+			}
+		}
+
+		if (fCov != 0 && fVar != 0 && iN != 0) {
+			fCov = (fCov / iN); //moyenne
+			fCov = -fCov;
+			fVar = (fVar / iN); //moyenne
+		}
+
+
+
+		fPente = fVar / fCov; // Donne la pente. fCov = y , fVar = x.
+		if (!_boObjet) {
+			if (fCov != 0 && fVar != 0) {
+				if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 0 && fPente > 0) { // Le joueur se déplace vers la droite et la pente est positive.
+					fPente = (180 / M_PI) * atanf(fPente);
+					return fPente;
+				}
+
+				if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 0 && fPente < 0) { // Le joueur se déplace vers la droite et la pente est négative.
+					fPente = 360 - ((180 / M_PI) * atanf(-fPente));
+					return fPente;
+				}
+				if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 1 && fPente > 0) { // Le joueur se déplace vers la gauche et la pente est positive.
+					fPente = 180 + (180 / M_PI) * atanf(fPente);
+					return fPente;
+				}
+				if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 1 && fPente < 0) { // Le joueur se déplace vers la gauche et la pente est négative.
+					fPente = 90 + (180 / M_PI) * atanf(-fPente);
+					return fPente;
+				}
+			}
+		}
+		else {
+			fPente = atan((fCov / fVar)) * 180 / M_PI;
+			return fPente;
+		}
+
+		return 362;
+
 	}
 
 	// Procédure qui retourne la pente 
@@ -560,28 +653,31 @@ public:
 	// Param2: La destination de l'objet.
 	// Param3: La position en X qui sera retourné.
 	// Param4: La position en Y qui sera retourné.
-	bool CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY) {
+	bool CollisionObjetMap(SDL_Surface* _pSurfaceObjet, SDL_Rect _RectDestinationObjet, int* _iX, int* _iY) {
 
-		*_iX = 0;
-		*_iY = 0;
 
-		SDL_Surface* pSDLSurfaceMap = m_pGameMap->ObtenirSurfaceMap();
 
-		for (int y = 0; y < _RectDestination.h; y++) {
-			for (int x = 0; x <_RectDestination.w; x++) {
+		if (_RectDestinationObjet.x <= 1366 || _RectDestinationObjet.x + _RectDestinationObjet.w >= 0 || _RectDestinationObjet.y <= 768) {
+			// Tous les y
+			for (int y = 0; y < _RectDestinationObjet.h; y++) {
+				// Tous les x
+				for (int x = 0; x < _RectDestinationObjet.w; x++) {
+					if (((unsigned int*)_pSurfaceObjet->pixels)[y * _pSurfaceObjet->w + x] != 0 && ((unsigned int*)_pSurfaceObjet->pixels)[y * _pSurfaceObjet->w + x] != TRANSPARENCE32BIT) {
 
-				if (_RectDestination.x >= 0 && _RectDestination.x <= 1366 && _RectDestination.y >= 0 && _RectDestination.y <= 768) {
-
-					if ((((unsigned int*)pSDLSurfaceMap->pixels)[(y + _RectDestination.y) * pSDLSurfaceMap->w + (x + _RectDestination.x)] != 0) && (((unsigned int*)_pSDLSurface->pixels)[(y) * _pSDLSurface->w + (x)] != 0)) {
-						
-						*_iX = x;
-						*_iY = y;
-						
-						return true;
+						// Position de la pixel dans le rect du joueur
+						int iPixelObjetMapX = _RectDestinationObjet.x + x;
+						int iPixelObjetMapY = _RectDestinationObjet.y + y;
+						// Vérifier Transparence
+						if (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(iPixelObjetMapY)* m_pGameMap->ObtenirSurfaceMap()->w + iPixelObjetMapX] != 0 && ((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(iPixelObjetMapY)* m_pGameMap->ObtenirSurfaceMap()->w + iPixelObjetMapX] != TRANSPARENCE32BIT) {
+							*_iX = iPixelObjetMapX;
+							*_iY = iPixelObjetMapY;
+							return true;
+						}
 					}
 				}
 			}
 		}
+
 		return false;
 	}
 

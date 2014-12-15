@@ -1,32 +1,41 @@
 // 420-202-RE : Travail final
 // Classe qui représente un missile ayant un angle et une force.
 // 16 novembre 2014 par Julien Dufresne (dufresne_julien@hotmail.ca)
-//
+// Ajout d'une description(BlitText, loading de la description, ShowDescriptoin et UpdateDescription)
 
 class CMissile : public CProjectile {
 
 private:
 
 	bool m_boMissileLancer; // Si le missile est lancé
+	bool m_boExplosion; // Si il y a une explosion en cours.
+	bool m_boShowDescription; // Si on affiche la description
 	int m_iAngle; // L'angle de départ du missile.
+	unsigned int m_uiRayon; // Rayon d'explosion du missile.
 	unsigned int m_uiForce; // Force de départ du missile.
 	unsigned int m_uiMunition; // Le nombre de missiles disponible.
 	CVecteur2D* m_pVecteurVitesseMissile;
 
-	SDL_Point  m_PointRotation; // Le poitn de rotation.
 	SDL_Surface* m_pSDLSurfaceMissile; // La surface du missile.
 	SDL_Surface* m_pSDLSurfaceMissileRotation; // La surface du missile.
 	SDL_Rect m_RectDestinationMissile; // La destination du missile dans la fenêtre.
+	SDL_Rect m_RectDestinationExplosion; // La destination de l'explosion.
 	CBarrePuissance* m_pBarrePuissance; // La barre déterminant l'angle et la puissance du missile.
+	CSprite* m_pSpriteExplosion; // L'animation de l'explosion.
 
-	CLabel* m_pLblDescription; // La descripton du missile.
-	string m_strDescription[8];
-	bool m_boShowDescription;
+	CLabel* m_pLblDescription; // Le label descripton du missile.
+	string m_strDescription[8]; // Le texte de la description du missile.
 
 	void(*m_pMapDestruction)(int _iRayon, int _iX, int _iY); // La destruction de la map.
-	void(*m_pCollisionMap)(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY); // Procédure déterminant
 	SDL_Surface* (*m_pRotation)(SDL_Surface* _pSurfaceRotation, float _fAngle); // Rotation
 
+	// Fonction tranformant un tableau de string en surface
+	// En entrée:
+	// Param1: La tableau de string
+	// Param2: Le nombre d'élément dans le tableau.
+	// Param3: La couleur du texte.
+	// En sortie:
+	// Le texte dnas une surface.
 	SDL_Surface* BlitText(string _strTexte[], unsigned int _uiNombreElementTableau, SDL_Color _Couleur) {
 
 		SDL_Surface *pSurfaceBlitin,
@@ -51,9 +60,11 @@ private:
 		return pSurfaceBlitin;
 	}
 
-	char chr[3];
-
+	// Procédure mettant à jour le nombre de minution dans le description et dans le tablau de string.
+	// En entrée:
+	// Param1: Le renderer de la fenêtre où sera affiché les descrptions.
 	void MiseajourMunition(SDL_Renderer* _pRenderer) {
+		char chr[3];
 		SDL_itoa(m_uiMunition, chr, 10);
 		m_strDescription[0] = "";
 		m_strDescription[0].append("Munition : ");
@@ -63,10 +74,29 @@ private:
 
 public:
 
-	CMissile(string _strEmplacement, SDL_Renderer* _pRenderer, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), SDL_Surface* _Rotation(SDL_Surface* _pSurfaceRotation, float _fAngle)) {
+	// Constructeur
+	// En entrée:
+	// Param1: L'emplacement de la description du missile.
+	// Param2: Le renderer de la fenêtre.
+	// Param3: Le pointeur de fonction sur la procédure qui détruit la map selon un rayon.
+	// Param4: LE pointeur de fonction sur la fonction qui rotationne une surface.
+	CMissile(string _strEmplacement, SDL_Renderer* _pRenderer, void _MapDestruction(int _iRayon, int _iX, int _iY), SDL_Surface* _Rotation(SDL_Surface* _pSurfaceRotation, float _fAngle)) {
 
+		// Initialisation de variable...
 		m_boShowDescription = false;
+		m_boMissileLancer = false;
+		m_iAngle = 0;
+		m_uiForce = 0;
+		m_pMapDestruction = _MapDestruction;
+		m_pRotation = _Rotation;
+		m_pSDLSurfaceMissile = pGestionnaireSurface->ObtenirDonnee("pSurfaceMissile");
+		m_pSDLSurfaceMissileRotation = m_pSDLSurfaceMissile;
+		m_RectDestinationMissile = { 0, 0, 0, 0 };
+		m_RectDestinationMissile.w = m_pSDLSurfaceMissile->w;
+		m_RectDestinationMissile.h = m_pSDLSurfaceMissile->h;
+		m_RectDestinationExplosion = { 0, 0, 150, 146 };
 
+		// Création de la description 
 		m_strDescription;
 		string strEmplacement(_strEmplacement);
 		string strMunition;
@@ -83,95 +113,131 @@ public:
 		FichierDescription.open(strEmplacement);
 		if (FichierDescription.is_open()) {
 			char chrtmp[55];
-			FichierDescription.getline(chrtmp, 75);
-			for (int i = 11; chrtmp[i] != -52; i++) {
-				strMunition += chrtmp[i];
-			}
-			m_uiMunition = SDL_atoi(strMunition.c_str());
-			m_strDescription[0] = chrtmp;
-			for (int i = 1; i < 8; i++) {
+			string strMunition;
+			string strRayon;
+
+			for (int i = 0; i < 8; i++) {
 				FichierDescription.getline(chrtmp, 75);
 				m_strDescription[i] = chrtmp;
+				switch (i) {
+				case 0:
+
+					for (int j = 11; chrtmp[j] > 47 && chrtmp[j] < 58; j++) {
+						strMunition += chrtmp[j];
+					}
+					break;
+				case 2:
+
+					for (int j = 20; chrtmp[j] > 47 && chrtmp[j] < 58; j++) {
+						strRayon += chrtmp[j];
+					}
+					break;
+				}
 			}
+			m_uiMunition = SDL_atoi(strMunition.c_str());
+			m_uiRayon = SDL_atoi(strRayon.c_str());
 		}
 
 		FichierDescription.close();
 
+		// Création du label de description.
 		SDL_Surface *pSDLSurface = BlitText(m_strDescription, 8, { 0, 0, 0 });
-
 		m_pLblDescription = new CLabel(SDL_CreateTextureFromSurface(_pRenderer, pSDLSurface), { 0, 0, pSDLSurface->w, pSDLSurface->h });
 
-		m_iAngle = 0;
-		m_uiForce = 0;
-
-		m_pSDLSurfaceMissile = pGestionnaireSurface->ObtenirDonnee("pSurfaceMissile");
-		m_pSDLSurfaceMissileRotation = m_pSDLSurfaceMissile;
-
-		m_RectDestinationMissile = { 0, 0, 0, 0 };
-		m_RectDestinationMissile.w = m_pSDLSurfaceMissile->w;
-		m_RectDestinationMissile.h = m_pSDLSurfaceMissile->h;
+		// Création des autres pointeurs.
 		m_pBarrePuissance = new CBarrePuissance();
-
-		m_pMapDestruction = _MapDestruction;
-		m_pCollisionMap = _CollisionMap;
-		m_pRotation = _Rotation;
-
-		m_PointRotation = { m_RectDestinationMissile.w, m_RectDestinationMissile.h / 2 };
-
-		m_boMissileLancer = false;
+		m_pSpriteExplosion = new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceExplosionMissile"), pGestionnaireTexture->ObtenirDonnee("pTextureExplosionMissile"), m_RectDestinationExplosion, 9, 100, false, false, 1);
 	}
 
-	void ReactionColision(int iX, int iY) {
+	// Procédure réagissnat à une collision.
+	// Param1: La position en X de la collision.
+	// Param2: Le position en Y de la collision.
+	bool ReactionExplosion(int iX, int iY) {
 	
-		m_pMapDestruction(50, iX, iY);
+		// Détruit la map avec la position et la rayon de 50, met le missile inactif.
+		m_pMapDestruction(m_uiRayon, iX, iY);
 		m_boMissileLancer = false;
+		m_boExplosion = true;
+		m_RectDestinationExplosion.x = iX - m_RectDestinationExplosion.w / 2;
+		m_RectDestinationExplosion.y = iY - m_RectDestinationExplosion.h / 2;
+		m_pSpriteExplosion->DefinirActif(true);
 
+		// Détruit le vecteur vitesse.
 		delete m_pVecteurVitesseMissile;
 		m_pVecteurVitesseMissile = nullptr;
+		return false;
 	}
 
+	// Procédure affichant le missile selon une position.
+	// Param1: Le renderer de la fenêtre.
+	// Param2: La destination du joueur, pour la barre de puissance.
 	void ShowTool(SDL_Renderer* _pRenderer, SDL_Rect _RectPlayerDestination) {
 
+		// Si le missile est lancé, on affiche le missile
 		if (m_boMissileLancer) {
 
 			SDL_Texture* pTextureTMP = SDL_CreateTextureFromSurface(_pRenderer, m_pSDLSurfaceMissileRotation);
 			SDL_RenderCopy(_pRenderer, pTextureTMP, NULL, &m_RectDestinationMissile);
 			SDL_DestroyTexture(pTextureTMP);
-			
 		}
+
+		// Sinon, on affiche la barre de puissance.
 		else {
-			_RectPlayerDestination.x -= 22;
-			_RectPlayerDestination.y -= 10;
-			m_pBarrePuissance->AfficherBarre(_pRenderer, _RectPlayerDestination);
+
+			if (!m_pSpriteExplosion->IsActif()) {
+
+				_RectPlayerDestination.x -= 22;
+				_RectPlayerDestination.y -= 10;
+				m_pBarrePuissance->AfficherBarre(_pRenderer, _RectPlayerDestination);
+			}
+
+			else {
+				m_pSpriteExplosion->Render(_pRenderer, m_RectDestinationExplosion);
+				m_pSpriteExplosion->ModifierAnnimation();
+			}
 		}
 	}
 
+	// Procédure affichant la description du missile.
+	// Param1: Le renderer de la fenêtre.
 	void ShowDescription(SDL_Renderer* _pRenderer) {
+		// Si la description est active
 		if (m_boShowDescription) {
-			MiseajourMunition(_pRenderer);
-			m_pLblDescription->ShowControl(_pRenderer);
+			MiseajourMunition(_pRenderer); // Met à jour la description avec les minutions.
+			m_pLblDescription->ShowControl(_pRenderer); // Affiche.
 		}
 	}
 
+	// Procédure réagissant au événement dans la fenêtre.
 	void ReactToEvent(SDL_Event* _pEvent) {
 
+		// Réaction au événement pour la barre de puissance.
 		m_pBarrePuissance->ReactToEvent(_pEvent);
 
+		// Si le missile n'est pas lancé.
 		if (!m_boMissileLancer) {
 
+			// Pour tous les types d'événements...
 			switch (_pEvent->type) {
 
+			// Si une touche du clavier en enfoncé.
 			case SDL_KEYDOWN:
 
+				// Si c'est la space...
 				if (_pEvent->key.keysym.scancode == SDL_SCANCODE_SPACE) {
 
+					// Modifie la force, l'angle et on crée le vecteur vitesse.
 					m_iAngle = m_pBarrePuissance->ObtenirAngle();
 					m_uiForce = (m_pBarrePuissance->ObtenirForce() + 3) * 100;
-					m_boMissileLancer = true;
 					m_pVecteurVitesseMissile = new CVecteur2D((float)m_uiForce, (float)m_iAngle);
+					
+					// On met le missile actif.
+					m_boMissileLancer = true;
 
+					// On modifie la position du missile et le nombre de minution.
 					m_pBarrePuissance->ObtenirPosition(&m_RectDestinationMissile.x, &m_RectDestinationMissile.y);
 					m_RectDestinationMissile.y -= m_RectDestinationMissile.h;
+					m_uiMunition--;
 				}
 				break;
 			}
@@ -179,14 +245,9 @@ public:
 
 	}
 
-	void DefinirActif(bool _boActif) {
-
-	}
-
-	unsigned int ObtenirMunition() {
-		return m_uiMunition;
-	}
-
+	// Procédure modifiant la position et l'activité de la description.
+	// Param1: Si la description est active.
+	//Param2: LA position de la descrition.
 	void UpdateDescription(bool _boShow, SDL_Rect _RectPositionDescription) {
 
 		m_boShowDescription = _boShow;
@@ -204,8 +265,14 @@ public:
 			m_pLblDescription->SetRectDestinationY(_RectPositionDescription.y);
 	}
 
+	void DefinirActif(bool _boActif) {
+
+	}
+
+	// Accesseurs...
+
 	CSprite* ObtenirSprite(string _strNom) {
-		return nullptr;
+		return m_pSpriteExplosion;
 	}
 
 	CVecteur2D* ObtenirVecteurVitesse() {
@@ -236,8 +303,26 @@ public:
 		m_RectDestinationMissile = _Rect;
 	}
 
+	void DefinirExplosion(bool _boExplosion) {
+
+		m_boExplosion = _boExplosion;
+	}
+
+	void DestructionProjectile() {
+
+	}
+
 	bool EstLancer() {
 		
 		return m_boMissileLancer;
+	}
+
+	bool ExplosionEnCours(void) {
+
+		return m_boExplosion;
+	}
+
+	unsigned int ObtenirMunition() {
+		return m_uiMunition;
 	}
 };

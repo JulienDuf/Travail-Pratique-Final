@@ -96,6 +96,11 @@ public:
 		}
 	}
 
+	void Reinitialisation() {
+		m_uiForce = 1;
+		m_iAngle = 0;
+	}
+
 	// Accesseurs...
 
 	double ObtenirAngle(void) {

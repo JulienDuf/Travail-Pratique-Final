@@ -1,7 +1,9 @@
 Munition : 5
 
-Dommage : 100 - % de proximité du rayon d'explosion
-
 Rayon d'explosion : 45
+
+Délai d'explosion : 5 secondes
+
+Dommage : 100 - % de proximité du rayon d'explosion
 
 Grenadaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!

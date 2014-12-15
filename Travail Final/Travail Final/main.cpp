@@ -17,7 +17,6 @@ CGestionaire<SDL_Surface*>* pGestionnaireSurface; // Le gestionaire des surfaces
 CGestionaire<TTF_Font*>* pGestionnaireFont; // Le gestionaire des fonts.
 
 #include "CListeDC.h"
-#include "Pointeur Fonction.h"
 #include "CTimer.h"
 #include "CVecteur2D.h"
 #include "CSprite.h"
@@ -68,212 +67,64 @@ SDL_Color CouleurTexte; // La couleur du texte.
 
 CTimer* pTimerPhysique;
 
+// Fonction convertissant en angle de degré à radian.
+// En entrée:
+// Param1: L'angle à convertir.
+// En sortie: L'angle converti.
+float DegtoRad(float _fAngle) {
+
+	return (M_PI / 180) * _fAngle;
+}
 
 // Pointeurs de fonctions pour les classes [
 
+// Fontion effectuant un rotation sur une surface selon un angle.
+// En entrée: 
+// Param1: La surface qui doit être tourné.
+// Param2: L'angle de la rotation.
+// En sortie: La surface avec la rotaiton.
+SDL_Surface* Rotation(SDL_Surface* _pSurfaceRotation, float _fAngle) {
 
+	SDL_Surface * pNouvelleSurface = SDL_CreateRGBSurface(_pSurfaceRotation->flags, _pSurfaceRotation->w, _pSurfaceRotation->h, _pSurfaceRotation->format->BitsPerPixel, _pSurfaceRotation->format->Rmask, _pSurfaceRotation->format->Gmask, _pSurfaceRotation->format->Bmask, _pSurfaceRotation->format->Amask);
 
-// Fonction qui retourne la position d'une collision.
-// Paramètre: _pPlayer, joueur pour lequel on vérifie les collisions avec la carte de jeu
-// Paramètre: _RectPlayer, rectangle qui encadre l'endroit ou l'on veut vérifier les collisions sur la map. (ex: Prochain rectangle destination d'un player.)
-// Paramètre: _pboCollisionCorps, pointeur de booléenne qui indique si il y a eu une collision au corps.
-// Paramètre: _pboCollisionPieds, pointeur de booléenne qui indique si il y a eu une collision au pieds.
-// Paramètre: _puiXCorps, pointeur d'entier non-signé qui indique la position en x de la collision dans le rectangle du joueur entre le corps et la carte de jeu s'il y a lieu.
-// Paramètre: _puiYPieds, pointeur d'entier non-signé qui indique la position en y de la collision dans le rectangle du joueur entre les pieds et la carte de jeu s'il y a lieu.
-// Retour: Un booléen qui indique si il y a eu une collision.
-bool VerifierCollisionJoueurMap(CPlayer* _pPlayer, SDL_Rect _RectPlayer, bool* _pboCollisionCorps, bool* _pboCollisionPieds, unsigned int* _puiXCorps, unsigned int* _puiYPieds) {
+	double sin = sinf(DegtoRad(_fAngle));
+	double cos = cosf(DegtoRad(_fAngle));
 
-	SDL_Surface* pTmpSDLSurfaceMap = pWindowJeu->ObtenirGame()->ObtenirMap()->ObtenirSurfaceMap();	// pointeur temporaire de surface qui pointe sur la surface de la carte de jeu.
-	SDL_Surface* pTmpSDLSurfacePlayer = nullptr;			// pointeur temporaire de surface qui pointera sur la surface appropriée du joueur.
+	for (int y = 0; y < _pSurfaceRotation->h; y++)
+	for (int x = 0; x < _pSurfaceRotation->w; x++) {
 
-	SDL_Rect TmpSDLRectPlayerDestination = _RectPlayer;						// Structure SDL Rect qui contient le rectangle dans lequel le joueur est affiché sur la map.
-	SDL_Rect TmpSDLRectPlayerSource = {0,0,1,1};										// Structure SDL Rect qui contiendra le rectangle source de la surface appropriée du joueur pour la situation.
+		int RotX = (x - _pSurfaceRotation->w / 2) * cos - (y - _pSurfaceRotation->h / 2) * sin + _pSurfaceRotation->w / 2;
+		int RotY = (x - _pSurfaceRotation->w / 2) * sin + (y - _pSurfaceRotation->h / 2) * cos + _pSurfaceRotation->w / 2;
 
-	SDL_Rect TmpSDLRectPlayerHitboxCorps = {0,0,1,1};									// Structure SDL Rect qui contiendra le rectangle dans le rectangle source dans lequel il faudra vérifier les collisions du pieds.
-	SDL_Rect TmpSDLRectPlayerHitboxPieds = {0,0,1,1};									// Structure SDL Rect qui contiendra le rectangle dans le rectangle source dans lequel il faudra vérifier les collisions du corps.
-
-	if (_pPlayer->ObtenirSpriteCourse()->IsActif()) {						// Si le joueur est en train de courir...
-
-		pTmpSDLSurfacePlayer = _pPlayer->ObtenirSpriteCourse()->ObtenirSurface();			// On se sert de la surface du sprite de course.
-
-		TmpSDLRectPlayerSource = _pPlayer->ObtenirSpriteCourse()->ObtenirRectSource();		// On se sert du Rect source du sprite de course.
-
-		TmpSDLRectPlayerHitboxPieds = _pPlayer->ObtenirHitboxPieds();						// On se sert du hitbox des pieds approprié pour le sprite de course.
+		if ((RotX >= 0 && RotY >= 0 && (RotX < _pSurfaceRotation->w && RotY < _pSurfaceRotation->h)))
+			((unsigned int*)pNouvelleSurface->pixels)[y * pNouvelleSurface->w + x] = ((unsigned int*)_pSurfaceRotation->pixels)[RotY * _pSurfaceRotation->w + RotX];
 	}
 
-	else if (_pPlayer->ObtenirSpriteSaut()->IsActif()) {
-
-		pTmpSDLSurfacePlayer = _pPlayer->ObtenirSpriteSaut()->ObtenirSurface();			// On se sert de la surface du sprite de saut.
-
-		TmpSDLRectPlayerSource = _pPlayer->ObtenirSpriteSaut()->ObtenirRectSource();		// On se sert du Rect source du sprite de saut.
-
-		TmpSDLRectPlayerHitboxPieds = _pPlayer->ObtenirHitboxPieds();						// On se sert du hitbox des pieds approprié pour le sprite de saut.
-	}
-
-	else if (_pPlayer->ObtenirSpriteParachute()->IsActif()) {
-
-		pTmpSDLSurfacePlayer = _pPlayer->ObtenirSpriteParachute()->ObtenirSurface();			// On se sert de la surface du sprite de parachute.
-
-		TmpSDLRectPlayerSource = _pPlayer->ObtenirSpriteParachute()->ObtenirRectSource();		// On se sert du Rect source du sprite de parachute.
-
-		TmpSDLRectPlayerHitboxPieds = _pPlayer->ObtenirHitboxPiedsParachute();						// On se sert du hitbox des pieds approprié pour le sprite de parachute.
-	}
-
-	else if (_pPlayer->ObtenirSpriteRepos()->IsActif()) {
-
-		pTmpSDLSurfacePlayer = _pPlayer->ObtenirSpriteRepos()->ObtenirSurface();			// On se sert de la surface du sprite de repos.
-
-		TmpSDLRectPlayerSource = _pPlayer->ObtenirSpriteRepos()->ObtenirRectSource();		// On se sert du Rect source du sprite de repos.
-
-		TmpSDLRectPlayerHitboxPieds = _pPlayer->ObtenirHitboxPieds();						// On se sert du hitbox des pieds approprié pour le sprite de repos.
-	}
-	else if (_pPlayer->ObtenirSpriteJetPack()->IsActif()) {
-
-		pTmpSDLSurfacePlayer = _pPlayer->ObtenirSpriteJetPack()->ObtenirSurface();
-
-		TmpSDLRectPlayerSource = _pPlayer->ObtenirSpriteJetPack()->ObtenirRectSource();
-
-		TmpSDLRectPlayerHitboxPieds = _pPlayer->ObtenirHitboxPieds();
-	}
-
-	if (_pPlayer->ObtenirSpriteCourse()->ObtenirEtage() == 0)					// Si le jueur est orienté vers la droite...
-		TmpSDLRectPlayerHitboxCorps = _pPlayer->ObtenirHitboxCorpsDroite();		// On se sert du rectangle pour le corps de droite. 
-	else																		// Sinon...
-		TmpSDLRectPlayerHitboxCorps = _pPlayer->ObtenirHitboxCorpsGauche();		// On se sert du rectangle pour le corps de gauche.	
-
-
-	*_pboCollisionCorps = false;
-	*_pboCollisionPieds = false;
-
-	*_puiXCorps = 0;
-	*_puiYPieds = 0;
-
-	// Vérification de la collision des pieds du joueur avec la carte de jeu...
-
-	for (unsigned int y = 0; y < TmpSDLRectPlayerHitboxPieds.h && !*_pboCollisionPieds; y++) {				// On parcours les pixels dans le hitbox de haut en bas.
-
-		for (unsigned int x = 0; x < TmpSDLRectPlayerHitboxPieds.w && !*_pboCollisionPieds; x++) {			// On parcours les pixels dans le hitbox de gauche à droite.
-
-			if ((((unsigned int*)pTmpSDLSurfaceMap->pixels)[(TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerHitboxPieds.x + x) + (TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerHitboxPieds.y + y) * pTmpSDLSurfaceMap->w] != 0) && (((unsigned int*)pTmpSDLSurfacePlayer->pixels)[(TmpSDLRectPlayerSource.x + TmpSDLRectPlayerHitboxPieds.x + x) + (TmpSDLRectPlayerSource.y + TmpSDLRectPlayerHitboxPieds.y + y) * pTmpSDLSurfacePlayer->w] != 0)) {			// Si il y a une collision entre les pixels non-transparents de la map et les pixels non-transparents des pieds du joueur...
-
-				*_puiYPieds = TmpSDLRectPlayerHitboxPieds.y + y;		// Dans le rectangle destination, on prend la position en y de la collision pour la stocker.
-
-				*_pboCollisionPieds = true;				// On confirme la collision aux pieds.
-
-
-			}
-
-		}
-
-	}
-
-	// Vérification de la collision du corps du joueur avec la carte de jeu.
-
-	for (unsigned int y = 0; y < TmpSDLRectPlayerHitboxCorps.h && !*_pboCollisionCorps; y++) {				// On parcours les pixels dans le hitbox de haut en bas.
-
-		for (unsigned int x = 0; x < TmpSDLRectPlayerHitboxCorps.w && !*_pboCollisionCorps; x++) {			// On parcours les pixels dans le hitbox de gauche à droite.
-
-			if ((((unsigned int*)pTmpSDLSurfaceMap->pixels)[(TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerHitboxCorps.x + x) + (TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerHitboxCorps.y + y) * pTmpSDLSurfaceMap->w] != 0) && (((unsigned int*)pTmpSDLSurfacePlayer->pixels)[(TmpSDLRectPlayerSource.x + TmpSDLRectPlayerHitboxCorps.x + x) + (TmpSDLRectPlayerSource.y + TmpSDLRectPlayerHitboxCorps.y + y) * pTmpSDLSurfacePlayer->w] != 0)) {			// Si il y a une collision entre les pixels non-transparents de la map et les pixels non-transparents du corps du joueur...
-
-				*_puiXCorps = TmpSDLRectPlayerHitboxCorps.x + x;		// Dans le rectangle destination, on prend la position en x de la collision pour la stocker.
-
-				*_pboCollisionCorps = true;
-
-			}
-
-		}
-
-	}
-
-	return (*_pboCollisionPieds || *_pboCollisionCorps);			// On retourne vrai dès qu'il y a eu une collision.
-
-
+	return pNouvelleSurface;
 }
-
 
 // Procédure détruisant une partie de la map selon un rayon.
 // En entrée:
 // Param1: Le rayon de la destruction.
 // Param2: La position en X de la destruction dans la map.
 // Param3: La position en Y de la destruction dans la map.
-void MapDestruction(int _iRayon, int _iX, int _iY) {
-
-	int iX, iY;
-	SDL_Rect RectSource = { 0, 0, 120, 120 };
+void MapDestruction(int _iRayonDestruction,int _iX, int _iY) {
+	SDL_Rect RectTmp = { _iX - _iRayonDestruction, _iY - _iRayonDestruction, 2 * _iRayonDestruction, 2 * _iRayonDestruction };
 	SDL_Surface* pSurfaceMap = pWindowJeu->ObtenirGame()->ObtenirMap()->ObtenirSurfaceMap();
-
-	iX = _iX - 60;
-	iY = _iY - 60;
-
-	switch (_iRayon) {
-
-	case 45:
-		RectSource.x = RectSource.w * 0;
-		break;
-
-	case 50:
-		RectSource.x = RectSource.w * 1;
-		break;
-
-	case 60:
-		RectSource.x = RectSource.w * 2;
-		break;
-	}
-
-	for (int y = 0; y < 120; y++) {
-
-		for (int x = 0; x < 120; x++) {
-
-			if ((iY >= 0 && iX >= 0) && (iY <= 768 & iX <= 1366)) {
-
-				if (((unsigned int*)pSurfaceGabarie->pixels)[y * pSurfaceGabarie->w + RectSource.x + x] != BLANC32BIT)
-					((unsigned int*)pSurfaceMap->pixels)[iY * pSurfaceMap->w + iX] = 0;
-			}
-			iX++;
-
-		}
-		iY++;
-		iX = _iX - 60;
-
-	}
-
-	pWindowJeu->ObtenirGame()->ObtenirMap()->PutMapInTexture(pWindowJeu->ObtenirRenderer());
-
-}
-
-// Procédure déterminant la position d'une collision entre un objet et la map, si il y en a une.
-// En entrée:
-// Param1: La surface de l'objet.
-// Param2: La destination de l'objet.
-// Param3: La position en X qui sera retourné.
-// Param4: La position en Y qui sera retourné.
-void CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY) {
-
-	*_iX = 0;
-	*_iY = 0;
-
-	unsigned int ix, iy;
-
-	SDL_Surface* pSDLSurfaceMap = pWindowJeu->ObtenirGame()->ObtenirMap()->ObtenirSurfaceMap();
-
-	for (int y = _RectDestination.y; y < _RectDestination.y + _RectDestination.h; y++) {
-		for (int x = _RectDestination.x; x < _RectDestination.x + _RectDestination.w; x++) {
-
-			if (x >= 0 && x <= 1366 && y >= 0 && y <= 768) {
-
-				ix = ((unsigned int*)pSDLSurfaceMap->pixels)[y * pSDLSurfaceMap->w + x];
-
-				if ((((unsigned int*)pSDLSurfaceMap->pixels)[y * pSDLSurfaceMap->w + x] != 0) && (((unsigned int*)_pSDLSurface->pixels)[(y - _RectDestination.y) * _pSDLSurface->w + (x - _RectDestination.x)] != 0)) {
-
-					if (*_iX == 0) {
-						*_iX = x;
-						*_iY = y;
-					}
+	for (int j = 0; j <= RectTmp.h; j++) {
+		for (int i = 0; i <= RectTmp.w; i++) {
+			double dX = RectTmp.w / 2 - i;
+			double dY = RectTmp.h / 2 - j;
+			double dRayonPixel = sqrt(pow(dX, 2) + pow(dY, 2));
+			if (dRayonPixel <= _iRayonDestruction) {
+				for (int i2 = 0; i2 <= dX * 2; i2++) {
+					((unsigned int*)pSurfaceMap->pixels)[(j + RectTmp.y) * pSurfaceMap->w + i + RectTmp.x] = 0;
+					i++;
 				}
 			}
 		}
 	}
-
+	pWindowJeu->ObtenirGame()->ObtenirMap()->PutMapInTexture(pWindowJeu->ObtenirRenderer());
 }
 
 // Procédure pour le click sur le bouton nouvelle partie...
@@ -353,7 +204,7 @@ void ClickBoutonDebutPartie(void) {
 	iNombreEquipe = pGestionnaireControl->ObtenirDonnee("pLblLRChoixNbrEquipe")->ObtenirElement("PositionLabel") + 2;
 	iNombreJoueur = pGestionnaireControl->ObtenirDonnee("pLblLRChoixNbrJoueurEquipe")->ObtenirElement("PositionLabel") + 4;
 
-	pWindowJeu->CreateGame(strTmp, iNombreEquipe, iNombreJoueur, new CVent(pGestionnaireFont->ObtenirDonnee("pFontBouton"), "250 km/h", CouleurTexte, pGestionnaireTexture->ObtenirDonnee("pFlecheVent"), { 1200, 30, 117, 63 }, 180, pWindowJeu->ObtenirRenderer()),  VerifierCollisionJoueurMap, MapDestruction, CollisionObjetMap, Rotation);
+	pWindowJeu->CreateGame(strTmp, iNombreEquipe, iNombreJoueur, new CVent(pGestionnaireFont->ObtenirDonnee("pFontBouton"), "250 km/h", CouleurTexte, pGestionnaireTexture->ObtenirDonnee("pFlecheVent"), { 1200, 30, 117, 63 }, 180, pWindowJeu->ObtenirRenderer()), MapDestruction, Rotation);
 }
 
 // Procédure pour le click sur le bouton quitter...
@@ -517,11 +368,6 @@ void Start(char* _strApplicationFilename) {
 
 	pTimerPhysique = new CTimer(1000);
 
-	// Chargement du gabarie...
-	strEmplacement = strApplicationPath;
-	strEmplacement.append("Gabarie.png");
-	pSurfaceGabarie = IMG_Load(strEmplacement.c_str());
-
 	// Chargement des surfaces des personnages...
 	
 	// La course...
@@ -569,10 +415,15 @@ void Start(char* _strApplicationFilename) {
 	strEmplacement.append("Armes et Packs\\Mine.png");
 	pGestionnaireSurface->AjouterDonnee(IMG_Load(strEmplacement.c_str()), "pSurfaceMine");
 
-	// Chargement de la surface des explosions...
+	// Chargement de la surface de l'explosion du missile...
 	strEmplacement = strApplicationPath;
-	strEmplacement.append("Armes et Packs\\Explosion.png");
-	pGestionnaireSurface->AjouterDonnee(IMG_Load(strEmplacement.c_str()), "pSurfaceExplosion");
+	strEmplacement.append("Armes et Packs\\ExplosionMissile.png");
+	pGestionnaireSurface->AjouterDonnee(IMG_Load(strEmplacement.c_str()), "pSurfaceExplosionMissile");
+
+	// Chargement de la surface de l'explosion de la grenade...
+	strEmplacement = strApplicationPath;
+	strEmplacement.append("Armes et Packs\\ExplosionGrenade.png");
+	pGestionnaireSurface->AjouterDonnee(IMG_Load(strEmplacement.c_str()), "pSurfaceExplosionGrenade");
 
 	// Chargement de font du texte des boutons et label de description...
 	strEmplacement = strApplicationPath;
@@ -616,6 +467,16 @@ void Start(char* _strApplicationFilename) {
 	strEmplacement = strApplicationPath;
 	strEmplacement.append("Armes et Packs\\BarrePuissance.png");
 	pGestionnaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTextureBarrePuissance");
+
+	// Chargement de la texture de l'explosion du missile...
+	strEmplacement = strApplicationPath;
+	strEmplacement.append("Armes et Packs\\ExplosionMissile.png");
+	pGestionnaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTextureExplosionMissile");
+
+	// Chargement de la texture de l'explosion du missile...
+	strEmplacement = strApplicationPath;
+	strEmplacement.append("Armes et Packs\\ExplosionGrenade.png");
+	pGestionnaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTextureExplosionGrenade");
 
 	// Chargement des textures de la barre de vie...
 	strEmplacement = strApplicationPath;
@@ -755,7 +616,6 @@ int main(int argc, char* argv[]) {
 			case SDL_QUIT:
 				boExecution = false;
 				break;
-
 			case SDL_KEYDOWN:
 				switch (pEvent->key.keysym.scancode) {
 				case SDL_SCANCODE_ESCAPE:

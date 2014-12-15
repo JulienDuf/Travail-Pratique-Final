@@ -19,6 +19,7 @@ private:
 	SDL_Surface* m_pSDLSurfaceMissileRotation; // La surface du missile.
 	SDL_Rect m_RectDestinationMissile; // La destination du missile dans la fenêtre.
 	SDL_Rect m_RectDestinationExplosion; // La destination de l'explosion.
+	SDL_Rect RayonExplosion;
 	CBarrePuissance* m_pBarrePuissance; // La barre déterminant l'angle et la puissance du missile.
 	CSprite* m_pSpriteExplosion; // L'animation de l'explosion.
 
@@ -94,6 +95,7 @@ public:
 		m_RectDestinationMissile.w = m_pSDLSurfaceMissile->w;
 		m_RectDestinationMissile.h = m_pSDLSurfaceMissile->h;
 		m_RectDestinationExplosion = { 0, 0, 150, 146 };
+		RayonExplosion = { 0, 0, 0, 0 };
 
 		// Création de la description 
 		m_strDescription;
@@ -146,6 +148,7 @@ public:
 		m_boExplosion = true;
 		m_RectDestinationExplosion.x = iX - m_RectDestinationExplosion.w / 2;
 		m_RectDestinationExplosion.y = iY - m_RectDestinationExplosion.h / 2;
+		RayonExplosion = { iX - 50, iY - 50, 100, 100 };
 		m_pSpriteExplosion->DefinirActif(true);
 
 		// Détruit le vecteur vitesse.
@@ -164,6 +167,8 @@ public:
 			SDL_Texture* pTextureTMP = SDL_CreateTextureFromSurface(_pRenderer, m_pSDLSurfaceMissileRotation);
 			SDL_RenderCopy(_pRenderer, pTextureTMP, NULL, &m_RectDestinationMissile);
 			SDL_DestroyTexture(pTextureTMP);
+			SDL_SetRenderDrawColor(_pRenderer, 0, 0, 0, 255);
+			SDL_RenderDrawRect(_pRenderer, &m_RectDestinationMissile);
 		}
 
 		// Sinon, on affiche la barre de puissance.
@@ -179,6 +184,8 @@ public:
 			else {
 				m_pSpriteExplosion->Render(_pRenderer, m_RectDestinationExplosion);
 				m_pSpriteExplosion->ModifierAnnimation();
+				SDL_SetRenderDrawColor(_pRenderer, 0, 0, 0, 255);
+				SDL_RenderDrawRect(_pRenderer, &RayonExplosion);
 			}
 		}
 	}

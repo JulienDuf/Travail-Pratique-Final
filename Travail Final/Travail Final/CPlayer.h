@@ -156,6 +156,8 @@ public:
 			if (m_boToolActif)
 				m_pListeTools->ObtenirElementCurseur()->ShowTool(_pRenderer, m_RectPlayerDestination);
 		}
+		SDL_SetRenderDrawColor(_pRenderer, 0, 0, 0, 255);
+		SDL_RenderDrawRect(_pRenderer, &m_RectPlayerDestination);
 	}
 
 	void ShowDescription(SDL_Renderer* _pRenderer) {

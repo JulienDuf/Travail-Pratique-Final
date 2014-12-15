@@ -498,9 +498,11 @@ public:
 		else {
 			_RectRegression = _RectPiedJoueur;
 			_RectRegression.y += _RectPiedJoueur.h / 2;
+			_RectRegression.h += 10;
 		}
 
-		int iTableau[28][18]; // Tableau.
+		//int* iTableau = new int[_RectRegression.w,_RectRegression.h]; // Tableau.
+		int iTableau[38][28];
 		for (int j = 0; j < _RectRegression.h; j++) { // Boucler sur toute le rect du pied dans la position de la map.
 			for (int i = 0; i < _RectRegression.w; i++) {
 				if (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(i + _RectRegression.x + _RectJoueur.x) + ((j + _RectRegression.y + _RectJoueur.y) * (m_pGameMap->ObtenirSurfaceMap()->w))] != 0)  { // Si le pixel est transparent.
@@ -517,18 +519,17 @@ public:
 			fX = fX / iN; // moyenne
 			fY = fY / iN; // moyenne
 		}
-		for (int j = 0; j < 18; j++) {
-			for (int i = 0; i < 28; i++) {
+		for (int j = 0; j < _RectRegression.h; j++) {
+			for (int i = 0; i < _RectRegression.w; i++) {
 				if (iTableau[i][j] == 1) {
-					iCov += ((i - fX) * (j - fY)); // Calcul pour Y moyens avec le Y moyens.
-					iVar += pow((i - fX), 2);    // Calcul pour X moyens avec le X moyens.
+					iCov += ((j - fY) * (i - fX)); // Calcul pour Y moyens avec le Y moyens.
+					iVar += pow((j - fY), 2);    // Calcul pour X moyens avec le X moyens.
 				}
 			}
 		}
 
 		if (iCov != 0 && iVar != 0) {
 			iCov = (iCov / iN); //moyenne
-			iCov = -iCov;
 			iVar = (iVar / iN); //moyenne
 		}
 
@@ -557,10 +558,7 @@ public:
 			}
 		}
 		else {
-			if (fPente > 0)
-				return -(180 / M_PI) * atanf(fPente);
-			else if (fPente < 0)
-				return -(180 / M_PI) * atanf(fPente);
+			return (180 / M_PI) * atanf(fPente);
 		}
 
 		return 362;

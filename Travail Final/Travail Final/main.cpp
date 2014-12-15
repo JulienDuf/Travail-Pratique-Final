@@ -116,7 +116,7 @@ void MapDestruction(int _iRayonDestruction,int _iX, int _iY) {
 			double dX = RectTmp.w / 2 - i;
 			double dY = RectTmp.h / 2 - j;
 			double dRayonPixel = sqrt(pow(dX, 2) + pow(dY, 2));
-			if (dRayonPixel <= _iRayonDestruction) {
+			if (dRayonPixel <= _iRayonDestruction && j + RectTmp.y < 768 && j + RectTmp.y >= 0 && i + RectTmp.x < 1366 && i + RectTmp.x >=0) {
 				for (int i2 = 0; i2 <= dX * 2; i2++) {
 					((unsigned int*)pSurfaceMap->pixels)[(j + RectTmp.y) * pSurfaceMap->w + i + RectTmp.x] = 0;
 					i++;

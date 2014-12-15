@@ -183,6 +183,11 @@ public:
 
 						if (boPied) {
 
+							if (pPlayerActif->ObtenirSpriteSaut()->IsActif()) {
+								pPlayerActif->ObtenirSpriteSaut()->DefinirActif(false);
+								pPlayerActif->ObtenirSpriteRepos()->DefinirActif(true);
+							}
+
 							pPlayerActif->ObtenirVecteurPoids()->ModifierComposantY(0);
 
 							if (((pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 0) && (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[RectTmp.x + pPlayerActif->ObtenirHitboxPieds().x + pPlayerActif->ObtenirHitboxPieds().w + 10 + (RectTmp.y + pPlayerActif->ObtenirHitboxPieds().y + pPlayerActif->ObtenirHitboxPieds().h - 20) * m_pGameMap->ObtenirSurfaceMap()->w] == 0)) || ((pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1) && (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[RectTmp.x + pPlayerActif->ObtenirHitboxPieds().x - 10 + (RectTmp.y + pPlayerActif->ObtenirHitboxPieds().y + pPlayerActif->ObtenirHitboxPieds().h - 20) * m_pGameMap->ObtenirSurfaceMap()->w] == 0)))
@@ -405,7 +410,7 @@ public:
 						CVecteur2D VecteurRebond = CVecteur2D(pVecteurVitesse->ObtenirNorme(), dAngle);
 					}
 
-					RectTmp->x += pVecteurVitesse->ObtenirComposanteX() / 35;
+					//RectTmp->x += pVecteurVitesse->ObtenirComposanteX() / 35;
 					RectTmp->y += pVecteurVitesse->ObtenirComposanteY() / 35;
 					*pVecteurVitesse += *m_pGameMap->ObtenirGravite();
 				}

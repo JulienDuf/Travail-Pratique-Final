@@ -7,6 +7,7 @@ class CMelee : public CMouvement {
 private:
 
 	float m_fDommage; //Degats de l'arme de melee
+	unsigned int m_uiRayon; // Rayon de dégat de l'attaque.
 	CSprite* m_pSprite; //sprite du personnage qui utilise l'arme de melee
 
 	CLabel* m_pLblDescription; // La descripton du missile.
@@ -61,16 +62,29 @@ public:
 		FichierDescription.open(strEmplacement);
 		if (FichierDescription.is_open()) {
 			char chrtmp[55];
-			FichierDescription.getline(chrtmp, 75);
-			for (int i = 10; chrtmp[i] != -52; i++) {
-				strDommage += chrtmp[i];
-			}
-			m_fDommage = SDL_atoi(strDommage.c_str()) / 100;
-			m_strDescription[0] = chrtmp;
-			for (int i = 1; i < 8; i++) {
+			string strDommage;
+			string strRayon;
+
+			for (int i = 0; i < 8; i++) {
 				FichierDescription.getline(chrtmp, 75);
 				m_strDescription[i] = chrtmp;
+				switch (i) {
+				case 0:
+
+					for (int j = 9; chrtmp[j] > 47 && chrtmp[j] < 58; j++) {
+						strDommage += chrtmp[j];
+					}
+					break;
+				case 2:
+
+					for (int j = 8; chrtmp[j] > 47 && chrtmp[j] < 58; j++) {
+						strRayon += chrtmp[j];
+					}
+					break;
+				}
 			}
+			m_fDommage = (float)SDL_atoi(strDommage.c_str()) / 100;
+			m_uiRayon = SDL_atoi(strRayon.c_str());
 		}
 
 		FichierDescription.close();

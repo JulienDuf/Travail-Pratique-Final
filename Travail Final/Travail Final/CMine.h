@@ -3,7 +3,7 @@
 
 class CMine : public CPack{
 private:
-	SDL_Point m_PointRotation;
+	SDL_Point m_PointRotation; // Point de rotation de la mine.
 	SDL_Rect m_RectDestination; //position de la mine sur la map
 	SDL_Rect m_RectExplosion; //Position de l'explosion
 	SDL_Surface* m_pSurface; //Texture du pack
@@ -26,7 +26,7 @@ public:
 		m_RectDestination.h = m_pSurface->h;
 		m_RectDestination.w = m_pSurface->w;
 		m_RectDestination.y = 0;
-		m_RectDestination.x = rand() % 1366;
+		m_RectDestination.x = rand() % (1366 - m_pSurface->w);
 
 		m_RectExplosion.h = 300;
 		m_RectExplosion.w = 260;

@@ -1,7 +1,7 @@
 // 420-202-RE : Travail final
 // Classe qui représente un missile ayant un angle et une force.
 // 16 novembre 2014 par Julien Dufresne (dufresne_julien@hotmail.ca)
-//
+// Ajout d'une description(BlitText, loading de la description, ShowDescriptoin et UpdateDescription)
 
 class CMissile : public CProjectile {
 
@@ -11,6 +11,7 @@ private:
 	bool m_boExplosion; // Si il y a une explosion en cours.
 	bool m_boShowDescription; // Si on affiche la description
 	int m_iAngle; // L'angle de départ du missile.
+	unsigned int m_uiRayon; // Rayon d'explosion du missile.
 	unsigned int m_uiForce; // Force de départ du missile.
 	unsigned int m_uiMunition; // Le nombre de missiles disponible.
 	CVecteur2D* m_pVecteurVitesseMissile;
@@ -112,21 +113,34 @@ public:
 		FichierDescription.open(strEmplacement);
 		if (FichierDescription.is_open()) {
 			char chrtmp[55];
-			FichierDescription.getline(chrtmp, 75);
-			for (int i = 11; chrtmp[i] != -52; i++) {
-				strMunition += chrtmp[i];
-			}
-			m_uiMunition = SDL_atoi(strMunition.c_str());
-			m_strDescription[0] = chrtmp;
-			for (int i = 1; i < 8; i++) {
+			string strMunition;
+			string strRayon;
+
+			for (int i = 0; i < 8; i++) {
 				FichierDescription.getline(chrtmp, 75);
 				m_strDescription[i] = chrtmp;
+				switch (i) {
+				case 0:
+
+					for (int j = 11; chrtmp[j] > 47 && chrtmp[j] < 58; j++) {
+						strMunition += chrtmp[j];
+					}
+					break;
+				case 2:
+
+					for (int j = 20; chrtmp[j] > 47 && chrtmp[j] < 58; j++) {
+						strRayon += chrtmp[j];
+					}
+					break;
+				}
 			}
+			m_uiMunition = SDL_atoi(strMunition.c_str());
+			m_uiRayon = SDL_atoi(strRayon.c_str());
 		}
 
 		FichierDescription.close();
 
-		// Cr.ation du label de description.
+		// Création du label de description.
 		SDL_Surface *pSDLSurface = BlitText(m_strDescription, 8, { 0, 0, 0 });
 		m_pLblDescription = new CLabel(SDL_CreateTextureFromSurface(_pRenderer, pSDLSurface), { 0, 0, pSDLSurface->w, pSDLSurface->h });
 
@@ -141,7 +155,7 @@ public:
 	bool ReactionExplosion(int iX, int iY) {
 	
 		// Détruit la map avec la position et la rayon de 50, met le missile inactif.
-		m_pMapDestruction(50, iX, iY);
+		m_pMapDestruction(m_uiRayon, iX, iY);
 		m_boMissileLancer = false;
 		m_boExplosion = true;
 		m_RectDestinationExplosion.x = iX - m_RectDestinationExplosion.w / 2;

@@ -9,12 +9,13 @@ private:
 	CBarreVie* m_pBarreDeCarburant;
 
 	CLabel* m_pLblDescription;
-	string m_strDescription[5];
+	string m_strDescription[8];
 
 	bool m_boSpace,
 		m_boShowDescription;
 
 	unsigned int m_uiTempsPropulsionInitiale;
+	int m_iVerticalThrust;
 
 	SDL_Surface* BlitText(string _strTexte[], unsigned int _uiNombreElementTableau, SDL_Color _Couleur) {
 
@@ -71,11 +72,31 @@ public:
 		ifstream FichierDescription;
 		FichierDescription.open(strEmplacement);
 		if (FichierDescription.is_open()) {
-			for (int i = 0; i < 5; i++) {
-				char chrtmp[75];
+			char chrtmp[55];
+			string strCarburant;
+			string strVerticalThrust;
+
+			for (int i = 0; i < 8; i++) {
 				FichierDescription.getline(chrtmp, 75);
 				m_strDescription[i] = chrtmp;
+				switch (i) {
+				case 0:
+
+					for (int j = 22; chrtmp[j] > 47 && chrtmp[j] < 58; j++) {
+						strCarburant += chrtmp[j];
+					}
+					break;
+				case 2:
+
+					for (int j = 19; chrtmp[j] > 47 && chrtmp[j] < 58; j++) {
+						strVerticalThrust += chrtmp[j];
+					}
+					break;
+				}
 			}
+			m_pBarreDeCarburant = _pBarreDeCarburant;
+			m_pBarreDeCarburant->ModifierPourcentageVie(SDL_atoi(strCarburant.c_str()) / 100);
+			m_iVerticalThrust = SDL_atoi(strVerticalThrust.c_str());
 		}
 
 		FichierDescription.close();
@@ -84,8 +105,6 @@ public:
 		m_pLblDescription = new CLabel(SDL_CreateTextureFromSurface(_pRenderer, pSDLSurface), { 503, 346, pSDLSurface->w, pSDLSurface->h });
 
 		m_pSpriteJetPack = _pSpriteJetPack;
-
-		m_pBarreDeCarburant = _pBarreDeCarburant;
 
 		m_pSpriteJetPack->DefinirPositionDeBouclage(0, 1);
 
@@ -130,7 +149,7 @@ public:
 			case SDL_SCANCODE_SPACE:
 				if (_pEvent->key.type == SDL_KEYDOWN) {
 					m_pBarreDeCarburant->ModifierPourcentageVie(m_pBarreDeCarburant->ObtenirVie() - 0.002);
-					_pVecteurVitesse->ModifierComposantY(-50);
+					_pVecteurVitesse->ModifierComposantY(-m_iVerticalThrust);
 					m_uiTempsPropulsionInitiale++;
 					if (m_uiTempsPropulsionInitiale >= 3) {
 						m_pSpriteJetPack->DefinirPositionDeBouclage(4, 6);

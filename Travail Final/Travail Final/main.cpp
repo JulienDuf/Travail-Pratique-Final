@@ -190,55 +190,27 @@ bool VerifierCollisionJoueurMap(CPlayer* _pPlayer, SDL_Rect _RectPlayer, bool* _
 
 }
 
-
 // Procédure détruisant une partie de la map selon un rayon.
 // En entrée:
 // Param1: Le rayon de la destruction.
 // Param2: La position en X de la destruction dans la map.
 // Param3: La position en Y de la destruction dans la map.
-void MapDestruction(int _iRayon, int _iX, int _iY) {
-
-	int iX, iY;
-	SDL_Rect RectSource = { 0, 0, 120, 120 };
+void MapDestruction(int _iRayonDestruction,int _iX, int _iY) {
+	SDL_Rect RectTmp = { _iX - _iRayonDestruction, _iY - _iRayonDestruction, 2 * _iRayonDestruction, 2 * _iRayonDestruction };
 	SDL_Surface* pSurfaceMap = pWindowJeu->ObtenirGame()->ObtenirMap()->ObtenirSurfaceMap();
-
-	iX = _iX - 60;
-	iY = _iY - 60;
-
-	switch (_iRayon) {
-
-	case 45:
-		RectSource.x = RectSource.w * 0;
-		break;
-
-	case 50:
-		RectSource.x = RectSource.w * 1;
-		break;
-
-	case 60:
-		RectSource.x = RectSource.w * 2;
-		break;
-	}
-
-	for (int y = 0; y < 120; y++) {
-
-		for (int x = 0; x < 120; x++) {
-
-			if ((iY >= 0 && iX >= 0) && (iY <= 768 & iX <= 1366)) {
-
-				if (((unsigned int*)pSurfaceGabarie->pixels)[y * pSurfaceGabarie->w + RectSource.x + x] != BLANC32BIT)
-					((unsigned int*)pSurfaceMap->pixels)[iY * pSurfaceMap->w + iX] = 0;
+	for (int j = 0; j <= RectTmp.h; j++) {
+		for (int i = 0; i <= RectTmp.w; i++) {
+			double dX = RectTmp.w / 2 - i;
+			double dY = RectTmp.h / 2 - j;
+			double dRayonPixel = sqrt(pow(dX, 2) + pow(dY, 2));
+			if (dRayonPixel <= _iRayonDestruction) {
+				if (((unsigned int*)pSurfaceMap->pixels)[(j + RectTmp.y) * pSurfaceMap->w + i + RectTmp.x] != 0)
+					int ii = 2;
+				((unsigned int*)pSurfaceMap->pixels)[(j + RectTmp.y) * pSurfaceMap->w + i + RectTmp.x] = 0;
 			}
-			iX++;
-
 		}
-		iY++;
-		iX = _iX - 60;
-
 	}
-
 	pWindowJeu->ObtenirGame()->ObtenirMap()->PutMapInTexture(pWindowJeu->ObtenirRenderer());
-
 }
 
 // Procédure déterminant la position d'une collision entre un objet et la map, si il y en a une.
@@ -771,6 +743,11 @@ int main(int argc, char* argv[]) {
 				boExecution = false;
 				break;
 
+			case SDL_MOUSEBUTTONDOWN:
+
+				if (pWindowJeu->ObtenirGame() != nullptr)
+					MapDestruction(50, pEvent->motion.x, pEvent->motion.y);
+				break;
 			case SDL_KEYDOWN:
 				switch (pEvent->key.keysym.scancode) {
 				case SDL_SCANCODE_ESCAPE:

@@ -54,6 +54,7 @@ CGestionaire<CMenu*>* pGestionnaireMenu; // Le gestionaire des menus.
 
 // Variables...
 bool boExecution; // Variable de la boucle principale du programme.
+bool boPause; // Variable pour savoir si le menu est en pause, ou non.
 
 string strEmplacementFichier; // L'emplacement de nos fichiers.
 
@@ -64,8 +65,6 @@ CWindow* pWindowJeu; // La fenêtre de jeu.
 SDL_Surface* pSurfaceGabarie; // Le gabarie pour les destructions.
 
 SDL_Color CouleurTexte; // La couleur du texte.
-
-CTimer* pTimerPhysique;
 
 // Fonction convertissant en angle de degré à radian.
 // En entrée:
@@ -111,14 +110,18 @@ SDL_Surface* Rotation(SDL_Surface* _pSurfaceRotation, float _fAngle) {
 void MapDestruction(int _iRayonDestruction,int _iX, int _iY) {
 	SDL_Rect RectTmp = { _iX - _iRayonDestruction, _iY - _iRayonDestruction, 2 * _iRayonDestruction, 2 * _iRayonDestruction };
 	SDL_Surface* pSurfaceMap = pWindowJeu->ObtenirGame()->ObtenirMap()->ObtenirSurfaceMap();
+	double dX;
+	double dY;
+	double dRayonPixel;
 	for (int j = 0; j <= RectTmp.h; j++) {
 		for (int i = 0; i <= RectTmp.w; i++) {
-			double dX = RectTmp.w / 2 - i;
-			double dY = RectTmp.h / 2 - j;
-			double dRayonPixel = sqrt(pow(dX, 2) + pow(dY, 2));
-			if (dRayonPixel <= _iRayonDestruction && j + RectTmp.y < 768 && j + RectTmp.y >= 0 && i + RectTmp.x < 1366 && i + RectTmp.x >=0) {
+			dX = _iRayonDestruction - i;
+			dY = _iRayonDestruction - j;
+			dRayonPixel = sqrt(pow(dX, 2) + pow(dY, 2));
+			if (dRayonPixel <= _iRayonDestruction) {
 				for (int i2 = 0; i2 <= dX * 2; i2++) {
-					((unsigned int*)pSurfaceMap->pixels)[(j + RectTmp.y) * pSurfaceMap->w + i + RectTmp.x] = 0;
+					if (j + RectTmp.y < 768 && j + RectTmp.y >= 0 && i + RectTmp.x < 1366 && i + RectTmp.x >= 0)
+						((unsigned int*)pSurfaceMap->pixels)[(j + RectTmp.y) * pSurfaceMap->w + i + RectTmp.x] = 0;
 					i++;
 				}
 			}
@@ -230,12 +233,14 @@ void ClickBoutonGaucheChoixMap(void) {
 // Procédure qui résume la partie lorsquelle est sur pause...
 void ClickBoutonResumer(void) {
 	pGestionnaireMenu->ObtenirDonnee("pMenuPause")->DefinirboShow(false);
+	boPause = false;
 }
 
 // Procédure qui quitter une partie en cours et la détruit...
 void ClickBoutonQuitterJeu(void) {
 	pWindowJeu->FinDePartie();
 	pGestionnaireMenu->ObtenirDonnee("pMenuPause")->DefinirboShow(false);
+	boPause = false;
 	pGestionnaireMenu->ObtenirDonnee("pMenuPrincipal")->DefinirboShow(true);
 }
 
@@ -365,8 +370,6 @@ void Start(char* _strApplicationFilename) {
 	pGestionnaireFont = new CGestionaire<TTF_Font*>();
 	pGestionnaireControl = new CGestionaire<CControl*>();
 	pGestionnaireMenu = new CGestionaire<CMenu*>();
-
-	pTimerPhysique = new CTimer(1000);
 
 	// Chargement des surfaces des personnages...
 	
@@ -568,6 +571,7 @@ void Start(char* _strApplicationFilename) {
 	pWindowJeu->AjouterMenu(3, pGestionnaireMenu->ObtenirDonnee("pMenuPrincipal"), pGestionnaireMenu->ObtenirDonnee("pMenuNouvellePartie"), pGestionnaireMenu->ObtenirDonnee("pMenuPause"));
 
 	boExecution = true;
+	boPause = false;
 	pEvent = new SDL_Event(); // Créé le pointeur.
 
 }
@@ -593,13 +597,11 @@ int main(int argc, char* argv[]) {
 	Start(argv[0]); // Initialisation
 
 	srand(time(NULL));
-	
-	pTimerPhysique->Start();
 
 	// Boucle principale de l'application.
 	while (boExecution) {
 
-		pWindowJeu->Rafraichir();
+		pWindowJeu->Rafraichir(boPause);
 
 		// Tant qu'il y a des événements à gérer.
 		while (SDL_PollEvent(pEvent)) {
@@ -607,7 +609,7 @@ int main(int argc, char* argv[]) {
 			pGestionnaireMenu->ObtenirDonnee("pMenuPrincipal")->ReactToEvent(pEvent);
 			pGestionnaireMenu->ObtenirDonnee("pMenuNouvellePartie")->ReactToEvent(pEvent);
 			pGestionnaireMenu->ObtenirDonnee("pMenuPause")->ReactToEvent(pEvent);
-			if (pWindowJeu->ObtenirGame() != nullptr) {
+			if (pWindowJeu->ObtenirGame() != nullptr && !boPause) {
 				pWindowJeu->ObtenirGame()->ReactToEvent(pEvent);
 			}
 
@@ -619,11 +621,14 @@ int main(int argc, char* argv[]) {
 			case SDL_KEYDOWN:
 				switch (pEvent->key.keysym.scancode) {
 				case SDL_SCANCODE_ESCAPE:
-					if (pWindowJeu->ObtenirGame() != nullptr) {
-						pGestionnaireMenu->ObtenirDonnee("pMenuPause")->DefinirboShow(true);
+					if (pEvent->type == SDL_KEYDOWN) {
+						if (pWindowJeu->ObtenirGame() != nullptr) {
+							pGestionnaireMenu->ObtenirDonnee("pMenuPause")->DefinirboShow(true);
+							boPause = true;
+						}
+						else
+							boExecution = !(pEvent->key.keysym.scancode == SDL_SCANCODE_ESCAPE);
 					}
-					else
-						boExecution = !(pEvent->key.keysym.scancode == SDL_SCANCODE_ESCAPE);
 					break;
 				case SDL_SCANCODE_T:
 					//pWindowJeu->ObtenirGame()->ChangerTour(pGestionnaireFont->ObtenirDonnee("pFontBouton"), pWindowJeu->ObtenirRenderer());

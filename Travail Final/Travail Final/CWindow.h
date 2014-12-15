@@ -74,8 +74,8 @@ public:
 	}
 
 	// Procédure qui rendre l'image final.
-	// Paramètre : _Renderer : Le renderer.
-	void Rafraichir(void) {
+	// Paramètre : _boPause : Jeu en pause.
+	void Rafraichir(bool _boPause) {
 		SDL_RenderClear(m_pSDLRenderer);
 
 		if (pTimerFrame->IsDone()) {
@@ -87,7 +87,7 @@ public:
 		}
 
 		if (m_pGame != nullptr)
-			m_pGame->AfficherGame(m_pSDLRenderer);
+			m_pGame->AfficherGame(m_pSDLRenderer, _boPause);
 
 		m_pArbreMenu->ParcoursMenu(m_pSDLRenderer);
 

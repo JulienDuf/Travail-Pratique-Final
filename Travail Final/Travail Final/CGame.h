@@ -50,25 +50,27 @@ public:
 		return m_pTeamList->ObtenirElementCurseur();
 	}
 
-	void AfficherGame(SDL_Renderer* _pRenderer) {
+	void AfficherGame(SDL_Renderer* _pRenderer, bool _boPause) {
 
 		if (m_boDebutPartie)
 			m_boDebutPartie = !IsAllTeamStable();
 
 		m_pGameMap->ShowMap(_pRenderer);
 
-		PhysiquePlayer(_pRenderer);
-		PhysiquePack();
-
+		if (!_boPause) {
+			PhysiquePlayer(_pRenderer);
+			PhysiquePack();
+		}
 
 		for (int i = 0; i < m_pTeamList->ObtenirCompte(); i++) {
 			m_pTeamList->ObtenirElementCurseur()->ShowTeam(_pRenderer);
 			m_pTeamList->AllerSuivantCurseur();
 		}
 
-		m_pToolBar->ShowToolBar(_pRenderer);
-
-		m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ShowDescription(_pRenderer);
+		if (!_boPause) {
+			m_pToolBar->ShowToolBar(_pRenderer);
+			m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ShowDescription(_pRenderer);
+		}
 	}
 
 	void ReactToEvent(SDL_Event* _pEvent) {
@@ -398,19 +400,13 @@ public:
 						//ChangerTour()
 					}
 
-					if (CollisionObjetMapChuteLibre(pProjectileTmp->ObtenirSurface(), *pProjectileTmp->ObtenirRectDestination(), &iX, &iY)) {
-						double dAngle = RegressionLineaire(*pProjectileTmp->ObtenirRectDestination(), *pProjectileTmp->ObtenirRectDestination(), true);
-						if (pVecteurVitesse->ObtenirComposanteX() < 0) {
-							pVecteurVitesse->ModifierOrientation((pVecteurVitesse->ObtenirOrientation() - dAngle) - 2 * pVecteurVitesse->ObtenirOrientation());
-						}
-						else
-						{
-							pVecteurVitesse->ModifierOrientation((pVecteurVitesse->ObtenirOrientation() - dAngle) + 2 * pVecteurVitesse->ObtenirOrientation());
-						}
-						CVecteur2D VecteurRebond = CVecteur2D(pVecteurVitesse->ObtenirNorme(), dAngle);
+					if (CollisionObjetMap(pProjectileTmp->ObtenirSurface(), *pProjectileTmp->ObtenirRectDestination(), &iX, &iY)) {
+						CVecteur2D VecteurNormal = CVecteur2D(1, (float)RegressionLineaire(*pProjectileTmp->ObtenirRectDestination(), *pProjectileTmp->ObtenirRectDestination(), true) - 90);
+						double dScalaire = 2 * pVecteurVitesse->Scalaire(VecteurNormal.ObtenirComposanteX(), VecteurNormal.ObtenirComposanteY());
+						*pVecteurVitesse -= VecteurNormal * dScalaire;
 					}
 
-					//RectTmp->x += pVecteurVitesse->ObtenirComposanteX() / 35;
+					RectTmp->x += pVecteurVitesse->ObtenirComposanteX() / 35;
 					RectTmp->y += pVecteurVitesse->ObtenirComposanteY() / 35;
 					*pVecteurVitesse += *m_pGameMap->ObtenirGravite();
 				}
@@ -607,7 +603,7 @@ public:
 
 
 
-		if (_RectDestinationObjet.x <= 1366 && _RectDestinationObjet.x + _RectDestinationObjet.w >= 0 && _RectDestinationObjet.y <= 768) {
+		if (_RectDestinationObjet.x + _RectDestinationObjet.w <= 1366 && _RectDestinationObjet.x >= 0 && _RectDestinationObjet.y + _RectDestinationObjet.h <= 768 && _RectDestinationObjet.y >= 0) {
 			// Tous les y
 			for (int y = 0; y < _RectDestinationObjet.h; y++) {
 				// Tous les x

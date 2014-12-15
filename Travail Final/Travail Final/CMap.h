@@ -33,7 +33,7 @@ public:
 	// Param3: _pSDLTextureMap, pointe sur la texture qui représente l'avant plan de la carte de jeu.
 	// Param4: _pVent, Classe qui donne la force et la direction du vent.
 	// Param5: Renderer.
-	CMap(string _strEmplacementMap, SDL_Rect _RectPositionImages, CVent* _pVent, SDL_Renderer* _pRenderer, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY)) {
+	CMap(string _strEmplacementMap, SDL_Rect _RectPositionImages, CVent* _pVent, SDL_Renderer* _pRenderer, void _MapDestruction(int _iRayon, int _iX, int _iY)) {
 		
 		// Variables temporaires...
 		string strTmp[5];
@@ -93,7 +93,7 @@ public:
 
 		for (int i = iNombreMines; i > 0; i--) {
 
-			m_pPackList->AjouterFin(new CMine(_pRenderer, _MapDestruction, _CollisionObjetMap));
+			m_pPackList->AjouterFin(new CMine(_pRenderer, _MapDestruction));
 
 		}
 

@@ -12,11 +12,10 @@ private:
 	bool m_boStable; //Si la mine touche par terre.
 	double m_dAnglemine; //L'angle de la mine.
 
-	void(*m_pCollisionMap)(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY);
 	void(*m_pMapDestruction)(int _iRayon, int _iX, int _iY);
 
 public:
-	CMine(SDL_Renderer* _Renderer, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY)){
+	CMine(SDL_Renderer* _Renderer, void _MapDestruction(int _iRayon, int _iX, int _iY)){
 		//initialisation de la texture.
 		m_pSurface = pGestionnaireSurface->ObtenirDonnee("pSurfaceMine");		
 		m_pTexture = SDL_CreateTextureFromSurface(_Renderer, m_pSurface);
@@ -35,9 +34,8 @@ public:
 
 		m_PointRotation = { m_pSurface->w / 2, m_pSurface->h };
 
-		m_pSpriteExplosion = new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceExplosionMissile"), pGestionnaireTexture->ObtenirDonnee("pTextureExplosionMissile"), m_RectExplosion, 9, 300, false, false, 1);
+		m_pSpriteExplosion = new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceExplosionMissile"), pGestionnaireTexture->ObtenirDonnee("pTextureExplosionMissile"), m_RectExplosion, 9, 100, false, false, 1);
 		
-		m_pCollisionMap = _CollisionMap;
 		m_pMapDestruction = _MapDestruction;
 
 		m_boStable = false;

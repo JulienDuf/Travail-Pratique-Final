@@ -47,7 +47,6 @@ private:
 
 	// Pointeurs de fonciton
 	void(*m_pMapDestruction)(int _iRayon, int _iX, int _iY); // La destruction de la map.
-	void(*m_pCollisionMap)(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY); // Procédure déterminant
 	SDL_Surface *(*m_pRotation)(SDL_Surface* _pSurfaceRotation, float _fAngle); // Rotation
 
 	CLabel *m_pLblDescription; // La descripton du missile.
@@ -102,7 +101,7 @@ public:
 	// Param3: Procédure de la destruction de la map.
 	// Param4: Procédure de la collision avec la map.
 	// Param5: Fonction pour la rotation de la grenade.
-	CGrenade(string _strEmplacement, SDL_Renderer* _pRenderer, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), SDL_Surface* _Rotation(SDL_Surface* _pSurfaceRotation, float _fAngle)){
+	CGrenade(string _strEmplacement, SDL_Renderer* _pRenderer, void _MapDestruction(int _iRayon, int _iX, int _iY), SDL_Surface* _Rotation(SDL_Surface* _pSurfaceRotation, float _fAngle)){
 
 		m_boShowDescription = false;
 		m_boRotation = false;
@@ -173,7 +172,6 @@ public:
 		m_pBarrePuissance = new CBarrePuissance();
 
 		m_pMapDestruction = _MapDestruction;
-		m_pCollisionMap = _CollisionMap;
 		m_pRotation = _Rotation;
 
 		m_pSpriteExplosion = new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceExplosionGrenade"), pGestionnaireTexture->ObtenirDonnee("pTextureExplosionGrenade"), { 0, 0, m_uiRayon, m_uiRayon }, 10, 50, false, false, 1);

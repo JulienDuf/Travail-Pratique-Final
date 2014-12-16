@@ -222,6 +222,7 @@ public:
 			}
 
 			SDL_RenderCopy(_pRenderer, m_pTextureGrenade, NULL, &m_RectDestinationGrenade);
+			SDL_RenderDrawRect(_pRenderer, &m_RectDestinationGrenade);
 		}
 		else if (m_boExplosion) {
 

@@ -337,20 +337,18 @@ public:
 			CVecteur2D* pVecteurVitesse;
 			int iX, iY;
 
-<<<<<<< HEAD
 			if (!pProjectileTmp->ObtenirSprite("")->IsActif() && pProjectileTmp->ExplosionEnCours()) {
 				m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->DefinirToolActif(false);
 				ChangerTour(_pRenderer);
 				pProjectileTmp->DefinirExplosion(false);
 			}
-=======
+			
 			if (pProjectileTmp->ObtenirSprite("") != nullptr) {
->>>>>>> origin/Branche-Julien
 
 				if (!pProjectileTmp->ObtenirSprite("")->IsActif() && pProjectileTmp->ExplosionEnCours()) {
 					m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->DefinirToolActif(false);
 					ChangerTour(_pRenderer);
-					pProjectileTmp->DefinierExplosion(false);
+					pProjectileTmp->DefinirExplosion(false);
 				}
 			}
 			if (m_pToolBar->ObtenirPositionObjetDoubleClick() == 0 && pProjectileTmp->EstLancer())  {
@@ -360,13 +358,12 @@ public:
 
 				if (CollisionMissile(pProjectileTmp->ObtenirSurface(), *pProjectileTmp->ObtenirRectDestination(), &iX, &iY)) {
 
-<<<<<<< HEAD
 					pProjectileTmp->ReactionExplosion(pProjectileTmp->ObtenirRectDestination()->x + iX, pProjectileTmp->ObtenirRectDestination()->y + iY);
-=======
-					pProjectileTmp->ReactionColision(pProjectileTmp->ObtenirRectDestination()->x + iX, pProjectileTmp->ObtenirRectDestination()->y + iY);
-					AfficherGame(_pRenderer);
+
+					pProjectileTmp->ReactionExplosion(pProjectileTmp->ObtenirRectDestination()->x + iX, pProjectileTmp->ObtenirRectDestination()->y + iY);
+					AfficherGame(_pRenderer, false);
 					SDL_RenderPresent(_pRenderer);
->>>>>>> origin/Branche-Julien
+
 					DomageExplosion({ pProjectileTmp->ObtenirRectDestination()->x + iX, pProjectileTmp->ObtenirRectDestination()->y }, 50);
 				}
 
@@ -918,13 +915,16 @@ public:
 		*_puiXCorps = 0;
 		*_puiYPieds = 0;
 
+		unsigned int uiTransparenceJoueur = ((unsigned int *)pTmpSDLSurfacePlayer->pixels)[0];
+		unsigned int uiTransparenceMap = ((unsigned int *)m_pGameMap->ObtenirSurfaceMap()->pixels)[0];
+
 		// Vérification de la collision des pieds du joueur avec la carte de jeu...
 
 		for (unsigned int y = 0; y < TmpSDLRectPlayerHitboxPieds.h && !*_pboCollisionPieds; y++) {				// On parcours les pixels dans le hitbox de haut en bas.
 
 			for (unsigned int x = 0; x < TmpSDLRectPlayerHitboxPieds.w && !*_pboCollisionPieds; x++) {			// On parcours les pixels dans le hitbox de gauche à droite.
 
-				if ((((unsigned int*)pTmpSDLSurfaceMap->pixels)[(TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerHitboxPieds.x + x) + (TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerHitboxPieds.y + y) * pTmpSDLSurfaceMap->w] != 0) && (((unsigned int*)pTmpSDLSurfacePlayer->pixels)[(TmpSDLRectPlayerSource.x + TmpSDLRectPlayerHitboxPieds.x + x) + (TmpSDLRectPlayerSource.y + TmpSDLRectPlayerHitboxPieds.y + y) * pTmpSDLSurfacePlayer->w] != 0)) {			// Si il y a une collision entre les pixels non-transparents de la map et les pixels non-transparents des pieds du joueur...
+				if ((((unsigned int*)pTmpSDLSurfaceMap->pixels)[(TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerHitboxPieds.x + x) + (TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerHitboxPieds.y + y) * pTmpSDLSurfaceMap->w] != uiTransparenceMap) && (((unsigned int*)pTmpSDLSurfacePlayer->pixels)[(TmpSDLRectPlayerSource.x + TmpSDLRectPlayerHitboxPieds.x + x) + (TmpSDLRectPlayerSource.y + TmpSDLRectPlayerHitboxPieds.y + y) * pTmpSDLSurfacePlayer->w] != uiTransparenceJoueur)) {			// Si il y a une collision entre les pixels non-transparents de la map et les pixels non-transparents des pieds du joueur...
 
 					*_puiYPieds = TmpSDLRectPlayerHitboxPieds.y + y;		// Dans le rectangle destination, on prend la position en y de la collision pour la stocker.
 
@@ -1109,7 +1109,7 @@ public:
 						iDistanceRayon = (_RectPositionExplosion.x + _iRayon) - (RectDestinationPlayer.x + RectDestinationPlayer.w);
 
 					else
-						RectDestinationPlayer.x - (_RectPositionExplosion.x + _iRayon);
+						iDistanceRayon = RectDestinationPlayer.x - (_RectPositionExplosion.x + _iRayon);
 
 					fPourcentage = ((float)iDistanceRayon / (float)_iRayon);
 					pPlayerTmp->SetHealth(pPlayerTmp->GetHealth() * fPourcentage);
@@ -1125,7 +1125,7 @@ public:
 
 				else if ((RectDestinationPlayer.x >= _RectPositionExplosion.x && RectDestinationPlayer.x + RectDestinationPlayer.w <= _RectPositionExplosion.x + _RectPositionExplosion.w) && (RectDestinationPlayer.y <= _RectPositionExplosion.y + _RectPositionExplosion.h && RectDestinationPlayer.y + RectDestinationPlayer.h > _RectPositionExplosion.y + _RectPositionExplosion.h)) {
 
-					RectDestinationPlayer.y - (_RectPositionExplosion.y + _iRayon);
+					iDistanceRayon = RectDestinationPlayer.y - (_RectPositionExplosion.y + _iRayon);
 					fPourcentage = ((float)iDistanceRayon / (float)_iRayon);
 					pPlayerTmp->SetHealth(pPlayerTmp->GetHealth() * fPourcentage);
 				}

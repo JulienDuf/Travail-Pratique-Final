@@ -14,4 +14,6 @@ le cas d'utilisation (qui avait été fait il y a longtemps mais j'avais oublier d
 régression linéaire et ajout de multiple bug causé par des changements dans la classe CVecteur. Beaucoup d'aide de la part de Nicolas pour valider les angles.
 6 décembre 2014 ~1h J'ai travailler sur la régression linéaire. J'ai encore des bugs je crois car le mouvement est loin d'être fluide. J'ai aussi réparer un bug
 pour notre saut. Jeudi 12 décembre et lundi 15. ~3h . Travail sur la régression. Découverte que mon programme n'ajoute pas les donné dans mon tableau comme je 
-veux. Donc, je dois modifier ma formule.
+veux. Donc, je dois modifier ma formule. Mardi 16 decembre. ~3h. Travail sur la glissade. On s'est recontrer aujourd'hui pour parler de ou ce qu'on étais rendu. 
+J'ai pas mal fini la régression. Il y a encore des choses louches avec mes angles mais ca va aller pour l'instant. Et il reste juste a finaliser la glissade parce
+que la logique est toute coder.

@@ -199,6 +199,10 @@ public:
 		m_boChuteLibre = _boChuteLibre;
 	}
 
+	void ModifierGlissadeJoueur(bool _boGlissade) {
+		m_boChuteLibre = _boGlissade;
+	}
+
 	void DefinirPositionX(double _dX) {
 
 		m_dPositionX = _dX;
@@ -285,6 +289,10 @@ public:
 	bool IsUsingTool(void) {
 
 		return m_boToolActif;
+	}
+
+	bool IsSliding(void) {
+		return m_boGlissade;
 	}
 
 	double ObtenirPositionX(void) {

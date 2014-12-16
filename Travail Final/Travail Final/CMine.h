@@ -10,6 +10,7 @@ private:
 	SDL_Texture* m_pTexture; // Texture du pack
 	CSprite* m_pSpriteExplosion; //Sprite de l'explosion de la mine
 	bool m_boStable; //Si la mine touche par terre.
+	bool m_boUse; // Si la mine explose.
 	double m_dAnglemine; //L'angle de la mine.
 
 	void(*m_pMapDestruction)(int _iRayon, int _iX, int _iY);
@@ -53,8 +54,8 @@ public:
 		m_RectExplosion.y = (m_RectDestination.y + m_RectDestination.h) - (m_RectExplosion.h/2);
 		m_pSpriteExplosion->DefinirActif(true);
 		m_pMapDestruction(45, m_RectDestination.x + m_RectDestination.w / 2, m_RectDestination.y + m_RectDestination.h);
-
-
+		m_boUse = true;
+		
 		
 		return true;
 	}
@@ -69,6 +70,7 @@ public:
 		}
 		else{
 			SDL_RenderCopyEx(_Renderer, m_pTexture, NULL, &m_RectDestination, m_dAnglemine, &m_PointRotation, SDL_FLIP_NONE);
+			SDL_RenderDrawRect(_Renderer, &m_RectDestination);
 		}
 	}
 
@@ -88,6 +90,11 @@ public:
 		m_dAnglemine = _dAngle;
 	}
 
+	void ModifierUse(bool _boUse) {
+
+		m_boUse = _boUse;
+	}
+
 	SDL_Surface* GetSurface(){
 		return m_pSurface;
 	}
@@ -96,9 +103,18 @@ public:
 		return m_RectDestination;
 	}
 
+	CSprite* GetSpriteExplosion(void) {
+
+		return m_pSpriteExplosion;
+	}
+
 	bool IsStable(void) {
 
 		return m_boStable;
 	}
 
+	bool IsUse(void) {
+
+		return m_boUse;
+	}
 };

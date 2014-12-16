@@ -14,10 +14,15 @@ public:
 
 	virtual void ModifierAnlge(double _dAngle) = 0;
 
+	virtual void ModifierUse(bool _boUse) = 0;
+
 	virtual SDL_Surface* GetSurface(void) = 0;
 
 	virtual SDL_Rect GetRectDestination(void) = 0;
 
+	virtual CSprite* GetSpriteExplosion(void) = 0;
+
 	virtual bool IsStable(void) = 0;
 
+	virtual bool IsUse(void) = 0;
 };

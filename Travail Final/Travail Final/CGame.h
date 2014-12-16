@@ -368,7 +368,7 @@ public:
 				}
 
 				else if (RectTmp->x >= 1366 || RectTmp->x + RectTmp->w <= 0 || RectTmp->y >= 768)
-					pProjectileTmp->ReactionExplosion(0, 0);
+					pProjectileTmp->ReactionExplosion(-100, -100);
 
 				RectTmp->x += pVecteurVitesse->ObtenirComposanteX() / 35;
 				RectTmp->y += pVecteurVitesse->ObtenirComposanteY() / 35;
@@ -982,6 +982,10 @@ public:
 
 		bool boTerminerBoucle = false;
 
+		int xPlayer, xMissile, yPlayer, yMissile, FinY, FinX;
+		int XPlayer, XMissile, YPlayer, YMissile;
+		bool boCollsionJoeur;
+
 		*_boExplosion = false;
 
 		if (_pPlayer->ObtenirSpriteCourse()->IsActif()) {						// Si le joueur est en train de courir...
@@ -1030,29 +1034,93 @@ public:
 		}
 
 
-		for (int i = 0; i < m_pGameMap->ObtenirPackList()->ObtenirCompte(); i++) {
+		for (int j = 0; j < m_pGameMap->ObtenirPackList()->ObtenirCompte(); j++) {
 
 			pPackTmp = m_pGameMap->ObtenirPackList()->ObtenirElementCurseur();
 			RectPack = pPackTmp->GetRectDestination();
 
-			if ((RectPack.x >= TmpSDLRectPlayerDestination.x && RectPack.x <= (TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerDestination.w)) && (RectPack.y >= TmpSDLRectPlayerDestination.y && RectPack.y <= (TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerDestination.h))){
+			//1
+			if (RectPack.x + RectPack.w >= TmpSDLRectPlayerHitboxPieds.x && RectPack.x < TmpSDLRectPlayerHitboxPieds.x && RectPack.y >= TmpSDLRectPlayerHitboxPieds.y && RectPack.y + RectPack.h <= (TmpSDLRectPlayerHitboxPieds.y + TmpSDLRectPlayerHitboxPieds.h)) {
 
-				for (int x = TmpSDLRectPlayerDestination.w; x > 0; x--) {
+				xPlayer = 0;
+				yPlayer = RectPack.y - TmpSDLRectPlayerHitboxPieds.y;
+				xMissile = TmpSDLRectPlayerHitboxPieds.x - RectPack.x;
+				yMissile = 0;
+				FinX = RectPack.w;
+				FinY = RectPack.h;
+				boCollsionJoeur = true;
+			}
 
-					for (int y = TmpSDLRectPlayerDestination.h; y > 0; y--) {
+			//5
+			else if (RectPack.x >= TmpSDLRectPlayerHitboxPieds.x && RectPack.x + RectPack.w <= TmpSDLRectPlayerHitboxPieds.x + TmpSDLRectPlayerHitboxPieds.w && RectPack.y >= TmpSDLRectPlayerHitboxPieds.y && RectPack.y + RectPack.h <= (TmpSDLRectPlayerHitboxPieds.y + TmpSDLRectPlayerHitboxPieds.h)) {
 
-						if ((((unsigned int*)pTmpSDLSurfacePlayer->pixels)[(TmpSDLRectPlayerSource.x + TmpSDLRectPlayerHitboxPieds.x + x) + (TmpSDLRectPlayerSource.y + TmpSDLRectPlayerHitboxPieds.y + y) * pTmpSDLSurfacePlayer->w] != 0)) {
+				xPlayer = RectPack.x - TmpSDLRectPlayerHitboxPieds.x;
+				yPlayer = RectPack.y - TmpSDLRectPlayerHitboxPieds.y;
+				xMissile = 0;
+				yMissile = 0;
+				FinX = RectPack.w;
+				FinY = RectPack.h;
+				boCollsionJoeur = true;
+			}
+			//2
+			else if (RectPack.x <= TmpSDLRectPlayerHitboxPieds.x + TmpSDLRectPlayerHitboxPieds.w && RectPack.x + RectPack.w > TmpSDLRectPlayerHitboxPieds.x + TmpSDLRectPlayerHitboxPieds.w && RectPack.y >= TmpSDLRectPlayerHitboxPieds.y && RectPack.y + RectPack.h <= (TmpSDLRectPlayerHitboxPieds.y + TmpSDLRectPlayerHitboxPieds.h)) {
 
-							*_boExplosion = pPackTmp->Use(_pPlayer);
-							*_RectExplosion = pPackTmp->GetRectDestination();
-							//m_pGameMap->ObtenirPackList()->Retirer(true);
-							return true;
+				xPlayer = TmpSDLRectPlayerHitboxPieds.w - ((TmpSDLRectPlayerHitboxPieds.x + TmpSDLRectPlayerHitboxPieds.w) - RectPack.x);
+				yPlayer = RectPack.y - TmpSDLRectPlayerHitboxPieds.y;
+				xMissile = 0;
+				yMissile = 0;
+				FinX = (TmpSDLRectPlayerHitboxPieds.x + TmpSDLRectPlayerHitboxPieds.w) - RectPack.x;
+				FinY = RectPack.h;
+				boCollsionJoeur = true;
+			}
+			//3
+			else if (RectPack.x >= TmpSDLRectPlayerHitboxPieds.x && RectPack.x + RectPack.w <= TmpSDLRectPlayerHitboxPieds.x + TmpSDLRectPlayerHitboxPieds.w && RectPack.y < TmpSDLRectPlayerHitboxPieds.y && RectPack.y + RectPack.h >= TmpSDLRectPlayerHitboxPieds.y) {
 
+				xPlayer = RectPack.x - TmpSDLRectPlayerHitboxPieds.x;
+				yPlayer = 0;
+				xMissile = 0;
+				yMissile = TmpSDLRectPlayerHitboxPieds.y - RectPack.y;
+				FinX = RectPack.w;
+				FinY = RectPack.h;
+				boCollsionJoeur = true;
+			}
+			//4
+			else if (RectPack.x >= TmpSDLRectPlayerHitboxPieds.x && RectPack.x + RectPack.w <= TmpSDLRectPlayerHitboxPieds.x + TmpSDLRectPlayerHitboxPieds.w && RectPack.y < TmpSDLRectPlayerHitboxPieds.y + TmpSDLRectPlayerHitboxPieds.w && RectPack.y + RectPack.h > TmpSDLRectPlayerHitboxPieds.y + TmpSDLRectPlayerHitboxPieds.h) {
+
+				xPlayer = RectPack.x - TmpSDLRectPlayerHitboxPieds.x;
+				yPlayer = TmpSDLRectPlayerHitboxPieds.h - ((TmpSDLRectPlayerHitboxPieds.y + TmpSDLRectPlayerHitboxPieds.h) - RectPack.y);
+				xMissile = 0;
+				yMissile = 0;
+				FinX = RectPack.w;
+				FinY = (TmpSDLRectPlayerHitboxPieds.y + TmpSDLRectPlayerHitboxPieds.h) - RectPack.y;
+				boCollsionJoeur = true;
+			}
+
+			else {
+
+				boCollsionJoeur = false;
+			}
+
+			if (boCollsionJoeur) {
+				for (; yMissile < FinY; yPlayer++, yMissile++) {
+					for (XPlayer = xPlayer, XMissile = xMissile; XMissile < FinX; XPlayer++, XMissile++) {
+
+						if (xPlayer >= 0 && xPlayer <= 1366 && yPlayer >= 0 && yPlayer <= 768) {
+
+							if (((unsigned int*)pTmpSDLSurfacePlayer->pixels)[(yPlayer + TmpSDLRectPlayerSource.y) * pTmpSDLSurfacePlayer->w + (XPlayer + TmpSDLRectPlayerSource.x)] != 0)
+
+								if (((unsigned int*)pPackTmp->GetSurface()->pixels)[(yMissile)* pPackTmp->GetSurface()->w + (XMissile)] != 0) {
+
+									pPackTmp->Use(_pPlayer);
+									return true;
+
+								}
 						}
 					}
 				}
 			}
-			m_pGameMap->ObtenirPackList()->AllerSuivantCurseur();
+
+			m_pGameMap->ObtenirPackList()->AllerSuivantTrieur();
 		}
 
 	}
@@ -1153,21 +1221,38 @@ public:
 			pPackTmp = pPackList->ObtenirElementCurseur();
 			RectDestinationPack = pPackTmp->GetRectDestination();
 
-			if (RectDestinationPack.x + RectDestinationPack.w >= (_RectPositionExplosion.x - _iRayon) && _RectPositionExplosion.x >= RectDestinationPack.x) {
+			if (!pPackTmp->IsUse()) {
 
+				if ((RectDestinationPack.x < _RectPositionExplosion.x && RectDestinationPack.x + RectDestinationPack.w >= _RectPositionExplosion.x) && (RectDestinationPack.y >= _RectPositionExplosion.y && RectDestinationPack.y + RectDestinationPack.h <= _RectPositionExplosion.y + _RectPositionExplosion.h)) {
 
-				pPackTmp->Use(nullptr);
-				m_pGameMap->ObtenirPackList()->Retirer(true);
+					pPackTmp->Use(nullptr);
+					DomageExplosion(pPackTmp->GetRectDestination(), 45);
+				}
+
+				else if ((RectDestinationPack.x <= _RectPositionExplosion.x + _RectPositionExplosion.w && RectDestinationPack.x + RectDestinationPack.w > _RectPositionExplosion.x + _RectPositionExplosion.w) && (RectDestinationPack.y >= _RectPositionExplosion.y && RectDestinationPack.y + RectDestinationPack.h <= _RectPositionExplosion.y + _RectPositionExplosion.h)) {
+
+					pPackTmp->Use(nullptr);
+					DomageExplosion(pPackTmp->GetRectDestination(), 45);
+				}
+
+				else if ((RectDestinationPack.x >= _RectPositionExplosion.x && RectDestinationPack.x + RectDestinationPack.w <= _RectPositionExplosion.x + _RectPositionExplosion.w) && (RectDestinationPack.y >= _RectPositionExplosion.y && RectDestinationPack.y + RectDestinationPack.h <= _RectPositionExplosion.y + _RectPositionExplosion.h)) {
+
+					pPackTmp->Use(nullptr);
+					DomageExplosion(pPackTmp->GetRectDestination(), 45);
+				}
+
+				else if ((RectDestinationPack.x >= _RectPositionExplosion.x && RectDestinationPack.x + RectDestinationPack.w <= _RectPositionExplosion.x + _RectPositionExplosion.w) && (RectDestinationPack.y < _RectPositionExplosion.y && RectDestinationPack.y + RectDestinationPack.h >= _RectPositionExplosion.y)) {
+
+					pPackTmp->Use(nullptr);
+					DomageExplosion(pPackTmp->GetRectDestination(), 45);
+				}
+
+				else if ((RectDestinationPack.x >= _RectPositionExplosion.x && RectDestinationPack.x + RectDestinationPack.w <= _RectPositionExplosion.x + _RectPositionExplosion.w) && (RectDestinationPack.y <= _RectPositionExplosion.y + _RectPositionExplosion.h && RectDestinationPack.y + RectDestinationPack.h > _RectPositionExplosion.y + _RectPositionExplosion.h)) {
+
+					pPackTmp->Use(nullptr);
+					DomageExplosion(pPackTmp->GetRectDestination(), 45);
+				}
 			}
-
-			else if ((RectDestinationPack.x <= (_RectPositionExplosion.x + _iRayon) && _RectPositionExplosion.x <= RectDestinationPack.x) && (_RectPositionExplosion.y - (RectDestinationPack.y + RectDestinationPack.h)) <5  && (_RectPositionExplosion.y - (RectDestinationPack.y + RectDestinationPack.h)) > -5){
-
-				pPackTmp->Use(nullptr);
-				m_pGameMap->ObtenirPackList()->Retirer(true);
-			}
-
-			else
-				pPackList->AllerSuivantCurseur();
 		}
 		
 	}

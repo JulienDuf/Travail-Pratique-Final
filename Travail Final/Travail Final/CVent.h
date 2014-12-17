@@ -1,6 +1,7 @@
 // Classe représentant une direction et force d'un vent
 // Créée par Gabriel Beaudry (gabriel.bdry@gmail.com) le 09 novembre 2014
-
+// Modifié par Julien Dufresne (dufresne_julien@hotmail.ca) le 13 décembre 2014
+//   - Ajout du vecteur vitesse du vent.
 class CVent {
 private:
 
@@ -10,6 +11,7 @@ private:
 	SDL_Rect m_RectDestinationFleche;
 	SDL_Rect m_RectDestinationText;
 	int m_iAngle;
+	CVecteur2D* m_pVecteurVitesseVent; // Le vecteur de la force du vent.
 
 public:
 
@@ -46,6 +48,8 @@ public:
 		m_RotPoint->y = m_RectDestinationFleche.h/2;
 
 		SDL_FreeSurface(pSurfaceText);
+
+		m_pVecteurVitesseVent = new CVecteur2D(0, 0.0f);
 	}
 
 	~CVent() {
@@ -79,8 +83,18 @@ public:
 		m_iAngle = _iAngle;
 	}
 
+	void ModifierVecteurVent(double _dforceVent, float _fAngle) {
+
+		m_pVecteurVitesseVent->ModifierVecteur(_dforceVent, _fAngle);
+	}
+
 	void ShowVent(SDL_Renderer* _pSDLRenderer) {
 		SDL_RenderCopyEx(_pSDLRenderer, m_pDirectionVent, NULL, &m_RectDestinationFleche, m_iAngle, m_RotPoint, SDL_FLIP_NONE);
 		SDL_RenderCopy(_pSDLRenderer, m_pForceVent, NULL, &m_RectDestinationText);
+	}
+
+	CVecteur2D* ObtenirVecteurVent(void) {
+
+		return m_pVecteurVitesseVent;
 	}
 };

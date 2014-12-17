@@ -4,9 +4,9 @@
 // 4 novembre 2014 par Nicolas Dean (Gody117@hotmail.com)
 //
 class CTimer {
-
 private:
-	unsigned int m_uiTimer;
+
+	unsigned int m_uiTimer; // Duration en milliseconde
 	unsigned int m_uiTicks;
 
 public:
@@ -48,6 +48,11 @@ public:
 
 	}
 
+	// Retourne le timer en secondes...
+	float ObtenirTimer() {
+		
+		return (float)m_uiTimer / 1000;
+	}
 
 
 };

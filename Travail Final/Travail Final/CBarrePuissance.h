@@ -69,9 +69,10 @@ public:
 
 			case SDL_SCANCODE_LEFT:
 
-				m_uiForce--;
-				if (m_uiForce < 0)
+				if (m_uiForce == 0)
 					m_uiForce = 3;
+				else
+					m_uiForce--;
 				m_RectSourceBarre.x = m_uiForce * m_RectDestinationBarre.w;
 				break;
 
@@ -93,6 +94,11 @@ public:
 			break;
 
 		}
+	}
+
+	void Reinitialisation() {
+		m_uiForce = 1;
+		m_iAngle = 0;
 	}
 
 	// Accesseurs...

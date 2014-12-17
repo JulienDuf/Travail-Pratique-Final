@@ -2,13 +2,13 @@ class CProjectile {
 
 public:
 
-	virtual void ReactionColision(int iX, int iY) = 0;
+	virtual bool ReactionExplosion(int iX, int iY) = 0;
 
 	virtual void ShowTool(SDL_Renderer* _pRenderer, SDL_Rect _RectPlayerDestination) = 0;
 
 	virtual void ReactToEvent(SDL_Event* _pEvent) = 0;
 
-	virtual void DefinirActif(bool _boActif) = 0;
+	virtual void DefinirRotation(int _iVitesseAngulaire) = 0;
 
 	virtual CSprite* ObtenirSprite(string _strNom) = 0;
 
@@ -28,5 +28,11 @@ public:
 
 	virtual void DefinirPosition(SDL_Rect _Rect) = 0;
 
+	virtual void DefinirExplosion(bool _boExplosion) = 0;
+
+	virtual void DestructionProjectile() = 0;
+
 	virtual bool EstLancer() = 0;
+
+	virtual bool ExplosionEnCours() = 0;
 };

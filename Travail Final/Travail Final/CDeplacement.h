@@ -9,7 +9,6 @@ private:
 		*m_pSpriteRepos;		    // Pointeur de sprite qui pointe sur le sprite qui représente le joueur qui est au repos.
 
 	bool m_boSpace;
-	unsigned int m_uiCompte;
 
 	/*
 	m_uiCompte++;
@@ -21,13 +20,11 @@ public:
 
 	CDeplacement(SDL_Rect _RectDestination) {
 
-		m_uiCompte = 0;
-
 		m_boSpace = false;
 
 		m_pSpriteCourse = new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceCourse"), pGestionnaireTexture->ObtenirDonnee("pTextureCourse"), _RectDestination, 9, 50, true, false, 2);
 
-		m_pSpriteSaut = new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceSaut"), pGestionnaireTexture->ObtenirDonnee("pTextureSaut"), _RectDestination, 9, 100, false, false, 2);
+		m_pSpriteSaut = new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceSaut"), pGestionnaireTexture->ObtenirDonnee("pTextureSaut"), _RectDestination, 9, 400, false, false, 2);
 
 		m_pSpriteRepos = new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceRepos"), pGestionnaireTexture->ObtenirDonnee("pTextureRepos"), _RectDestination, 1, 50, true, false, 2);
 	}
@@ -98,7 +95,7 @@ public:
 
 		case SDL_SCANCODE_SPACE: // Saut
 
-			if (_pEvent->type == SDL_KEYDOWN && !m_boSpace) {
+			if (_pEvent->type == SDL_KEYDOWN && !m_boSpace && !m_pSpriteSaut->IsActif()) {
 
 				m_boSpace = true;
 				m_pSpriteRepos->DefinirActif(false);
@@ -109,28 +106,29 @@ public:
 				*_boStable = false;
 
 			}
-			else if (m_pSpriteSaut->IsActif())
+			else if (m_pSpriteSaut->IsActif() || !m_pSpriteSaut->IsActif())
 				m_boSpace = false;
 
 			break;
 
 		}
-
 	}
 
 	void ShowPlayer(SDL_Renderer* _pRenderer, SDL_Rect _RectPlayerDestination) {
 		
-		if (m_pSpriteRepos->IsActif()) {
-			m_pSpriteRepos->ModifierAnnimation();
-			m_pSpriteRepos->Render(_pRenderer, _RectPlayerDestination);
-		}
-		else if (m_pSpriteCourse->IsActif()) {
+		if (m_pSpriteCourse->IsActif()) {
 			m_pSpriteCourse->ModifierAnnimation();
 			m_pSpriteCourse->Render(_pRenderer, _RectPlayerDestination);
 		}
 		else if (m_pSpriteSaut->IsActif()) {
 			m_pSpriteSaut->ModifierAnnimation();
 			m_pSpriteSaut->Render(_pRenderer, _RectPlayerDestination);
+		}
+		else
+		{
+			m_pSpriteRepos->DefinirActif(true);
+			m_pSpriteRepos->ModifierAnnimation();
+			m_pSpriteRepos->Render(_pRenderer, _RectPlayerDestination);
 		}
 	}
 

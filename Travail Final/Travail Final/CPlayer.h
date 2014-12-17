@@ -51,7 +51,7 @@ public:
 	// Paramètre: _strName, contient le nom que l'on veut donner au joueur.
 	// Retour: Rien (constructeur).
 
-	CPlayer(string _strEmplacement, SDL_Renderer* _pRenderer, unsigned int _uiIDTeam, SDL_Rect _RectDestination, void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), SDL_Surface* _Rotation(SDL_Surface* _pSurfaceRotation, float _fAngle)) {
+	CPlayer(string _strEmplacement, SDL_Renderer* _pRenderer, unsigned int _uiIDTeam, SDL_Rect _RectDestination, void _MapDestruction(int _iRayon, int _iX, int _iY), SDL_Surface* _Rotation(SDL_Surface* _pSurfaceRotation, float _fAngle)) {
 		
 		m_pListeTools = new CListeDC<CProjectile*>();
 		m_pListeMouvement = new CListeDC<CMouvement*>();
@@ -61,16 +61,16 @@ public:
 		
 		m_pListeMouvement->AjouterFin(new CMelee(_strEmplacement, new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceMelee"), pGestionnaireTexture->ObtenirDonnee("pTextureMelee"), _RectDestination, 30, 30, true, true, 2), _pRenderer));
 
-		m_pListeMouvement->AjouterFin(new CJetPack(_strEmplacement, new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceJetPack"), pGestionnaireTexture->ObtenirDonnee("pTextureJetPack"), _RectDestination, 6, 80, true, false, 2), new CBarreVie({ _RectDestination.x, _RectDestination.y + _RectDestination.h - 2, 0, 0 }, 6), _pRenderer));
+		m_pListeMouvement->AjouterFin(new CJetPack(_strEmplacement, new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceJetPack"), pGestionnaireTexture->ObtenirDonnee("pTextureJetPack"), _RectDestination, 6, 80, true, false, 2), new CBarreVie({ _RectDestination.x, _RectDestination.y + _RectDestination.h - 2, 0, 0 }, 5), _pRenderer));
 		
 		m_pListeMouvement->AjouterFin(new CDeplacement(_RectDestination));
 
 		m_pListeMouvement->AllerACurseur(2);
 		m_pListeMouvement->AllerATrieur(0);
 
-		m_pListeTools->AjouterFin(new CMissile(_strEmplacement, _pRenderer, _MapDestruction, _CollisionObjetMap, _Rotation));
+		m_pListeTools->AjouterFin(new CMissile(_strEmplacement, _pRenderer, _MapDestruction, _Rotation));
 
-		m_pListeTools->AjouterFin(new CGrenade(_strEmplacement, _pRenderer, _MapDestruction, _CollisionObjetMap, _Rotation));
+		m_pListeTools->AjouterFin(new CGrenade(_strEmplacement, _pRenderer, _MapDestruction, _Rotation));
 
 		m_pListeTools->AllerACurseur(0);
 		m_pListeTools->AllerATrieur(0);
@@ -156,6 +156,8 @@ public:
 			if (m_boToolActif)
 				m_pListeTools->ObtenirElementCurseur()->ShowTool(_pRenderer, m_RectPlayerDestination);
 		}
+		SDL_SetRenderDrawColor(_pRenderer, 0, 0, 0, 255);
+		SDL_RenderDrawRect(_pRenderer, &m_RectPlayerDestination);
 	}
 
 	void ShowDescription(SDL_Renderer* _pRenderer) {
@@ -197,6 +199,10 @@ public:
 		m_boChuteLibre = _boChuteLibre;
 	}
 
+	void ModifierGlissadeJoueur(bool _boGlissade) {
+		m_boChuteLibre = _boGlissade;
+	}
+
 	void DefinirPositionX(double _dX) {
 
 		m_dPositionX = _dX;
@@ -205,6 +211,11 @@ public:
 	void DefinirPositionY(double _dY) {
 
 		m_dPositionY = _dY;
+	}
+
+	void DefinirToolActif(bool _boActif){
+
+		m_boToolActif = _boActif;
 	}
 
 	CSprite* ObtenirSpriteCourse() {
@@ -275,6 +286,14 @@ public:
 		return m_boChuteLibre;
 	}
 
+	bool IsUsingTool(void) {
+
+		return m_boToolActif;
+	}
+
+	bool IsSliding(void) {
+		return m_boGlissade;
+	}
 
 	double ObtenirPositionX(void) {
 

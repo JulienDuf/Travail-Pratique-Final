@@ -69,15 +69,15 @@ public:
 	}
 	
 
-	void CreateGame(string _strEmplacementMap, int _iNombreÉquipe, int _iNombreJoueur, CVent* _pVent, bool _VerifierCollisionJoueurMap(CPlayer* _pPlayer, SDL_Rect _RectPlayer, bool* _boCollisionCorps, bool* _boCollisionPieds, unsigned int* _puiXPieds, unsigned int* _puiYPieds, unsigned int* _puiXCorps, unsigned int* _puiYCorps), void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), SDL_Surface* _Rotation(SDL_Surface* _pSurfaceRotation, float _fAngle)) {
+	void CreateGame(string _strEmplacementMap, int _iNombreÉquipe, int _iNombreJoueur, CVent* _pVent, void _MapDestruction(int _iRayon, int _iX, int _iY), SDL_Surface* _Rotation(SDL_Surface* _pSurfaceRotation, float _fAngle)) {
 
 
-		m_pGame = new CGame(_strEmplacementMap, _iNombreÉquipe, _iNombreJoueur, _pVent, _VerifierCollisionJoueurMap, _MapDestruction, _CollisionObjetMap, _Rotation, m_pSDLRenderer);
+		m_pGame = new CGame(_strEmplacementMap, _iNombreÉquipe, _iNombreJoueur, _pVent, _MapDestruction, _Rotation, m_pSDLRenderer);
 	}
 
 	// Procédure qui rendre l'image final.
-	// Paramètre : _Renderer : Le renderer.
-	void Rafraichir(void) {
+	// Paramètre : _boPause : Jeu en pause.
+	void Rafraichir(bool _boPause) {
 		SDL_RenderClear(m_pSDLRenderer);
 
 		if (pTimerFrame->IsDone()) {
@@ -89,7 +89,7 @@ public:
 		}
 
 		if (m_pGame != nullptr)
-			m_pGame->AfficherGame(m_pSDLRenderer);
+			m_pGame->AfficherGame(m_pSDLRenderer, _boPause);
 
 		m_pArbreMenu->ParcoursMenu(m_pSDLRenderer);
 

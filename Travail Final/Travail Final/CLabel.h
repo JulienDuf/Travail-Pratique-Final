@@ -52,7 +52,28 @@ public:
 		m_pListeTextureLabel->AllerDebut();
 
 		// Défini le rect de position...
-		m_RectPosition = _RectPosition;
+		m_RectPosition.x = _RectPosition.x;
+		m_RectPosition.y = _RectPosition.y;
+
+		if (_RectPosition.w == 0 || _RectPosition.h == 0) {
+			int iW, iH;
+			SDL_QueryTexture(_pTextureLabel, nullptr, nullptr, &iW, &iH);
+
+			if (_RectPosition.w == 0)
+				m_RectPosition.w = iW;
+			else
+				m_RectPosition.w = _RectPosition.w;
+
+			if (_RectPosition.h == 0)
+				m_RectPosition.h = iH;
+			else
+				m_RectPosition.h = iH;
+		}
+		else
+		{
+			m_RectPosition.w = _RectPosition.w;
+			m_RectPosition.h = _RectPosition.h;
+		}
 	}
 
 	// Constructeur de CLabel...

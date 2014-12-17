@@ -1,6 +1,7 @@
 //
 // Classe représentant une vecteur 2D
 // Créé par Julien Dufresne (dufresne_julien@hotmail.ca) le 18 novembre 2014
+// Ajout de ObtenirNorme par Gabriel Beaudry.
 //
 
 class CVecteur2D {
@@ -41,6 +42,23 @@ public:
 		m_dComposanteY += _VecteurB.m_dComposanteY;
 
 	}
+
+	void operator -= (CVecteur2D _VecteurB) {
+		
+		m_dComposanteX -= _VecteurB.m_dComposanteX;
+		m_dComposanteY -= _VecteurB.m_dComposanteY;
+	}
+
+	CVecteur2D operator * (double _dScalaire) {
+
+		return CVecteur2D(_dScalaire*m_dComposanteX, _dScalaire*m_dComposanteY);
+	}
+
+	double Scalaire(double _dComposanteX, double _dComposanteY) {
+
+		return m_dComposanteX * _dComposanteX + m_dComposanteY * _dComposanteY;
+	}
+
 	void ModifierVecteur(float _dNorme, float _dOrientation) {
 
 		m_dComposanteX = _dNorme * (cosf((M_PI / 180) * _dOrientation));
@@ -67,6 +85,15 @@ public:
 		return m_dComposanteY;
 	}
 
+	double ObtenirNorme(void) {
+
+		return sqrt(pow(m_dComposanteX, 2) + pow(m_dComposanteY, 2));
+	}
+
+	double ObtenirOrientation(void) {
+
+		return atan(m_dComposanteY / m_dComposanteX);
+	}
 	void ModifierOrientation(double _dOrientation) {
 
 		if (_dOrientation <= 360) {

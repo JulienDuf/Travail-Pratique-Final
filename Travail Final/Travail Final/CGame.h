@@ -11,11 +11,11 @@ private:
 	CTimer* m_pTimerPhysique; // Le timer pour la physique.
 
 	bool m_boDebutPartie; // Si le jeu est en début de partie.
-	bool(*m_pVerifierCollisionJoueurMap)(CPlayer* _pPlayer, SDL_Rect _RectPlayer, bool* _boCollisionCorps, bool* _boCollisionPieds, unsigned int* _uiXMap, unsigned int* _uiYMap);
+	bool(*m_pVerifierCollisionJoueurMap)(CPlayer* _pPlayer, SDL_Rect _RectPlayer, bool* _boCollisionCorps, bool* _boCollisionPieds, unsigned int* _puiXPieds, unsigned int* _puiYPieds, unsigned int* _puiXCorps, unsigned int* _puiYCorps);
 
 public:
 
-	CGame(string _strEmplacementMap, CGestionaire<TTF_Font*>* _pGestionnaireFont, CGestionaire<SDL_Surface*>* _pGestionnaireSurface, CGestionaire<SDL_Texture*>* _pGestionnaireTexture, int _iNombreÉquipe, int _iNombreJoueur, CVent* _pVent, bool _VerifierCollisionJoueurMap(CPlayer* _pPlayer, SDL_Rect _RectPlayer, bool* _boCollisionCorps, bool* _boCollisionPieds, unsigned int* _uiXMap, unsigned int* _uiYMap), void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), SDL_Surface* _Rotation(SDL_Surface* _pSurfaceRotation, float _fAngle), SDL_Renderer* _pRenderer) {
+	CGame(string _strEmplacementMap, CGestionaire<TTF_Font*>* _pGestionnaireFont, CGestionaire<SDL_Surface*>* _pGestionnaireSurface, CGestionaire<SDL_Texture*>* _pGestionnaireTexture, int _iNombreÉquipe, int _iNombreJoueur, CVent* _pVent, bool _VerifierCollisionJoueurMap(CPlayer* _pPlayer, SDL_Rect _RectPlayer, bool* _boCollisionCorps, bool* _boCollisionPieds, unsigned int* _puiXPieds, unsigned int* _puiYPieds, unsigned int* _puiXCorps, unsigned int* _puiYCorps), void _MapDestruction(int _iRayon, int _iX, int _iY), void _CollisionObjetMap(SDL_Surface* _pSDLSurface, SDL_Rect _RectDestination, int* _iX, int* _iY), SDL_Surface* _Rotation(SDL_Surface* _pSurfaceRotation, float _fAngle), SDL_Renderer* _pRenderer) {
 
 		m_boDebutPartie = true;
 
@@ -118,41 +118,82 @@ public:
 				bool boCorps;
 				bool boPied;
 				bool boExplosion;
-				unsigned int _uiX;
-				unsigned int _uiY;
+				unsigned int _uiXPieds;
+				unsigned int _uiYPieds;
+				unsigned int _uiXCorps;
+				unsigned int _uiYCorps;
 				SDL_Rect RectExplosion;
 
 
 				if (!pPlayerActif->IsStable()) {
-					/*
+
 					if (pPlayerActif->ObtenirSpriteCourse()->IsActif()) {
 
+						DetectionCollisionPack(pPlayerActif, &boExplosion, &RectExplosion);
+						if (boExplosion) {
 
-						if (!m_pVerifierCollisionJoueurMap(pPlayerActif, RectTmp, &boCorps, &boPied, &_uiX, &_uiY)) {
+							DomageExplosion(RectExplosion, 45);
+						}
+
+						else if (!m_pVerifierCollisionJoueurMap(pPlayerActif, RectTmp, &boCorps, &boPied, &_uiXPieds, &_uiYPieds, &_uiXCorps, &_uiYCorps)) {
 
 							pPlayerActif->ObtenirVecteurPoids()->ModifierComposantY(m_pGameMap->ObtenirGravite()->ObtenirComposanteY());
 
 							*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
 							dComposanteX += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35;
-							dComposanteY += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35;
+							dComposanteY += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 5;
 
 						}
 
 						else {
 
-							unsigned int uim = 10;
-							unsigned int uin = 0;
+							if (boPied) {
 
-							while (((pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 0) && (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[RectTmp.x + pPlayerActif->ObtenirHitboxPieds().x + pPlayerActif->ObtenirHitboxPieds().w + uim + (RectTmp.y + pPlayerActif->ObtenirHitboxPieds().y + pPlayerActif->ObtenirHitboxPieds().h - uin) * m_pGameMap->ObtenirSurfaceMap()->w] == 0)) || ((pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1) && (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[RectTmp.x + pPlayerActif->ObtenirHitboxPieds().x - uim + (RectTmp.y + pPlayerActif->ObtenirHitboxPieds().y + pPlayerActif->ObtenirHitboxPieds().h - uin) * m_pGameMap->ObtenirSurfaceMap()->w] == 0)))
-								uin--;
-							
+								int uim = 2;
+								int uin = 0;
+
+								if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1)
+									uim = -2;
+
+
+								while ((uin >= -4) && ((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[RectTmp.x + _uiXPieds + uim + (RectTmp.y + _uiYPieds + uin) * m_pGameMap->ObtenirSurfaceMap()->w] != 0)
+									uin--;
+
+								if (uin >= -4) {
+
+									dComposanteX += uim;
+									dComposanteY += uin;
+
+								}
+
+							}
+
+							if (boCorps) {
+
+								if (boCorps && pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 0)
+									dComposanteX -= (pPlayerActif->ObtenirRectDestination().w - _uiXCorps);
+
+								if (boCorps && pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1)
+									dComposanteX += _uiXCorps;
+
+							}
 
 						}
 
+						pPlayerActif->DefinirPositionX(dComposanteX);
+						pPlayerActif->DefinirPositionY(dComposanteY);
+						pPlayerActif->ObtenirVecteurVitesse()->ModifierComposantY(0);
+
 
 					}
-					*/
+
+				}
+
+				m_pTimerPhysique->Start();
+
+			}
 					
+					/*
 					pPlayerActif->ObtenirVecteurPoids()->ModifierComposantY(m_pGameMap->ObtenirGravite()->ObtenirComposanteY());
 
 					*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
@@ -212,15 +253,17 @@ public:
 				}
 				
 			}
-
+			*/
 		}
 		else {
 
 			bool _boCorps;
 			bool _boPieds;
 
-			unsigned int _uiXMap;
-			unsigned int _uiYMap;
+			unsigned int _uiXPieds;
+			unsigned int _uiYPieds;
+			unsigned int _uiXCorps;
+			unsigned int _uiYCorps;
 
 			CListeDC<CPlayer*>* pPlayerListTmp;
 			CPlayer* pPlayer;
@@ -239,7 +282,7 @@ public:
 						if (pPlayer->ObtenirSpriteRepos()->IsActif() && !pPlayer->IsStable()) {
 							RectPlayer = pPlayer->ObtenirRectDestination();
 							RectPlayer.y += 9.8;
-							if (!m_pVerifierCollisionJoueurMap(pPlayer, RectPlayer, &_boCorps, &_boPieds, &_uiXMap, &_uiYMap))
+							if (!m_pVerifierCollisionJoueurMap(pPlayer, RectPlayer, &_boCorps, &_boPieds, &_uiXPieds, &_uiYPieds, &_uiXCorps, &_uiYCorps))
 								pPlayer->DefinirPositionY(RectPlayer.y);
 
 							else {
@@ -247,7 +290,7 @@ public:
 								bool boExplosion;
 								SDL_Rect RectTmp;
 
-								RectPlayer.y -= (RectPlayer.h - _uiYMap);
+								RectPlayer.y -= (RectPlayer.h - _uiYPieds);
 								pPlayer->DefinirPositionY(RectPlayer.y);
 								pPlayer->ModifierStabiliteJoueur(true);
 
@@ -265,7 +308,7 @@ public:
 						else if (pPlayer->ObtenirSpriteParachute()->IsActif()) {
 							RectPlayer = pPlayer->ObtenirRectDestinationParachute();
 							RectPlayer.y += 1;
-							if (!m_pVerifierCollisionJoueurMap(pPlayer, RectPlayer, &_boCorps, &_boPieds, &_uiXMap, &_uiYMap)) {
+							if (!m_pVerifierCollisionJoueurMap(pPlayer, RectPlayer, &_boCorps, &_boPieds, &_uiXPieds, &_uiYPieds, &_uiXCorps, &_uiYCorps)) {
 								pPlayer->ModifierRectDestinationParachute(RectPlayer);
 
 							}

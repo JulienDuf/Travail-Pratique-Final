@@ -172,9 +172,6 @@ public:
 		RayonExplosion = { iX - 50, iY - 50, 100, 100 };
 		m_pSpriteExplosion->DefinirActif(true);
 
-		// Détruit le vecteur vitesse.
-		delete m_pVecteurVitesseMissile;
-		m_pVecteurVitesseMissile = nullptr;
 		return false;
 	}
 

@@ -13,6 +13,7 @@ private:
 
 	bool m_boSpace,
 		m_boShowDescription;
+	bool boFleche;
 
 	unsigned int m_uiTempsPropulsionInitiale;
 	int m_iVerticalThrust;
@@ -55,7 +56,7 @@ private:
 public:
 
 	CJetPack(string _strEmplacement, CSprite* _pSpriteJetPack, CBarreVie* _pBarreDeCarburant, SDL_Renderer* _pRenderer) {
-
+		boFleche = false;
 		m_boShowDescription = false;
 
 		m_strDescription;
@@ -113,44 +114,42 @@ public:
 
 	void ReactToEvent(SDL_Event* _pEvent, CVecteur2D* _pVecteurVitesse, bool* _boStable) {
 
+		*_boStable = false;
+
 		m_pSpriteJetPack->DefinirActif(true);
 		// Barre de carburant vide
 		if (m_pBarreDeCarburant->ObtenirPourcentage() <= 0) {
 			m_pSpriteJetPack->DefinirPositionDeBouclage(0, 1);
 			*_boStable = false;
 		}
-		else
-		{
-			switch (_pEvent->key.keysym.scancode) {
-			case SDL_SCANCODE_RIGHT:
-				if (_pEvent->key.type == SDL_KEYDOWN && m_boSpace) {
+		else {
+
+			switch (_pEvent->type) {
+
+			case SDL_KEYDOWN:
+
+				switch (_pEvent->key.keysym.scancode) {
+
+				case SDL_SCANCODE_RIGHT:
 					m_pSpriteJetPack->DefinirEtage(0);
 					_pVecteurVitesse->ModifierComposantX(10);
-					_boStable = false;
-				}
-				else
-				{
-					m_pSpriteJetPack->DefinirActif(0);
-					_boStable = false;
-				}
-				break;
-			case SDL_SCANCODE_LEFT:
-				if (_pEvent->key.type == SDL_KEYDOWN && m_boSpace) {
+					*_boStable = false;
+					boFleche = true;
+					break;
+
+				case SDL_SCANCODE_LEFT:
 					m_pSpriteJetPack->DefinirEtage(1);
 					_pVecteurVitesse->ModifierComposantX(-10);
-					_boStable = false;
-				}
-				else
-				{
-					m_pSpriteJetPack->DefinirActif(0);
-					_boStable = false;
-				}
-				break;
-			case SDL_SCANCODE_SPACE:
-				if (_pEvent->key.type == SDL_KEYDOWN) {
+					*_boStable = false;
+					boFleche = true;
+					break;
+
+				case SDL_SCANCODE_SPACE:
 					m_pBarreDeCarburant->ModifierPourcentageVie(m_pBarreDeCarburant->ObtenirVie() - 0.002);
 					_pVecteurVitesse->ModifierComposantY(-m_iVerticalThrust);
 					m_uiTempsPropulsionInitiale++;
+					if (boFleche)
+  						boFleche = boFleche;
 					if (m_uiTempsPropulsionInitiale >= 3) {
 						m_pSpriteJetPack->DefinirPositionDeBouclage(4, 6);
 					}
@@ -159,20 +158,40 @@ public:
 						m_pSpriteJetPack->DefinirPositionDeBouclage(0, 6);
 					}
 					m_boSpace = true;
-					_boStable = false;
+					*_boStable = false;
+					break;
 				}
-				else
-				{
+				break;
+
+			case SDL_KEYUP:
+
+				switch (_pEvent->key.keysym.scancode) {
+
+				case SDL_SCANCODE_RIGHT:
+					m_pSpriteJetPack->DefinirActif(0);
+					*_boStable = false;
+					_pVecteurVitesse->ModifierComposantX(0);
+					boFleche = false;
+					break;
+
+				case SDL_SCANCODE_LEFT:
+					m_pSpriteJetPack->DefinirActif(0);
+					_pVecteurVitesse->ModifierComposantX(0);
+					*_boStable = false;
+					boFleche = false;
+					break;
+
+				case SDL_SCANCODE_SPACE:
 					m_pSpriteJetPack->DefinirPositionDeBouclage(0, 1);
+					_pVecteurVitesse->ModifierComposantY(0);
 					m_boSpace = false;
 					m_uiTempsPropulsionInitiale = 0;
-					_boStable = false;
+					*_boStable = false;
+					break;
 				}
 				break;
 			}
 		}
-
-		_boStable = false;
 	}
 
 	void ShowPlayer(SDL_Renderer* _pRenderer, SDL_Rect _RectPlayerDestination) {

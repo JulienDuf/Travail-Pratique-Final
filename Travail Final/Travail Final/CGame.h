@@ -155,7 +155,7 @@ public:
 
 					pPlayerActif->ObtenirVecteurPoids()->ModifierComposantY(m_pGameMap->ObtenirGravite()->ObtenirComposanteY());
 
-					*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
+                    *pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
 					dComposanteX += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35;
 					dComposanteY += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35;
 
@@ -360,11 +360,10 @@ public:
 
 					pProjectileTmp->ReactionExplosion(pProjectileTmp->ObtenirRectDestination()->x + iX, pProjectileTmp->ObtenirRectDestination()->y + iY);
 
-					pProjectileTmp->ReactionExplosion(pProjectileTmp->ObtenirRectDestination()->x + iX, pProjectileTmp->ObtenirRectDestination()->y + iY);
 					AfficherGame(_pRenderer, false);
 					SDL_RenderPresent(_pRenderer);
 
-					DomageExplosion({ pProjectileTmp->ObtenirRectDestination()->x + iX, pProjectileTmp->ObtenirRectDestination()->y }, 50);
+					DomageExplosion({ pProjectileTmp->ObtenirRectDestination()->x + iX, pProjectileTmp->ObtenirRectDestination()->y + iY}, 50);
 				}
 
 				else if (RectTmp->x >= 1366 || RectTmp->x + RectTmp->w <= 0 || RectTmp->y >= 768)
@@ -943,7 +942,7 @@ public:
 
 			for (unsigned int x = 0; x < TmpSDLRectPlayerHitboxCorps.w && !*_pboCollisionCorps; x++) {			// On parcours les pixels dans le hitbox de gauche à droite.
 
-				if ((((unsigned int*)pTmpSDLSurfaceMap->pixels)[(TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerHitboxCorps.x + x) + (TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerHitboxCorps.y + y) * pTmpSDLSurfaceMap->w] != 0) && (((unsigned int*)pTmpSDLSurfacePlayer->pixels)[(TmpSDLRectPlayerSource.x + TmpSDLRectPlayerHitboxCorps.x + x) + (TmpSDLRectPlayerSource.y + TmpSDLRectPlayerHitboxCorps.y + y) * pTmpSDLSurfacePlayer->w] != 0)) {			// Si il y a une collision entre les pixels non-transparents de la map et les pixels non-transparents du corps du joueur...
+ 				if ((((unsigned int*)pTmpSDLSurfaceMap->pixels)[(TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerHitboxCorps.x + x) + (TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerHitboxCorps.y + y) * pTmpSDLSurfaceMap->w] != 0) && (((unsigned int*)pTmpSDLSurfacePlayer->pixels)[(TmpSDLRectPlayerSource.x + TmpSDLRectPlayerHitboxCorps.x + x) + (TmpSDLRectPlayerSource.y + TmpSDLRectPlayerHitboxCorps.y + y) * pTmpSDLSurfacePlayer->w] != 0)) {			// Si il y a une collision entre les pixels non-transparents de la map et les pixels non-transparents du corps du joueur...
 
 					*_puiXCorps = TmpSDLRectPlayerHitboxCorps.x + x;		// Dans le rectangle destination, on prend la position en x de la collision pour la stocker.
 
@@ -1040,11 +1039,11 @@ public:
 			RectPack = pPackTmp->GetRectDestination();
 
 			//1
-			if (RectPack.x + RectPack.w >= TmpSDLRectPlayerHitboxPieds.x && RectPack.x < TmpSDLRectPlayerHitboxPieds.x && RectPack.y >= TmpSDLRectPlayerHitboxPieds.y && RectPack.y + RectPack.h <= (TmpSDLRectPlayerHitboxPieds.y + TmpSDLRectPlayerHitboxPieds.h)) {
+			if (RectPack.x + RectPack.w >= TmpSDLRectPlayerDestination.x && RectPack.x < TmpSDLRectPlayerDestination.x && RectPack.y + RectPack.h >= TmpSDLRectPlayerDestination.y && RectPack.y <= (TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerDestination.h)) {
 
 				xPlayer = 0;
-				yPlayer = RectPack.y - TmpSDLRectPlayerHitboxPieds.y;
-				xMissile = TmpSDLRectPlayerHitboxPieds.x - RectPack.x;
+				yPlayer = RectPack.y - TmpSDLRectPlayerDestination.y;
+				xMissile = TmpSDLRectPlayerDestination.x - RectPack.x;
 				yMissile = 0;
 				FinX = RectPack.w;
 				FinY = RectPack.h;
@@ -1052,10 +1051,10 @@ public:
 			}
 
 			//5
-			else if (RectPack.x >= TmpSDLRectPlayerHitboxPieds.x && RectPack.x + RectPack.w <= TmpSDLRectPlayerHitboxPieds.x + TmpSDLRectPlayerHitboxPieds.w && RectPack.y >= TmpSDLRectPlayerHitboxPieds.y && RectPack.y + RectPack.h <= (TmpSDLRectPlayerHitboxPieds.y + TmpSDLRectPlayerHitboxPieds.h)) {
+			else if (RectPack.x >= TmpSDLRectPlayerDestination.x && RectPack.x + RectPack.w <= TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerDestination.w && RectPack.y >= TmpSDLRectPlayerDestination.y && RectPack.y + RectPack.h <= (TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerDestination.h)) {
 
-				xPlayer = RectPack.x - TmpSDLRectPlayerHitboxPieds.x;
-				yPlayer = RectPack.y - TmpSDLRectPlayerHitboxPieds.y;
+				xPlayer = RectPack.x - TmpSDLRectPlayerDestination.x;
+				yPlayer = RectPack.y - TmpSDLRectPlayerDestination.y;
 				xMissile = 0;
 				yMissile = 0;
 				FinX = RectPack.w;
@@ -1063,36 +1062,36 @@ public:
 				boCollsionJoeur = true;
 			}
 			//2
-			else if (RectPack.x <= TmpSDLRectPlayerHitboxPieds.x + TmpSDLRectPlayerHitboxPieds.w && RectPack.x + RectPack.w > TmpSDLRectPlayerHitboxPieds.x + TmpSDLRectPlayerHitboxPieds.w && RectPack.y >= TmpSDLRectPlayerHitboxPieds.y && RectPack.y + RectPack.h <= (TmpSDLRectPlayerHitboxPieds.y + TmpSDLRectPlayerHitboxPieds.h)) {
+			else if (RectPack.x <= TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerDestination.w && RectPack.x + RectPack.w > TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerDestination.w && RectPack.y + RectPack.h >= TmpSDLRectPlayerDestination.y && RectPack.y <= (TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerDestination.h)) {
 
-				xPlayer = TmpSDLRectPlayerHitboxPieds.w - ((TmpSDLRectPlayerHitboxPieds.x + TmpSDLRectPlayerHitboxPieds.w) - RectPack.x);
-				yPlayer = RectPack.y - TmpSDLRectPlayerHitboxPieds.y;
+				xPlayer = TmpSDLRectPlayerDestination.w - ((TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerDestination.w) - RectPack.x);
+				yPlayer = RectPack.y - TmpSDLRectPlayerDestination.y;
 				xMissile = 0;
 				yMissile = 0;
-				FinX = (TmpSDLRectPlayerHitboxPieds.x + TmpSDLRectPlayerHitboxPieds.w) - RectPack.x;
+				FinX = (TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerDestination.w) - RectPack.x;
 				FinY = RectPack.h;
 				boCollsionJoeur = true;
 			}
 			//3
-			else if (RectPack.x >= TmpSDLRectPlayerHitboxPieds.x && RectPack.x + RectPack.w <= TmpSDLRectPlayerHitboxPieds.x + TmpSDLRectPlayerHitboxPieds.w && RectPack.y < TmpSDLRectPlayerHitboxPieds.y && RectPack.y + RectPack.h >= TmpSDLRectPlayerHitboxPieds.y) {
+			else if (RectPack.x >= TmpSDLRectPlayerDestination.x && RectPack.x + RectPack.w <= TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerDestination.w && RectPack.y < TmpSDLRectPlayerDestination.y && RectPack.y + RectPack.h >= TmpSDLRectPlayerDestination.y) {
 
-				xPlayer = RectPack.x - TmpSDLRectPlayerHitboxPieds.x;
+				xPlayer = RectPack.x - TmpSDLRectPlayerDestination.x;
 				yPlayer = 0;
 				xMissile = 0;
-				yMissile = TmpSDLRectPlayerHitboxPieds.y - RectPack.y;
+				yMissile = TmpSDLRectPlayerDestination.y - RectPack.y;
 				FinX = RectPack.w;
 				FinY = RectPack.h;
 				boCollsionJoeur = true;
 			}
 			//4
-			else if (RectPack.x >= TmpSDLRectPlayerHitboxPieds.x && RectPack.x + RectPack.w <= TmpSDLRectPlayerHitboxPieds.x + TmpSDLRectPlayerHitboxPieds.w && RectPack.y < TmpSDLRectPlayerHitboxPieds.y + TmpSDLRectPlayerHitboxPieds.w && RectPack.y + RectPack.h > TmpSDLRectPlayerHitboxPieds.y + TmpSDLRectPlayerHitboxPieds.h) {
+			else if (RectPack.x >= TmpSDLRectPlayerDestination.x && RectPack.x + RectPack.w <= TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerDestination.w && RectPack.y < TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerDestination.w && RectPack.y + RectPack.h > TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerDestination.h) {
 
-				xPlayer = RectPack.x - TmpSDLRectPlayerHitboxPieds.x;
-				yPlayer = TmpSDLRectPlayerHitboxPieds.h - ((TmpSDLRectPlayerHitboxPieds.y + TmpSDLRectPlayerHitboxPieds.h) - RectPack.y);
+				xPlayer = RectPack.x - TmpSDLRectPlayerDestination.x;
+				yPlayer = TmpSDLRectPlayerDestination.h - ((TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerDestination.h) - RectPack.y);
 				xMissile = 0;
 				yMissile = 0;
 				FinX = RectPack.w;
-				FinY = (TmpSDLRectPlayerHitboxPieds.y + TmpSDLRectPlayerHitboxPieds.h) - RectPack.y;
+				FinY = (TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerDestination.h) - RectPack.y;
 				boCollsionJoeur = true;
 			}
 
@@ -1112,15 +1111,18 @@ public:
 								if (((unsigned int*)pPackTmp->GetSurface()->pixels)[(yMissile)* pPackTmp->GetSurface()->w + (XMissile)] != 0) {
 
 									pPackTmp->Use(_pPlayer);
+									*_boExplosion = true;
+									*_RectExplosion = { pPackTmp->GetRectDestination().x + pPackTmp->GetRectDestination().w / 2, pPackTmp->GetRectDestination().y + pPackTmp->GetRectDestination().h / 2, pPackTmp->GetRectDestination().w, pPackTmp->GetRectDestination().h };
 									return true;
 
 								}
+						
 						}
 					}
 				}
 			}
 
-			m_pGameMap->ObtenirPackList()->AllerSuivantTrieur();
+			m_pGameMap->ObtenirPackList()->AllerSuivantCurseur();
 		}
 
 	}
@@ -1154,14 +1156,14 @@ public:
 				pPlayerTmp = pPlayerList->ObtenirElementTrieur();
 				RectDestinationPlayer = pPlayerTmp->ObtenirRectDestination();
 
-				if ((RectDestinationPlayer.x < _RectPositionExplosion.x && RectDestinationPlayer.x + RectDestinationPlayer.w >= _RectPositionExplosion.x) && (RectDestinationPlayer.y >= _RectPositionExplosion.y && RectDestinationPlayer.y + RectDestinationPlayer.h <= _RectPositionExplosion.y + _RectPositionExplosion.h)) {
+				if ((RectDestinationPlayer.x < _RectPositionExplosion.x && RectDestinationPlayer.x + RectDestinationPlayer.w >= _RectPositionExplosion.x) && (RectDestinationPlayer.y + RectDestinationPlayer.h >= _RectPositionExplosion.y && RectDestinationPlayer.y <= _RectPositionExplosion.y + _RectPositionExplosion.h)) {
 
 					iDistanceRayon = (_RectPositionExplosion.x + _iRayon) - (RectDestinationPlayer.x + RectDestinationPlayer.w);
 					fPourcentage = ((float)iDistanceRayon / (float)_iRayon);
 					pPlayerTmp->SetHealth(pPlayerTmp->GetHealth() * fPourcentage);
 				}
 
-				else if ((RectDestinationPlayer.x <= _RectPositionExplosion.x + _RectPositionExplosion.w && RectDestinationPlayer.x + RectDestinationPlayer.w > _RectPositionExplosion.x + _RectPositionExplosion.w) && (RectDestinationPlayer.y >= _RectPositionExplosion.y && RectDestinationPlayer.y + RectDestinationPlayer.h <= _RectPositionExplosion.y + _RectPositionExplosion.h)) {
+				else if ((RectDestinationPlayer.x <= _RectPositionExplosion.x + _RectPositionExplosion.w && RectDestinationPlayer.x + RectDestinationPlayer.w > _RectPositionExplosion.x + _RectPositionExplosion.w) && (RectDestinationPlayer.y + RectDestinationPlayer.h >= _RectPositionExplosion.y && RectDestinationPlayer.y <= _RectPositionExplosion.y + _RectPositionExplosion.h)) {
 
 					iDistanceRayon = RectDestinationPlayer.x - (_RectPositionExplosion.x + _iRayon);
 					fPourcentage = ((float)iDistanceRayon / (float)_iRayon);
@@ -1223,13 +1225,13 @@ public:
 
 			if (!pPackTmp->IsUse()) {
 
-				if ((RectDestinationPack.x < _RectPositionExplosion.x && RectDestinationPack.x + RectDestinationPack.w >= _RectPositionExplosion.x) && (RectDestinationPack.y >= _RectPositionExplosion.y && RectDestinationPack.y + RectDestinationPack.h <= _RectPositionExplosion.y + _RectPositionExplosion.h)) {
+				if ((RectDestinationPack.x < _RectPositionExplosion.x && RectDestinationPack.x + RectDestinationPack.w >= _RectPositionExplosion.x) && (RectDestinationPack.y + RectDestinationPack.h >= _RectPositionExplosion.y && RectDestinationPack.y <= _RectPositionExplosion.y + _RectPositionExplosion.h)) {
 
 					pPackTmp->Use(nullptr);
 					DomageExplosion(pPackTmp->GetRectDestination(), 45);
 				}
 
-				else if ((RectDestinationPack.x <= _RectPositionExplosion.x + _RectPositionExplosion.w && RectDestinationPack.x + RectDestinationPack.w > _RectPositionExplosion.x + _RectPositionExplosion.w) && (RectDestinationPack.y >= _RectPositionExplosion.y && RectDestinationPack.y + RectDestinationPack.h <= _RectPositionExplosion.y + _RectPositionExplosion.h)) {
+				else if ((RectDestinationPack.x <= _RectPositionExplosion.x + _RectPositionExplosion.w && RectDestinationPack.x + RectDestinationPack.w > _RectPositionExplosion.x + _RectPositionExplosion.w) && (RectDestinationPack.y + RectDestinationPack.h >= _RectPositionExplosion.y && RectDestinationPack.y <= _RectPositionExplosion.y + _RectPositionExplosion.h)) {
 
 					pPackTmp->Use(nullptr);
 					DomageExplosion(pPackTmp->GetRectDestination(), 45);

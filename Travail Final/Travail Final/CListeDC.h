@@ -314,16 +314,18 @@ public:
 			m_pTrieur->ObtenirPrecedente()->DefinirSuivante(m_pTrieur->ObtenirSuivante());
 			m_pTrieur->ObtenirSuivante()->DefinirPrecedente(m_pTrieur->ObtenirPrecedente());
 			CCelluleListeDC<T>* pCelltmpListeDC = m_pTrieur; // Pointeur de type CCelluleListeDC sur m_pCurseur.
+			
+			if (m_pTrieur == m_pCurseur)
+				m_pCurseur = m_pCurseur->ObtenirPrecedente();
+			
 			// Si le curseur n'est pas sur m_pDernière... il sera égal à sa suivante
 			if (m_pTrieur != m_pDerniere)
 				m_pTrieur = m_pTrieur->ObtenirSuivante();
-			if (m_pTrieur == m_pCurseur)
-				m_pCurseur->ObtenirPrecedente();
 			// Sinon il est égal à sa précédente pour ne pas revenir au début.
 			else
 			{
 				m_pTrieur = m_pTrieur->ObtenirPrecedente();
-				m_pTrieur = m_pTrieur;
+				m_pDerniere = m_pTrieur;
 			}
 			// Si l'utilisateur veut effacer l'élément dans la cellule.
 			if (_boSupprimer)
@@ -333,6 +335,7 @@ public:
 			// Si le compte est à zéro, tout mettre à nullptr.
 			if (m_uiCompte == 0) {
 				m_pTrieur = nullptr;
+				m_pCurseur = nullptr;
 				m_pDerniere = nullptr;
 			}
 			return true;

@@ -61,7 +61,7 @@ public:
 		
 		m_pListeMouvement->AjouterFin(new CMelee(_strEmplacement, new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceMelee"), pGestionnaireTexture->ObtenirDonnee("pTextureMelee"), _RectDestination, 30, 30, true, true, 2), _pRenderer));
 
-		m_pListeMouvement->AjouterFin(new CJetPack(_strEmplacement, new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceJetPack"), pGestionnaireTexture->ObtenirDonnee("pTextureJetPack"), _RectDestination, 6, 80, true, false, 2), new CBarreVie({ _RectDestination.x, _RectDestination.y + _RectDestination.h - 2, 0, 0 }, 6), _pRenderer));
+		m_pListeMouvement->AjouterFin(new CJetPack(_strEmplacement, new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceJetPack"), pGestionnaireTexture->ObtenirDonnee("pTextureJetPack"), _RectDestination, 6, 80, true, false, 2), new CBarreVie({ _RectDestination.x, _RectDestination.y + _RectDestination.h - 2, 0, 0 }, 5), _pRenderer));
 		
 		m_pListeMouvement->AjouterFin(new CDeplacement(_RectDestination));
 

@@ -244,9 +244,9 @@ public:
 							pPlayerActif->ModifierGlissadeJoueur(false);
 					}
 
-					m_pTimerPhysique->Start();
 				}
 
+				m_pTimerPhysique->Start();
 			}
 
 		}

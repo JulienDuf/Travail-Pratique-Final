@@ -132,20 +132,20 @@ public:
 
 				case SDL_SCANCODE_RIGHT:
 					m_pSpriteJetPack->DefinirEtage(0);
-					_pVecteurVitesse->ModifierComposantX(10);
+					_pVecteurVitesse->ModifierComposantX(40);
 					*_boStable = false;
 					boFleche = true;
 					break;
 
 				case SDL_SCANCODE_LEFT:
 					m_pSpriteJetPack->DefinirEtage(1);
-					_pVecteurVitesse->ModifierComposantX(-10);
+					_pVecteurVitesse->ModifierComposantX(-40);
 					*_boStable = false;
 					boFleche = true;
 					break;
 
 				case SDL_SCANCODE_SPACE:
-					m_pBarreDeCarburant->ModifierPourcentageVie(m_pBarreDeCarburant->ObtenirVie() - 0.002);
+ 					m_pBarreDeCarburant->ModifierPourcentageVie(m_pBarreDeCarburant->ObtenirVie() - 0.002);
 					_pVecteurVitesse->ModifierComposantY(-m_iVerticalThrust);
 					m_uiTempsPropulsionInitiale++;
 					if (boFleche)
@@ -191,6 +191,9 @@ public:
 				}
 				break;
 			}
+
+			if (m_boSpace)
+  				_pVecteurVitesse->ModifierComposantY(-m_iVerticalThrust);
 		}
 	}
 

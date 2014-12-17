@@ -262,7 +262,7 @@ public:
 						m_iVitesseRotationAngulaire = 300;
 					else
 						m_iVitesseRotationAngulaire = -300;
-					m_uiForce = (m_pBarrePuissance->ObtenirForce() + 3) * 100;
+					m_uiForce = (m_pBarrePuissance->ObtenirForce() + 3) * 50;
 					m_boGrenadeLancer = true;
 					m_boRotation = true;
 					m_uiMunition--;

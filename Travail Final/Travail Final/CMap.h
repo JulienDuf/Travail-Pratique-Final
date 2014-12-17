@@ -117,8 +117,13 @@ public:
 		m_pPackList->AllerDebut();
 		for (int i = 0; i < m_pPackList->ObtenirCompte(); i++) {
 
-			m_pPackList->ObtenirElementCurseur()->ShowPack(_pSDLRenderer);
-			m_pPackList->AllerSuivantCurseur();
+			if (m_pPackList->ObtenirElementCurseur()->IsUse() && !m_pPackList->ObtenirElementCurseur()->GetSpriteExplosion()->IsActif())
+				m_pPackList->Retirer(true);
+
+			else {
+				m_pPackList->ObtenirElementCurseur()->ShowPack(_pSDLRenderer);
+				m_pPackList->AllerSuivantCurseur();
+			}
 		}
 			
 		

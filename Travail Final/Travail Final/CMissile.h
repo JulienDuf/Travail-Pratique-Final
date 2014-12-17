@@ -18,11 +18,14 @@ private:
 
 	SDL_Surface* m_pSDLSurfaceMissile; // La surface du missile.
 	SDL_Surface* m_pSDLSurfaceMissileRotation; // La surface du missile.
+	SDL_Texture* m_pTextureBazooka; // La texture d bazooka.
 	SDL_Rect m_RectDestinationMissile; // La destination du missile dans la fenêtre.
 	SDL_Rect m_RectDestinationExplosion; // La destination de l'explosion.
 	SDL_Rect RayonExplosion;
+	SDL_Rect m_RectDestinationBazooka; // La destination du bazooka.
 	CBarrePuissance* m_pBarrePuissance; // La barre déterminant l'angle et la puissance du missile.
 	CSprite* m_pSpriteExplosion; // L'animation de l'explosion.
+	CSprite* m_pSpritePlayer; // Le sprite du player.
 
 	CLabel* m_pLblDescription; // Le label descripton du missile.
 	string m_strDescription[8]; // Le texte de la description du missile.
@@ -92,10 +95,13 @@ public:
 		m_pRotation = _Rotation;
 		m_pSDLSurfaceMissile = pGestionnaireSurface->ObtenirDonnee("pSurfaceMissile");
 		m_pSDLSurfaceMissileRotation = m_pSDLSurfaceMissile;
+		m_pTextureBazooka = pGestionnaireTexture->ObtenirDonnee("pTextureBazooka");
 		m_RectDestinationMissile = { 0, 0, 0, 0 };
 		m_RectDestinationMissile.w = m_pSDLSurfaceMissile->w;
 		m_RectDestinationMissile.h = m_pSDLSurfaceMissile->h;
 		m_RectDestinationExplosion = { 0, 0, 150, 146 };
+		m_RectDestinationBazooka = { 0, 0, 0, 0 };
+		SDL_QueryTexture(m_pTextureBazooka, NULL, NULL, &m_RectDestinationBazooka.w, &m_RectDestinationBazooka.h);
 		RayonExplosion = { 0, 0, 0, 0 };
 
 		// Création de la description 
@@ -149,6 +155,7 @@ public:
 		// Création des autres pointeurs.
 		m_pBarrePuissance = new CBarrePuissance();
 		m_pSpriteExplosion = new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceExplosionMissile"), pGestionnaireTexture->ObtenirDonnee("pTextureExplosionMissile"), m_RectDestinationExplosion, 9, 100, false, false, 1);
+		m_pSpritePlayer = new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfacePlayerBazooka"), pGestionnaireTexture->ObtenirDonnee("pTexturePlayerBazooka"), m_RectDestinationBazooka, 1, 0, true, false, 2);
 	}
 
 	// Procédure réagissnat à une collision.
@@ -165,9 +172,6 @@ public:
 		RayonExplosion = { iX - 50, iY - 50, 100, 100 };
 		m_pSpriteExplosion->DefinirActif(true);
 
-		// Détruit le vecteur vitesse.
-		delete m_pVecteurVitesseMissile;
-		m_pVecteurVitesseMissile = nullptr;
 		return false;
 	}
 
@@ -191,9 +195,14 @@ public:
 
 			if (!m_pSpriteExplosion->IsActif()) {
 
+				m_RectDestinationBazooka.x = _RectPlayerDestination.x;
+				m_RectDestinationBazooka.y = _RectPlayerDestination.y + (_RectPlayerDestination.h / 2);
 				_RectPlayerDestination.x -= 22;
 				_RectPlayerDestination.y -= 10;
 				m_pBarrePuissance->AfficherBarre(_pRenderer, _RectPlayerDestination);
+				m_pSpritePlayer->Render(_pRenderer, _RectPlayerDestination);
+				m_pSpritePlayer->ModifierAnnimation();
+				SDL_RenderCopyEx(_pRenderer, m_pTextureBazooka, NULL, &m_RectDestinationBazooka, m_pBarrePuissance->ObtenirAngle(), NULL, SDL_FLIP_NONE);
 			}
 
 			else {

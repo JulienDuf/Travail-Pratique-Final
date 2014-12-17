@@ -413,6 +413,11 @@ void Start(char* _strApplicationFilename) {
 	strEmplacement.append("Personnage\\Melee.png");
 	pGestionnaireSurface->AjouterDonnee(IMG_Load(strEmplacement.c_str()), "pSurfaceMelee");
 
+	// Avec le bazooka...
+	strEmplacement = strApplicationPath;
+	strEmplacement.append("Personnage\\bazooka.png");
+	pGestionnaireSurface->AjouterDonnee(IMG_Load(strEmplacement.c_str()), "pSurfacePlayerBazooka");
+
 	// Chargement de la surface des mines...
 	strEmplacement = strApplicationPath;
 	strEmplacement.append("Armes et Packs\\Mine.png");
@@ -466,6 +471,11 @@ void Start(char* _strApplicationFilename) {
 	strEmplacement.append("Personnage\\Melee.png");
 	pGestionnaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTextureMelee");
 
+	// Avec le bazooka...
+	strEmplacement = strApplicationPath;
+	strEmplacement.append("Personnege\\bazooka.png");
+	pGestionnaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTexturePlayerBazooka");
+
 	// Chargement de la texture de la barre de puissance
 	strEmplacement = strApplicationPath;
 	strEmplacement.append("Armes et Packs\\BarrePuissance.png");
@@ -480,6 +490,11 @@ void Start(char* _strApplicationFilename) {
 	strEmplacement = strApplicationPath;
 	strEmplacement.append("Armes et Packs\\ExplosionGrenade.png");
 	pGestionnaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTextureExplosionGrenade");
+
+	// Chargement de la texture du bazooka.
+	strEmplacement = strApplicationPath;
+	strEmplacement.append("Armes et Packs\\bazooka.png");
+	pGestionnaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTextureBazooka");
 
 	// Chargement des textures de la barre de vie...
 	strEmplacement = strApplicationPath;

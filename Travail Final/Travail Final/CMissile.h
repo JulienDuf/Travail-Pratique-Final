@@ -272,9 +272,7 @@ public:
 			m_pLblDescription->SetRectDestinationY(_RectPositionDescription.y);
 	}
 
-	void DefinirActif(bool _boActif) {
-
-	}
+	void DefinirRotation(int _iVitesseAngulaire) {}
 
 	// Accesseurs...
 

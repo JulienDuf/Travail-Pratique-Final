@@ -21,12 +21,12 @@ class CGrenade: public CProjectile {
 private:
 
 	bool m_boGrenadeLancer,
-		m_boDirectionRotation, // Sens de la rotation dépendant de la direction du lancer
 		m_boRotation,
 		m_boShowDescription,
 		m_boExplosion;
 
-	int m_iAngle; // Angle du lancement de la grenade
+	int m_iAngle, // Angle du lancement de la grenade
+		m_iVitesseRotationAngulaire;
 
 	unsigned int m_uiForce, // Force du lancement de la grenade
 		m_uiMunition,
@@ -37,7 +37,8 @@ private:
 
 	CSprite* m_pSpriteExplosion;
 
-	CTimer* m_pTimerExplosion;
+	CTimer *m_pTimerExplosion,
+		*m_pTimerRotation;
 
 	SDL_Point m_PointRotation;
 	SDL_Texture *m_pTextureGrenade; //Texture de la grenade
@@ -159,6 +160,8 @@ public:
 			m_pTimerExplosion = new CTimer(SDL_atoi(strDelai.c_str()) * 1000);
 		}
 
+		m_pTimerRotation = new CTimer(50);
+
 		FichierDescription.close();
 
 		m_pLblDescription = new CLabel(SDL_CreateTextureFromSurface(_pRenderer, BlitText(m_strDescription, 7, { 0, 0, 0 })), { 0, 0, 0, 0 });
@@ -204,21 +207,13 @@ public:
 	
 		if (m_boGrenadeLancer) {
 
-			if (m_boRotation) {
+			if (m_boRotation && m_pTimerRotation->IsDone()) {
 
-				if (m_boDirectionRotation)
-
-					m_iAngle = m_iAngle + 1 % 360;
-				else {
-
-					m_iAngle--;
-					if (m_iAngle <= -360)
-
-						m_iAngle = 0;
-				}
-
+				m_iAngle += (float)m_iVitesseRotationAngulaire * m_pTimerRotation->ObtenirTimer();
+				m_iAngle %= 360;
 				m_pSurfaceGrenadeRotation = m_pRotation(m_pSurfaceGrenade, m_iAngle);
 				m_pTextureGrenade = SDL_CreateTextureFromSurface(_pRenderer, m_pSurfaceGrenadeRotation);
+				m_pTimerRotation->Start();
 			}
 
 			SDL_RenderCopy(_pRenderer, m_pTextureGrenade, NULL, &m_RectDestinationGrenade);
@@ -264,26 +259,30 @@ public:
 					m_iAngle = m_pBarrePuissance->ObtenirAngle();
 
 					if (m_iAngle <= 90 || m_iAngle >= 270)
-						m_boDirectionRotation = false;
+						m_iVitesseRotationAngulaire = 300;
 					else
-						m_boDirectionRotation = true;
-
+						m_iVitesseRotationAngulaire = -300;
 					m_uiForce = (m_pBarrePuissance->ObtenirForce() + 3) * 100;
 					m_boGrenadeLancer = true;
+					m_boRotation = true;
 					m_uiMunition--;
 					m_pVecteurVitesseGrenade = new CVecteur2D((float)m_uiForce, (float)m_iAngle);
+					m_iAngle = 0;
 
 					m_pBarrePuissance->ObtenirPosition(&m_RectDestinationGrenade.x, &m_RectDestinationGrenade.y);
 					m_RectDestinationGrenade.y -= m_RectDestinationGrenade.h;
 					m_pTimerExplosion->Start();
+					m_pTimerRotation->Start();
 				}
 				break;
 			}
 		}
 	}
 
-	void DefinirActif(bool _boActif) {
-		
+	// Positif = vers la gauche...
+	void DefinirRotation(int _iVitesseAngulaire) {
+
+		m_iVitesseRotationAngulaire = _iVitesseAngulaire;
 	}
 
 	CSprite* ObtenirSprite(string _strNom) {

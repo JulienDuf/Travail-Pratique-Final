@@ -128,3 +128,10 @@ fait. Maintenant au moins les personnages ne montent plus n'importe quelle pente
 parfois marcher au travers de la map.
 
 ----------------------------------------------------------------------------------------------------------------------
+
+Mercredi 17 décembre 2014
+
+1:00 PM
+
+Les déplacements devraient être pas mal terminés, j'ai réparé le bug où les joueurs passaient au travers de la map.
+Il restera à gérer d'autres états du joueur comme glissade et chute libre, donc ce n'est pas fini!

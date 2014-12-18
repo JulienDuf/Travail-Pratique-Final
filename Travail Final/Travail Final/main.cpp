@@ -522,6 +522,10 @@ void Start(char* _strApplicationFilename) {
 	strEmplacement.append("FlecheVent.png");
 	pGestionnaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pFlecheVent");
 
+	// Chargement de la texture du menu principale.
+	strEmplacement = strApplicationPath;
+	strEmplacement.append("Menu\\Menu Principal.png");
+	pGestionnaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTextureMenuPrincipal");
 
 	CouleurTexte = { 0, 0, 0, 0 }; // Met la couleur noir.
 
@@ -529,7 +533,7 @@ void Start(char* _strApplicationFilename) {
 	strEmplacement = strApplicationPath;
 	strEmplacement.append("Bouton\\BoutonMettreTexte.png");
 	pGestionnaireControl->AjouterDonnee(new CButton("Nouvelle Partie", pGestionnaireFont->ObtenirDonnee("pFontBouton"), CouleurTexte, strEmplacement.c_str(), { (iW - 500) / 2, 250, 500, 60 }, 3, 0, pWindowJeu->ObtenirRenderer(), ClickBoutonNouvellePartie), "pBtnNouvellePartie");
-	pGestionnaireControl->AjouterDonnee(new CButton("Quitter", pGestionnaireFont->ObtenirDonnee("pFontBouton"), CouleurTexte, strEmplacement.c_str(), { (iW - 500) / 2, 320, 500, 60 }, 3, 0, pWindowJeu->ObtenirRenderer(), ClickBoutonQuitter), "pBtnQuitter");
+	pGestionnaireControl->AjouterDonnee(new CButton("Quitter", pGestionnaireFont->ObtenirDonnee("pFontBouton"), CouleurTexte, strEmplacement.c_str(), { (iW - 500) / 2, 350, 500, 60 }, 3, 0, pWindowJeu->ObtenirRenderer(), ClickBoutonQuitter), "pBtnQuitter");
 	pGestionnaireControl->AjouterDonnee(new CButton("Debuter la partie", pGestionnaireFont->ObtenirDonnee("pFontBouton"), CouleurTexte, strEmplacement.c_str(), { 790, 530, 500, 60 }, 3, 0, pWindowJeu->ObtenirRenderer(), ClickBoutonDebutPartie), "pBtnDebutPartie");
 	pGestionnaireControl->AjouterDonnee(new CButton("Retour", pGestionnaireFont->ObtenirDonnee("pFontBouton"), CouleurTexte, strEmplacement.c_str(), { 790, 600, 500, 60 }, 3, 0, pWindowJeu->ObtenirRenderer(), ClickBoutonRetour), "pBtnRetour");
 	pGestionnaireControl->AjouterDonnee(new CButton("Resumer", pGestionnaireFont->ObtenirDonnee("pFontBouton"), CouleurTexte, strEmplacement.c_str(), { 503, 284, 360, 60 }, 3, 0, pWindowJeu->ObtenirRenderer(), ClickBoutonResumer), "pBtnResumer");
@@ -579,9 +583,9 @@ void Start(char* _strApplicationFilename) {
 	strEmplacementFichier = strApplicationPath;
 
 	// Création des menus...
-	pGestionnaireMenu->AjouterDonnee(new CMenu(true, { 0, 0, iW, iH }, pWindowJeu->ObtenirRenderer(), { 255, 255, 255, 255 }, 2, pGestionnaireControl->ObtenirDonnee("pBtnNouvellePartie"), pGestionnaireControl->ObtenirDonnee("pBtnQuitter")), "pMenuPrincipal"); // Crée le menu principal.
-	pGestionnaireMenu->AjouterDonnee(new CMenu(false, { 0, 0, iW, iH }, pWindowJeu->ObtenirRenderer(), { 255, 255, 255, 255 }, 8, pGestionnaireControl->ObtenirDonnee("pBtnDebutPartie"), pGestionnaireControl->ObtenirDonnee("pBtnRetour"), pGestionnaireControl->ObtenirDonnee("pLblDescriptionMap"), pGestionnaireControl->ObtenirDonnee("pLblNombreJoueurEquipe"), pGestionnaireControl->ObtenirDonnee("pLblNombreEquipe"), pGestionnaireControl->ObtenirDonnee("pLblLRChoixNbrEquipe"), pGestionnaireControl->ObtenirDonnee("pLblLRChoixNbrJoueurEquipe"), pGestionnaireControl->ObtenirDonnee("pLblLRChoixMap")), "pMenuNouvellePartie"); // Créé le menu nouvelle partie.
-	pGestionnaireMenu->AjouterDonnee(new CMenu(false, { 341, 192, 683, 384 }, pWindowJeu->ObtenirRenderer(), { 128, 128, 128, 165 }, 2, pGestionnaireControl->ObtenirDonnee("pBtnResumer"), pGestionnaireControl->ObtenirDonnee("pBtnQuitterGame")), "pMenuPause");
+	pGestionnaireMenu->AjouterDonnee(new CMenu(true, { 0, 0, iW, iH }, pGestionnaireTexture->ObtenirDonnee("pTextureMenuPrincipal"), 2, pGestionnaireControl->ObtenirDonnee("pBtnNouvellePartie"), pGestionnaireControl->ObtenirDonnee("pBtnQuitter")), "pMenuPrincipal"); // Crée le menu principal.
+	pGestionnaireMenu->AjouterDonnee(new CMenu(false, { 0, 0, iW, iH }, { 255, 255, 255, 255 }, 8, pGestionnaireControl->ObtenirDonnee("pBtnDebutPartie"), pGestionnaireControl->ObtenirDonnee("pBtnRetour"), pGestionnaireControl->ObtenirDonnee("pLblDescriptionMap"), pGestionnaireControl->ObtenirDonnee("pLblNombreJoueurEquipe"), pGestionnaireControl->ObtenirDonnee("pLblNombreEquipe"), pGestionnaireControl->ObtenirDonnee("pLblLRChoixNbrEquipe"), pGestionnaireControl->ObtenirDonnee("pLblLRChoixNbrJoueurEquipe"), pGestionnaireControl->ObtenirDonnee("pLblLRChoixMap")), "pMenuNouvellePartie"); // Créé le menu nouvelle partie.
+	pGestionnaireMenu->AjouterDonnee(new CMenu(false, { 341, 192, 683, 384 }, { 128, 128, 128, 165 }, 2, pGestionnaireControl->ObtenirDonnee("pBtnResumer"), pGestionnaireControl->ObtenirDonnee("pBtnQuitterGame")), "pMenuPause");
 
 	// Ajoue des menus dans la fenêtre.
 	pWindowJeu->AjouterMenu(3, pGestionnaireMenu->ObtenirDonnee("pMenuPrincipal"), pGestionnaireMenu->ObtenirDonnee("pMenuNouvellePartie"), pGestionnaireMenu->ObtenirDonnee("pMenuPause"));

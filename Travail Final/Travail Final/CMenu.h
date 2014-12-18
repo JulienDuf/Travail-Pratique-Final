@@ -11,15 +11,18 @@ private:
 	bool m_boShow; // Booléen qui dicte si le menu s'affiche ou non.
 	SDL_Rect m_RectDestinationBackGround; // La position du background.
 	SDL_Color m_CouleurBackground; // La couleur du background.
+	SDL_Texture* m_pTextureBackground; // La texture du background.
 
 public:
 
 	// Constructeur de Menu...
 	// En entrée:
 	// Param1: booléen qui dicte si le menu doit s'afficher ou non.
-	// Param2; Nombre de Contrôles à ajouter.
-	// Param3...; Contrôles à ajouter.
-	CMenu(bool _boShow, SDL_Rect _RectDestination, SDL_Renderer* _pRenderer, SDL_Color _CouleurBackGround, unsigned int argc, ...) {
+	// Param2: La destination du menu.
+	// Param3: La couleur du background.
+	// Param4: Nombre de Contrôles à ajouter.
+	// Param5...: Contrôles à ajouter.
+	CMenu(bool _boShow, SDL_Rect _RectDestination, SDL_Color _CouleurBackGround, unsigned int argc, ...) {
 
 		m_boShow = _boShow;
 		m_pArbreControl = new CArbreAVL<CControl*>();
@@ -27,6 +30,34 @@ public:
 		m_RectDestinationBackGround = _RectDestination;
 
 		m_CouleurBackground = _CouleurBackGround;
+		m_pTextureBackground = nullptr;
+
+		if (argc > 0) {
+			va_list parametres;
+
+			va_start(parametres, argc);
+			for (int i = 0; i < argc; i++) {
+				m_pArbreControl->Ajouter(va_arg(parametres, CControl*), "");
+			}
+			va_end(parametres);
+		}
+	}
+
+	// Constructeur de Menu...
+	// En entrée:
+	// Param1: booléen qui dicte si le menu doit s'afficher ou non.
+	// Param2: La destination du menu.
+	// Param3: La texture du background.
+	// Param4: Nombre de Contrôles à ajouter.
+	// Param5...: Contrôles à ajouter.
+	CMenu(bool _boShow, SDL_Rect _RectDestination, SDL_Texture* _pTextureBackground, unsigned int argc, ...) {
+
+		m_boShow = _boShow;
+		m_pArbreControl = new CArbreAVL<CControl*>();
+
+		m_RectDestinationBackGround = _RectDestination;
+
+		m_pTextureBackground = _pTextureBackground;
 
 		if (argc > 0) {
 			va_list parametres;
@@ -87,10 +118,17 @@ public:
 	void ShowMenu(SDL_Renderer* _pSDLRenderer) {
 		if (m_boShow) {
 
-			SDL_SetRenderDrawBlendMode(_pSDLRenderer, SDL_BLENDMODE_BLEND);
-			SDL_SetRenderDrawColor(_pSDLRenderer, m_CouleurBackground.r, m_CouleurBackground.b, m_CouleurBackground.b, m_CouleurBackground.a);
+			if (m_pTextureBackground == nullptr) {
+				SDL_SetRenderDrawBlendMode(_pSDLRenderer, SDL_BLENDMODE_BLEND);
+				SDL_SetRenderDrawColor(_pSDLRenderer, m_CouleurBackground.r, m_CouleurBackground.b, m_CouleurBackground.b, m_CouleurBackground.a);
 
-			SDL_RenderFillRect(_pSDLRenderer, &m_RectDestinationBackGround);
+				SDL_RenderFillRect(_pSDLRenderer, &m_RectDestinationBackGround);
+			}
+
+			else {
+
+				SDL_RenderCopy(_pSDLRenderer, m_pTextureBackground, NULL, NULL);
+			}
 			m_pArbreControl->ParcoursControl(_pSDLRenderer);
 		}
 	}

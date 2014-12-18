@@ -166,4 +166,14 @@ public:
 	unsigned int ObtenirMunition() {
 		return NULL;
 	}
+
+	CVecteur2D* ObtenirVecteur(void) {
+
+		return nullptr;
+	}
+
+	bool IsActive(void) {
+
+		return true;
+	}
 };

@@ -370,10 +370,10 @@ public:
 
 	void PhysiqueTool(SDL_Renderer* _pRenderer) {
 
-		if (m_pToolBar->ObtenirPositionObjetDoubleClick() <= 1) {
+		if (m_pToolBar->ObtenirPositionObjetDoubleClick() <= 3) {
 
 			CProjectile* pProjectileTmp = m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirProjectile(m_pToolBar->ObtenirPositionObjetDoubleClick());
-			SDL_Rect* RectTmp;
+			SDL_Rect* RectTmp = NULL;
 			CVecteur2D* pVecteurVitesse;
 			int iX, iY;
 
@@ -469,6 +469,46 @@ public:
 					RectTmp->x += pVecteurVitesse->ObtenirComposanteX() / 35;
 					RectTmp->y += pVecteurVitesse->ObtenirComposanteY() / 35;
 					*pVecteurVitesse += *m_pGameMap->ObtenirGravite();
+				}
+			}
+
+			else if (m_pToolBar->ObtenirPositionObjetDoubleClick() == 3) {
+
+				double dX, dY;
+				unsigned int uiTmp;
+				bool boCorps, boPieds;
+				CPlayer* pPlayerActif = m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif();
+				SDL_Rect RectPlayer;
+				CMouvement* pJetPack = pPlayerActif->ObtenirJetPack();
+				pVecteurVitesse = pPlayerActif->ObtenirVecteurVitesse();
+				
+				if (pJetPack->IsActive()) {
+ 					*pVecteurVitesse += *pJetPack->ObtenirVecteur();
+					*pVecteurVitesse += *m_pGameMap->ObtenirGravite();
+				}
+				else if (pVecteurVitesse->ObtenirComposanteX() != 0 && pVecteurVitesse->ObtenirComposanteY() != 0) {
+					*pVecteurVitesse += *m_pGameMap->ObtenirGravite();
+				}
+
+				dX = pPlayerActif->ObtenirPositionX() - 1;
+				dY = pPlayerActif->ObtenirPositionY() - 1;
+
+				dX += pVecteurVitesse->ObtenirComposanteX() / 35;
+				dY += pVecteurVitesse->ObtenirComposanteY() / 35;
+
+				RectPlayer = { dX, dY, 0, 0 };
+
+				if (VerifierCollisionJoueurMap(pPlayerActif, RectPlayer, &boCorps, &boPieds, &uiTmp, &uiTmp, &uiTmp, &uiTmp)) {
+
+					pPlayerActif->ModifierChuteLibreJoueur(true);
+					pPlayerActif->ObtenirSpriteJetPack()->DefinirActif(false);
+					pPlayerActif->ObtenirSpriteRepos()->DefinirActif(true);
+					pVecteurVitesse->ModifierVecteur(0, 0.0f);
+				}
+
+				else {
+					pPlayerActif->DefinirPositionX(dX);
+					pPlayerActif->DefinirPositionY(dY);
 				}
 			}
 		}

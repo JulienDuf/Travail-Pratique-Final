@@ -18,6 +18,8 @@ private:
 	unsigned int m_uiTempsPropulsionInitiale;
 	int m_iVerticalThrust;
 
+	CVecteur2D* m_pVecteurJetpack;
+
 	SDL_Surface* BlitText(string _strTexte[], unsigned int _uiNombreElementTableau, SDL_Color _Couleur) {
 
 		SDL_Surface *pSurfaceBlitin,
@@ -56,7 +58,7 @@ private:
 public:
 
 	CJetPack(string _strEmplacement, CSprite* _pSpriteJetPack, CBarreVie* _pBarreDeCarburant, SDL_Renderer* _pRenderer) {
-		boFleche = false;
+		boFleche = true;
 		m_boShowDescription = false;
 
 		m_strDescription;
@@ -104,6 +106,7 @@ public:
 
 		SDL_Surface *pSDLSurface = BlitText(m_strDescription, 5, { 0, 0, 0 });
 		m_pLblDescription = new CLabel(SDL_CreateTextureFromSurface(_pRenderer, pSDLSurface), { 503, 346, pSDLSurface->w, pSDLSurface->h });
+		m_pVecteurJetpack = new CVecteur2D(0, 0.0f);
 
 		m_pSpriteJetPack = _pSpriteJetPack;
 
@@ -132,21 +135,21 @@ public:
 
 				case SDL_SCANCODE_RIGHT:
 					m_pSpriteJetPack->DefinirEtage(0);
-					_pVecteurVitesse->ModifierComposantX(40);
+					m_pVecteurJetpack->ModifierComposantX(40);
 					*_boStable = false;
 					boFleche = true;
 					break;
 
 				case SDL_SCANCODE_LEFT:
 					m_pSpriteJetPack->DefinirEtage(1);
-					_pVecteurVitesse->ModifierComposantX(-40);
+					m_pVecteurJetpack->ModifierComposantX(-40);
 					*_boStable = false;
 					boFleche = true;
 					break;
 
 				case SDL_SCANCODE_SPACE:
  					m_pBarreDeCarburant->ModifierPourcentageVie(m_pBarreDeCarburant->ObtenirVie() - 0.002);
-					_pVecteurVitesse->ModifierComposantY(-m_iVerticalThrust);
+					m_pVecteurJetpack->ModifierComposantY(-m_iVerticalThrust);
 					m_uiTempsPropulsionInitiale++;
 					if (boFleche)
   						boFleche = boFleche;
@@ -170,20 +173,20 @@ public:
 				case SDL_SCANCODE_RIGHT:
 					m_pSpriteJetPack->DefinirActif(0);
 					*_boStable = false;
-					_pVecteurVitesse->ModifierComposantX(0);
+					m_pVecteurJetpack->ModifierComposantX(0);
 					boFleche = false;
 					break;
 
 				case SDL_SCANCODE_LEFT:
 					m_pSpriteJetPack->DefinirActif(0);
-					_pVecteurVitesse->ModifierComposantX(0);
+					m_pVecteurJetpack->ModifierComposantX(0);
 					*_boStable = false;
 					boFleche = false;
 					break;
 
 				case SDL_SCANCODE_SPACE:
 					m_pSpriteJetPack->DefinirPositionDeBouclage(0, 1);
-					_pVecteurVitesse->ModifierComposantY(0);
+					m_pVecteurJetpack->ModifierComposantY(0);
 					m_boSpace = false;
 					m_uiTempsPropulsionInitiale = 0;
 					*_boStable = false;
@@ -193,7 +196,9 @@ public:
 			}
 
 			if (m_boSpace)
-  				_pVecteurVitesse->ModifierComposantY(-m_iVerticalThrust);
+				m_pVecteurJetpack->ModifierComposantY(-m_iVerticalThrust);
+			if (m_boSpace && !boFleche)
+				m_pVecteurJetpack->ModifierComposantY(-m_iVerticalThrust);
 		}
 	}
 
@@ -238,5 +243,15 @@ public:
 			m_pLblDescription->SetRectDestinationY(_RectPositionDescription.y - uiH);
 		else
 			m_pLblDescription->SetRectDestinationY(_RectPositionDescription.y);
+	}
+
+	CVecteur2D* ObtenirVecteur(void) {
+
+		return m_pVecteurJetpack;
+	}
+
+	bool IsActive(void) {
+
+		return m_boSpace;
 	}
 };

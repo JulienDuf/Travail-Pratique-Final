@@ -124,8 +124,10 @@ public:
 			}
 			else
 			{
-				if (_uiObjetSelectionner <= 3)
+				if (_uiObjetSelectionner <= 3) {
 					m_pListeMouvement->AllerACurseur(_uiObjetSelectionner - 2);
+					m_boToolActif = true;
+				}
 				else
 					m_pListeMouvement->AllerACurseur(2);
 				m_pListeMouvement->ObtenirElementCurseur()->ReactToEvent(_pSDLEvent, m_pVecteurVitesse, &m_boStable);
@@ -309,7 +311,6 @@ public:
 		return m_pVecteurVitesse;
 	}
 
-
 	CVecteur2D* ObtenirVecteurTool() {
 
 		return m_pListeTools->ObtenirElementCurseur()->ObtenirVecteurVitesse();
@@ -330,6 +331,12 @@ public:
 
 		m_pListeTools->AllerACurseur(_uiPosition);
 		return m_pListeTools->ObtenirElementCurseur();
+	}
+
+	CMouvement* ObtenirJetPack(void) {
+
+		m_pListeMouvement->AllerACurseur(1);
+		return m_pListeMouvement->ObtenirElementCurseur();
 	}
 
 	float GetHealth(void) {

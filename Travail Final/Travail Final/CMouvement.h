@@ -13,4 +13,8 @@ public:
 	virtual void ShowDescription(SDL_Renderer* _pRenderer) = 0;
 
 	virtual unsigned int ObtenirMunition() = 0;
+
+	virtual CVecteur2D* ObtenirVecteur(void) = 0;
+
+	virtual bool IsActive(void) = 0;
 };

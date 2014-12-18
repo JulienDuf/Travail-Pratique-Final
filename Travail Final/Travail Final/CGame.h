@@ -127,7 +127,6 @@ public:
 				if (pPlayerActif->IsUsingTool())
 					PhysiqueTool(_pRenderer);
 
-
 				else if (!pPlayerActif->IsStable()) {
 
 					if (pPlayerActif->ObtenirSpriteCourse()->IsActif()) {
@@ -135,7 +134,9 @@ public:
 						DetectionCollisionPack(pPlayerActif, &boExplosion, &RectExplosion);
 						if (boExplosion) {
 
+							pPlayerActif->SetHealth(0);
 							DomageExplosion(RectExplosion, 45);
+							
 						}
 
 						else if (!VerifierCollisionJoueurMap(pPlayerActif, RectTmp, &boCorps, &boPied, &_uiXPieds, &_uiYPieds, &_uiXCorps, &_uiYCorps)) {
@@ -244,6 +245,32 @@ public:
 							pPlayerActif->ModifierGlissadeJoueur(false);
 					}
 
+					else if (pPlayerActif->ObtenirJetPack()->ObtenirSprite("")->IsActif()) {
+
+						if (pPlayerActif->ObtenirJetPack()->IsActive()) {
+							if (pPlayerActif->ObtenirJetPack()->ObtenirVecteur()->ObtenirComposanteX() == 0)
+								pPlayerActif->ObtenirVecteurVitesse()->ModifierComposantX(0);
+							*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirJetPack()->ObtenirVecteur();
+							*pPlayerActif->ObtenirVecteurVitesse() += *m_pGameMap->ObtenirGravite();
+ 							dComposanteX += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35;
+							dComposanteY += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35;
+
+							if (!VerifierCollisionJoueurMap(pPlayerActif, { dComposanteX, dComposanteY }, &boCorps, &boPied, &_uiXPieds, &_uiYPieds, &_uiXCorps, &_uiYPieds)) {
+								pPlayerActif->DefinirPositionX(dComposanteX);
+								pPlayerActif->DefinirPositionY(dComposanteY);
+							}
+
+							else {
+
+  								pPlayerActif->ModifierTypeMouvement(2);
+								pPlayerActif->ObtenirJetPack()->ObtenirSprite("")->DefinirActif(false);
+								pPlayerActif->ObtenirSpriteRepos()->DefinirActif(true);
+								pPlayerActif->ModifierChuteLibreJoueur(true);
+								m_pToolBar->NouveauTour();
+							}
+						}
+					}
+
 				}
 
 				m_pTimerPhysique->Start();
@@ -279,6 +306,11 @@ public:
 							RectPlayer = pPlayer->ObtenirRectDestination();
 							RectPlayer.y += 9.8;
 
+							if (RectPlayer.y >= 1366) {
+								pPlayerListTmp->Retirer(true);
+								m_pGameMap->CreateHealthPack();
+							}
+
 							if (!VerifierCollisionJoueurMap(pPlayer, RectPlayer, &_boCorps, &_boPieds, &_uiXPieds, &_uiYPieds, &_uiXCorps, &_uiYCorps))
 
 								pPlayer->DefinirPositionY(RectPlayer.y);
@@ -295,7 +327,7 @@ public:
 								DetectionCollisionPack(pPlayer, &boExplosion, &RectTmp);
 
 								if (boExplosion) {
-									pPlayerListTmp->Retirer(true);
+									pPlayer->SetHealth(0);
 									DomageExplosion(RectTmp, 45);
 								}
 
@@ -469,46 +501,6 @@ public:
 					RectTmp->x += pVecteurVitesse->ObtenirComposanteX() / 35;
 					RectTmp->y += pVecteurVitesse->ObtenirComposanteY() / 35;
 					*pVecteurVitesse += *m_pGameMap->ObtenirGravite();
-				}
-			}
-
-			else if (m_pToolBar->ObtenirPositionObjetDoubleClick() == 3) {
-
-				double dX, dY;
-				unsigned int uiTmp;
-				bool boCorps, boPieds;
-				CPlayer* pPlayerActif = m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif();
-				SDL_Rect RectPlayer;
-				CMouvement* pJetPack = pPlayerActif->ObtenirJetPack();
-				pVecteurVitesse = pPlayerActif->ObtenirVecteurVitesse();
-				
-				if (pJetPack->IsActive()) {
- 					*pVecteurVitesse += *pJetPack->ObtenirVecteur();
-					*pVecteurVitesse += *m_pGameMap->ObtenirGravite();
-				}
-				else if (pVecteurVitesse->ObtenirComposanteX() != 0 && pVecteurVitesse->ObtenirComposanteY() != 0) {
-					*pVecteurVitesse += *m_pGameMap->ObtenirGravite();
-				}
-
-				dX = pPlayerActif->ObtenirPositionX() - 1;
-				dY = pPlayerActif->ObtenirPositionY() - 1;
-
-				dX += pVecteurVitesse->ObtenirComposanteX() / 35;
-				dY += pVecteurVitesse->ObtenirComposanteY() / 35;
-
-				RectPlayer = { dX, dY, 0, 0 };
-
-				if (VerifierCollisionJoueurMap(pPlayerActif, RectPlayer, &boCorps, &boPieds, &uiTmp, &uiTmp, &uiTmp, &uiTmp)) {
-
-					pPlayerActif->ModifierChuteLibreJoueur(true);
-					pPlayerActif->ObtenirSpriteJetPack()->DefinirActif(false);
-					pPlayerActif->ObtenirSpriteRepos()->DefinirActif(true);
-					pVecteurVitesse->ModifierVecteur(0, 0.0f);
-				}
-
-				else {
-					pPlayerActif->DefinirPositionX(dX);
-					pPlayerActif->DefinirPositionY(dY);
 				}
 			}
 		}
@@ -1081,6 +1073,9 @@ public:
 		SDL_Rect TmpSDLRectPlayerHitboxCorps = { 0, 0, 1, 1 };									// Structure SDL Rect qui contiendra le rectangle dans le rectangle source dans lequel il faudra vérifier les collisions du pieds.
 		SDL_Rect TmpSDLRectPlayerHitboxPieds = { 0, 0, 1, 1 };									// Structure SDL Rect qui contiendra le rectangle dans le rectangle source dans lequel il faudra vérifier les collisions du corps.
 
+		unsigned int uiTransparenceJoueur;
+		unsigned int uiTransparenceMap;
+
 		if (_pPlayer->ObtenirSpriteCourse()->IsActif()) {						// Si le joueur est en train de courir...
 
 			pTmpSDLSurfacePlayer = _pPlayer->ObtenirSpriteCourse()->ObtenirSurface();			// On se sert de la surface du sprite de course.
@@ -1139,22 +1134,27 @@ public:
 		*_puiXCorps = 0;
 		*_puiYCorps = 0;
 
+		uiTransparenceJoueur = ((unsigned int*)pTmpSDLSurfacePlayer->pixels)[0];
+		uiTransparenceMap = ((unsigned int *)pTmpSDLSurfaceMap->pixels)[0];
+
 		// Vérification de la collision des pieds du joueur avec la carte de jeu...
 
 		for (unsigned int y = 0; y < TmpSDLRectPlayerHitboxPieds.h && !*_pboCollisionPieds; y++) {				// On parcours les pixels dans le hitbox de haut en bas.
 
 			for (unsigned int x = 0; x < TmpSDLRectPlayerHitboxPieds.w && !*_pboCollisionPieds; x++) {			// On parcours les pixels dans le hitbox de gauche à droite.
 
-				if ((((unsigned int*)pTmpSDLSurfaceMap->pixels)[(TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerHitboxPieds.x + x) + (TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerHitboxPieds.y + y) * pTmpSDLSurfaceMap->w] != 0) && (((unsigned int*)pTmpSDLSurfacePlayer->pixels)[(TmpSDLRectPlayerSource.x + TmpSDLRectPlayerHitboxPieds.x + x) + (TmpSDLRectPlayerSource.y + TmpSDLRectPlayerHitboxPieds.y + y) * pTmpSDLSurfacePlayer->w] != 0)) {			// Si il y a une collision entre les pixels non-transparents de la map et les pixels non-transparents des pieds du joueur...
+				if (TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerHitboxPieds.x + x >= 0 && TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerHitboxPieds.x + x < 1366 && TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerHitboxPieds.y + y >= 0 && TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerHitboxPieds.y + y < 768) {
 
-					*_puiXPieds = TmpSDLRectPlayerHitboxPieds.x + x;
-					*_puiYPieds = TmpSDLRectPlayerHitboxPieds.y + y;		// Dans le rectangle destination, on prend la position en y de la collision pour la stocker.
+					if ((((unsigned int*)pTmpSDLSurfaceMap->pixels)[(TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerHitboxPieds.x + x) + (TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerHitboxPieds.y + y) * pTmpSDLSurfaceMap->w] != uiTransparenceMap) && (((unsigned int*)pTmpSDLSurfacePlayer->pixels)[(TmpSDLRectPlayerSource.x + TmpSDLRectPlayerHitboxPieds.x + x) + (TmpSDLRectPlayerSource.y + TmpSDLRectPlayerHitboxPieds.y + y) * pTmpSDLSurfacePlayer->w] != uiTransparenceJoueur)) {			// Si il y a une collision entre les pixels non-transparents de la map et les pixels non-transparents des pieds du joueur...
 
-					*_pboCollisionPieds = true;				// On confirme la collision aux pieds.
+						*_puiXPieds = TmpSDLRectPlayerHitboxPieds.x + x;
+						*_puiYPieds = TmpSDLRectPlayerHitboxPieds.y + y;		// Dans le rectangle destination, on prend la position en y de la collision pour la stocker.
+
+						*_pboCollisionPieds = true;				// On confirme la collision aux pieds.
 
 
+					}
 				}
-
 			}
 
 		}
@@ -1165,15 +1165,17 @@ public:
 
 			for (unsigned int x = 0; x < TmpSDLRectPlayerHitboxCorps.w && !*_pboCollisionCorps; x++) {			// On parcours les pixels dans le hitbox de gauche à droite.
 
-				if ((((unsigned int*)pTmpSDLSurfaceMap->pixels)[(TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerHitboxCorps.x + x) + (TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerHitboxCorps.y + y) * pTmpSDLSurfaceMap->w] != 0) && (((unsigned int*)pTmpSDLSurfacePlayer->pixels)[(TmpSDLRectPlayerSource.x + TmpSDLRectPlayerHitboxCorps.x + x) + (TmpSDLRectPlayerSource.y + TmpSDLRectPlayerHitboxCorps.y + y) * pTmpSDLSurfacePlayer->w] != 0)) {			// Si il y a une collision entre les pixels non-transparents de la map et les pixels non-transparents du corps du joueur...
+				if (TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerHitboxCorps.x + x >= 0 && TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerHitboxCorps.x + x < 1366 && TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerHitboxCorps.y + y >= 0 && TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerHitboxCorps.y + y < 768) {
 
-					*_puiXCorps = TmpSDLRectPlayerHitboxCorps.x + x;
-					*_puiYCorps = TmpSDLRectPlayerHitboxCorps.y + y;		// Dans le rectangle destination, on prend la position en x de la collision pour la stocker.
+					if ((((unsigned int*)pTmpSDLSurfaceMap->pixels)[(TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerHitboxCorps.x + x) + (TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerHitboxCorps.y + y) * pTmpSDLSurfaceMap->w] != uiTransparenceMap) && (((unsigned int*)pTmpSDLSurfacePlayer->pixels)[(TmpSDLRectPlayerSource.x + TmpSDLRectPlayerHitboxCorps.x + x) + (TmpSDLRectPlayerSource.y + TmpSDLRectPlayerHitboxCorps.y + y) * pTmpSDLSurfacePlayer->w] != uiTransparenceJoueur)) {			// Si il y a une collision entre les pixels non-transparents de la map et les pixels non-transparents du corps du joueur...
 
-					*_pboCollisionCorps = true;
+						*_puiXCorps = TmpSDLRectPlayerHitboxCorps.x + x;
+						*_puiYCorps = TmpSDLRectPlayerHitboxCorps.y + y;		// Dans le rectangle destination, on prend la position en x de la collision pour la stocker.
 
+						*_pboCollisionCorps = true;
+
+					}
 				}
-
 			}
 
 		}
@@ -1334,9 +1336,11 @@ public:
 
 								if (((unsigned int*)pPackTmp->GetSurface()->pixels)[(yMissile)* pPackTmp->GetSurface()->w + (XMissile)] != 0) {
 
-									pPackTmp->Use(_pPlayer);
-									*_boExplosion = true;
-									*_RectExplosion = { pPackTmp->GetRectDestination().x + pPackTmp->GetRectDestination().w / 2, pPackTmp->GetRectDestination().y + pPackTmp->GetRectDestination().h / 2, pPackTmp->GetRectDestination().w, pPackTmp->GetRectDestination().h };
+									if (pPackTmp->Use(_pPlayer)) {
+										*_boExplosion = true;
+										*_RectExplosion = { pPackTmp->GetRectDestination().x + pPackTmp->GetRectDestination().w / 2, pPackTmp->GetRectDestination().y + pPackTmp->GetRectDestination().h / 2, pPackTmp->GetRectDestination().w, pPackTmp->GetRectDestination().h };
+									}
+
 									return true;
 
 								}
@@ -1423,8 +1427,10 @@ public:
 					fPourcentage = ((float)iDistanceRayon / (float)_iRayon);
 					pPlayerTmp->SetHealth(pPlayerTmp->GetHealth() * fPourcentage);
 				}
-				if (pPlayerTmp->GetHealth() <= 0) 
+				if (pPlayerTmp->GetHealth() <= 0)  {
 					pPlayerList->RetirerTrieur(true);
+					m_pGameMap->CreateHealthPack();
+				}
 				
 
 				else

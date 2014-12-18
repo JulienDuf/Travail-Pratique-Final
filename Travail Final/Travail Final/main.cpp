@@ -424,6 +424,11 @@ void Start(char* _strApplicationFilename) {
 	strEmplacement.append("Armes et Packs\\Mine.png");
 	pGestionnaireSurface->AjouterDonnee(IMG_Load(strEmplacement.c_str()), "pSurfaceMine");
 
+	// Chargement de la surface des healthpacks...
+	strEmplacement = strApplicationPath;
+	strEmplacement.append("Armes et Packs\\HealthPack.png");
+	pGestionnaireSurface->AjouterDonnee(IMG_Load(strEmplacement.c_str()), "pSurfaceHealthPack");
+
 	// Chargement de la surface de l'explosion du missile...
 	strEmplacement = strApplicationPath;
 	strEmplacement.append("Armes et Packs\\ExplosionMissile.png");
@@ -476,6 +481,16 @@ void Start(char* _strApplicationFilename) {
 	strEmplacement = strApplicationPath;
 	strEmplacement.append("Personnege\\bazooka.png");
 	pGestionnaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTexturePlayerBazooka");
+
+	// Chargement de la surface des mines...
+	strEmplacement = strApplicationPath;
+	strEmplacement.append("Armes et Packs\\Mine.png");
+	pGestionnaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer() ,strEmplacement.c_str()), "pTextureMine");
+
+	// Chargement de la surface des healthpacks...
+	strEmplacement = strApplicationPath;
+	strEmplacement.append("Armes et Packs\\HealthPack.png");
+	pGestionnaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTextureHealthPack");
 
 	// Chargement de la texture de la barre de puissance
 	strEmplacement = strApplicationPath;

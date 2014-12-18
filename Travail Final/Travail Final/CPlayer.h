@@ -126,7 +126,6 @@ public:
 			{
 				if (_uiObjetSelectionner <= 3) {
 					m_pListeMouvement->AllerACurseur(_uiObjetSelectionner - 2);
-					m_boToolActif = true;
 				}
 				else
 					m_pListeMouvement->AllerACurseur(2);
@@ -203,6 +202,11 @@ public:
 
 	void ModifierGlissadeJoueur(bool _boGlissade) {
 		m_boChuteLibre = _boGlissade;
+	}
+
+	void ModifierTypeMouvement(int _iPositionCurseur) {
+
+		m_pListeMouvement->AllerACurseur(_iPositionCurseur);
 	}
 
 	void DefinirPositionX(double _dX) {

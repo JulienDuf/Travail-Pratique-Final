@@ -1,5 +1,5 @@
 Niveau de Carburant : 100%
 
-Poussée vertical : 10
+Poussée vertical : 15
 
 C'est un oiseau? Un avion? Non c'est SuperStickman

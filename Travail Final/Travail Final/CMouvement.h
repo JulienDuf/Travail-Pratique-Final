@@ -14,7 +14,7 @@ public:
 
 	virtual unsigned int ObtenirMunition() = 0;
 
-	virtual CVecteur2D* ObtenirVecteur(void) = 0;
-
 	virtual bool IsActive(void) = 0;
+
+	virtual CVecteur2D* ObtenirVecteur(void) = 0;
 };

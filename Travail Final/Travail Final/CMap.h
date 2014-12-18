@@ -117,13 +117,19 @@ public:
 		m_pPackList->AllerDebut();
 		for (int i = 0; i < m_pPackList->ObtenirCompte(); i++) {
 
-			if (m_pPackList->ObtenirElementCurseur()->IsUse() && !m_pPackList->ObtenirElementCurseur()->GetSpriteExplosion()->IsActif())
-				m_pPackList->Retirer(true);
-
-			else {
-				m_pPackList->ObtenirElementCurseur()->ShowPack(_pSDLRenderer);
-				m_pPackList->AllerSuivantCurseur();
+			if (m_pPackList->ObtenirElementCurseur()->GetSpriteExplosion() != nullptr) {
+				if (m_pPackList->ObtenirElementCurseur()->IsUse() && !m_pPackList->ObtenirElementCurseur()->GetSpriteExplosion()->IsActif())
+					m_pPackList->Retirer(true);
 			}
+			
+			else {
+				if (m_pPackList->ObtenirElementCurseur()->IsUse())
+					m_pPackList->Retirer(true);
+			}
+
+			m_pPackList->ObtenirElementCurseur()->ShowPack(_pSDLRenderer);
+			m_pPackList->AllerSuivantCurseur();
+			
 		}
 			
 		
@@ -139,6 +145,11 @@ public:
 		string str = chr;
 		str.append(" km/h");
 		m_pVent->ModifierForce(_pFont, str.c_str(), { 0, 0, 0 }, _pRenderer);
+	}
+
+	void CreateHealthPack(void) {
+
+		m_pPackList->AjouterFin(new CHealthPack());
 	}
 
 	void PutMapInTexture(SDL_Renderer* _pRenderer) {

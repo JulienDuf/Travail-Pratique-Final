@@ -135,16 +135,6 @@ public:
 		return NULL;
 	}
 
-	CVecteur2D* ObtenirVecteur(void) {
-
-		return nullptr;
-	}
-
-	bool IsActive(void) {
-
-		return m_boSpace;
-	}
-
 	CSprite* ObtenirSprite(string _strNom) { return m_pSprite; }
 
 	void UpdateDescription(bool _boShow, SDL_Rect _RectPositionDescription) {
@@ -162,5 +152,15 @@ public:
 			m_pLblDescription->SetRectDestinationY(_RectPositionDescription.y - uiH);
 		else
 			m_pLblDescription->SetRectDestinationY(_RectPositionDescription.y);
+	}
+
+	bool IsActive(void) {
+
+		return true;
+	}
+
+	CVecteur2D* ObtenirVecteur(void) {
+
+		return nullptr;
 	}
 };

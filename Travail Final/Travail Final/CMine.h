@@ -19,7 +19,7 @@ public:
 	CMine(SDL_Renderer* _Renderer, void _MapDestruction(int _iRayon, int _iX, int _iY)){
 		//initialisation de la texture.
 		m_pSurface = pGestionnaireSurface->ObtenirDonnee("pSurfaceMine");		
-		m_pTexture = SDL_CreateTextureFromSurface(_Renderer, m_pSurface);
+		m_pTexture = pGestionnaireTexture->ObtenirDonnee("pTextureMine");
 		
 		
 		//initialisation de la position de la mine

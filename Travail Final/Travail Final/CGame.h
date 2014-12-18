@@ -192,6 +192,11 @@ public:
 						pPlayerActif->DefinirPositionY(dComposanteY);
 						pPlayerActif->ObtenirVecteurVitesse()->ModifierComposantY(0);
 
+						/*if (RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination(), false) == 240 || RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination(), false) == 330) {
+							pPlayerActif->ModifierGlissadeJoueur(true);
+							pPlayerActif->ObtenirSpriteCourse()->DefinirActif(false);
+							pPlayerActif->ObtenirSpriteRepos()->DefinirActif(true);
+						}*/
 
 					}
 
@@ -585,22 +590,21 @@ public:
 
 		else {
 			_RectRegression = _RectPiedJoueur;
-			_RectRegression.y += _RectPiedJoueur.h / 2;
-			_RectRegression.h += 10;
+			_RectRegression.h = 30;
+
 		}
 
-		//int* iTableau = new int[_RectRegression.w,_RectRegression.h]; // Tableau.
-		int iTableau[38][28];
+		int iTableau[5000]; // Tableau.
 		for (int j = 0; j < _RectRegression.h; j++) { // Boucler sur toute le rect du pied dans la position de la map.
 			for (int i = 0; i < _RectRegression.w; i++) {
 				if (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(i + _RectRegression.x + _RectJoueur.x) + ((j + _RectRegression.y + _RectJoueur.y) * (m_pGameMap->ObtenirSurfaceMap()->w))] != 0)  { // Si le pixel est transparent.
-					iTableau[i][j] = 1; // Mettre 1 dans mon tableau.
+					iTableau[i + j * _RectRegression.w] = 1; // Mettre 1 dans mon tableau.
 					fX += i; // fX va servir a faire la moyenne des X.
 					fY += j; // fY va servir a faire la moyenne des Y.
 					iN += 1; // Pour diviser le nombre d'éléments.
 				}
 				else
-					iTableau[i][j] = 0;
+					iTableau[i + j * _RectRegression.w] = 0;
 			}
 		}
 		if (fX != 0 && fY != 0) {
@@ -609,9 +613,9 @@ public:
 		}
 		for (int j = 0; j < _RectRegression.h; j++) {
 			for (int i = 0; i < _RectRegression.w; i++) {
-				if (iTableau[i][j] == 1) {
+				if (iTableau[i + j * _RectRegression.w] == 1) {
 					iCov += ((j - fY) * (i - fX)); // Calcul pour Y moyens avec le Y moyens.
-					iVar += pow((j - fY), 2);    // Calcul pour X moyens avec le X moyens.
+					iVar += pow((i - fX), 2);    // Calcul pour X moyens avec le X moyens.
 				}
 			}
 		}
@@ -619,11 +623,12 @@ public:
 		if (iCov != 0 && iVar != 0) {
 			iCov = (iCov / iN); //moyenne
 			iVar = (iVar / iN); //moyenne
+			fPente = iCov / iVar; // Donne la pente. iCov = y , iVar = x.
 		}
 
 
 
-		fPente = iCov / iVar; // Donne la pente. iCov = y , iVar = x.
+
 		if (!_boObjet) {
 			if (iCov != 0 && iVar != 0) {
 				if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 0 && fPente > 0) { // Le joueur se déplace vers la droite et la pente est positive.
@@ -646,7 +651,10 @@ public:
 			}
 		}
 		else {
-			return (180 / M_PI) * atanf(fPente);
+			if (fPente != 0)
+				return (180 / M_PI) * atanf(fPente);
+			else
+				return 270;
 		}
 
 		return 362;

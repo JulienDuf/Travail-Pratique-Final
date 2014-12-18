@@ -24,7 +24,7 @@ public:
 
 		m_pSpriteCourse = new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceCourse"), pGestionnaireTexture->ObtenirDonnee("pTextureCourse"), _RectDestination, 9, 50, true, false, 2);
 
-		m_pSpriteSaut = new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceSaut"), pGestionnaireTexture->ObtenirDonnee("pTextureSaut"), _RectDestination, 9, 400, false, false, 2);
+		m_pSpriteSaut = new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceSaut"), pGestionnaireTexture->ObtenirDonnee("pTextureSaut"), _RectDestination, 5, 400, false, false, 2);
 
 		m_pSpriteRepos = new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceRepos"), pGestionnaireTexture->ObtenirDonnee("pTextureRepos"), _RectDestination, 1, 50, true, false, 2);
 	}
@@ -95,18 +95,29 @@ public:
 
 		case SDL_SCANCODE_SPACE: // Saut
 
-			if (_pEvent->type == SDL_KEYDOWN && !m_boSpace && !m_pSpriteSaut->IsActif()) {
+			if (_pEvent->type == SDL_KEYDOWN) {
 
-				m_boSpace = true;
-				m_pSpriteRepos->DefinirActif(false);
-				m_pSpriteCourse->DefinirActif(false);
-				m_pSpriteSaut->DefinirEtage(m_pSpriteCourse->ObtenirEtage()); // Pour que le saut sois du même bord que la course.
-				m_pSpriteSaut->DefinirActif(true);
-				_pVecteurVitesse->ModifierComposantY(-100);
-				*_boStable = false;
+				if (!m_pSpriteSaut->IsActif()) {
+					m_boSpace = true;
+
+					if (m_pSpriteRepos->IsActif()) {
+						m_pSpriteRepos->DefinirActif(false);
+						m_pSpriteSaut->DefinirEtage(m_pSpriteRepos->ObtenirEtage()); // Pour que le saut sois du même bord que le repos.
+					}
+
+					else if (m_pSpriteCourse->IsActif()) {
+						m_pSpriteCourse->DefinirActif(false);
+						m_pSpriteSaut->DefinirEtage(m_pSpriteCourse->ObtenirEtage()); // Pour que le saut sois du même bord que le repos.
+					}
+
+					m_pSpriteSaut->DefinirActif(true);
+					_pVecteurVitesse->ModifierComposantY(-100);
+					*_boStable = false;
+				}
 
 			}
-			else if (m_pSpriteSaut->IsActif() || !m_pSpriteSaut->IsActif())
+
+			else
 				m_boSpace = false;
 
 			break;
@@ -123,8 +134,12 @@ public:
 		else if (m_pSpriteSaut->IsActif()) {
 			m_pSpriteSaut->ModifierAnnimation();
 			m_pSpriteSaut->Render(_pRenderer, _RectPlayerDestination);
+			if (!m_pSpriteSaut->IsActif()) {
+				m_pSpriteRepos->DefinirActif(true);
+				
+			}
 		}
-		else
+		if (m_pSpriteRepos->IsActif())
 		{
 			m_pSpriteRepos->DefinirActif(true);
 			m_pSpriteRepos->ModifierAnnimation();

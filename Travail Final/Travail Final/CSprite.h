@@ -101,10 +101,13 @@ public:
 
 					m_RectSource.x = m_uiPositionBouclageDebut * m_RectSource.w; // Retour au départ voulu.
 				}
-				else
-				{
+
+				else {
+
 					m_boActif = false;
+
 				}
+				
 				return true;
 			}
 			else

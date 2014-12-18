@@ -140,7 +140,7 @@ public:
 
 						else if (!VerifierCollisionJoueurMap(pPlayerActif, RectTmp, &boCorps, &boPied, &_uiXPieds, &_uiYPieds, &_uiXCorps, &_uiYCorps)) {
 
-							pPlayerActif->ObtenirVecteurPoids()->ModifierComposantY(m_pGameMap->ObtenirGravite()->ObtenirComposanteY());
+							pPlayerActif->ObtenirVecteurPoids()->ModifierComposantY(m_pGameMap->ObtenirGravite()->ObtenirComposanteY()*3);
 
 							*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
 							dComposanteX += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35;
@@ -194,7 +194,13 @@ public:
 
 					}
 
+					else if (pPlayerActif->ObtenirSpriteSaut()->IsActif()) {
 
+
+
+					}
+
+					/*
 					else if (pPlayerActif->IsSliding()) {
 						CVecteur2D* VecteurFrottement = new CVecteur2D(1, 0.0f);
 						double doAngle = RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination(), false); // Variable qui sert a calcul juste 1 fois l'angle.
@@ -243,7 +249,7 @@ public:
 						if (pPlayerActif->ObtenirVecteurVitesse() == 0 && RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination(), false) < 60) // Si la glissade est fini.
 							pPlayerActif->ModifierGlissadeJoueur(false);
 					}
-
+					*/
 				}
 
 				m_pTimerPhysique->Start();

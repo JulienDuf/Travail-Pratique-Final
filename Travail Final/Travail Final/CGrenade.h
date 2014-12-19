@@ -182,10 +182,6 @@ public:
 		m_PointRotation = { m_RectDestinationGrenade.w, m_RectDestinationGrenade.h / 2 };
 	}
 	
-	~CGrenade() {
-		SDL_FreeSurface(m_pSurfaceGrenadeRotation);
-	}
-
 	bool ReactionExplosion(int iX, int iY) {
 		if (m_pTimerExplosion->IsDone()) {
 			m_boExplosion = true;
@@ -196,8 +192,6 @@ public:
 			m_RectDestinationGrenade.x += m_RectDestinationGrenade.w / 2;
 			m_RectDestinationGrenade.y += m_RectDestinationGrenade.h / 2;
 			m_pMapDestruction(m_uiRayon, m_RectDestinationGrenade.x, m_RectDestinationGrenade.y);
-			m_RectDestinationGrenade.x -= m_uiRayon;
-			m_RectDestinationGrenade.y -= m_uiRayon;
 			m_RectDestinationGrenade.w = 2 * m_uiRayon;
 			m_RectDestinationGrenade.h = 2 * m_uiRayon;
 			delete m_pVecteurVitesseGrenade;
@@ -314,6 +308,12 @@ public:
 			m_pLblDescription->SetRectDestinationY(_RectPositionDescription.y - uiH);
 		else
 			m_pLblDescription->SetRectDestinationY(_RectPositionDescription.y);
+	}
+
+	void ReinitialisationProjectile(void) {
+
+		m_pBarrePuissance->Reinitialisation();
+		m_pBarrePuissance->ModidierActivite(true);
 	}
 
 	CVecteur2D* ObtenirVecteurVitesse() {

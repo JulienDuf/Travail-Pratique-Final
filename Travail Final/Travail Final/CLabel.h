@@ -90,8 +90,8 @@ public:
 	}
 
 	~CLabel() {
-		m_pListeTextureLabel->DetruireListeTexture();
-		delete m_pListeTextureLabel;
+
+		
 	}
 
 	// Procédure permettant d'afficher le label...

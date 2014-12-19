@@ -98,10 +98,6 @@ public:
 		m_boSpace = false;
 	}
 
-	~CMelee() {
-		delete m_pSprite;
-		delete m_pLblDescription;
-	}
 
 	void ReactToEvent(SDL_Event* _pEvent, CVecteur2D* _pVecteurVitesse, bool* _boStable) { 
 		m_pSprite->DefinirActif(true);

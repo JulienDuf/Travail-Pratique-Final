@@ -9,6 +9,7 @@ private:
 
 	int m_iAngle; // L'angle de la barre.
 	unsigned int m_uiForce; // La force affiché par la barre.
+	bool m_boActive; // La barre est active.
 
 	SDL_Point m_PointRotation; // Le point de rotation.
 	SDL_Texture* m_pSDLTextureBarrre; // La texture de la barre.
@@ -24,6 +25,7 @@ public:
 	CBarrePuissance() {
 
 		m_uiForce = 0;
+		m_boActive = true;
 
 		m_pSDLTextureBarrre = pGestionnaireTexture->ObtenirDonnee("pTextureBarrePuissance");
 
@@ -42,9 +44,11 @@ public:
 	// Param1: Le renderer de la fenêtre.
 	void AfficherBarre(SDL_Renderer* _pRenderer, SDL_Rect _RectBarreDestination) {
 
-		m_RectDestinationBarre.x = _RectBarreDestination.x + _RectBarreDestination.w;
-		m_RectDestinationBarre.y = _RectBarreDestination.y;
-		SDL_RenderCopyEx(_pRenderer, m_pSDLTextureBarrre, &m_RectSourceBarre, &m_RectDestinationBarre, m_iAngle, &m_PointRotation, SDL_FLIP_NONE);
+		if (m_boActive) {
+			m_RectDestinationBarre.x = _RectBarreDestination.x + _RectBarreDestination.w;
+			m_RectDestinationBarre.y = _RectBarreDestination.y;
+			SDL_RenderCopyEx(_pRenderer, m_pSDLTextureBarrre, &m_RectSourceBarre, &m_RectDestinationBarre, m_iAngle, &m_PointRotation, SDL_FLIP_NONE);
+		}
 	}
 
 	void ModifierForceBarre(int _iForce) {
@@ -97,7 +101,7 @@ public:
 	}
 
 	void Reinitialisation() {
-		m_uiForce = 1;
+		m_uiForce = 0;
 		m_iAngle = 0;
 	}
 
@@ -125,4 +129,8 @@ public:
 		m_RectDestinationBarre.y = _RectDestination.y;
 	}
 
+	void ModidierActivite(bool _boActive) {
+
+		m_boActive = _boActive;
+	}
 };

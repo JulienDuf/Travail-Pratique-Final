@@ -116,14 +116,6 @@ public:
 		m_uiTempsPropulsionInitiale = 0;
 	}
 
-	~CJetPack() {
-
-		delete m_pSpriteJetPack;
-		delete m_pBarreDeCarburant;
-		delete m_pLblDescription;
-		delete pVecteur;
-	}
-
 	void ReactToEvent(SDL_Event* _pEvent, CVecteur2D* _pVecteurVitesse, bool* _boStable) {
 
 		*_boStable = false;

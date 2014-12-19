@@ -8,11 +8,12 @@ private:
 
 	CMap* m_pGameMap; //La map.
 	CListeDC<CTeam*>* m_pTeamList; // Liste d'équipe.
+	CListeDC<CTemporaryLabel*>* m_pListeDomage; // Listes des domages.
 	CToolBar* m_pToolBar; // La toolbar où le joueur choisi son outils pour son tour.
 	CTimer* m_pTimerPhysique; // Le timer pour la physique.
 
 	bool m_boDebutPartie; // Si le jeu est en début de partie.
-
+	bool m_boFinTour; // Si le jeu est en fin de tour.
 
 public:
 
@@ -20,8 +21,10 @@ public:
 
 
 		m_boDebutPartie = true;
+		m_boFinTour = false;
 
 		m_pTeamList = new CListeDC<CTeam*>();
+		m_pListeDomage = new CListeDC<CTemporaryLabel*>();
 
 		m_pGameMap = new CMap(_strEmplacementMap, { 0, 0, 0, 0 }, _pVent, _pRenderer, _MapDestruction);
 
@@ -37,17 +40,10 @@ public:
 		m_pTimerPhysique->Start();
 	}
 
-	~CGame() {
-
-		delete m_pGameMap;
-		delete m_pTeamList;
-		delete m_pToolBar;
-		delete m_pTimerPhysique;
-	}
-
 	void ChangerTour(SDL_Renderer* _pRenderer) {
 		m_pTeamList->AllerSuivantCurseur();
 		m_pTeamList->ObtenirElementCurseur()->ChangerPlayerActif();
+		m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ReinitialisationTool();
 		m_pGameMap->NouveauVent(pGestionnaireFont->ObtenirDonnee("pFontBouton"), _pRenderer);
 		m_pToolBar->NouveauTour();
 	}
@@ -62,14 +58,20 @@ public:
 
 	void AfficherGame(SDL_Renderer* _pRenderer, bool _boPause) {
 
-		if (m_boDebutPartie)
+		if (m_boDebutPartie && m_boFinTour) {
+			m_boDebutPartie = !IsAllTeamStable();
+			if (!m_boDebutPartie)
+				ChangerTour(_pRenderer);
+		}
+
+		else if (m_boDebutPartie)
 			m_boDebutPartie = !IsAllTeamStable();
 
 		m_pGameMap->ShowMap(_pRenderer);
 
 		if (!_boPause) {
 			PhysiquePlayer(_pRenderer);
-			PhysiquePack();
+			PhysiquePack(_pRenderer);
 		}
 
 		for (int i = 0; i < m_pTeamList->ObtenirCompte(); i++) {
@@ -80,6 +82,17 @@ public:
 		if (!_boPause) {
 			m_pToolBar->ShowToolBar(_pRenderer);
 			m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ShowDescription(_pRenderer);
+		}
+
+		m_pListeDomage->AllerDebut();
+		for (int i = 0; i < m_pListeDomage->ObtenirCompte(); i++) {
+
+			m_pListeDomage->ObtenirElementCurseur()->ShowControl(_pRenderer);
+			if (m_pListeDomage->ObtenirElementCurseur()->IsDead())
+				m_pListeDomage->Retirer(true);
+			else
+				m_pListeDomage->AllerSuivantCurseur();
+
 		}
 	}
 
@@ -143,7 +156,7 @@ public:
 						if (boExplosion) {
 
 							pPlayerActif->SetHealth(0);
-							DomageExplosion(RectExplosion, 45);
+							DomageExplosion(RectExplosion, 45, _pRenderer);
 							
 						}
 
@@ -341,7 +354,7 @@ public:
 
 								if (boExplosion) {
 									pPlayer->SetHealth(0);
-									DomageExplosion(RectTmp, 45);
+									DomageExplosion(RectTmp, 45, _pRenderer);
 								}
 
 							}
@@ -384,7 +397,7 @@ public:
 		}
 	}
 
-	void PhysiquePack(void) {
+	void PhysiquePack(SDL_Renderer* _pRenderer) {
 
 		CListeDC<CPack*>* pPackListTmp = m_pGameMap->ObtenirPackList();
 		SDL_Rect RectTmp;
@@ -421,19 +434,14 @@ public:
 			SDL_Rect* RectTmp = NULL;
 			CVecteur2D* pVecteurVitesse;
 			int iX, iY;
-
-			if (!pProjectileTmp->ObtenirSprite("")->IsActif() && pProjectileTmp->ExplosionEnCours()) {
-				m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->DefinirToolActif(false);
-				ChangerTour(_pRenderer);
-				pProjectileTmp->DefinirExplosion(false);
-			}
 			
 			if (pProjectileTmp->ObtenirSprite("") != nullptr) {
 
 				if (!pProjectileTmp->ObtenirSprite("")->IsActif() && pProjectileTmp->ExplosionEnCours()) {
 					m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->DefinirToolActif(false);
-					ChangerTour(_pRenderer);
 					pProjectileTmp->DefinirExplosion(false);
+					m_boDebutPartie = true;
+					m_boFinTour = true;
 				}
 			}
 			if (m_pToolBar->ObtenirPositionObjetDoubleClick() == 0 && pProjectileTmp->EstLancer())  {
@@ -444,15 +452,12 @@ public:
 				if (CollisionMissile(pProjectileTmp->ObtenirSurface(), *pProjectileTmp->ObtenirRectDestination(), &iX, &iY)) {
 
 					pProjectileTmp->ReactionExplosion(pProjectileTmp->ObtenirRectDestination()->x + iX, pProjectileTmp->ObtenirRectDestination()->y + iY);
-
-					AfficherGame(_pRenderer, false);
-					SDL_RenderPresent(_pRenderer);
-
-					DomageExplosion({ pProjectileTmp->ObtenirRectDestination()->x + iX, pProjectileTmp->ObtenirRectDestination()->y + iY}, 50);
+					DomageExplosion({ pProjectileTmp->ObtenirRectDestination()->x + iX, pProjectileTmp->ObtenirRectDestination()->y + iY}, 50, _pRenderer);
 				}
 
-				else if (RectTmp->x >= 1366 || RectTmp->x + RectTmp->w <= 0 || RectTmp->y >= 768)
+				else if (RectTmp->x >= 1366 || RectTmp->x + RectTmp->w <= 0 || RectTmp->y >= 768) {
 					pProjectileTmp->ReactionExplosion(-100, -100);
+				}
 
 				RectTmp->x += pVecteurVitesse->ObtenirComposanteX() / 35;
 				RectTmp->y += pVecteurVitesse->ObtenirComposanteY() / 35;
@@ -481,7 +486,7 @@ public:
 				// AutoDesctruction de la grenade...
 				if (pProjectileTmp->ReactionExplosion(0, 0)) {
 					RectTmp = pProjectileTmp->ObtenirRectDestination();
-					DomageExplosion({ RectTmp->x, RectTmp->y }, RectTmp->w / 2);
+					DomageExplosion({ RectTmp->x, RectTmp->y }, RectTmp->w / 2, _pRenderer);
 				}
 				else if (RectTmp->x >= 1366 || RectTmp->x + RectTmp->w <= 0 || RectTmp->y >= 768) {
 					pProjectileTmp->DestructionProjectile();
@@ -597,77 +602,122 @@ public:
 		}
 
 		else {
+
 			_RectRegression = _RectPiedJoueur;
-			_RectRegression.h = 30;
+
+			int j = 0;
+			float y1 = 0;
+			float y2 = 0;
+			float x1 = _RectRegression.x;
+			float x2 = _RectRegression.x + _RectRegression.w;
+			float fPente = 0;
+			while (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(_RectRegression.x + _RectJoueur.x) + ((j + _RectRegression.y + _RectJoueur.y) * m_pGameMap->ObtenirSurfaceMap()->w)] == 0 && j < 50) { // Coter gauche du rect.
+				j++;
+				y1 = j;
+			}
+			if (j > 50) {
+				j = 0;
+				while (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[((_RectRegression.w / 2) + _RectRegression.x + _RectJoueur.x) + ((j + _RectRegression.y + _RectJoueur.y) * m_pGameMap->ObtenirSurfaceMap()->w)] == 0 && j < 50) { // Si le coter gauche na pas de trouver de boute de pente, je le pars a la moitier.
+					j++;
+					y1 = j;
+				}
+			}
+			if (j > 50) // Si y'a toujours rien trouver, ca veut dire que c'est a la verticale ou presque.
+				return 90;
+			j = 0;
+			while (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(_RectRegression.w + _RectRegression.x + _RectJoueur.x) + ((j + _RectRegression.y + _RectJoueur.y) * m_pGameMap->ObtenirSurfaceMap()->w)] == 0 && j < 50) { // Coter droite du rect
+				j++;
+				y2 = j;
+			}
+
+			if (j > 50) { // Si y'a rien trouver le faire partir a la moitier.
+				j = 0;
+				while (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[((_RectRegression.w / 2) + _RectRegression.x + _RectJoueur.x) + ((j + _RectRegression.y + _RectJoueur.y) * m_pGameMap->ObtenirSurfaceMap()->w)] == 0 && j < 50) {
+					j++;
+					y2 = j;
+				}
+			}
+			if (j > 50) // Si y'a rien trouver encore ca veut dire que c'est à la verticale.
+				return 90;
+
+			fPente = ((y2 - y1) / (x2 - x1));
+			return (180 / M_PI) * atanf(fPente);
+
 
 		}
 
+
+
+
+
+		/* Ancienne régression ...
 		int iTableau[5000]; // Tableau.
 		for (int j = 0; j < _RectRegression.h; j++) { // Boucler sur toute le rect du pied dans la position de la map.
-			for (int i = 0; i < _RectRegression.w; i++) {
-				if (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(i + _RectRegression.x + _RectJoueur.x) + ((j + _RectRegression.y + _RectJoueur.y) * (m_pGameMap->ObtenirSurfaceMap()->w))] != 0)  { // Si le pixel est transparent.
-					iTableau[i + j * _RectRegression.w] = 1; // Mettre 1 dans mon tableau.
-					fX += i; // fX va servir a faire la moyenne des X.
-					fY += j; // fY va servir a faire la moyenne des Y.
-					iN += 1; // Pour diviser le nombre d'éléments.
-				}
-				else
-					iTableau[i + j * _RectRegression.w] = 0;
-			}
+		for (int i = 0; i < _RectRegression.w; i++) {
+		if (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(i + _RectRegression.x + _RectJoueur.x) + ((j + _RectRegression.y + _RectJoueur.y) * (m_pGameMap->ObtenirSurfaceMap()->w))] != 0)  { // Si le pixel est transparent.
+		iTableau[i + j * _RectRegression.w] = 1; // Mettre 1 dans mon tableau.
+		fX += i; // fX va servir a faire la moyenne des X.
+		fY += j; // fY va servir a faire la moyenne des Y.
+		iN += 1; // Pour diviser le nombre d'éléments.
+		}
+		else
+		iTableau[i + j * _RectRegression.w] = 0;
+		}
 		}
 		if (fX != 0 && fY != 0) {
-			fX = fX / iN; // moyenne
-			fY = fY / iN; // moyenne
+		fX = fX / iN; // moyenne
+		fY = fY / iN; // moyenne
 		}
 		for (int j = 0; j < _RectRegression.h; j++) {
-			for (int i = 0; i < _RectRegression.w; i++) {
-				if (iTableau[i + j * _RectRegression.w] == 1) {
-					iCov += ((j - fY) * (i - fX)); // Calcul pour Y moyens avec le Y moyens.
-					iVar += pow((i - fX), 2);    // Calcul pour X moyens avec le X moyens.
-				}
-			}
+		for (int i = 0; i < _RectRegression.w; i++) {
+		if (iTableau[i + j * _RectRegression.w] == 1) {
+		iCov += ((j - fY) * (i - fX)); // Calcul pour Y moyens avec le Y moyens.
+		iVar += pow((i - fX), 2);    // Calcul pour X moyens avec le X moyens.
+		}
+		}
 		}
 
 		if (iCov != 0 && iVar != 0) {
-			iCov = (iCov / iN); //moyenne
-			iVar = (iVar / iN); //moyenne
-			fPente = iCov / iVar; // Donne la pente. iCov = y , iVar = x.
+		iCov = (iCov / iN); //moyenne
+		iVar = (iVar / iN); //moyenne
+		fPente = iCov / iVar; // Donne la pente. iCov = y , iVar = x.
 		}
 
 
 
 
 		if (!_boObjet) {
-			if (iCov != 0 && iVar != 0) {
-				if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 0 && fPente > 0) { // Le joueur se déplace vers la droite et la pente est positive.
-					fPente = (180 / M_PI) * atanf(fPente);
-					return fPente;
-				}
+		if (iCov != 0 && iVar != 0) {
+		if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 0 && fPente > 0) { // Le joueur se déplace vers la droite et la pente est positive.
+		fPente = (180 / M_PI) * atanf(fPente);
+		return fPente;
+		}
 
-				if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 0 && fPente < 0) { // Le joueur se déplace vers la droite et la pente est négative.
-					fPente = 360 - ((180 / M_PI) * atanf(fPente));
-					return fPente;
-				}
-				if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 1 && fPente > 0) { // Le joueur se déplace vers la gauche et la pente est positive.
-					fPente = 180 + (180 / M_PI) * atanf(fPente);
-					return fPente;
-				}
-				if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 1 && fPente < 0) { // Le joueur se déplace vers la gauche et la pente est négative.
-					fPente = 180 + (180 / M_PI) * atanf(fPente);
-					return fPente;
-				}
-			}
+		if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 0 && fPente < 0) { // Le joueur se déplace vers la droite et la pente est négative.
+		fPente = 360 - ((180 / M_PI) * atanf(fPente));
+		return fPente;
+		}
+		if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 1 && fPente > 0) { // Le joueur se déplace vers la gauche et la pente est positive.
+		fPente = 180 + (180 / M_PI) * atanf(fPente);
+		return fPente;
+		}
+		if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 1 && fPente < 0) { // Le joueur se déplace vers la gauche et la pente est négative.
+		fPente = 180 + (180 / M_PI) * atanf(fPente);
+		return fPente;
+		}
+		}
 		}
 		else {
-			if (fPente != 0)
-				return (180 / M_PI) * atanf(fPente);
-			else
-				return 270;
+		if (fPente != 0)
+		return (180 / M_PI) * atanf(fPente);
+		else
+		return 270;
 		}
 
-		return 362;
+		return 362;*/
 
 	}
+
 
 	// Procédure déterminant la position d'une collision entre un objet et la map, si il y en a une.
 	// En entrée:
@@ -1371,7 +1421,7 @@ public:
 
 	}
 
-	void DomageExplosion(SDL_Rect _RectPositionExplosion, int _iRayon) {
+	void DomageExplosion(SDL_Rect _RectPositionExplosion, int _iRayon, SDL_Renderer* _pRenderer) {
 
 		CListeDC<CPlayer*>* pPlayerList;
 		CListeDC<CPack*>* pPackList;
@@ -1385,8 +1435,10 @@ public:
 		_RectPositionExplosion.x -= _iRayon;
 		_RectPositionExplosion.y -= _iRayon;
 
-		int iDistanceRayon;
+		int iDistanceRayon, iDomage;
 		float fPourcentage;
+		char chrTmp[8];
+		string strDomage;
 
 		m_pTeamList->AllerATrieur(0);
 		for (int i = 0; i < m_pTeamList->ObtenirCompte() && m_pTeamList->ObtenirCompte() > 0; i++) {
@@ -1404,14 +1456,30 @@ public:
 
 					iDistanceRayon = (_RectPositionExplosion.x + _iRayon) - (RectDestinationPlayer.x + RectDestinationPlayer.w);
 					fPourcentage = ((float)iDistanceRayon / (float)_iRayon);
+
+					iDomage = (float)((1 - fPourcentage) * pPlayerTmp->GetHealth()) * 100;
+
+					strDomage.append("-");
+					strDomage.append(SDL_itoa(iDomage, chrTmp, 10));
+					m_pListeDomage->AjouterFin(new CTemporaryLabel(strDomage, { 200, 0, 0, 255 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 20, 0, 0 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 80, 0, 0 }, 30, 2000, _pRenderer));
+
 					pPlayerTmp->SetHealth(pPlayerTmp->GetHealth() * fPourcentage);
+					pPlayerTmp->ModifierStabiliteJoueur(false);
 				}
 
 				else if ((RectDestinationPlayer.x <= _RectPositionExplosion.x + _RectPositionExplosion.w && RectDestinationPlayer.x + RectDestinationPlayer.w > _RectPositionExplosion.x + _RectPositionExplosion.w) && (RectDestinationPlayer.y + RectDestinationPlayer.h >= _RectPositionExplosion.y && RectDestinationPlayer.y <= _RectPositionExplosion.y + _RectPositionExplosion.h)) {
 
 					iDistanceRayon = RectDestinationPlayer.x - (_RectPositionExplosion.x + _iRayon);
 					fPourcentage = ((float)iDistanceRayon / (float)_iRayon);
+					
+					iDomage = (float)((1 - fPourcentage) * pPlayerTmp->GetHealth()) * 100;
+
+					strDomage.append("-");
+					strDomage.append(SDL_itoa(iDomage, chrTmp, 10));
+					m_pListeDomage->AjouterFin(new CTemporaryLabel(strDomage, { 200, 0, 0, 255 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 20, 0, 0 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 80, 0, 0 }, 30, 2000, _pRenderer));
+					
 					pPlayerTmp->SetHealth(pPlayerTmp->GetHealth() * fPourcentage);
+					pPlayerTmp->ModifierStabiliteJoueur(false);
 				}
 
 				else if ((RectDestinationPlayer.x >= _RectPositionExplosion.x && RectDestinationPlayer.x + RectDestinationPlayer.w <= _RectPositionExplosion.x + _RectPositionExplosion.w) && (RectDestinationPlayer.y >= _RectPositionExplosion.y && RectDestinationPlayer.y + RectDestinationPlayer.h <= _RectPositionExplosion.y + _RectPositionExplosion.h)) {
@@ -1426,7 +1494,15 @@ public:
 						iDistanceRayon = RectDestinationPlayer.x - (_RectPositionExplosion.x + _iRayon);
 
 					fPourcentage = ((float)iDistanceRayon / (float)_iRayon);
+					
+					iDomage = (float)((1 - fPourcentage) * pPlayerTmp->GetHealth()) * 100;
+
+					strDomage.append("-");
+					strDomage.append(SDL_itoa(iDomage, chrTmp, 10));
+					m_pListeDomage->AjouterFin(new CTemporaryLabel(strDomage, { 200, 0, 0, 255 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 20, 0, 0 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 80, 0, 0 }, 30, 2000, _pRenderer));
+					
 					pPlayerTmp->SetHealth(pPlayerTmp->GetHealth() * fPourcentage);
+					pPlayerTmp->ModifierStabiliteJoueur(false);
 
 				}
 
@@ -1434,14 +1510,30 @@ public:
 
 					iDistanceRayon = (_RectPositionExplosion.y + _iRayon) - (RectDestinationPlayer.y + RectDestinationPlayer.h);
 					fPourcentage = ((float)iDistanceRayon / (float)_iRayon);
+					
+					iDomage = (float)((1 - fPourcentage) * pPlayerTmp->GetHealth()) * 100;
+
+					strDomage.append("-");
+					strDomage.append(SDL_itoa(iDomage, chrTmp, 10));
+					m_pListeDomage->AjouterFin(new CTemporaryLabel(strDomage, { 200, 0, 0, 255 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 20, 0, 0 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 80, 0, 0 }, 30, 2000, _pRenderer));
+					
 					pPlayerTmp->SetHealth(pPlayerTmp->GetHealth() * fPourcentage);
+					pPlayerTmp->ModifierStabiliteJoueur(false);
 				}
 
 				else if ((RectDestinationPlayer.x >= _RectPositionExplosion.x && RectDestinationPlayer.x + RectDestinationPlayer.w <= _RectPositionExplosion.x + _RectPositionExplosion.w) && (RectDestinationPlayer.y <= _RectPositionExplosion.y + _RectPositionExplosion.h && RectDestinationPlayer.y + RectDestinationPlayer.h > _RectPositionExplosion.y + _RectPositionExplosion.h)) {
 
 					iDistanceRayon = RectDestinationPlayer.y - (_RectPositionExplosion.y + _iRayon);
 					fPourcentage = ((float)iDistanceRayon / (float)_iRayon);
+					
+					iDomage = (float)((1 - fPourcentage) * pPlayerTmp->GetHealth()) * 100;
+
+					strDomage.append("-");
+					strDomage.append(SDL_itoa(iDomage, chrTmp, 10));
+					m_pListeDomage->AjouterFin(new CTemporaryLabel(strDomage, { 200, 0, 0, 255 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 20, 0, 0 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 80, 0, 0 }, 30, 2000, _pRenderer));
+					
 					pPlayerTmp->SetHealth(pPlayerTmp->GetHealth() * fPourcentage);
+					pPlayerTmp->ModifierStabiliteJoueur(false);
 				}
 				if (pPlayerTmp->GetHealth() <= 0)  {
 					pPlayerList->RetirerTrieur(true);
@@ -1474,31 +1566,31 @@ public:
 				if ((RectDestinationPack.x < _RectPositionExplosion.x && RectDestinationPack.x + RectDestinationPack.w >= _RectPositionExplosion.x) && (RectDestinationPack.y + RectDestinationPack.h >= _RectPositionExplosion.y && RectDestinationPack.y <= _RectPositionExplosion.y + _RectPositionExplosion.h)) {
 
 					pPackTmp->Use(nullptr);
-					DomageExplosion(pPackTmp->GetRectDestination(), 45);
+					DomageExplosion(pPackTmp->GetRectDestination(), 45, _pRenderer);
 				}
 
 				else if ((RectDestinationPack.x <= _RectPositionExplosion.x + _RectPositionExplosion.w && RectDestinationPack.x + RectDestinationPack.w > _RectPositionExplosion.x + _RectPositionExplosion.w) && (RectDestinationPack.y + RectDestinationPack.h >= _RectPositionExplosion.y && RectDestinationPack.y <= _RectPositionExplosion.y + _RectPositionExplosion.h)) {
 
 					pPackTmp->Use(nullptr);
-					DomageExplosion(pPackTmp->GetRectDestination(), 45);
+					DomageExplosion(pPackTmp->GetRectDestination(), 45, _pRenderer);
 				}
 
 				else if ((RectDestinationPack.x >= _RectPositionExplosion.x && RectDestinationPack.x + RectDestinationPack.w <= _RectPositionExplosion.x + _RectPositionExplosion.w) && (RectDestinationPack.y >= _RectPositionExplosion.y && RectDestinationPack.y + RectDestinationPack.h <= _RectPositionExplosion.y + _RectPositionExplosion.h)) {
 
 					pPackTmp->Use(nullptr);
-					DomageExplosion(pPackTmp->GetRectDestination(), 45);
+					DomageExplosion(pPackTmp->GetRectDestination(), 45, _pRenderer);
 				}
 
 				else if ((RectDestinationPack.x >= _RectPositionExplosion.x && RectDestinationPack.x + RectDestinationPack.w <= _RectPositionExplosion.x + _RectPositionExplosion.w) && (RectDestinationPack.y < _RectPositionExplosion.y && RectDestinationPack.y + RectDestinationPack.h >= _RectPositionExplosion.y)) {
 
 					pPackTmp->Use(nullptr);
-					DomageExplosion(pPackTmp->GetRectDestination(), 45);
+					DomageExplosion(pPackTmp->GetRectDestination(), 45, _pRenderer);
 				}
 
 				else if ((RectDestinationPack.x >= _RectPositionExplosion.x && RectDestinationPack.x + RectDestinationPack.w <= _RectPositionExplosion.x + _RectPositionExplosion.w) && (RectDestinationPack.y <= _RectPositionExplosion.y + _RectPositionExplosion.h && RectDestinationPack.y + RectDestinationPack.h > _RectPositionExplosion.y + _RectPositionExplosion.h)) {
 
 					pPackTmp->Use(nullptr);
-					DomageExplosion(pPackTmp->GetRectDestination(), 45);
+					DomageExplosion(pPackTmp->GetRectDestination(), 45, _pRenderer);
 				}
 			}
 		}

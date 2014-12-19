@@ -36,5 +36,6 @@
     <ClInclude Include="CDeplacement.h" />
     <ClInclude Include="CMouvement.h" />
     <ClInclude Include="CProjectile.h" />
+    <ClInclude Include="CTemporaryLabel.h" />
   </ItemGroup>
 </Project>

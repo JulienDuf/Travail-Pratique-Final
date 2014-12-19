@@ -95,6 +95,7 @@
     <ClInclude Include="CScrollBar.h" />
     <ClInclude Include="CSprite.h" />
     <ClInclude Include="CTeam.h" />
+    <ClInclude Include="CTemporaryLabel.h" />
     <ClInclude Include="CTimer.h" />
     <ClInclude Include="CProjectile.h" />
     <ClInclude Include="CToolBar.h" />

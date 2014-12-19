@@ -38,8 +38,6 @@ public:
 		SDL_DestroyRenderer(m_pSDLRenderer);
 		SDL_DestroyWindow(m_pSDLWindow);
 		delete m_pArbreMenu;
-		delete m_pGame;
-		delete pTimerFrame;
 	}
 
 	// Procédure permettant d'ajouter des menus...

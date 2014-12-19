@@ -26,7 +26,10 @@ CGestionaire<CControl*>* pGestionnaireControl; // Le gestionaire des controls.
 
 #include "CButton.h"
 #include "CLabel.h"
+#include "CLabelLeftRight.h"
+#include "CTemporaryLabel.h"
 #include "CMenu.h"
+
 
 CGestionaire<CMenu*>* pGestionnaireMenu; // Le gestionaire des menus.
 
@@ -50,7 +53,6 @@ CGestionaire<CMenu*>* pGestionnaireMenu; // Le gestionaire des menus.
 #include "CMap.h"
 #include "CGame.h"
 #include "CWindow.h"
-#include "CLabelLeftRight.h"
 
 // Variables...
 bool boExecution; // Variable de la boucle principale du programme.
@@ -61,8 +63,6 @@ string strEmplacementFichier; // L'emplacement de nos fichiers.
 SDL_Event* pEvent; // Les événemens du programme;
 
 CWindow* pWindowJeu; // La fenêtre de jeu.
-
-SDL_Surface* pSurfaceGabarie; // Le gabarie pour les destructions.
 
 SDL_Color CouleurTexte; // La couleur du texte.
 
@@ -441,9 +441,10 @@ void Start(char* _strApplicationFilename) {
 
 	// Chargement de font du texte des boutons et label de description...
 	strEmplacement = strApplicationPath;
-	strEmplacement.append("calibri.ttf");
+	strEmplacement.append("BRLNSR.ttf");
 	pGestionnaireFont->AjouterDonnee(TTF_OpenFont(strEmplacement.c_str(), 30), "pFontBouton");
 	pGestionnaireFont->AjouterDonnee(TTF_OpenFont(strEmplacement.c_str(), 12), "pFontDescription");
+	pGestionnaireFont->AjouterDonnee(TTF_OpenFont(strEmplacement.c_str(), 20), "pFontDomage");
 
 	// Chargement des textures des personnages...
 
@@ -618,18 +619,6 @@ void Close(void) {
 	// Détruit le gestionnaire d'événement
 	delete pEvent;
 	delete pWindowJeu; // Détruit la fenêtre, donc tous les contrôles reliés à la fenêtre.
-
-	// Destructions des éléments spéciaux.
-	pGestionnaireFont->DestructionFont();
-	pGestionnaireSurface->DestructionSurface();
-	pGestionnaireTexture->DestructionTexture();
-
-	// Destruction des gestionnaires de données...
-	delete pGestionnaireControl;
-	delete pGestionnaireFont;
-	delete pGestionnaireMenu;
-	delete pGestionnaireSurface;
-	delete pGestionnaireTexture;
 
 	// Quitte les librairies...
 	SDL_Quit();

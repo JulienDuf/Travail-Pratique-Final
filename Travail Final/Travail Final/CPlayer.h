@@ -112,16 +112,6 @@ public:
 
 	}
 
-	~CPlayer() {
-
-		delete m_pBarreVie;
-		delete m_pListeMouvement;
-		delete m_pListeTools;
-		delete m_pSpriteParachute;
-		delete m_pVecteurPoids;
-		delete m_pVecteurVitesse;
-	}
-
 	// Procédure qui affiche le joueur.
 	// Paramètre: _pSDLRenderer, Rendeur de la fenêtre dans laquelle on veut afficher le joueur.
 	// Retour: Rien.
@@ -131,6 +121,7 @@ public:
 				m_boToolActif = true;
 				m_pListeTools->AllerACurseur(_uiObjetSelectionner);
 				m_pListeTools->ObtenirElementCurseur()->ReactToEvent(_pSDLEvent);
+				
 			}
 			else
 			{
@@ -183,6 +174,16 @@ public:
 	}
 
 	// Accesseur ... 
+
+	void ReinitialisationTool(void) {
+
+		m_pListeTools->AllerDebut();
+		for (int i = 0; i < m_pListeTools->ObtenirCompte(); i++) {
+
+			m_pListeTools->ObtenirElementCurseur()->ReinitialisationProjectile();
+			m_pListeTools->AllerSuivantCurseur();
+		}
+	}
 
 	void SetHealth(float _fHealth) {
 

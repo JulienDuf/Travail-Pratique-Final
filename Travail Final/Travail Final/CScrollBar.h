@@ -52,12 +52,6 @@ public:
 
 	}
 
-	~CScrollBar() {
-
-		SDL_DestroyTexture(m_pBarTexture);
-		SDL_DestroyTexture(m_pTrackTexture);
-	}
-
 	// Procédure permettant d'afficher la scrollbar...
 	// En entrée:
 	// Param1: Renderer d'affichage.

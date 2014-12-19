@@ -22,11 +22,6 @@ public:
 
 	}
 
-	~CGestionaire() {
-
-		delete m_pArbreGestionaire;
-	}
-
 	// Procédure ajoutant un élément à l'arbre.
 	// En entré:
 	// Param1: L'élément à ajouter.
@@ -43,23 +38,5 @@ public:
 	T ObtenirDonnee(string _strID) {
 
 		return m_pArbreGestionaire->ObtenirElement(_strID);
-	}
-
-	// Procédure détruisant des textures...
-	void DestructionTexture(void) {
-
-		m_pArbreGestionaire->ParcoursDestructionTexture();
-	}
-
-	// Procédure détruisant des surfaces...
-	void DestructionSurface(void) {
-
-		m_pArbreGestionaire->ParcoursDestructionSurface();
-	}
-
-	// Procédure détruisant des fonts...
-	void DestructionFont(void) {
-
-		m_pArbreGestionaire->ParcoursDestructionFont();
 	}
 };

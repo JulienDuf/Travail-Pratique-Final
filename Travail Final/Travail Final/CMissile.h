@@ -156,14 +156,7 @@ public:
 		m_pBarrePuissance = new CBarrePuissance();
 		m_pSpriteExplosion = new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceExplosionMissile"), pGestionnaireTexture->ObtenirDonnee("pTextureExplosionMissile"), m_RectDestinationExplosion, 9, 100, false, false, 1);
 		m_pSpritePlayer = new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfacePlayerBazooka"), pGestionnaireTexture->ObtenirDonnee("pTexturePlayerBazooka"), m_RectDestinationBazooka, 1, 0, true, false, 2);
-	}
-
-	~CMissile() {
-
-		delete m_pBarrePuissance;
-		delete m_pLblDescription;
-		delete m_pSpriteExplosion;
-		delete m_pSpritePlayer;
+		m_pVecteurVitesseMissile = new CVecteur2D(0, 0.0f);
 	}
 
 	// Procédure réagissnat à une collision.
@@ -253,10 +246,11 @@ public:
 					// Modifie la force, l'angle et on crée le vecteur vitesse.
 					m_iAngle = m_pBarrePuissance->ObtenirAngle();
 					m_uiForce = (m_pBarrePuissance->ObtenirForce() + 3) * 100;
-					m_pVecteurVitesseMissile = new CVecteur2D((float)m_uiForce, (float)m_iAngle);
+					m_pVecteurVitesseMissile->ModifierVecteur((float)m_uiForce, (float)m_iAngle);
 					
 					// On met le missile actif.
 					m_boMissileLancer = true;
+					m_pBarrePuissance->ModidierActivite(false);
 
 					// On modifie la position du missile et le nombre de minution.
 					m_pBarrePuissance->ObtenirPosition(&m_RectDestinationMissile.x, &m_RectDestinationMissile.y);
@@ -289,28 +283,15 @@ public:
 			m_pLblDescription->SetRectDestinationY(_RectPositionDescription.y);
 	}
 
+	//Procédure permettant de réinitialisation du missile...
+	void ReinitialisationProjectile(void) {
+
+		m_pBarrePuissance->Reinitialisation();
+		m_pBarrePuissance->ModidierActivite(true);
+		m_pVecteurVitesseMissile->ModifierVecteur(0, 0.0f);
+	}
+
 	void DefinirRotation(int _iVitesseAngulaire) {}
-
-	// Accesseurs...
-
-	CSprite* ObtenirSprite(string _strNom) {
-		return m_pSpriteExplosion;
-	}
-
-	CVecteur2D* ObtenirVecteurVitesse() {
-
-		return m_pVecteurVitesseMissile;
-	}
-
-	SDL_Rect* ObtenirRectDestination() {
-
-		return &m_RectDestinationMissile;
-	}
-
-	SDL_Surface* ObtenirSurface(void) {
-
-		return m_pSDLSurfaceMissileRotation;
-	}
 
 	void DefinirAngle(double _dAngle) {
 
@@ -332,6 +313,32 @@ public:
 
 	void DestructionProjectile() {
 
+	}
+
+	void ModifierActivationBarre(bool _boActive) {
+
+		m_pBarrePuissance->ModidierActivite(_boActive);
+	}
+
+	// Accesseurs...
+
+	CSprite* ObtenirSprite(string _strNom) {
+		return m_pSpriteExplosion;
+	}
+
+	CVecteur2D* ObtenirVecteurVitesse() {
+
+		return m_pVecteurVitesseMissile;
+	}
+
+	SDL_Rect* ObtenirRectDestination() {
+
+		return &m_RectDestinationMissile;
+	}
+
+	SDL_Surface* ObtenirSurface(void) {
+
+		return m_pSDLSurfaceMissileRotation;
 	}
 
 	bool EstLancer() {

@@ -381,18 +381,6 @@ public:
 		}
 	}
 
-	/*
-	// Procédure détruisant toutes les textures de la liste
-	*/
-	void DetruireListeTexture(void) {
-		
-		AllerDebut();
-		for (unsigned int i = m_uiCompte; i > 0; i--){
-
-			SDL_DestroyTexture(m_pCurseur->ObtenirElement());
-			Retirer(false);
-		}
-	}
 	// Accesseurs...
 
 	// Fonction qui retourne l'élément dans la cellule où pointe le curseur.

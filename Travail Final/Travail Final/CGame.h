@@ -246,7 +246,7 @@ public:
 
 					}
 					
-					/*
+					
 					else if (pPlayerActif->IsSliding()) {
 						CVecteur2D* VecteurFrottement = new CVecteur2D(1, 0.0f);
 						double doAngle = RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination(), false); // Variable qui sert a calcul juste 1 fois l'angle.
@@ -296,7 +296,7 @@ public:
 							pPlayerActif->ModifierGlissadeJoueur(false);
 					}
 
-					*/
+					
 
 
 					else if (pPlayerActif->ObtenirJetPack()->ObtenirSprite("")->IsActif()) {
@@ -635,8 +635,9 @@ public:
 		else {
 
 			_RectRegression = _RectPiedJoueur;
-
-			int j = 0;
+			_RectRegression.h += 20;
+		}
+			/*int j = 0;
 			float y1 = 0;
 			float y2 = 0;
 			float x1 = _RectRegression.x;
@@ -675,119 +676,72 @@ public:
 			return (180 / M_PI) * atanf(fPente);
 
 
-		}
+		}*/
 
 
 
 
 
-		/* Ancienne régression ...
 		int iTableau[5000]; // Tableau.
 		for (int j = 0; j < _RectRegression.h; j++) { // Boucler sur toute le rect du pied dans la position de la map.
-		for (int i = 0; i < _RectRegression.w; i++) {
-		if (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(i + _RectRegression.x + _RectJoueur.x) + ((j + _RectRegression.y + _RectJoueur.y) * (m_pGameMap->ObtenirSurfaceMap()->w))] != 0)  { // Si le pixel est transparent.
-		iTableau[i + j * _RectRegression.w] = 1; // Mettre 1 dans mon tableau.
-		fX += i; // fX va servir a faire la moyenne des X.
-		fY += j; // fY va servir a faire la moyenne des Y.
-		iN += 1; // Pour diviser le nombre d'éléments.
-		}
-		else
-		iTableau[i + j * _RectRegression.w] = 0;
-		}
+			for (int i = 0; i < _RectRegression.w; i++) {
+				if (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(i + _RectRegression.x + _RectJoueur.x) + ((j + _RectRegression.y + _RectJoueur.y) * (m_pGameMap->ObtenirSurfaceMap()->w))] != 0)  { // Si le pixel est transparent.
+					iTableau[i + j * _RectRegression.w] = 1; // Mettre 1 dans mon tableau.
+					fX += i; // fX va servir a faire la moyenne des X.
+					fY += j; // fY va servir a faire la moyenne des Y.
+					iN += 1; // Pour diviser le nombre d'éléments.
+				}
+				else
+					iTableau[i + j * _RectRegression.w] = 0;
+			}
 		}
 		if (fX != 0 && fY != 0) {
-		fX = fX / iN; // moyenne
-		fY = fY / iN; // moyenne
+			fX = fX / iN; // moyenne
+			fY = fY / iN; // moyenne
 		}
+
 		for (int j = 0; j < _RectRegression.h; j++) {
-		for (int i = 0; i < _RectRegression.w; i++) {
-		if (iTableau[i + j * _RectRegression.w] == 1) {
-		iCov += ((j - fY) * (i - fX)); // Calcul pour Y moyens avec le Y moyens.
-		iVar += pow((i - fX), 2);    // Calcul pour X moyens avec le X moyens.
-		}
-		}
+			for (int i = 0; i < _RectRegression.w; i++) {
+				if (iTableau[i + j * _RectRegression.w] == 1) {
+					iCov += ((j - fY) * (i - fX)); // Calcul pour Y moyens avec le Y moyens.
+					iVar += pow((i - fX), 2);    // Calcul pour X moyens avec le X moyens.
+				}
+			}
 		}
 
 		if (iCov != 0 && iVar != 0) {
-		iCov = (iCov / iN); //moyenne
-		iVar = (iVar / iN); //moyenne
-		fPente = iCov / iVar; // Donne la pente. iCov = y , iVar = x.
+			iCov = (iCov / iN); //moyenne
+			iVar = (iVar / iN); //moyenne
+			fPente = iCov / iVar; // Donne la pente. iCov = y , iVar = x.
 		}
 
 
 
 
 		if (!_boObjet) {
-		if (iCov != 0 && iVar != 0) {
-		if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 0 && fPente > 0) { // Le joueur se déplace vers la droite et la pente est positive.
-		fPente = (180 / M_PI) * atanf(fPente);
-		return fPente;
-		}
 
-<<<<<<< HEAD
-		if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 0 && fPente < 0) { // Le joueur se déplace vers la droite et la pente est négative.
-		fPente = 360 - ((180 / M_PI) * atanf(fPente));
-		return fPente;
-		}
-		if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 1 && fPente > 0) { // Le joueur se déplace vers la gauche et la pente est positive.
-		fPente = 180 + (180 / M_PI) * atanf(fPente);
-		return fPente;
-		}
-		if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 1 && fPente < 0) { // Le joueur se déplace vers la gauche et la pente est négative.
-		fPente = 180 + (180 / M_PI) * atanf(fPente);
-		return fPente;
-		}
-		}
-		}
-		else {
-<<<<<<< HEAD
 
-=======
-<<<<<<< HEAD
-		if (fPente != 0)
-		return (180 / M_PI) * atanf(fPente);
-		else
-		return 270;
-=======
-<<<<<<< HEAD
->>>>>>> 0f9edd669264a206ae78c99aad863e9a61435e30
-=======
-				if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 0 && fPente < 0) { // Le joueur se déplace vers la droite et la pente est négative.
-					fPente = 360 - ((180 / M_PI) * atanf(fPente));
-					return fPente;
-				}
-				if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 1 && fPente > 0) { // Le joueur se déplace vers la gauche et la pente est positive.
-					fPente = 180 + (180 / M_PI) * atanf(fPente);
-					return fPente;
-				}
-				if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 1 && fPente < 0) { // Le joueur se déplace vers la gauche et la pente est négative.
-					fPente = 180 - (180 / M_PI) * atanf(fPente);
-					return fPente;
-				}
+			if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 0 && fPente < 0) { // Le joueur se déplace vers la droite et la pente est négative.
+				fPente = 360 - ((180 / M_PI) * atanf(fPente));
+				return fPente;
+			}
+			if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 1 && fPente > 0) { // Le joueur se déplace vers la gauche et la pente est positive.
+				fPente = 180 + (180 / M_PI) * atanf(fPente);
+				return fPente;
+			}
+			if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 1 && fPente < 0) { // Le joueur se déplace vers la gauche et la pente est négative.
+				fPente = 180 - (180 / M_PI) * atanf(fPente);
+				return fPente;
 			}
 		}
+		
 		else {
-
->>>>>>> origin/BrancheGlissade
 			if (fPente != 0)
 				return (180 / M_PI) * atanf(fPente);
 			else
 				return 270;
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-=======
-=======
-			if (iCov != 0 && iVar != 0) 
-				return (180 / M_PI) * atanf(fPente);
->>>>>>> origin/Branche-Player
->>>>>>> origin/Branche-jeu
->>>>>>> 0f9edd669264a206ae78c99aad863e9a61435e30
-=======
->>>>>>> origin/BrancheGlissade
 		}
-
-		return 362;*/
+		return 362;
 
 	}
 

@@ -1,4 +1,4 @@
-﻿Build started 2014-12-19 2:47:45 PM.
+﻿Build started 2014-12-19 3:27:08 PM.
      1>Project "C:\Users\Nicolas\Documents\GitHub\Travail-Pratique-Final\Travail Final\Travail Final\Travail Final.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
@@ -57,7 +57,7 @@
      1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(168): warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
      1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(214): warning C4018: '>' : signed/unsigned mismatch
      1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(217): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(310): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(308): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
      1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(348): warning C4018: '<' : signed/unsigned mismatch
      1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(352): warning C4018: '<' : signed/unsigned mismatch
      1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(358): warning C4244: '+=' : conversion from 'double' to 'int', possible loss of data
@@ -128,17 +128,15 @@
      1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1549): warning C4715: 'CGame::DetectionCollisionPack' : not all control paths return a value
      1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\clabelleftright.h(152): warning C4715: 'CLabelLeftRight::ObtenirElement' : not all control paths return a value
      1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cdeplacement.h(164): warning C4715: 'CDeplacement::ObtenirSprite' : not all control paths return a value
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\carbreavl.h(226): warning C4715: 'CArbreAVL<SDL_Surface *>::Rechercher' : not all control paths return a value
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\carbreavl.h(226): warning C4715: 'CArbreAVL<_TTF_Font *>::Rechercher' : not all control paths return a value
      1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\carbreavl.h(226): warning C4715: 'CArbreAVL<CControl *>::Rechercher' : not all control paths return a value
+     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\carbreavl.h(226): warning C4715: 'CArbreAVL<_TTF_Font *>::Rechercher' : not all control paths return a value
+     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\carbreavl.h(226): warning C4715: 'CArbreAVL<SDL_Surface *>::Rechercher' : not all control paths return a value
      1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\carbreavl.h(226): warning C4715: 'CArbreAVL<CMenu *>::Rechercher' : not all control paths return a value
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Nicolas\Documents\GitHub\Travail-Pratique-Final\Travail Final\Debug\Travail Final.exe" /INCREMENTAL /NOLOGO SDL2.lib SDL2main.lib SDL2_ttf.lib SDL2_image.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Nicolas\Documents\GitHub\Travail-Pratique-Final\Travail Final\Debug\Travail Final.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Nicolas\Documents\GitHub\Travail-Pratique-Final\Travail Final\Debug\Travail Final.lib" /MACHINE:X86 Debug\main.obj
-         LINK : C:\Users\Nicolas\Documents\GitHub\Travail-Pratique-Final\Travail Final\Debug\Travail Final.exe not found or not built by the last incremental link; performing full link
-     1>MSVCRTD.lib(cinitexe.obj) : warning LNK4098: defaultlib 'msvcrt.lib' conflicts with use of other libs; use /NODEFAULTLIB:library
          Travail Final.vcxproj -> C:\Users\Nicolas\Documents\GitHub\Travail-Pratique-Final\Travail Final\Debug\Travail Final.exe
      1>Done Building Project "C:\Users\Nicolas\Documents\GitHub\Travail-Pratique-Final\Travail Final\Travail Final\Travail Final.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:03.29
+Time Elapsed 00:00:03.24

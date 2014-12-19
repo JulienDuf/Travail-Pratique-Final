@@ -230,11 +230,13 @@ public:
 
 						
 
-						/*if (RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination(), false) == 240 || RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination(), false) == 330) {
+						if (RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination(), false) == 240 || RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination(), false) == 330) {
 							pPlayerActif->ModifierGlissadeJoueur(true);
 							pPlayerActif->ObtenirSpriteCourse()->DefinirActif(false);
 							pPlayerActif->ObtenirSpriteRepos()->DefinirActif(true);
-						}*/
+							pPlayerActif->DefinirToolActif(false);
+							
+						}
 
 					}
 
@@ -314,10 +316,13 @@ public:
 
 							else {
 
-  								pPlayerActif->ModifierTypeMouvement(2);
 								pPlayerActif->ObtenirJetPack()->ObtenirSprite("")->DefinirActif(false);
+								pPlayerActif->ObtenirSpriteRepos()->DefinirEtage(pPlayerActif->ObtenirJetPack()->ObtenirSprite("")->ObtenirEtage());
+								pPlayerActif->ModifierTypeMouvement(2);
 								pPlayerActif->ObtenirSpriteRepos()->DefinirActif(true);
-								pPlayerActif->ModifierChuteLibreJoueur(true);
+								pPlayerActif->ModifierStabiliteJoueur(false);
+								m_boFinTour = true;
+								m_boDebutPartie = true;
 								m_pToolBar->NouveauTour();
 							}
 						}
@@ -406,8 +411,9 @@ public:
 								RectPlayer.y += (pPlayer->ObtenirRectDestinationParachute().h - pPlayer->ObtenirRectDestination().h);
 								pPlayer->DefinirPositionX(RectPlayer.x);
 								pPlayer->DefinirPositionY(RectPlayer.y);
-								if (RectPlayer.x >= (1366 / 2))
+								if (RectPlayer.x >= (1366 / 2)) 
 									pPlayer->ObtenirSpriteRepos()->DefinirEtage(1);
+								
 							}
 
 
@@ -718,6 +724,7 @@ public:
 		return fPente;
 		}
 
+<<<<<<< HEAD
 		if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 0 && fPente < 0) { // Le joueur se déplace vers la droite et la pente est négative.
 		fPente = 360 - ((180 / M_PI) * atanf(fPente));
 		return fPente;
@@ -744,10 +751,29 @@ public:
 =======
 <<<<<<< HEAD
 >>>>>>> 0f9edd669264a206ae78c99aad863e9a61435e30
+=======
+				if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 0 && fPente < 0) { // Le joueur se déplace vers la droite et la pente est négative.
+					fPente = 360 - ((180 / M_PI) * atanf(fPente));
+					return fPente;
+				}
+				if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 1 && fPente > 0) { // Le joueur se déplace vers la gauche et la pente est positive.
+					fPente = 180 + (180 / M_PI) * atanf(fPente);
+					return fPente;
+				}
+				if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 1 && fPente < 0) { // Le joueur se déplace vers la gauche et la pente est négative.
+					fPente = 180 - (180 / M_PI) * atanf(fPente);
+					return fPente;
+				}
+			}
+		}
+		else {
+
+>>>>>>> origin/BrancheGlissade
 			if (fPente != 0)
 				return (180 / M_PI) * atanf(fPente);
 			else
 				return 270;
+<<<<<<< HEAD
 <<<<<<< HEAD
 
 =======
@@ -757,6 +783,8 @@ public:
 >>>>>>> origin/Branche-Player
 >>>>>>> origin/Branche-jeu
 >>>>>>> 0f9edd669264a206ae78c99aad863e9a61435e30
+=======
+>>>>>>> origin/BrancheGlissade
 		}
 
 		return 362;*/

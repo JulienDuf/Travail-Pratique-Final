@@ -14,9 +14,12 @@ private:
 	bool m_boSpace,
 		m_boShowDescription;
 	bool boFleche;
+	bool boDecoller;
 
 	unsigned int m_uiTempsPropulsionInitiale;
 	int m_iVerticalThrust;
+
+	CVecteur2D* pVecteur;
 
 	SDL_Surface* BlitText(string _strTexte[], unsigned int _uiNombreElementTableau, SDL_Color _Couleur) {
 
@@ -42,9 +45,9 @@ private:
 		return pSurfaceBlitin;
 	}
 
-	char m_chrMunition[3];
-
 	void MiseajourMunition(SDL_Renderer* _pRenderer) {
+		char m_chrMunition[4];
+		
 		SDL_itoa(ObtenirMunition(), m_chrMunition, 10);
 		m_strDescription[0] = "";
 		m_strDescription[0].append("Niveau de carburant : ");
@@ -56,9 +59,10 @@ private:
 public:
 
 	CJetPack(string _strEmplacement, CSprite* _pSpriteJetPack, CBarreVie* _pBarreDeCarburant, SDL_Renderer* _pRenderer) {
-		boFleche = false;
+		boFleche = true;
 		m_boShowDescription = false;
-
+		boDecoller = false;
+		pVecteur = new CVecteur2D(0, 0.0f);
 		m_strDescription;
 		string strEmplacement(_strEmplacement);
 		int i = strEmplacement.length();
@@ -112,6 +116,14 @@ public:
 		m_uiTempsPropulsionInitiale = 0;
 	}
 
+	~CJetPack() {
+
+		delete m_pSpriteJetPack;
+		delete m_pBarreDeCarburant;
+		delete m_pLblDescription;
+		delete pVecteur;
+	}
+
 	void ReactToEvent(SDL_Event* _pEvent, CVecteur2D* _pVecteurVitesse, bool* _boStable) {
 
 		*_boStable = false;
@@ -132,21 +144,29 @@ public:
 
 				case SDL_SCANCODE_RIGHT:
 					m_pSpriteJetPack->DefinirEtage(0);
-					_pVecteurVitesse->ModifierComposantX(40);
+					pVecteur->ModifierComposantX(2);
 					*_boStable = false;
 					boFleche = true;
 					break;
 
 				case SDL_SCANCODE_LEFT:
 					m_pSpriteJetPack->DefinirEtage(1);
-					_pVecteurVitesse->ModifierComposantX(-40);
+					pVecteur->ModifierComposantX(-2);
 					*_boStable = false;
 					boFleche = true;
 					break;
 
 				case SDL_SCANCODE_SPACE:
  					m_pBarreDeCarburant->ModifierPourcentageVie(m_pBarreDeCarburant->ObtenirVie() - 0.002);
-					_pVecteurVitesse->ModifierComposantY(-m_iVerticalThrust);
+					
+					if (!m_boSpace) {
+						if (boDecoller)
+							pVecteur->ModifierComposantY(-m_iVerticalThrust);
+						else {
+							pVecteur->ModifierComposantY(-100);
+							boDecoller = true;
+						}
+					}
 					m_uiTempsPropulsionInitiale++;
 					if (boFleche)
   						boFleche = boFleche;
@@ -168,22 +188,20 @@ public:
 				switch (_pEvent->key.keysym.scancode) {
 
 				case SDL_SCANCODE_RIGHT:
-					m_pSpriteJetPack->DefinirActif(0);
 					*_boStable = false;
-					_pVecteurVitesse->ModifierComposantX(0);
+					pVecteur->ModifierComposantX(0);
 					boFleche = false;
 					break;
 
 				case SDL_SCANCODE_LEFT:
-					m_pSpriteJetPack->DefinirActif(0);
-					_pVecteurVitesse->ModifierComposantX(0);
+					pVecteur->ModifierComposantX(0);
 					*_boStable = false;
 					boFleche = false;
 					break;
 
 				case SDL_SCANCODE_SPACE:
 					m_pSpriteJetPack->DefinirPositionDeBouclage(0, 1);
-					_pVecteurVitesse->ModifierComposantY(0);
+					pVecteur->ModifierComposantY(0);
 					m_boSpace = false;
 					m_uiTempsPropulsionInitiale = 0;
 					*_boStable = false;
@@ -192,8 +210,29 @@ public:
 				break;
 			}
 
-			if (m_boSpace)
-  				_pVecteurVitesse->ModifierComposantY(-m_iVerticalThrust);
+			if (m_boSpace) {
+				m_pBarreDeCarburant->ModifierPourcentageVie(m_pBarreDeCarburant->ObtenirVie() - 0.002);
+
+					if (boDecoller)
+						pVecteur->ModifierComposantY(-m_iVerticalThrust);
+					else {
+						pVecteur->ModifierComposantY(-100);
+						boDecoller = true;
+					
+				}
+				m_uiTempsPropulsionInitiale++;
+				if (boFleche)
+					boFleche = boFleche;
+				if (m_uiTempsPropulsionInitiale >= 3) {
+					m_pSpriteJetPack->DefinirPositionDeBouclage(4, 6);
+				}
+				else
+				{
+					m_pSpriteJetPack->DefinirPositionDeBouclage(0, 6);
+				}
+				m_boSpace = true;
+				*_boStable = false;
+			}
 		}
 	}
 
@@ -238,5 +277,15 @@ public:
 			m_pLblDescription->SetRectDestinationY(_RectPositionDescription.y - uiH);
 		else
 			m_pLblDescription->SetRectDestinationY(_RectPositionDescription.y);
+	}
+
+	bool IsActive(void) {
+
+		return boDecoller;
+	}
+
+	CVecteur2D* ObtenirVecteur(void) {
+
+		return pVecteur;
 	}
 };

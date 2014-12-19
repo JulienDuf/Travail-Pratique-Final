@@ -112,6 +112,16 @@ public:
 
 	}
 
+	~CPlayer() {
+
+		delete m_pBarreVie;
+		delete m_pListeMouvement;
+		delete m_pListeTools;
+		delete m_pSpriteParachute;
+		delete m_pVecteurPoids;
+		delete m_pVecteurVitesse;
+	}
+
 	// Procédure qui affiche le joueur.
 	// Paramètre: _pSDLRenderer, Rendeur de la fenêtre dans laquelle on veut afficher le joueur.
 	// Retour: Rien.
@@ -124,8 +134,9 @@ public:
 			}
 			else
 			{
-				if (_uiObjetSelectionner <= 3)
+				if (_uiObjetSelectionner <= 3) {
 					m_pListeMouvement->AllerACurseur(_uiObjetSelectionner - 2);
+				}
 				else
 					m_pListeMouvement->AllerACurseur(2);
 				m_pListeMouvement->ObtenirElementCurseur()->ReactToEvent(_pSDLEvent, m_pVecteurVitesse, &m_boStable);
@@ -201,6 +212,11 @@ public:
 
 	void ModifierGlissadeJoueur(bool _boGlissade) {
 		m_boChuteLibre = _boGlissade;
+	}
+
+	void ModifierTypeMouvement(int _iPositionCurseur) {
+
+		m_pListeMouvement->AllerACurseur(_iPositionCurseur);
 	}
 
 	void DefinirPositionX(double _dX) {
@@ -309,7 +325,6 @@ public:
 		return m_pVecteurVitesse;
 	}
 
-
 	CVecteur2D* ObtenirVecteurTool() {
 
 		return m_pListeTools->ObtenirElementCurseur()->ObtenirVecteurVitesse();
@@ -330,6 +345,12 @@ public:
 
 		m_pListeTools->AllerACurseur(_uiPosition);
 		return m_pListeTools->ObtenirElementCurseur();
+	}
+
+	CMouvement* ObtenirJetPack(void) {
+
+		m_pListeMouvement->AllerACurseur(1);
+		return m_pListeMouvement->ObtenirElementCurseur();
 	}
 
 	float GetHealth(void) {

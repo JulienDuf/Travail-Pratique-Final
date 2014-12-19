@@ -29,6 +29,13 @@ public:
 		m_pSpriteRepos = new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceRepos"), pGestionnaireTexture->ObtenirDonnee("pTextureRepos"), _RectDestination, 1, 50, true, false, 2);
 	}
 
+	~CDeplacement() {
+
+		delete m_pSpriteCourse;
+		delete m_pSpriteRepos;
+		delete m_pSpriteSaut;
+	}
+
 	void ReactToEvent(SDL_Event* _pEvent, CVecteur2D* _pVecteurVitesse, bool* _boStable) {
 
 		// Event scancode...
@@ -180,5 +187,15 @@ public:
 
 	unsigned int ObtenirMunition() {
 		return NULL;
+	}
+
+	CVecteur2D* ObtenirVecteur(void) {
+
+		return nullptr;
+	}
+
+	bool IsActive(void) {
+
+		return true;
 	}
 };

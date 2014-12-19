@@ -73,6 +73,8 @@ public:
 	~CMenu() {
 
 		delete m_pArbreControl;
+		if (m_pTextureBackground != nullptr)
+			SDL_DestroyTexture(m_pTextureBackground);
 	}
 
 	// Procédure permettant d'ajouter des contrôles au menu...

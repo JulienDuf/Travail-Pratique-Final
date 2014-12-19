@@ -26,6 +26,11 @@ public:
 		m_pPlayerList->AllerDebut();
 	}
 
+	~CTeam() {
+
+		delete m_pPlayerList;
+	}
+
 	CListeDC<CPlayer*>* ObtenirListePlayer(void) {
 
 		return m_pPlayerList;

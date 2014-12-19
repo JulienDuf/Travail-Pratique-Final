@@ -182,6 +182,10 @@ public:
 		m_PointRotation = { m_RectDestinationGrenade.w, m_RectDestinationGrenade.h / 2 };
 	}
 	
+	~CGrenade() {
+		SDL_FreeSurface(m_pSurfaceGrenadeRotation);
+	}
+
 	bool ReactionExplosion(int iX, int iY) {
 		if (m_pTimerExplosion->IsDone()) {
 			m_boExplosion = true;

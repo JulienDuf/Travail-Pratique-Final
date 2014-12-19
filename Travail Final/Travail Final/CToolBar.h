@@ -84,6 +84,15 @@ public:
 		m_RectTextureDestination.h = _uiObjectHeight;
 	}
 
+	~CToolBar() {
+
+		m_pListeObjet->DetruireListeTexture();
+		delete m_pListeObjet;
+		delete m_pScrollBar;
+		delete m_pTimerClick;
+		SDL_DestroyTexture(m_pTextureToolBar);
+	}
+
 	// Procédure permettant d'afficher la toolbar...
 	// Param1: Renderer pour afficher.
 	void ShowToolBar(SDL_Renderer* _pRenderer) {

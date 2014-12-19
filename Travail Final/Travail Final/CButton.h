@@ -90,7 +90,6 @@ public:
 
 	}
 	
-
 	~CButton() {
 
 		SDL_DestroyTexture(m_pSDLTextureButton);

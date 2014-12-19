@@ -127,7 +127,85 @@ public:
 				if (pPlayerActif->IsUsingTool())
 					PhysiqueTool(_pRenderer);
 
+				else if (!pPlayerActif->IsStable()) {
 
+					DetectionCollisionPack(pPlayerActif, &boExplosion, &RectExplosion);
+					if (boExplosion) {
+
+						DomageExplosion(RectExplosion, 45);
+					}
+
+					else if (pPlayerActif->ObtenirSpriteCourse()->IsActif()) {
+
+						dComposanteX += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35.0;
+
+						if (!VerifierCollisionJoueurMap(pPlayerActif, RectTmp, &boCorps, &boPied, &_uiXPieds, &_uiYPieds, &_uiXCorps, &_uiYCorps)) {
+
+							pPlayerActif->ObtenirVecteurPoids()->ModifierComposantY( pPlayerActif->ObtenirVecteurPoids()->ObtenirComposanteY() + m_pGameMap->ObtenirGravite()->ObtenirComposanteY() );
+
+							dComposanteY += pPlayerActif->ObtenirVecteurPoids()->ObtenirComposanteY() / 35;
+
+							pPlayerActif->DefinirPositionX(dComposanteX);
+							pPlayerActif->DefinirPositionY(dComposanteY);
+
+						}
+
+						else {
+
+							pPlayerActif->ObtenirVecteurPoids()->ModifierComposantY(0);
+
+							if (boPied && !boCorps) {
+
+
+								if (boCorps) {
+
+									if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 0)
+										dComposanteX -= (RectTmp.w - _uiXCorps);
+
+									if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1)
+										dComposanteX += _uiXCorps;
+
+									pPlayerActif->DefinirPositionX(dComposanteX);
+									pPlayerActif->DefinirPositionY(dComposanteY);
+
+								}
+
+								unsigned int uiH = 0;
+
+								while ((((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[RectTmp.x + 1 + _uiXPieds + (RectTmp.y + _uiYPieds - uiH) *m_pGameMap->ObtenirSurfaceMap()->w] != 0) && ( uiH <=2 ))
+									uiH++;
+
+								if (uiH <= 2) {
+
+									dComposanteY -= uiH;
+
+
+									pPlayerActif->DefinirPositionX(dComposanteX);
+									pPlayerActif->DefinirPositionY(dComposanteY);
+
+								}
+								
+								else {
+
+									if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 0 && (_uiXPieds > RectTmp.w / 2))
+										dComposanteX -= (RectTmp.w - _uiXPieds);
+
+									if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1 && (_uiXPieds < RectTmp.w / 2))
+										dComposanteX += _uiXPieds;
+
+									pPlayerActif->DefinirPositionX(dComposanteX);
+									pPlayerActif->DefinirPositionY(dComposanteY);
+
+								}
+								
+							}
+
+						}
+
+					}
+
+		
+				/*
 				else if (!pPlayerActif->IsStable()) {
 
 					if (pPlayerActif->ObtenirSpriteCourse()->IsActif()) {
@@ -199,7 +277,7 @@ public:
 
 
 					}
-
+					*/
 					/*
 					else if (pPlayerActif->IsSliding()) {
 						CVecteur2D* VecteurFrottement = new CVecteur2D(1, 0.0f);

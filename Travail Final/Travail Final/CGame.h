@@ -475,7 +475,7 @@ public:
 			}
 			else if (m_pToolBar->ObtenirPositionObjetDoubleClick() == 1 && pProjectileTmp->EstLancer()) {
 
-				bool boSensRotation;
+				bool boSensRotation = false;
 				RectTmp = pProjectileTmp->ObtenirRectDestination();
 
 				// AutoDesctruction de la grenade...
@@ -489,6 +489,10 @@ public:
 				else
 				{
 					pVecteurVitesse = pProjectileTmp->ObtenirVecteurVitesse();
+					int x = RectTmp->x;
+					int y = RectTmp->y;
+					RectTmp->x += pVecteurVitesse->ObtenirComposanteX() / 35;
+					RectTmp->y += pVecteurVitesse->ObtenirComposanteY() / 35;
 
 					if (CollisionGrenadeJoueur(pProjectileTmp->ObtenirSurface(), *pProjectileTmp->ObtenirRectDestination(), &iX, &iY)) {
 
@@ -497,22 +501,28 @@ public:
 						//DomageExplosion({ pProjectileTmp->ObtenirRectDestination()->x + iX, pProjectileTmp->ObtenirRectDestination()->y }, 40);
 						//ChangerTour()
 					}
-
-					if (CollisionGrenadeMap(pProjectileTmp->ObtenirSurface(), pVecteurVitesse, RectTmp, &boSensRotation)) {
+					
+					if (CollisionObjetMap(pProjectileTmp->ObtenirSurface(), *RectTmp, nullptr, nullptr)) {
+						RectTmp->x = x;
+						RectTmp->y = y;
+						RepositionnementGrenadeMap(pProjectileTmp->ObtenirSurface(), pVecteurVitesse, RectTmp, &boSensRotation);
 						float angle = (float)RegressionLineaire(*pProjectileTmp->ObtenirRectDestination(), *pProjectileTmp->ObtenirRectDestination(), true);
-						CVecteur2D VecteurNormal = CVecteur2D(1, angle + 90);
-						double dScalaire = 2 * pVecteurVitesse->Scalaire(VecteurNormal.ObtenirComposanteX(), VecteurNormal.ObtenirComposanteY());
-						*pVecteurVitesse -= VecteurNormal * dScalaire;
-						*pVecteurVitesse = *pVecteurVitesse * 0.35;
-
+						if (pVecteurVitesse->ObtenirNorme() >= 35) {
+							CVecteur2D VecteurNormal = CVecteur2D(1, angle + 90);
+							double dScalaire = 2 * pVecteurVitesse->Scalaire(VecteurNormal.ObtenirComposanteX(), VecteurNormal.ObtenirComposanteY());
+							*pVecteurVitesse -= VecteurNormal * dScalaire;
+							*pVecteurVitesse = *pVecteurVitesse * 0.35;
+						}
+						else
+						{
+							pVecteurVitesse->ModifierVecteur(35, angle);
+						}
 						if (boSensRotation)
 							pProjectileTmp->DefinirRotation(-pVecteurVitesse->ObtenirNorme());
 						else
 							pProjectileTmp->DefinirRotation(pVecteurVitesse->ObtenirNorme());
 					}
-
-					RectTmp->x += pVecteurVitesse->ObtenirComposanteX() / 35;
-					RectTmp->y += pVecteurVitesse->ObtenirComposanteY() / 35;
+					
 					*pVecteurVitesse += *m_pGameMap->ObtenirGravite();
 				}
 			}
@@ -659,15 +669,15 @@ public:
 			}
 		}
 		else {
-<<<<<<< HEAD
+
 			if (fPente != 0)
 				return (180 / M_PI) * atanf(fPente);
 			else
 				return 270;
-=======
+
 			if (iCov != 0 && iVar != 0) 
 				return (180 / M_PI) * atanf(fPente);
->>>>>>> origin/Branche-Player
+
 		}
 
 		return 362;
@@ -732,8 +742,10 @@ public:
 						if (iPixelObjetMapX > 0 && iPixelObjetMapX < 1366 && iPixelObjetMapY > 0 && iPixelObjetMapY < 768) {
 
 							if (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(iPixelObjetMapY - 1) * m_pGameMap->ObtenirSurfaceMap()->w + iPixelObjetMapX] != 0 && ((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(iPixelObjetMapY - 1)* m_pGameMap->ObtenirSurfaceMap()->w + iPixelObjetMapX] != TRANSPARENCE32BIT) {
-								*_iX = iPixelObjetMapX - _RectDestinationObjet.x;
-								*_iY = iPixelObjetMapY - _RectDestinationObjet.y;
+								if (_iX != nullptr)
+									*_iX = iPixelObjetMapX - _RectDestinationObjet.x;
+								if (_iY != nullptr)
+									*_iY = iPixelObjetMapY - _RectDestinationObjet.y;
 								return true;
 							}
 						}
@@ -743,33 +755,6 @@ public:
 		}
 
 		return false;
-
-		/* Ancienne Collision
-		*_iX = 0;
-		*_iY = 0;
-	
-		unsigned int ix, iy;
-		
-		SDL_Surface* pSDLSurfaceMap = pWindowJeu->ObtenirGame()->ObtenirMap()->ObtenirSurfaceMap();
-	
-		for (int y = _RectDestination.y; y < _RectDestination.y + _RectDestination.h; y++) {
-			for (int x = _RectDestination.x; x < _RectDestination.x + _RectDestination.w; x++) {
-	
-				if (x >= 0 && x <= 1366 && y >= 0 && y <= 768) {
-	
-					ix = ((unsigned int*)pSDLSurfaceMap->pixels)[y * pSDLSurfaceMap->w + x];
-	
-					if ((((unsigned int*)pSDLSurfaceMap->pixels)[y * pSDLSurfaceMap->w + x] != 0) && (((unsigned int*)_pSDLSurface->pixels)[(y - _RectDestination.y) * _pSDLSurface->w + (x - _RectDestination.x)] != 0)) {
-	
-						if (*_iX == 0) {
-							*_iX = x;
-							*_iY = y;
-						}
-					}
-				}
-			}
-		}
-		*/
 	}
 
 	bool CollisionMissile(SDL_Surface* _pSurfaceMissile, SDL_Rect _RectDestination, int* _iX, int* _iY) {
@@ -883,225 +868,34 @@ public:
 
 			m_pTeamList->AllerSuivantTrieur();
 		}
-
 		return CollisionObjetMap(_pSurfaceMissile, _RectDestination, _iX, _iY);
 	}
 
-	bool CollisionGrenadeMap(SDL_Surface* _pSurfaceGrenade, CVecteur2D* _pVecteurGrenade, SDL_Rect* _RectDestinationGrenade, bool* _boSensRotation) {
+	void RepositionnementGrenadeMap(SDL_Surface* _pSurfaceGrenade, CVecteur2D* _pVecteurGrenade, SDL_Rect* _RectDestinationGrenade, bool* _boSensRotation) {
 		
-		// Grenade dans la map...
-		if (_RectDestinationGrenade->x + _RectDestinationGrenade->w <= 1366 && _RectDestinationGrenade->x >= 0 && _RectDestinationGrenade->y + _RectDestinationGrenade->h <= 768 && _RectDestinationGrenade->y >= 0) {
-			
-			bool boArret;
-			bool boCollision = false;
-			int iX;
-			int iY;
-			SDL_Surface* pSurfaceMap = m_pGameMap->ObtenirSurfaceMap();
-			unsigned int uiTransparenceGrenade = ((unsigned int*)_pSurfaceGrenade->pixels)[0];
-			unsigned int uiTransparenceMap = ((unsigned int*)pSurfaceMap->pixels)[0];
-			/*
-			if (_pVecteurGrenade->ObtenirComposanteX() >= 0) {
-				*_boSensRotation = true;
-				if (_pVecteurGrenade->ObtenirComposanteY() >= 0) {
-					for (int j = 0; j < _RectDestinationGrenade->h; j++) {
-						for (int i = 0; i < _RectDestinationGrenade->w; i++) {
-							if (((unsigned int*)_pSurfaceGrenade->pixels)[j*_pSurfaceGrenade->w + i] != uiTransparenceGrenade) {
-								if (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(_RectDestinationGrenade->y + j)*pSurfaceMap->w + _RectDestinationGrenade->x + i] != uiTransparenceMap) {
-									//_RectDestinationGrenade->x--;
-									//_RectDestinationGrenade->y--;
-									boCollision = true;
-								}
-							}
-						}
-					}
+		int iIncrementationX = 0;
+		int iIncrementationY = 0;
+		int iVecteurX = _pVecteurGrenade->ObtenirComposanteX()/35;
+		int iVecteurY = _pVecteurGrenade->ObtenirComposanteY()/35;
+
+
+		for (int i = 0; i < _pVecteurGrenade->ObtenirNorme(); i++) {
+			if (!CollisionObjetMap(_pSurfaceGrenade, *_RectDestinationGrenade, nullptr, nullptr)) {
+				if (iIncrementationX <= abs(iVecteurX) && iVecteurX != 0) {
+					_RectDestinationGrenade->x -= iVecteurX / abs(iVecteurX);
+					iIncrementationX++;
 				}
-				else
-				{
-					(*_boSensRotation) = !(*_boSensRotation);
-					for (int j = 0; j < _RectDestinationGrenade->h; j++) {
-						for (int i = 0; i < _RectDestinationGrenade->w; i++) {
-							if (((unsigned int*)_pSurfaceGrenade->pixels)[j*_pSurfaceGrenade->w + i] != uiTransparenceGrenade) {
-								if (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(_RectDestinationGrenade->y + j)*pSurfaceMap->w + _RectDestinationGrenade->x + i] != uiTransparenceMap) {
-									//_RectDestinationGrenade->x--;
-									//_RectDestinationGrenade->y++;
-									boCollision = true;
-								}
-							}
-						}
-					}
+				if (iIncrementationY <= abs(iVecteurY) && iVecteurY != 0) {
+					_RectDestinationGrenade->y -= iVecteurY / abs(iVecteurY);
+					iIncrementationY++;
 				}
 			}
 			else
-			{
-				*_boSensRotation = false;
-				if (_pVecteurGrenade->ObtenirComposanteY() >= 0) {
-					for (int j = 0; j < _RectDestinationGrenade->h; j++) {
-						for (int i = 0; i < _RectDestinationGrenade->w; i++) {
-							if (((unsigned int*)_pSurfaceGrenade->pixels)[j*_pSurfaceGrenade->w + i] != uiTransparenceGrenade) {
-								if (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(_RectDestinationGrenade->y + j)*pSurfaceMap->w + _RectDestinationGrenade->x + i] != uiTransparenceMap) {
-									//_RectDestinationGrenade->x++;
-									//_RectDestinationGrenade->y--;
-									boCollision = true;
-								}
-							}
-						}
-					}
-				}
-				else
-				{
-					(*_boSensRotation) = !(*_boSensRotation);
-					for (int j = 0; j < _RectDestinationGrenade->h; j++) {
-						for (int i = 0; i < _RectDestinationGrenade->w; i++) {
-							if (((unsigned int*)_pSurfaceGrenade->pixels)[j*_pSurfaceGrenade->w + i] != uiTransparenceGrenade) {
-								if (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(_RectDestinationGrenade->y + j)*pSurfaceMap->w + _RectDestinationGrenade->x + i] != uiTransparenceMap) {
-									//_RectDestinationGrenade->x++;
-									//_RectDestinationGrenade->y++;
-									boCollision = true;
-								}
-							}
-						}
-					}
-				}
-			}
-			*/
-			
-			// Vecteur X Positif...
-			if (_pVecteurGrenade->ObtenirComposanteX() >= 0) {
-
-				*_boSensRotation = true;
-
-				// Boucle qui vérifie les pixels du côté droit du rect...
-				for (int j = 0; j < _pSurfaceGrenade->h; j++) {
-					iX = _RectDestinationGrenade->w - 1;
-					iY = j;
-					boArret = false;
-					for (int i = _RectDestinationGrenade->w - 1; i >= 0; i--) {
-						if (((unsigned int*)_pSurfaceGrenade->pixels)[iY * _pSurfaceGrenade->w + iX] == 0 || ((unsigned int*)_pSurfaceGrenade->pixels)[iY * _pSurfaceGrenade->w + iX] == TRANSPARENCE32BIT) {
-							iX--;
-							if (i == 0)
-								boArret = true;
-						}
-						else
-							i = -1;
-					}
-
-					if (!boArret) {
-						iX += _RectDestinationGrenade->x;
-						iY += _RectDestinationGrenade->y;
-						if (((unsigned int*)pSurfaceMap->pixels)[(iY)* pSurfaceMap->w + iX] != 0 && ((unsigned int*)pSurfaceMap->pixels)[(iY)* pSurfaceMap->w + iX] != TRANSPARENCE32BIT) {
-							_RectDestinationGrenade->x--;
-							if (_pVecteurGrenade->ObtenirComposanteY() >= 0)
-								_RectDestinationGrenade->y--;
-							else
-								_RectDestinationGrenade->y++;
-							boCollision = true;
-						}
-					}
-				}
-			}
-			else
-			{
-
-				*_boSensRotation = false;
-
-				// Boucle qui vérifie les pixels du côté gauche du rect...
-				for (int j = 0; j < _pSurfaceGrenade->h; j++) {
-					iX = 0;
-					iY = j;
-					boArret = false;
-					for (int i = _RectDestinationGrenade->w - 1; i <= _RectDestinationGrenade->w - 1; i++) {
-						if (((unsigned int*)_pSurfaceGrenade->pixels)[iY * _pSurfaceGrenade->w + iX] == 0 || ((unsigned int*)_pSurfaceGrenade->pixels)[iY * _pSurfaceGrenade->w + iX] == TRANSPARENCE32BIT) {
-							iX++;
-							if (i == _RectDestinationGrenade->w - 1)
-								boArret = true;
-						}
-						else
-							i = _RectDestinationGrenade->w;
-					}
-					if (!boArret) {
-						iX += _RectDestinationGrenade->x;
-						iY += _RectDestinationGrenade->y;
-						if (((unsigned int*)pSurfaceMap->pixels)[(iY)* pSurfaceMap->w + iX] != 0 && ((unsigned int*)pSurfaceMap->pixels)[(iY)* pSurfaceMap->w + iX] != TRANSPARENCE32BIT) {
-							_RectDestinationGrenade->x--;
-							if (_pVecteurGrenade->ObtenirComposanteY() >= 0)
-								_RectDestinationGrenade->y--;
-							else
-								_RectDestinationGrenade->y++;
-							boCollision = true;
-						}
-					}
-				}
-			}
-
-			// Vecteur Y Positif...
-			if (_pVecteurGrenade->ObtenirComposanteY() >= 0) {
-
-				// Boucle qui vérifie les pixels du côté bas du rect...
-				for (int i = 0; i < _RectDestinationGrenade->w; i++) {
-					iX = i;
-					iY = _RectDestinationGrenade->h - 1;
-					boArret = false;
-					for (int j = _RectDestinationGrenade->h - 1; j >= 0; j--) {
-						if (((unsigned int*)_pSurfaceGrenade->pixels)[iY * _pSurfaceGrenade->w + iX] == 0 || ((unsigned int*)_pSurfaceGrenade->pixels)[iY * _pSurfaceGrenade->w + iX] == TRANSPARENCE32BIT) {
-							iY--;
-							if (j == 0)
-								boArret = true;
-						}
-						else
-							j = -1;
-					}
-					if (!boArret) {
-						iX += _RectDestinationGrenade->x;
-						iY += _RectDestinationGrenade->y;
-						if (((unsigned int*)pSurfaceMap->pixels)[(iY)* pSurfaceMap->w + iX] != 0 && ((unsigned int*)pSurfaceMap->pixels)[(iY)* pSurfaceMap->w + iX] != TRANSPARENCE32BIT) {
-							_RectDestinationGrenade->y--;
-							if (_pVecteurGrenade->ObtenirComposanteX() >= 0)
-								_RectDestinationGrenade->x--;
-							else
-								_RectDestinationGrenade->x++;
-							boCollision = true;
-						}
-					}
-				}
-			}
-			// Vecteur Y Négatif...
-			else
-			{
-
-				(*_boSensRotation) = !(*_boSensRotation);
-
-				// Boucle qui vérifie les pixels du côté haut du rect...
-				for (int i = 0; i < _RectDestinationGrenade->w; i++) {
-					iX = i;
-					iY = 0;
-					boArret = false;
-					for (int j = _RectDestinationGrenade->h - 1; j <= _RectDestinationGrenade->h - 1; j++) {
-						if (((unsigned int*)_pSurfaceGrenade->pixels)[iY * _pSurfaceGrenade->w + iX] == 0 || ((unsigned int*)_pSurfaceGrenade->pixels)[iY * _pSurfaceGrenade->w + iX] == TRANSPARENCE32BIT) {
-							iY++;
-							if (j == _RectDestinationGrenade->h - 1)
-								boArret = true;
-						}
-						else
-							j = _RectDestinationGrenade->h;
-					}
-					if (!boArret) {
-						iX += _RectDestinationGrenade->x;
-						iY += _RectDestinationGrenade->y;
-						if (((unsigned int*)pSurfaceMap->pixels)[(iY)* pSurfaceMap->w + iX] != 0 && ((unsigned int*)pSurfaceMap->pixels)[(iY)* pSurfaceMap->w + iX] != TRANSPARENCE32BIT) {
-							_RectDestinationGrenade->y++;
-							if (_pVecteurGrenade->ObtenirComposanteX() >= 0)
-								_RectDestinationGrenade->x--;
-							else
-								_RectDestinationGrenade->x++;
-							boCollision = true;
-						}
-					}
-				}
-			}
-			
-			return boCollision;
+				i = _pVecteurGrenade->ObtenirNorme();
 		}
-		return false;
+
+		
+		
 	}
 
 	bool CollisionGrenadeJoueur(SDL_Surface* _pSurfaceGrenade, SDL_Rect _RectDestinationGrenade, int* iX, int* iY) {
@@ -1597,3 +1391,469 @@ public:
 	}
 	                                                                              
 };
+
+/*
+// Grenade dans la map...
+if (_RectDestinationGrenade->x + _RectDestinationGrenade->w <= 1366 && _RectDestinationGrenade->x >= 0 && _RectDestinationGrenade->y + _RectDestinationGrenade->h <= 768 && _RectDestinationGrenade->y >= 0) {
+
+	SDL_Point pPointMilieu;
+	SDL_Point pPointPixelObservee;
+	bool boCollision = false;
+	bool boCollisionX = false;
+	bool boCollisionY = false;
+	SDL_Surface* pSurfaceMap = m_pGameMap->ObtenirSurfaceMap();
+	unsigned int uiTransparenceGrenade = ((unsigned int*)_pSurfaceGrenade->pixels)[0];
+	unsigned int uiTransparenceMap = ((unsigned int*)pSurfaceMap->pixels)[0];
+
+	// Gauche/Bas
+	if (_pVecteurGrenade->ObtenirComposanteX() < 0 && _pVecteurGrenade->ObtenirComposanteY() > 0) {
+		pPointMilieu = { 0, _RectDestinationGrenade->h - 1 };
+		while (((unsigned int*)_pSurfaceGrenade->pixels)[pPointMilieu.y*_pSurfaceGrenade->w + pPointMilieu.x] == 0 || ((unsigned int*)_pSurfaceGrenade->pixels)[pPointMilieu.y*_pSurfaceGrenade->w + pPointMilieu.x] == TRANSPARENCE32BIT) {
+			pPointMilieu.x++;
+			pPointMilieu.y--;
+		}
+
+		int iMax;
+		if (_RectDestinationGrenade->w - pPointMilieu.x > pPointMilieu.y)
+			iMax = _RectDestinationGrenade->w - pPointMilieu.x;
+		else
+			iMax = pPointMilieu.y;
+
+		for (int i = 0; i < iMax; i++) {
+
+			// Côté gauche...
+			pPointPixelObservee = { 0, i };
+			if (pPointPixelObservee.y <= pPointMilieu.y) {
+				while ((((unsigned int*)_pSurfaceGrenade->pixels)[pPointPixelObservee.y*_pSurfaceGrenade->w + pPointPixelObservee.x] == 0 || ((unsigned int*)_pSurfaceGrenade->pixels)[pPointPixelObservee.y*_pSurfaceGrenade->w + pPointPixelObservee.x] == TRANSPARENCE32BIT) && pPointPixelObservee.x < _pSurfaceGrenade->w - 1) {
+					pPointPixelObservee.x++;
+				}
+				if (((unsigned int*)pSurfaceMap->pixels)[(_RectDestinationGrenade->y + pPointPixelObservee.y)*pSurfaceMap->w + (_RectDestinationGrenade->x + pPointPixelObservee.x)] != 0 && ((unsigned int*)pSurfaceMap->pixels)[(_RectDestinationGrenade->y + pPointPixelObservee.y)*pSurfaceMap->w + (_RectDestinationGrenade->x + pPointPixelObservee.x)] != TRANSPARENCE32BIT && pPointPixelObservee.x != _pSurfaceGrenade->w - 1) {
+					boCollisionX = true;
+					boCollision = true;
+				}
+			}
+
+			// Côté bas...
+			pPointPixelObservee = { _RectDestinationGrenade->w - i - 1, _RectDestinationGrenade->h - 1 };
+			if (pPointPixelObservee.x >= pPointMilieu.x) {
+				while ((((unsigned int*)_pSurfaceGrenade->pixels)[pPointPixelObservee.y*_pSurfaceGrenade->w + pPointPixelObservee.x] == 0 || ((unsigned int*)_pSurfaceGrenade->pixels)[pPointPixelObservee.y*_pSurfaceGrenade->w + pPointPixelObservee.x] == TRANSPARENCE32BIT) && pPointPixelObservee.y >= 1) {
+					pPointPixelObservee.y--;
+				}
+				if (((unsigned int*)pSurfaceMap->pixels)[(_RectDestinationGrenade->y + pPointPixelObservee.y)*pSurfaceMap->w + (_RectDestinationGrenade->x + pPointPixelObservee.x)] != 0 && ((unsigned int*)pSurfaceMap->pixels)[(_RectDestinationGrenade->y + pPointPixelObservee.y)*pSurfaceMap->w + (_RectDestinationGrenade->x + pPointPixelObservee.x)] != TRANSPARENCE32BIT && pPointPixelObservee.y != 0) {
+					boCollisionY = true;
+					boCollision = true;
+				}
+			}
+
+			if (boCollisionX)
+				_RectDestinationGrenade->x++;
+
+			if (boCollisionY)
+				_RectDestinationGrenade->y--;
+
+			boCollisionX = false;
+			boCollisionY = false;
+		}
+	}
+
+	// Gauche/Haut
+	if (_pVecteurGrenade->ObtenirComposanteX() < 0 && _pVecteurGrenade->ObtenirComposanteY() > 0) {
+		pPointMilieu = { 0, 0 };
+		while (((unsigned int*)_pSurfaceGrenade->pixels)[pPointMilieu.y*_pSurfaceGrenade->w + pPointMilieu.x] == 0 || ((unsigned int*)_pSurfaceGrenade->pixels)[pPointMilieu.y*_pSurfaceGrenade->w + pPointMilieu.x] == TRANSPARENCE32BIT) {
+			pPointMilieu.x++;
+			pPointMilieu.y++;
+		}
+
+		int iMax;
+		if (_RectDestinationGrenade->w - pPointMilieu.x > _RectDestinationGrenade->h - pPointMilieu.y)
+			iMax = _RectDestinationGrenade->w - pPointMilieu.x;
+		else
+			iMax = _RectDestinationGrenade->h - pPointMilieu.y;
+
+		for (int i = 0; i < iMax; i++) {
+
+			// Côté gauche...
+			pPointPixelObservee = { 0, _RectDestinationGrenade->h - i };
+			if (pPointPixelObservee.y >= pPointMilieu.y) {
+				while ((((unsigned int*)_pSurfaceGrenade->pixels)[pPointPixelObservee.y*_pSurfaceGrenade->w + pPointPixelObservee.x] == 0 || ((unsigned int*)_pSurfaceGrenade->pixels)[pPointPixelObservee.y*_pSurfaceGrenade->w + pPointPixelObservee.x] == TRANSPARENCE32BIT) && pPointPixelObservee.x < _pSurfaceGrenade->w - 1) {
+					pPointPixelObservee.x++;
+				}
+				if (((unsigned int*)pSurfaceMap->pixels)[(_RectDestinationGrenade->y + pPointPixelObservee.y)*pSurfaceMap->w + (_RectDestinationGrenade->x + pPointPixelObservee.x)] != 0 && ((unsigned int*)pSurfaceMap->pixels)[(_RectDestinationGrenade->y + pPointPixelObservee.y)*pSurfaceMap->w + (_RectDestinationGrenade->x + pPointPixelObservee.x)] != TRANSPARENCE32BIT && pPointPixelObservee.x != _pSurfaceGrenade->w - 1) {
+					boCollisionX = true;
+					boCollision = true;
+				}
+			}
+
+			// Côté Haut...
+			pPointPixelObservee = { _RectDestinationGrenade->w - i, 0 };
+			if (pPointPixelObservee.x >= pPointMilieu.x) {
+				while ((((unsigned int*)_pSurfaceGrenade->pixels)[pPointPixelObservee.y*_pSurfaceGrenade->w + pPointPixelObservee.x] == 0 || ((unsigned int*)_pSurfaceGrenade->pixels)[pPointPixelObservee.y*_pSurfaceGrenade->w + pPointPixelObservee.x] == TRANSPARENCE32BIT) && pPointPixelObservee.y < _pSurfaceGrenade->h - 1) {
+					pPointPixelObservee.y++;
+				}
+				if (((unsigned int*)pSurfaceMap->pixels)[(_RectDestinationGrenade->y + pPointPixelObservee.y)*pSurfaceMap->w + (_RectDestinationGrenade->x + pPointPixelObservee.x)] != 0 && ((unsigned int*)pSurfaceMap->pixels)[(_RectDestinationGrenade->y + pPointPixelObservee.y)*pSurfaceMap->w + (_RectDestinationGrenade->x + pPointPixelObservee.x)] != TRANSPARENCE32BIT && pPointPixelObservee.y != _RectDestinationGrenade->w - 1) {
+					boCollisionY = true;
+					boCollision = true;
+				}
+			}
+
+			if (boCollisionX)
+				_RectDestinationGrenade->x++;
+
+			if (boCollisionY)
+				_RectDestinationGrenade->y++;
+
+			boCollisionX = false;
+			boCollisionY = false;
+		}
+	}
+
+	// Droite/Bas...
+	if (_pVecteurGrenade->ObtenirComposanteX() > 0 && _pVecteurGrenade->ObtenirComposanteY() > 0) {
+		pPointMilieu = { _RectDestinationGrenade->w - 1, _RectDestinationGrenade->h - 1 };
+		while (((unsigned int*)_pSurfaceGrenade->pixels)[pPointMilieu.y*_pSurfaceGrenade->w + pPointMilieu.x] == 0 || ((unsigned int*)_pSurfaceGrenade->pixels)[pPointMilieu.y*_pSurfaceGrenade->w + pPointMilieu.x] == TRANSPARENCE32BIT) {
+			pPointMilieu.x--;
+			pPointMilieu.y--;
+		}
+
+		int iMax;
+		if (pPointMilieu.x > pPointMilieu.y)
+			iMax = pPointMilieu.x;
+		else
+			iMax = pPointMilieu.y;
+
+		for (int i = 0; i < iMax; i++) {
+
+			// Côté droit...
+			pPointPixelObservee = { _RectDestinationGrenade->w - 1, i };
+			if (pPointPixelObservee.y <= pPointMilieu.y) {
+				while ((((unsigned int*)_pSurfaceGrenade->pixels)[pPointPixelObservee.y*_pSurfaceGrenade->w + pPointPixelObservee.x] == 0 || ((unsigned int*)_pSurfaceGrenade->pixels)[pPointPixelObservee.y*_pSurfaceGrenade->w + pPointPixelObservee.x] == TRANSPARENCE32BIT) && pPointPixelObservee.x >= 1) {
+					pPointPixelObservee.x--;
+				}
+				if (((unsigned int*)pSurfaceMap->pixels)[(_RectDestinationGrenade->y + pPointPixelObservee.y)*pSurfaceMap->w + (_RectDestinationGrenade->x + pPointPixelObservee.x)] != 0 && ((unsigned int*)pSurfaceMap->pixels)[(_RectDestinationGrenade->y + pPointPixelObservee.y)*pSurfaceMap->w + (_RectDestinationGrenade->x + pPointPixelObservee.x)] != TRANSPARENCE32BIT && pPointPixelObservee.x != 0) {
+					boCollisionX = true;
+					boCollision = true;
+				}
+			}
+
+			// Côté bas...
+			pPointPixelObservee = { i, _RectDestinationGrenade->h - 1 };
+			if (pPointPixelObservee.x <= pPointMilieu.x) {
+				while ((((unsigned int*)_pSurfaceGrenade->pixels)[pPointPixelObservee.y*_pSurfaceGrenade->w + pPointPixelObservee.x] == 0 || ((unsigned int*)_pSurfaceGrenade->pixels)[pPointPixelObservee.y*_pSurfaceGrenade->w + pPointPixelObservee.x] == TRANSPARENCE32BIT) && pPointPixelObservee.y >= 1) {
+					pPointPixelObservee.y--;
+				}
+				if (((unsigned int*)pSurfaceMap->pixels)[(_RectDestinationGrenade->y + pPointPixelObservee.y)*pSurfaceMap->w + (_RectDestinationGrenade->x + pPointPixelObservee.x)] != 0 && ((unsigned int*)pSurfaceMap->pixels)[(_RectDestinationGrenade->y + pPointPixelObservee.y)*pSurfaceMap->w + (_RectDestinationGrenade->x + pPointPixelObservee.x)] != TRANSPARENCE32BIT && pPointPixelObservee.y != 0) {
+					boCollisionY = true;
+					boCollision = true;
+				}
+			}
+
+			if (boCollisionX)
+				_RectDestinationGrenade->x--;
+
+			if (boCollisionY)
+				_RectDestinationGrenade->y--;
+
+			boCollisionX = false;
+			boCollisionY = false;
+		}
+	}
+
+	// Droite/Haut...
+	if (_pVecteurGrenade->ObtenirComposanteX() > 0 && _pVecteurGrenade->ObtenirComposanteY() < 0) {
+		pPointMilieu = { _RectDestinationGrenade->w - 1, 0 };
+		while (((unsigned int*)_pSurfaceGrenade->pixels)[pPointMilieu.y*_pSurfaceGrenade->w + pPointMilieu.x] == 0 || ((unsigned int*)_pSurfaceGrenade->pixels)[pPointMilieu.y*_pSurfaceGrenade->w + pPointMilieu.x] == TRANSPARENCE32BIT) {
+			pPointMilieu.x--;
+			pPointMilieu.y++;
+		}
+
+		int iMax;
+		if (pPointMilieu.x > _RectDestinationGrenade->h - pPointMilieu.y)
+			iMax = pPointMilieu.x;
+		else
+			iMax = _RectDestinationGrenade->h - pPointMilieu.y;
+
+		for (int i = 0; i < iMax; i++) {
+
+			// Côté droit...
+			pPointPixelObservee = { _RectDestinationGrenade->w - 1, i };
+			if (pPointPixelObservee.y <= pPointMilieu.y) {
+				while ((((unsigned int*)_pSurfaceGrenade->pixels)[pPointPixelObservee.y*_pSurfaceGrenade->w + pPointPixelObservee.x] == 0 || ((unsigned int*)_pSurfaceGrenade->pixels)[pPointPixelObservee.y*_pSurfaceGrenade->w + pPointPixelObservee.x] == TRANSPARENCE32BIT) && pPointPixelObservee.x >= 1) {
+					pPointPixelObservee.x--;
+				}
+				if (((unsigned int*)pSurfaceMap->pixels)[(_RectDestinationGrenade->y + pPointPixelObservee.y)*pSurfaceMap->w + (_RectDestinationGrenade->x + pPointPixelObservee.x)] != 0 && ((unsigned int*)pSurfaceMap->pixels)[(_RectDestinationGrenade->y + pPointPixelObservee.y)*pSurfaceMap->w + (_RectDestinationGrenade->x + pPointPixelObservee.x)] != TRANSPARENCE32BIT && pPointPixelObservee.x != 0) {
+					boCollisionX = true;
+					boCollision = true;
+				}
+			}
+
+			// Côté Haut...
+			pPointPixelObservee = { i, 0 };
+			if (pPointPixelObservee.x <= pPointMilieu.x) {
+				while ((((unsigned int*)_pSurfaceGrenade->pixels)[pPointPixelObservee.y*_pSurfaceGrenade->w + pPointPixelObservee.x] == 0 || ((unsigned int*)_pSurfaceGrenade->pixels)[pPointPixelObservee.y*_pSurfaceGrenade->w + pPointPixelObservee.x] == TRANSPARENCE32BIT) && pPointPixelObservee.y < _pSurfaceGrenade->h - 1) {
+					pPointPixelObservee.y++;
+				}
+				if (((unsigned int*)pSurfaceMap->pixels)[(_RectDestinationGrenade->y + pPointPixelObservee.y)*pSurfaceMap->w + (_RectDestinationGrenade->x + pPointPixelObservee.x)] != 0 && ((unsigned int*)pSurfaceMap->pixels)[(_RectDestinationGrenade->y + pPointPixelObservee.y)*pSurfaceMap->w + (_RectDestinationGrenade->x + pPointPixelObservee.x)] != TRANSPARENCE32BIT && pPointPixelObservee.y != _RectDestinationGrenade->w - 1) {
+					boCollisionY = true;
+					boCollision = true;
+				}
+			}
+
+			if (boCollisionX)
+				_RectDestinationGrenade->x--;
+
+			if (boCollisionY)
+				_RectDestinationGrenade->y++;
+
+			boCollisionX = false;
+			boCollisionY = false;
+		}
+	}
+	/*
+	bool boCollision = true;
+	bool boCollision2 = false;
+	SDL_Surface* pSurfaceMap = m_pGameMap->ObtenirSurfaceMap();
+	unsigned int uiTransparenceGrenade = ((unsigned int*)_pSurfaceGrenade->pixels)[0];
+	unsigned int uiTransparenceMap = ((unsigned int*)pSurfaceMap->pixels)[0];
+	int iCollisionLimite = 0;
+	while (boCollision) {
+	boCollision = false;
+	for (int j = 0; j < _RectDestinationGrenade->h; j++) {
+	if (j < _pSurfaceGrenade->h) {
+	for (int i = 0; i < _RectDestinationGrenade->w; i++) {
+	if (i < _pSurfaceGrenade->w) {
+	if (((unsigned int*)_pSurfaceGrenade->pixels)[j*_pSurfaceGrenade->w + i] != uiTransparenceGrenade) {
+	if (((unsigned int*)pSurfaceMap->pixels)[(_RectDestinationGrenade->y + j)*pSurfaceMap->w + (_RectDestinationGrenade->x + i)] != uiTransparenceMap) {
+	iCollisionLimite++;
+	boCollision = true;
+	boCollision2 = true;
+	if (iCollisionLimite > _pVecteurGrenade->ObtenirNorme()/35)
+	boCollision = false;
+	if ((j + i) <= (_RectDestinationGrenade->h + _RectDestinationGrenade->w / 2)) {
+	if (_pVecteurGrenade->ObtenirComposanteX() >= 0)
+	_RectDestinationGrenade->x--;
+	else
+	_RectDestinationGrenade->x++;
+	}
+	else
+	{
+	if (_pVecteurGrenade->ObtenirComposanteY() >= 0)
+	_RectDestinationGrenade->y--;
+	else
+	_RectDestinationGrenade->y++;
+	}
+	}
+	}
+	}
+	}
+	}
+	}
+	}
+	*/
+	/*
+	bool boArret;
+	bool boCollision = false;
+	int iX;
+	int iY;
+	SDL_Surface* pSurfaceMap = m_pGameMap->ObtenirSurfaceMap();
+	unsigned int uiTransparenceGrenade = ((unsigned int*)_pSurfaceGrenade->pixels)[0];
+	unsigned int uiTransparenceMap = ((unsigned int*)pSurfaceMap->pixels)[0];
+
+	if (_pVecteurGrenade->ObtenirComposanteX() >= 0) {
+	*_boSensRotation = true;
+	if (_pVecteurGrenade->ObtenirComposanteY() >= 0) {
+	for (int j = 0; j < _RectDestinationGrenade->h; j++) {
+	for (int i = 0; i < _RectDestinationGrenade->w; i++) {
+	if (((unsigned int*)_pSurfaceGrenade->pixels)[j*_pSurfaceGrenade->w + i] != uiTransparenceGrenade) {
+	if (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(_RectDestinationGrenade->y + j)*pSurfaceMap->w + _RectDestinationGrenade->x + i] != uiTransparenceMap) {
+	_RectDestinationGrenade->x--;
+	_RectDestinationGrenade->y--;
+	boCollision = true;
+	}
+	}
+	}
+	}
+	}
+	else
+	{
+	(*_boSensRotation) = !(*_boSensRotation);
+	for (int j = 0; j < _RectDestinationGrenade->h; j++) {
+	for (int i = 0; i < _RectDestinationGrenade->w; i++) {
+	if (((unsigned int*)_pSurfaceGrenade->pixels)[j*_pSurfaceGrenade->w + i] != uiTransparenceGrenade) {
+	if (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(_RectDestinationGrenade->y + j)*pSurfaceMap->w + _RectDestinationGrenade->x + i] != uiTransparenceMap) {
+	_RectDestinationGrenade->x--;
+	_RectDestinationGrenade->y++;
+	boCollision = true;
+	}
+	}
+	}
+	}
+	}
+	}
+	else
+	{
+	*_boSensRotation = false;
+	if (_pVecteurGrenade->ObtenirComposanteY() >= 0) {
+	for (int j = 0; j < _RectDestinationGrenade->h; j++) {
+	for (int i = 0; i < _RectDestinationGrenade->w; i++) {
+	if (((unsigned int*)_pSurfaceGrenade->pixels)[j*_pSurfaceGrenade->w + i] != uiTransparenceGrenade) {
+	if (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(_RectDestinationGrenade->y + j)*pSurfaceMap->w + _RectDestinationGrenade->x + i] != uiTransparenceMap) {
+	_RectDestinationGrenade->x++;
+	_RectDestinationGrenade->y--;
+	boCollision = true;
+	}
+	}
+	}
+	}
+	}
+	else
+	{
+	(*_boSensRotation) = !(*_boSensRotation);
+	for (int j = 0; j < _RectDestinationGrenade->h; j++) {
+	for (int i = 0; i < _RectDestinationGrenade->w; i++) {
+	if (((unsigned int*)_pSurfaceGrenade->pixels)[j*_pSurfaceGrenade->w + i] != uiTransparenceGrenade) {
+	if (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(_RectDestinationGrenade->y + j)*pSurfaceMap->w + _RectDestinationGrenade->x + i] != uiTransparenceMap) {
+	_RectDestinationGrenade->x++;
+	_RectDestinationGrenade->y++;
+	boCollision = true;
+	}
+	}
+	}
+	}
+	}
+	}
+
+
+	// Vecteur X Positif...
+	if (_pVecteurGrenade->ObtenirComposanteX() >= 0) {
+
+	*_boSensRotation = true;
+
+	// Boucle qui vérifie les pixels du côté droit du rect...
+	for (int j = 0; j < _pSurfaceGrenade->h; j++) {
+	iX = _RectDestinationGrenade->w - 1;
+	iY = j;
+	boArret = false;
+	for (int i = _RectDestinationGrenade->w - 1; i >= 0; i--) {
+	if (((unsigned int*)_pSurfaceGrenade->pixels)[iY * _pSurfaceGrenade->w + iX] == 0 || ((unsigned int*)_pSurfaceGrenade->pixels)[iY * _pSurfaceGrenade->w + iX] == TRANSPARENCE32BIT) {
+	iX--;
+	if (i == 0)
+	boArret = true;
+	}
+	else
+	i = -1;
+	}
+
+	if (!boArret) {
+	iX += _RectDestinationGrenade->x;
+	iY += _RectDestinationGrenade->y;
+	if (((unsigned int*)pSurfaceMap->pixels)[(iY)* pSurfaceMap->w + iX] != 0 && ((unsigned int*)pSurfaceMap->pixels)[(iY)* pSurfaceMap->w + iX] != TRANSPARENCE32BIT) {
+	_RectDestinationGrenade->x--;
+	if (_pVecteurGrenade->ObtenirComposanteY() >= 0)
+	_RectDestinationGrenade->y--;
+	else
+	_RectDestinationGrenade->y++;
+	boCollision = true;
+	}
+	}
+	}
+	}
+	else
+	{
+
+	*_boSensRotation = false;
+
+	// Boucle qui vérifie les pixels du côté gauche du rect...
+	for (int j = 0; j < _pSurfaceGrenade->h; j++) {
+	iX = 0;
+	iY = j;
+	boArret = false;
+	for (int i = _RectDestinationGrenade->w - 1; i <= _RectDestinationGrenade->w - 1; i++) {
+	if (((unsigned int*)_pSurfaceGrenade->pixels)[iY * _pSurfaceGrenade->w + iX] == 0 || ((unsigned int*)_pSurfaceGrenade->pixels)[iY * _pSurfaceGrenade->w + iX] == TRANSPARENCE32BIT) {
+	iX++;
+	if (i == _RectDestinationGrenade->w - 1)
+	boArret = true;
+	}
+	else
+	i = _RectDestinationGrenade->w;
+	}
+	if (!boArret) {
+	iX += _RectDestinationGrenade->x;
+	iY += _RectDestinationGrenade->y;
+	if (((unsigned int*)pSurfaceMap->pixels)[(iY)* pSurfaceMap->w + iX] != 0 && ((unsigned int*)pSurfaceMap->pixels)[(iY)* pSurfaceMap->w + iX] != TRANSPARENCE32BIT) {
+	_RectDestinationGrenade->x--;
+	if (_pVecteurGrenade->ObtenirComposanteY() >= 0)
+	_RectDestinationGrenade->y--;
+	else
+	_RectDestinationGrenade->y++;
+	boCollision = true;
+	}
+	}
+	}
+	}
+
+	// Vecteur Y Positif...
+	if (_pVecteurGrenade->ObtenirComposanteY() >= 0) {
+
+	// Boucle qui vérifie les pixels du côté bas du rect...
+	for (int i = 0; i < _RectDestinationGrenade->w; i++) {
+	iX = i;
+	iY = _RectDestinationGrenade->h - 1;
+	boArret = false;
+	for (int j = _RectDestinationGrenade->h - 1; j >= 0; j--) {
+	if (((unsigned int*)_pSurfaceGrenade->pixels)[iY * _pSurfaceGrenade->w + iX] == 0 || ((unsigned int*)_pSurfaceGrenade->pixels)[iY * _pSurfaceGrenade->w + iX] == TRANSPARENCE32BIT) {
+	iY--;
+	if (j == 0)
+	boArret = true;
+	}
+	else
+	j = -1;
+	}
+	if (!boArret) {
+	iX += _RectDestinationGrenade->x;
+	iY += _RectDestinationGrenade->y;
+	if (((unsigned int*)pSurfaceMap->pixels)[(iY)* pSurfaceMap->w + iX] != 0 && ((unsigned int*)pSurfaceMap->pixels)[(iY)* pSurfaceMap->w + iX] != TRANSPARENCE32BIT) {
+	_RectDestinationGrenade->y--;
+	if (_pVecteurGrenade->ObtenirComposanteX() >= 0)
+	_RectDestinationGrenade->x--;
+	else
+	_RectDestinationGrenade->x++;
+	boCollision = true;
+	}
+	}
+	}
+	}
+	// Vecteur Y Négatif...
+	else
+	{
+
+	(*_boSensRotation) = !(*_boSensRotation);
+
+	// Boucle qui vérifie les pixels du côté haut du rect...
+	for (int i = 0; i < _RectDestinationGrenade->w; i++) {
+	iX = i;
+	iY = 0;
+	boArret = false;
+	for (int j = _RectDestinationGrenade->h - 1; j <= _RectDestinationGrenade->h - 1; j++) {
+	if (((unsigned int*)_pSurfaceGrenade->pixels)[iY * _pSurfaceGrenade->w + iX] == 0 || ((unsigned int*)_pSurfaceGrenade->pixels)[iY * _pSurfaceGrenade->w + iX] == TRANSPARENCE32BIT) {
+	iY++;
+	if (j == _RectDestinationGrenade->h - 1)
+	boArret = true;
+	}
+	else
+	j = _RectDestinationGrenade->h;
+	}
+	if (!boArret) {
+	iX += _RectDestinationGrenade->x;
+	iY += _RectDestinationGrenade->y;
+	if (((unsigned int*)pSurfaceMap->pixels)[(iY)* pSurfaceMap->w + iX] != 0 && ((unsigned int*)pSurfaceMap->pixels)[(iY)* pSurfaceMap->w + iX] != TRANSPARENCE32BIT) {
+	_RectDestinationGrenade->y++;
+	if (_pVecteurGrenade->ObtenirComposanteX() >= 0)
+	_RectDestinationGrenade->x--;
+	else
+	_RectDestinationGrenade->x++;
+	boCollision = true;
+	}
+	}
+	}
+	}
+	*/

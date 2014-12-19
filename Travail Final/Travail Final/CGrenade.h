@@ -261,16 +261,15 @@ public:
 				if (_pEvent->key.keysym.scancode == SDL_SCANCODE_SPACE) {
 
 					m_iAngle = m_pBarrePuissance->ObtenirAngle();
-
-					if (m_iAngle <= 90 || m_iAngle >= 270)
-						m_iVitesseRotationAngulaire = 300;
-					else
-						m_iVitesseRotationAngulaire = -300;
-					m_uiForce = (m_pBarrePuissance->ObtenirForce() + 3) * 50;
+					m_uiForce = (m_pBarrePuissance->ObtenirForce() + 3) * 40;
 					m_boGrenadeLancer = true;
 					m_boRotation = true;
 					m_uiMunition--;
 					m_pVecteurVitesseGrenade = new CVecteur2D((float)m_uiForce, (float)m_iAngle);
+					if (m_iAngle <= 90 || m_iAngle >= 270)
+						m_iVitesseRotationAngulaire = m_uiForce;
+					else
+						m_iVitesseRotationAngulaire = -(int)m_uiForce;
 					m_iAngle = 0;
 
 					m_pBarrePuissance->ObtenirPosition(&m_RectDestinationGrenade.x, &m_RectDestinationGrenade.y);

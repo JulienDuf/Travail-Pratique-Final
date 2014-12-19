@@ -18,7 +18,7 @@ private:
 	bool m_boToolActif;					// Si le joueur est en utilisation d'un outil.
 	bool m_boChuteLibre;				// Si le joueur est en chute libre.
 	bool m_boGlissade;					// Si le joueur est en train de glisser :)
-
+	
 
 	double m_dPositionX;
 	double m_dPositionY;
@@ -58,6 +58,9 @@ public:
 
 		m_boStable = false;
 		m_boToolActif = false;
+		m_boGlissade = false;
+		m_boChuteLibre = false;
+
 		
 		m_pListeMouvement->AjouterFin(new CMelee(_strEmplacement, new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceMelee"), pGestionnaireTexture->ObtenirDonnee("pTextureMelee"), _RectDestination, 30, 30, true, true, 2), _pRenderer));
 
@@ -136,6 +139,10 @@ public:
 			{
 				if (_uiObjetSelectionner <= 3) {
 					m_pListeMouvement->AllerACurseur(_uiObjetSelectionner - 2);
+					if (!m_pListeMouvement->ObtenirElementCurseur()->ObtenirSprite("")->IsActif()) 
+						m_pListeMouvement->ObtenirElementCurseur()->ObtenirSprite("")->DefinirEtage(ObtenirSpriteRepos()->ObtenirEtage());
+						
+					
 				}
 				else
 					m_pListeMouvement->AllerACurseur(2);
@@ -412,4 +419,7 @@ public:
 			return m_pListeMouvement->ObtenirElementTrieur()->ObtenirMunition();
 		}
 	}
+
+
+	
 };

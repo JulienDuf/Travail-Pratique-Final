@@ -12,6 +12,7 @@ private:
 	CTimer* m_pTimerPhysique; // Le timer pour la physique.
 
 	bool m_boDebutPartie; // Si le jeu est en début de partie.
+	bool m_boFinTour; // Si le jeu est en fin de tour.
 
 
 public:
@@ -62,7 +63,13 @@ public:
 
 	void AfficherGame(SDL_Renderer* _pRenderer, bool _boPause) {
 
-		if (m_boDebutPartie)
+		if (m_boDebutPartie && m_boFinTour) {
+			m_boDebutPartie = !IsAllTeamStable();
+			if (!m_boDebutPartie)
+				ChangerTour(_pRenderer);
+		}
+
+		else if (m_boDebutPartie)
 			m_boDebutPartie = !IsAllTeamStable();
 
 		m_pGameMap->ShowMap(_pRenderer);
@@ -200,11 +207,13 @@ public:
 						pPlayerActif->DefinirPositionY(dComposanteY);
 						pPlayerActif->ObtenirVecteurVitesse()->ModifierComposantY(0);
 
-						/*if (RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination(), false) == 240 || RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination(), false) == 330) {
+						if (RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination(), false) == 240 || RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination(), false) == 330) {
 							pPlayerActif->ModifierGlissadeJoueur(true);
 							pPlayerActif->ObtenirSpriteCourse()->DefinirActif(false);
 							pPlayerActif->ObtenirSpriteRepos()->DefinirActif(true);
-						}*/
+							pPlayerActif->DefinirToolActif(false);
+							
+						}
 
 					}
 
@@ -275,10 +284,13 @@ public:
 
 							else {
 
-  								pPlayerActif->ModifierTypeMouvement(2);
 								pPlayerActif->ObtenirJetPack()->ObtenirSprite("")->DefinirActif(false);
+								pPlayerActif->ObtenirSpriteRepos()->DefinirEtage(pPlayerActif->ObtenirJetPack()->ObtenirSprite("")->ObtenirEtage());
+								pPlayerActif->ModifierTypeMouvement(2);
 								pPlayerActif->ObtenirSpriteRepos()->DefinirActif(true);
-								pPlayerActif->ModifierChuteLibreJoueur(true);
+								pPlayerActif->ModifierStabiliteJoueur(false);
+								m_boFinTour = true;
+								m_boDebutPartie = true;
 								m_pToolBar->NouveauTour();
 							}
 						}
@@ -368,8 +380,9 @@ public:
 								RectPlayer.y += (pPlayer->ObtenirRectDestinationParachute().h - pPlayer->ObtenirRectDestination().h);
 								pPlayer->DefinirPositionX(RectPlayer.x);
 								pPlayer->DefinirPositionY(RectPlayer.y);
-								if (RectPlayer.x >= (1366 / 2))
+								if (RectPlayer.x >= (1366 / 2)) 
 									pPlayer->ObtenirSpriteRepos()->DefinirEtage(1);
+								
 							}
 
 
@@ -653,21 +666,17 @@ public:
 					return fPente;
 				}
 				if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 1 && fPente < 0) { // Le joueur se déplace vers la gauche et la pente est négative.
-					fPente = 180 + (180 / M_PI) * atanf(fPente);
+					fPente = 180 - (180 / M_PI) * atanf(fPente);
 					return fPente;
 				}
 			}
 		}
 		else {
-<<<<<<< HEAD
+
 			if (fPente != 0)
 				return (180 / M_PI) * atanf(fPente);
 			else
 				return 270;
-=======
-			if (iCov != 0 && iVar != 0) 
-				return (180 / M_PI) * atanf(fPente);
->>>>>>> origin/Branche-Player
 		}
 
 		return 362;

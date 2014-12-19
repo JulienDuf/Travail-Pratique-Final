@@ -226,15 +226,16 @@ public:
 
 						}
 
+						if (RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination(), false) == 240 || RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination(), false) == 330) {
+							pPlayerActif->ModifierGlissadeJoueur(true);
+							pPlayerActif->ObtenirSpriteCourse()->DefinirActif(false);
+							pPlayerActif->ObtenirSpriteRepos()->DefinirActif(true);
+							pPlayerActif->DefinirToolActif(false);
+
+						}
+
 					}
 
-
-
-					/*if (RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination(), false) == 240 || RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination(), false) == 330) {
-						pPlayerActif->ModifierGlissadeJoueur(true);
-						pPlayerActif->ObtenirSpriteCourse()->DefinirActif(false);
-						pPlayerActif->ObtenirSpriteRepos()->DefinirActif(true);
-						}*/
 
 					else if (pPlayerActif->ObtenirSpriteSaut()->IsActif()) {
 
@@ -242,57 +243,57 @@ public:
 
 					}
 
-					/*
+
 					else if (pPlayerActif->IsSliding()) {
-					CVecteur2D* VecteurFrottement = new CVecteur2D(1, 0.0f);
-					double doAngle = RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination(), false); // Variable qui sert a calcul juste 1 fois l'angle.
-					if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1) { // Si le joueur se déplace vers la droite.
+						CVecteur2D* VecteurFrottement = new CVecteur2D(1, 0.0f);
+						double doAngle = RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination(), false); // Variable qui sert a calcul juste 1 fois l'angle.
+						if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1) { // Si le joueur se déplace vers la droite.
 
-					if (doAngle > 90 && doAngle < 180) { // Si le joueur se déplace vers la gauche et que la pente est vers le haut à gauche.
-					pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(doAngle);
-					pPlayerActif->ObtenirVecteurPoids()->ModifierOrientation(doAngle + 180);
-					*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
-					VecteurFrottement->ModifierOrientation(doAngle + 180);
-					*pPlayerActif->ObtenirVecteurVitesse() -= *VecteurFrottement;
+							if (doAngle > 90 && doAngle < 180) { // Si le joueur se déplace vers la gauche et que la pente est vers le haut à gauche.
+								pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(doAngle);
+								pPlayerActif->ObtenirVecteurPoids()->ModifierOrientation(doAngle + 180);
+								*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
+								VecteurFrottement->ModifierOrientation(doAngle + 180);
+								*pPlayerActif->ObtenirVecteurVitesse() -= *VecteurFrottement;
+							}
+
+							if (doAngle > 180 && doAngle < 270) { // Si le joueur se déplace vers la le bas a gauche.
+								pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(doAngle);
+								pPlayerActif->ObtenirVecteurPoids()->ModifierOrientation(doAngle);
+								*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
+								VecteurFrottement->ModifierOrientation(doAngle - 180);
+								*pPlayerActif->ObtenirVecteurVitesse() -= *VecteurFrottement;
+							}
+
+
+
+
+
+						}
+						else { // Si le joueur va vers la droite
+
+							if (doAngle > 270) { // Si le joueur se déplace vers la droite et que la pente est vers le bas à droite.
+								pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(doAngle);
+								pPlayerActif->ObtenirVecteurPoids()->ModifierOrientation(doAngle);
+								*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
+								VecteurFrottement->ModifierOrientation(doAngle - 180);
+								*pPlayerActif->ObtenirVecteurVitesse() -= *VecteurFrottement;
+							}
+
+							if (doAngle < 90) { // Si la pente est en haut a droite.
+								pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(doAngle);
+								pPlayerActif->ObtenirVecteurPoids()->ModifierOrientation(doAngle + 180);
+								*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
+								VecteurFrottement->ModifierOrientation(-doAngle);
+								*pPlayerActif->ObtenirVecteurVitesse() -= *VecteurFrottement;
+							}
+						}
+
+						if (pPlayerActif->ObtenirVecteurVitesse() == 0 && RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination(), false) < 60) // Si la glissade est fini.
+							pPlayerActif->ModifierGlissadeJoueur(false);
 					}
 
-					if (doAngle > 180 && doAngle < 270) { // Si le joueur se déplace vers la le bas a gauche.
-					pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(doAngle);
-					pPlayerActif->ObtenirVecteurPoids()->ModifierOrientation(doAngle);
-					*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
-					VecteurFrottement->ModifierOrientation(doAngle - 180);
-					*pPlayerActif->ObtenirVecteurVitesse() -= *VecteurFrottement;
-					}
-
-
-
-
-
-					}
-					else { // Si le joueur va vers la droite
-
-					if (doAngle > 270) { // Si le joueur se déplace vers la droite et que la pente est vers le bas à droite.
-					pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(doAngle);
-					pPlayerActif->ObtenirVecteurPoids()->ModifierOrientation(doAngle);
-					*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
-					VecteurFrottement->ModifierOrientation(doAngle - 180);
-					*pPlayerActif->ObtenirVecteurVitesse() -= *VecteurFrottement;
-					}
-
-					if (doAngle < 90) { // Si la pente est en haut a droite.
-					pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(doAngle);
-					pPlayerActif->ObtenirVecteurPoids()->ModifierOrientation(doAngle + 180);
-					*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
-					VecteurFrottement->ModifierOrientation(-doAngle);
-					*pPlayerActif->ObtenirVecteurVitesse() -= *VecteurFrottement;
-					}
-					}
-
-					if (pPlayerActif->ObtenirVecteurVitesse() == 0 && RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination(), false) < 60) // Si la glissade est fini.
-					pPlayerActif->ModifierGlissadeJoueur(false);
-					}
-
-					*/
+					
 
 
 					else if (pPlayerActif->ObtenirJetPack()->ObtenirSprite("")->IsActif()) {
@@ -312,10 +313,13 @@ public:
 
 							else {
 
-								pPlayerActif->ModifierTypeMouvement(2);
 								pPlayerActif->ObtenirJetPack()->ObtenirSprite("")->DefinirActif(false);
+								pPlayerActif->ObtenirSpriteRepos()->DefinirEtage(pPlayerActif->ObtenirJetPack()->ObtenirSprite("")->ObtenirEtage());
+								pPlayerActif->ModifierTypeMouvement(2);
 								pPlayerActif->ObtenirSpriteRepos()->DefinirActif(true);
-								pPlayerActif->ModifierChuteLibreJoueur(true);
+								pPlayerActif->ModifierStabiliteJoueur(false);
+								m_boFinTour = true;
+								m_boDebutPartie = true;
 								m_pToolBar->NouveauTour();
 							}
 						}
@@ -325,7 +329,7 @@ public:
 
 				m_pTimerPhysique->Start();
 
-				}
+			}
 
 		}
 
@@ -406,8 +410,9 @@ public:
 								RectPlayer.y += (pPlayer->ObtenirRectDestinationParachute().h - pPlayer->ObtenirRectDestination().h);
 								pPlayer->DefinirPositionX(RectPlayer.x);
 								pPlayer->DefinirPositionY(RectPlayer.y);
-								if (RectPlayer.x >= (1366 / 2))
+								if (RectPlayer.x >= (1366 / 2)) 
 									pPlayer->ObtenirSpriteRepos()->DefinirEtage(1);
+								
 							}
 
 
@@ -629,8 +634,9 @@ public:
 		else {
 
 			_RectRegression = _RectPiedJoueur;
-
-			int j = 0;
+			_RectRegression.h += 20;
+		}
+			/*int j = 0;
 			float y1 = 0;
 			float y2 = 0;
 			float x1 = _RectRegression.x;
@@ -669,97 +675,81 @@ public:
 			return (180 / M_PI) * atanf(fPente);
 
 
-		}
+		}*/
 
 
 
 
 
-		/* Ancienne régression ...
 		int iTableau[5000]; // Tableau.
 		for (int j = 0; j < _RectRegression.h; j++) { // Boucler sur toute le rect du pied dans la position de la map.
-		for (int i = 0; i < _RectRegression.w; i++) {
-		if (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(i + _RectRegression.x + _RectJoueur.x) + ((j + _RectRegression.y + _RectJoueur.y) * (m_pGameMap->ObtenirSurfaceMap()->w))] != 0)  { // Si le pixel est transparent.
-		iTableau[i + j * _RectRegression.w] = 1; // Mettre 1 dans mon tableau.
-		fX += i; // fX va servir a faire la moyenne des X.
-		fY += j; // fY va servir a faire la moyenne des Y.
-		iN += 1; // Pour diviser le nombre d'éléments.
-		}
-		else
-		iTableau[i + j * _RectRegression.w] = 0;
-		}
+			for (int i = 0; i < _RectRegression.w; i++) {
+				if (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(i + _RectRegression.x + _RectJoueur.x) + ((j + _RectRegression.y + _RectJoueur.y) * (m_pGameMap->ObtenirSurfaceMap()->w))] != 0)  { // Si le pixel est transparent.
+					iTableau[i + j * _RectRegression.w] = 1; // Mettre 1 dans mon tableau.
+					fX += i; // fX va servir a faire la moyenne des X.
+					fY += j; // fY va servir a faire la moyenne des Y.
+					iN += 1; // Pour diviser le nombre d'éléments.
+				}
+				else
+					iTableau[i + j * _RectRegression.w] = 0;
+			}
 		}
 		if (fX != 0 && fY != 0) {
-		fX = fX / iN; // moyenne
-		fY = fY / iN; // moyenne
+			fX = fX / iN; // moyenne
+			fY = fY / iN; // moyenne
 		}
+
 		for (int j = 0; j < _RectRegression.h; j++) {
-		for (int i = 0; i < _RectRegression.w; i++) {
-		if (iTableau[i + j * _RectRegression.w] == 1) {
-		iCov += ((j - fY) * (i - fX)); // Calcul pour Y moyens avec le Y moyens.
-		iVar += pow((i - fX), 2);    // Calcul pour X moyens avec le X moyens.
-		}
-		}
+			for (int i = 0; i < _RectRegression.w; i++) {
+				if (iTableau[i + j * _RectRegression.w] == 1) {
+					iCov += ((j - fY) * (i - fX)); // Calcul pour Y moyens avec le Y moyens.
+					iVar += pow((i - fX), 2);    // Calcul pour X moyens avec le X moyens.
+				}
+			}
 		}
 
 		if (iCov != 0 && iVar != 0) {
-		iCov = (iCov / iN); //moyenne
-		iVar = (iVar / iN); //moyenne
-		fPente = iCov / iVar; // Donne la pente. iCov = y , iVar = x.
+			iCov = (iCov / iN); //moyenne
+			iVar = (iVar / iN); //moyenne
+			fPente = iCov / iVar; // Donne la pente. iCov = y , iVar = x.
 		}
 
 
 
 
 		if (!_boObjet) {
-		if (iCov != 0 && iVar != 0) {
-		if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 0 && fPente > 0) { // Le joueur se déplace vers la droite et la pente est positive.
-		fPente = (180 / M_PI) * atanf(fPente);
-		return fPente;
-		}
 
-		if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 0 && fPente < 0) { // Le joueur se déplace vers la droite et la pente est négative.
-		fPente = 360 - ((180 / M_PI) * atanf(fPente));
-		return fPente;
+			if (iCov != 0 && iVar != 0) {
+
+				if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 0 && fPente > 0) { // Le joueur se déplace vers la droite et la pente est négative.
+					fPente = ((180 / M_PI) * atanf(fPente));
+					return fPente;
+				}
+
+				if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 0 && fPente < 0) { // Le joueur se déplace vers la droite et la pente est négative.
+					fPente = 360 - ((180 / M_PI) * atanf(fPente));
+					return fPente;
+				}
+				if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 1 && fPente > 0) { // Le joueur se déplace vers la gauche et la pente est positive.
+					fPente = 180 + (180 / M_PI) * atanf(fPente);
+					return fPente;
+				}
+				if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 1 && fPente < 0) { // Le joueur se déplace vers la gauche et la pente est négative.
+					fPente = 180 - (180 / M_PI) * atanf(fPente);
+					return fPente;
+				}
+
+			}
+
 		}
-		if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 1 && fPente > 0) { // Le joueur se déplace vers la gauche et la pente est positive.
-		fPente = 180 + (180 / M_PI) * atanf(fPente);
-		return fPente;
-		}
-		if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 1 && fPente < 0) { // Le joueur se déplace vers la gauche et la pente est négative.
-		fPente = 180 + (180 / M_PI) * atanf(fPente);
-		return fPente;
-		}
-		}
-		}
+		
 		else {
-<<<<<<< HEAD
-
-=======
-<<<<<<< HEAD
-		if (fPente != 0)
-		return (180 / M_PI) * atanf(fPente);
-		else
-		return 270;
-=======
-<<<<<<< HEAD
->>>>>>> 0f9edd669264a206ae78c99aad863e9a61435e30
 			if (fPente != 0)
 				return (180 / M_PI) * atanf(fPente);
 			else
 				return 270;
-<<<<<<< HEAD
-
-=======
-=======
-			if (iCov != 0 && iVar != 0) 
-				return (180 / M_PI) * atanf(fPente);
->>>>>>> origin/Branche-Player
->>>>>>> origin/Branche-jeu
->>>>>>> 0f9edd669264a206ae78c99aad863e9a61435e30
 		}
-
-		return 362;*/
+		return 362;
 
 	}
 

@@ -86,6 +86,9 @@ public:
 
 		delete m_pButtonLeft;
 		delete m_pButtonRight;
+
+		m_pListeTexture->DetruireListeTexture();
+		delete m_pListeTexture;
 	}
 	
 	// Procédure permettant d'ajouter des textures à la liste.

@@ -112,6 +112,16 @@ public:
 
 	}
 
+	~CPlayer() {
+
+		delete m_pBarreVie;
+		delete m_pListeMouvement;
+		delete m_pListeTools;
+		delete m_pSpriteParachute;
+		delete m_pVecteurPoids;
+		delete m_pVecteurVitesse;
+	}
+
 	// Procédure qui affiche le joueur.
 	// Paramètre: _pSDLRenderer, Rendeur de la fenêtre dans laquelle on veut afficher le joueur.
 	// Retour: Rien.

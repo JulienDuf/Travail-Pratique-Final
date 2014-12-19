@@ -100,6 +100,15 @@ public:
 		NouveauVent(pGestionnaireFont->ObtenirDonnee("pFontBouton"), _pRenderer);
 	}
 
+	~CMap() {
+
+		SDL_DestroyTexture(m_pSDLTextureBackground);
+		SDL_DestroyTexture(m_pSDLTextureMap);
+		SDL_FreeSurface(m_pSDLSurfaceMap);
+		delete m_pPackList;
+		delete m_pVent;
+		delete m_VecteurGravite;
+	}
 
 	// Procédure qui affiche la carte de jeu.
 	// Paramètre: _pSDLRender, Rendeur de la fenêtre dans laquelle on veut afficher la carte de jeu.

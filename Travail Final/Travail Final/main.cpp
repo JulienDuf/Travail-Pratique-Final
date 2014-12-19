@@ -619,6 +619,18 @@ void Close(void) {
 	delete pEvent;
 	delete pWindowJeu; // Détruit la fenêtre, donc tous les contrôles reliés à la fenêtre.
 
+	// Destructions des éléments spéciaux.
+	pGestionnaireFont->DestructionFont();
+	pGestionnaireSurface->DestructionSurface();
+	pGestionnaireTexture->DestructionTexture();
+
+	// Destruction des gestionnaires de données...
+	delete pGestionnaireControl;
+	delete pGestionnaireFont;
+	delete pGestionnaireMenu;
+	delete pGestionnaireSurface;
+	delete pGestionnaireTexture;
+
 	// Quitte les librairies...
 	SDL_Quit();
 	TTF_Quit();

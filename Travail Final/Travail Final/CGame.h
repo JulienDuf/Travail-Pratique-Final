@@ -37,6 +37,14 @@ public:
 		m_pTimerPhysique->Start();
 	}
 
+	~CGame() {
+
+		delete m_pGameMap;
+		delete m_pTeamList;
+		delete m_pToolBar;
+		delete m_pTimerPhysique;
+	}
+
 	void ChangerTour(SDL_Renderer* _pRenderer) {
 		m_pTeamList->AllerSuivantCurseur();
 		m_pTeamList->ObtenirElementCurseur()->ChangerPlayerActif();

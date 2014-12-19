@@ -158,6 +158,14 @@ public:
 		m_pSpritePlayer = new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfacePlayerBazooka"), pGestionnaireTexture->ObtenirDonnee("pTexturePlayerBazooka"), m_RectDestinationBazooka, 1, 0, true, false, 2);
 	}
 
+	~CMissile() {
+
+		delete m_pBarrePuissance;
+		delete m_pLblDescription;
+		delete m_pSpriteExplosion;
+		delete m_pSpritePlayer;
+	}
+
 	// Procédure réagissnat à une collision.
 	// Param1: La position en X de la collision.
 	// Param2: Le position en Y de la collision.

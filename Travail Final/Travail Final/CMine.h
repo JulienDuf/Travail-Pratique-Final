@@ -43,6 +43,10 @@ public:
 		m_dAnglemine = 0;
 	}
 
+	~CMine() {
+
+		delete m_pSpriteExplosion;
+	}
 
 	bool Use(CPlayer* _pPlayer) {
 

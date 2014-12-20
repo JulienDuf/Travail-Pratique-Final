@@ -219,7 +219,7 @@ public:
 	}
 
 	void ModifierGlissadeJoueur(bool _boGlissade) {
-		m_boChuteLibre = _boGlissade;
+		m_boGlissade = _boGlissade;
 	}
 
 	void ModifierTypeMouvement(int _iPositionCurseur) {

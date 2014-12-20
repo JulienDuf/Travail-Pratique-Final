@@ -1,139 +1,141 @@
-﻿Build started 2014-12-19 3:50:44 PM.
-     1>Project "C:\Users\Nicolas\Documents\GitHub\Travail-Pratique-Final\Travail Final\Travail Final\Travail Final.vcxproj" on node 2 (Build target(s)).
+﻿La génération a démarré 2014-12-19 11:20:20 PM.
+     1>Projet "C:\Users\Xavier\Documents\GitHub\Travail-Pratique-Final\Travail Final\Travail Final\Travail Final.vcxproj" sur le nœud 2 (Build cible(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
          main.cpp
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cvecteur2d.h(32): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cvecteur2d.h(64): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cvecteur2d.h(65): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cvecteur2d.h(102): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cvecteur2d.h(103): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cvecteur2d.h(109): warning C4305: 'argument' : truncation from 'double' to 'float'
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cvecteur2d.h(110): warning C4305: 'argument' : truncation from 'double' to 'float'
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\csprite.h(97): warning C4018: '>=' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cbutton.h(48): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cmenu.h(39): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cmenu.h(66): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cscrollbar.h(107): warning C4244: 'return' : conversion from 'float' to 'unsigned int', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cmissile.h(58): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cmissile.h(247): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cmissile.h(298): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cmissile.h(300): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgrenade.h(76): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgrenade.h(210): warning C4244: '+=' : conversion from 'float' to 'int', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgrenade.h(212): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgrenade.h(257): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cmelee.h(33): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cbarrevie.h(50): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cbarrevie.h(51): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cjetpack.h(39): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cjetpack.h(103): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cjetpack.h(152): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cjetpack.h(206): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cjetpack.h(254): warning C4244: 'return' : conversion from 'float' to 'unsigned int', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cplayer.h(150): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cplayer.h(151): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cplayer.h(188): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\ctoolbar.h(64): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\ctoolbar.h(76): warning C4018: '>' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\ctoolbar.h(101): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\ctoolbar.h(105): warning C4018: '>=' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\ctoolbar.h(105): warning C4018: '<=' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\ctoolbar.h(115): warning C4018: '<=' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\ctoolbar.h(115): warning C4018: '>' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\ctoolbar.h(122): warning C4018: '>=' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\ctoolbar.h(122): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\ctoolbar.h(162): warning C4244: '=' : conversion from 'float' to 'unsigned int', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\ctoolbar.h(172): warning C4018: '>=' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\ctoolbar.h(172): warning C4018: '<=' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\chealthpack.h(37): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cteam.h(37): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cteam.h(57): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cvent.h(87): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cmap.h(118): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cmap.h(143): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(77): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(88): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(168): warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(214): warning C4018: '>' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(217): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(309): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(352): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(356): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(362): warning C4244: '+=' : conversion from 'double' to 'int', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(138): warning C4101: 'dAngle' : unreferenced local variable
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(436): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(450): warning C4244: '+=' : conversion from 'double' to 'int', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(492): warning C4244: '+=' : conversion from 'double' to 'int', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(493): warning C4244: '+=' : conversion from 'double' to 'int', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(530): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(544): warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(546): warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(549): warning C4244: '+=' : conversion from 'double' to 'int', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(550): warning C4244: '+=' : conversion from 'double' to 'int', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(575): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(725): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(730): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(734): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(738): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(867): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(872): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(863): warning C4101: 'YMissile' : unreferenced local variable
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(863): warning C4101: 'YPlayer' : unreferenced local variable
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1194): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1199): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1325): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1327): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1347): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1349): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1445): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1388): warning C4101: 'TmpSDLRectPlayerHitboxCorps' : unreferenced local variable
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1394): warning C4101: 'YMissile' : unreferenced local variable
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1394): warning C4101: 'YPlayer' : unreferenced local variable
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1561): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1567): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1577): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1581): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1592): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1596): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1615): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1619): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1631): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1635): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1646): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1650): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1676): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cwindow.h(51): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cwindow.h(65): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\main.cpp(75): warning C4244: 'return' : conversion from 'double' to 'float', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\main.cpp(96): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\main.cpp(97): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\main.cpp(635): warning C4244: 'argument' : conversion from 'time_t' to 'unsigned int', possible loss of data
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\clistedc.h(152): warning C4552: '+' : operator has no effect; expected operator with side-effect
-                 c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\clistedc.h(147) : while compiling class template member function 'bool CListeDC<SDL_Texture *>::AllerATrieur(unsigned int)'
-                 c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\ctoolbar.h(72) : see reference to function template instantiation 'bool CListeDC<SDL_Texture *>::AllerATrieur(unsigned int)' being compiled
-                 c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\clabel.h(27) : see reference to class template instantiation 'CListeDC<SDL_Texture *>' being compiled
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\clistedc.h(155): warning C4552: '-' : operator has no effect; expected operator with side-effect
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\clistedc.h(164): warning C4552: '-' : operator has no effect; expected operator with side-effect
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\clistedc.h(207): warning C4552: '+' : operator has no effect; expected operator with side-effect
-                 c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\clistedc.h(202) : while compiling class template member function 'bool CListeDC<SDL_Texture *>::AllerACurseur(unsigned int)'
-                 c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\clabel.h(158) : see reference to function template instantiation 'bool CListeDC<SDL_Texture *>::AllerACurseur(unsigned int)' being compiled
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\clistedc.h(210): warning C4552: '-' : operator has no effect; expected operator with side-effect
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\clistedc.h(219): warning C4552: '-' : operator has no effect; expected operator with side-effect
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cplayer.h(422): warning C4715: 'CPlayer::ObtenirMunition' : not all control paths return a value
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\carbreavl.h(226): warning C4715: 'CArbreAVL<SDL_Texture *>::Rechercher' : not all control paths return a value
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1539): warning C4715: 'CGame::DetectionCollisionPack' : not all control paths return a value
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\clabelleftright.h(152): warning C4715: 'CLabelLeftRight::ObtenirElement' : not all control paths return a value
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\cdeplacement.h(164): warning C4715: 'CDeplacement::ObtenirSprite' : not all control paths return a value
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\carbreavl.h(226): warning C4715: 'CArbreAVL<SDL_Surface *>::Rechercher' : not all control paths return a value
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\carbreavl.h(226): warning C4715: 'CArbreAVL<_TTF_Font *>::Rechercher' : not all control paths return a value
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\carbreavl.h(226): warning C4715: 'CArbreAVL<CControl *>::Rechercher' : not all control paths return a value
-     1>c:\users\nicolas\documents\github\travail-pratique-final\travail final\travail final\carbreavl.h(226): warning C4715: 'CArbreAVL<CMenu *>::Rechercher' : not all control paths return a value
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cvecteur2d.h(32): warning C4244: 'argument' : conversion de 'double' en 'float', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cvecteur2d.h(64): warning C4244: 'argument' : conversion de 'double' en 'float', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cvecteur2d.h(65): warning C4244: 'argument' : conversion de 'double' en 'float', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cvecteur2d.h(102): warning C4244: 'argument' : conversion de 'double' en 'float', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cvecteur2d.h(103): warning C4244: 'argument' : conversion de 'double' en 'float', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cvecteur2d.h(109): warning C4305: 'argument' : troncation de 'double' à 'float'
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cvecteur2d.h(110): warning C4305: 'argument' : troncation de 'double' à 'float'
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\csprite.h(97): warning C4018: '>=' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cbutton.h(48): warning C4018: '<' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cmenu.h(39): warning C4018: '<' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cmenu.h(66): warning C4018: '<' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cscrollbar.h(107): warning C4244: 'return' : conversion de 'float' en 'unsigned int', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cmissile.h(58): warning C4018: '<' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cmissile.h(247): warning C4244: '=' : conversion de 'double' en 'int', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cmissile.h(298): warning C4244: '=' : conversion de 'double' en 'int', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cmissile.h(300): warning C4244: 'argument' : conversion de 'int' en 'float', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgrenade.h(76): warning C4018: '<' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgrenade.h(210): warning C4244: '+=' : conversion de 'float' en 'int', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgrenade.h(212): warning C4244: 'argument' : conversion de 'int' en 'float', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgrenade.h(257): warning C4244: '=' : conversion de 'double' en 'int', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cmelee.h(33): warning C4018: '<' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cbarrevie.h(50): warning C4244: '=' : conversion de 'float' en 'int', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cbarrevie.h(51): warning C4244: '=' : conversion de 'float' en 'int', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cjetpack.h(39): warning C4018: '<' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cjetpack.h(103): warning C4244: 'argument' : conversion de 'int' en 'float', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cjetpack.h(152): warning C4244: 'argument' : conversion de 'double' en 'float', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cjetpack.h(206): warning C4244: 'argument' : conversion de 'double' en 'float', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cjetpack.h(254): warning C4244: 'return' : conversion de 'float' en 'unsigned int', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cplayer.h(150): warning C4244: '=' : conversion de 'double' en 'int', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cplayer.h(151): warning C4244: '=' : conversion de 'double' en 'int', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cplayer.h(188): warning C4018: '<' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\ctoolbar.h(64): warning C4018: '<' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\ctoolbar.h(76): warning C4018: '>' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\ctoolbar.h(101): warning C4018: '<' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\ctoolbar.h(105): warning C4018: '>=' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\ctoolbar.h(105): warning C4018: '<=' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\ctoolbar.h(115): warning C4018: '<=' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\ctoolbar.h(115): warning C4018: '>' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\ctoolbar.h(122): warning C4018: '>=' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\ctoolbar.h(122): warning C4018: '<' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\ctoolbar.h(162): warning C4244: '=' : conversion de 'float' en 'unsigned int', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\ctoolbar.h(172): warning C4018: '>=' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\ctoolbar.h(172): warning C4018: '<=' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\chealthpack.h(37): warning C4244: 'argument' : conversion de 'double' en 'float', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cteam.h(37): warning C4018: '<' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cteam.h(57): warning C4018: '<' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cvent.h(87): warning C4244: 'argument' : conversion de 'double' en 'float', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cmap.h(118): warning C4018: '<' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cmap.h(143): warning C4244: 'argument' : conversion de 'int' en 'float', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(77): warning C4018: '<' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(88): warning C4018: '<' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(168): warning C4244: 'argument' : conversion de 'double' en 'int', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(214): warning C4018: '>' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(217): warning C4018: '<' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(309): warning C4244: 'initialisation' : conversion de 'double' en 'int', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(352): warning C4018: '<' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(356): warning C4018: '<' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(362): warning C4244: '+=' : conversion de 'double' en 'int', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(138): warning C4101: 'dAngle' : variable locale non référencée
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(436): warning C4018: '<' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(450): warning C4244: '+=' : conversion de 'double' en 'int', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(492): warning C4244: '+=' : conversion de 'double' en 'int', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(493): warning C4244: '+=' : conversion de 'double' en 'int', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(530): warning C4244: 'argument' : conversion de 'double' en 'float', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(544): warning C4244: 'argument' : conversion de 'double' en 'int', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(546): warning C4244: 'argument' : conversion de 'double' en 'int', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(549): warning C4244: '+=' : conversion de 'double' en 'int', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(550): warning C4244: '+=' : conversion de 'double' en 'int', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(575): warning C4018: '<' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(642): warning C4244: 'initialisation' : conversion de 'int' en 'float', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(643): warning C4244: 'initialisation' : conversion de 'int' en 'float', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(648): warning C4244: '=' : conversion de 'int' en 'float', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(655): warning C4244: '=' : conversion de 'int' en 'float', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(663): warning C4244: '=' : conversion de 'int' en 'float', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(671): warning C4244: '=' : conversion de 'int' en 'float', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(872): warning C4018: '<' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(877): warning C4018: '<' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(868): warning C4101: 'YMissile' : variable locale non référencée
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(868): warning C4101: 'YPlayer' : variable locale non référencée
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1199): warning C4018: '<' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1204): warning C4018: '<' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1330): warning C4018: '<' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1332): warning C4018: '<' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1352): warning C4018: '<' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1354): warning C4018: '<' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1450): warning C4018: '<' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1393): warning C4101: 'TmpSDLRectPlayerHitboxCorps' : variable locale non référencée
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1399): warning C4101: 'YMissile' : variable locale non référencée
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1399): warning C4101: 'YPlayer' : variable locale non référencée
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1566): warning C4018: '<' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1572): warning C4018: '<' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1582): warning C4244: '=' : conversion de 'float' en 'int', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1586): warning C4244: 'initialisation' : conversion de 'double' en 'int', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1597): warning C4244: '=' : conversion de 'float' en 'int', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1601): warning C4244: 'initialisation' : conversion de 'double' en 'int', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1620): warning C4244: '=' : conversion de 'float' en 'int', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1624): warning C4244: 'initialisation' : conversion de 'double' en 'int', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1636): warning C4244: '=' : conversion de 'float' en 'int', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1640): warning C4244: 'initialisation' : conversion de 'double' en 'int', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1651): warning C4244: '=' : conversion de 'float' en 'int', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1655): warning C4244: 'initialisation' : conversion de 'double' en 'int', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1681): warning C4018: '<' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cwindow.h(51): warning C4018: '<' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cwindow.h(65): warning C4018: '<' : incompatibilité signed/unsigned
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\main.cpp(75): warning C4244: 'return' : conversion de 'double' en 'float', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\main.cpp(96): warning C4244: 'initialisation' : conversion de 'double' en 'int', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\main.cpp(97): warning C4244: 'initialisation' : conversion de 'double' en 'int', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\main.cpp(635): warning C4244: 'argument' : conversion de 'time_t' en 'unsigned int', perte possible de données
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\clistedc.h(152): warning C4552: '+' : opérateur sans effet ; opérateur avec effet secondaire attendu
+                 c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\clistedc.h(147) : lors de la compilation de la fonction membre 'bool CListeDC<SDL_Texture *>::AllerATrieur(unsigned int)' de la classe modèle
+                 c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\ctoolbar.h(72) : voir la référence à l'instanciation de la fonction modèle 'bool CListeDC<SDL_Texture *>::AllerATrieur(unsigned int)' en cours de compilation
+                 c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\clabel.h(27) : voir la référence à l'instanciation de la classe modèle 'CListeDC<SDL_Texture *>' en cours de compilation
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\clistedc.h(155): warning C4552: '-' : opérateur sans effet ; opérateur avec effet secondaire attendu
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\clistedc.h(164): warning C4552: '-' : opérateur sans effet ; opérateur avec effet secondaire attendu
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\clistedc.h(207): warning C4552: '+' : opérateur sans effet ; opérateur avec effet secondaire attendu
+                 c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\clistedc.h(202) : lors de la compilation de la fonction membre 'bool CListeDC<SDL_Texture *>::AllerACurseur(unsigned int)' de la classe modèle
+                 c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\clabel.h(158) : voir la référence à l'instanciation de la fonction modèle 'bool CListeDC<SDL_Texture *>::AllerACurseur(unsigned int)' en cours de compilation
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\clistedc.h(210): warning C4552: '-' : opérateur sans effet ; opérateur avec effet secondaire attendu
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\clistedc.h(219): warning C4552: '-' : opérateur sans effet ; opérateur avec effet secondaire attendu
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cplayer.h(422): warning C4715: 'CPlayer::ObtenirMunition' : les chemins de contrôle ne retournent pas tous une valeur
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\carbreavl.h(226): warning C4715: 'CArbreAVL<SDL_Texture *>::Rechercher' : les chemins de contrôle ne retournent pas tous une valeur
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cgame.h(1544): warning C4715: 'CGame::DetectionCollisionPack' : les chemins de contrôle ne retournent pas tous une valeur
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\clabelleftright.h(152): warning C4715: 'CLabelLeftRight::ObtenirElement' : les chemins de contrôle ne retournent pas tous une valeur
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\cdeplacement.h(164): warning C4715: 'CDeplacement::ObtenirSprite' : les chemins de contrôle ne retournent pas tous une valeur
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\carbreavl.h(226): warning C4715: 'CArbreAVL<SDL_Surface *>::Rechercher' : les chemins de contrôle ne retournent pas tous une valeur
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\carbreavl.h(226): warning C4715: 'CArbreAVL<CControl *>::Rechercher' : les chemins de contrôle ne retournent pas tous une valeur
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\carbreavl.h(226): warning C4715: 'CArbreAVL<_TTF_Font *>::Rechercher' : les chemins de contrôle ne retournent pas tous une valeur
+     1>c:\users\xavier\documents\github\travail-pratique-final\travail final\travail final\carbreavl.h(226): warning C4715: 'CArbreAVL<CMenu *>::Rechercher' : les chemins de contrôle ne retournent pas tous une valeur
        Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Nicolas\Documents\GitHub\Travail-Pratique-Final\Travail Final\Debug\Travail Final.exe" /INCREMENTAL /NOLOGO SDL2.lib SDL2main.lib SDL2_ttf.lib SDL2_image.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Nicolas\Documents\GitHub\Travail-Pratique-Final\Travail Final\Debug\Travail Final.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Nicolas\Documents\GitHub\Travail-Pratique-Final\Travail Final\Debug\Travail Final.lib" /MACHINE:X86 Debug\main.obj
-         Travail Final.vcxproj -> C:\Users\Nicolas\Documents\GitHub\Travail-Pratique-Final\Travail Final\Debug\Travail Final.exe
-     1>Done Building Project "C:\Users\Nicolas\Documents\GitHub\Travail-Pratique-Final\Travail Final\Travail Final\Travail Final.vcxproj" (Build target(s)).
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Xavier\Documents\GitHub\Travail-Pratique-Final\Travail Final\Debug\Travail Final.exe" /INCREMENTAL /NOLOGO SDL2.lib SDL2main.lib SDL2_ttf.lib SDL2_image.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Xavier\Documents\GitHub\Travail-Pratique-Final\Travail Final\Debug\Travail Final.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Xavier\Documents\GitHub\Travail-Pratique-Final\Travail Final\Debug\Travail Final.lib" /MACHINE:X86 Debug\main.obj
+         Travail Final.vcxproj -> C:\Users\Xavier\Documents\GitHub\Travail-Pratique-Final\Travail Final\Debug\Travail Final.exe
+     1>Génération du projet "C:\Users\Xavier\Documents\GitHub\Travail-Pratique-Final\Travail Final\Travail Final\Travail Final.vcxproj" terminée (Build cible(s)).
 
-Build succeeded.
+La génération a réussi.
 
-Time Elapsed 00:00:03.02
+Temps écoulé 00:00:01.39

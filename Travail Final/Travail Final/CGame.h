@@ -226,7 +226,7 @@ public:
 
 						}
 
-						if (RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination(), false) >= 30) {
+						if (RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination(), false) >= 30 || RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination(), false) <= -30) {
 							pPlayerActif->ModifierGlissadeJoueur(true);
 							pPlayerActif->ObtenirSpriteCourse()->DefinirActif(false);
 							pPlayerActif->ObtenirSpriteRepos()->DefinirActif(true);
@@ -245,21 +245,24 @@ public:
 
 
 					else if (pPlayerActif->IsSliding()) {
+						
 						CVecteur2D* VecteurFrottement = new CVecteur2D(1, 0.0f);
 						double doAngle = RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination(), false); // Variable qui sert a calcul juste 1 fois l'angle.
 						if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1) { // Si le joueur se déplace vers la droite.
 
-							if (doAngle > 90 && doAngle < 180) { // Si le joueur se déplace vers la gauche et que la pente est vers le haut à gauche.
+							if (doAngle > 0) { // Si le joueur se déplace vers la gauche et que la pente est vers le haut à gauche.
 								pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(doAngle);
-								pPlayerActif->ObtenirVecteurPoids()->ModifierOrientation(doAngle + 180);
+								//pPlayerActif->ObtenirVecteurPoids()->ModifierOrientation(doAngle + 180);
+								pPlayerActif->ObtenirVecteurPoids()->ModifierVecteur(m_pGameMap->ObtenirGravite()->ObtenirNorme(), doAngle + 180);
 								*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
 								VecteurFrottement->ModifierOrientation(doAngle + 180);
 								*pPlayerActif->ObtenirVecteurVitesse() -= *VecteurFrottement;
 							}
 
-							if (doAngle > 180 && doAngle < 270) { // Si le joueur se déplace vers la le bas a gauche.
+							if (doAngle < 0) { // Si le joueur se déplace vers la le bas a gauche.
 								pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(doAngle);
-								pPlayerActif->ObtenirVecteurPoids()->ModifierOrientation(doAngle);
+								//pPlayerActif->ObtenirVecteurPoids()->ModifierOrientation(doAngle);
+								pPlayerActif->ObtenirVecteurPoids()->ModifierVecteur(m_pGameMap->ObtenirGravite()->ObtenirNorme(), doAngle);
 								*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
 								VecteurFrottement->ModifierOrientation(doAngle - 180);
 								*pPlayerActif->ObtenirVecteurVitesse() -= *VecteurFrottement;
@@ -272,17 +275,19 @@ public:
 						}
 						else { // Si le joueur va vers la droite
 
-							if (doAngle > 270) { // Si le joueur se déplace vers la droite et que la pente est vers le bas à droite.
+							if (doAngle > 0) { // Si le joueur se déplace vers la droite et que la pente est vers le bas à droite.
 								pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(doAngle);
-								pPlayerActif->ObtenirVecteurPoids()->ModifierOrientation(doAngle);
+								//pPlayerActif->ObtenirVecteurPoids()->ModifierOrientation(doAngle);
+								pPlayerActif->ObtenirVecteurPoids()->ModifierVecteur(m_pGameMap->ObtenirGravite()->ObtenirNorme(), doAngle);
 								*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
 								VecteurFrottement->ModifierOrientation(doAngle - 180);
 								*pPlayerActif->ObtenirVecteurVitesse() -= *VecteurFrottement;
 							}
 
-							if (doAngle < 90) { // Si la pente est en haut a droite.
+							if (doAngle < 0) { // Si la pente est en haut a droite.
 								pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(doAngle);
-								pPlayerActif->ObtenirVecteurPoids()->ModifierOrientation(doAngle + 180);
+								//pPlayerActif->ObtenirVecteurPoids()->ModifierOrientation(doAngle + 180);
+								pPlayerActif->ObtenirVecteurPoids()->ModifierVecteur(m_pGameMap->ObtenirGravite()->ObtenirNorme(), doAngle + 180);
 								*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
 								VecteurFrottement->ModifierOrientation(-doAngle);
 								*pPlayerActif->ObtenirVecteurVitesse() -= *VecteurFrottement;
@@ -636,45 +641,53 @@ public:
 			_RectRegression = _RectPiedJoueur;
 			
 			int iMaxPente = 20;
+			bool boEssai = false; // Ca verifie si y'a du vide a gauche. comme ca ne pas le faire a droite.
 			int j = 0;
 			float y1 = 0;
 			float y2 = 0;
 			float x1 = _RectRegression.x;
 			float x2 = _RectRegression.x + _RectRegression.w;
 			if (!_boObjet)
-				iMaxPente = 50;
+				iMaxPente = 75;
 			while (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(_RectRegression.x + _RectJoueur.x) + ((j + _RectJoueur.h + _RectJoueur.y) * m_pGameMap->ObtenirSurfaceMap()->w)] == 0 && j < iMaxPente) { // Coter gauche du rect.
 				j++;
 				y1 = j;
+				boEssai = true;
 			}
 			if (j == iMaxPente) {
 				j = 0;
 				y1 = 0;
-				while (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(10 + _RectJoueur.h + _RectJoueur.x) + ((j + _RectRegression.h + _RectJoueur.y) * m_pGameMap->ObtenirSurfaceMap()->w)] == 0 && j < iMaxPente) { // Si le coter gauche na pas de trouver de boute de pente, je le pars a la moitier.
+				while (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(10 + _RectJoueur.h + _RectJoueur.x) + ((j + _RectRegression.h + _RectJoueur.y) * m_pGameMap->ObtenirSurfaceMap()->w)] == 0 && j < iMaxPente - 15) { // Si le coter gauche na pas de trouver de boute de pente, je le pars a la moitier.
 					j++;
 					y1 = j;
 				}
 			}
-			if (j == iMaxPente) // Si y'a toujours rien trouver, ca veut dire que c'est a la verticale ou presque.
+			if (j == iMaxPente - 15) // Si y'a toujours rien trouver, ca veut dire que c'est a la verticale ou presque.
 				return 0;
 			j = 0;
-			while (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(_RectRegression.w + _RectRegression.x + _RectJoueur.x) + ((j + _RectJoueur.h + _RectJoueur.y) * m_pGameMap->ObtenirSurfaceMap()->w)] == 0 && j < iMaxPente) { // Coter droite du rect
-				j++;
-				y2 = j;
-			}
-
-			if (j == iMaxPente) { // Si y'a rien trouver le faire partir a la moitier.
-				j = 0;
-				y2 = 0;
-				while (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(-5 + _RectRegression.x + _RectJoueur.x) + ((j + _RectJoueur.h + _RectJoueur.y) * m_pGameMap->ObtenirSurfaceMap()->w)] == 0 && j < iMaxPente) {
+			if (!boEssai) {
+				while (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(_RectRegression.w + _RectRegression.x + _RectJoueur.x) + ((j + _RectJoueur.h + _RectJoueur.y) * m_pGameMap->ObtenirSurfaceMap()->w)] == 0 && j < iMaxPente) { // Coter droite du rect
 					j++;
 					y2 = j;
 				}
+
+				if (j == iMaxPente) { // Si y'a rien trouver le faire partir a la moitier.
+					j = 0;
+					y2 = 0;
+					while (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(-5 + _RectRegression.x + _RectJoueur.x) + ((j + _RectJoueur.h + _RectJoueur.y) * m_pGameMap->ObtenirSurfaceMap()->w)] == 0 && j < iMaxPente - 15) {
+						j++;
+						y2 = j;
+					}
+				}
+				if (j == iMaxPente - 15) // Si y'a rien trouver encore ca veut dire que c'est à la verticale.
+					return 0;
 			}
-			if (j == iMaxPente) // Si y'a rien trouver encore ca veut dire que c'est à la verticale.
-				return 0;
+
+			if (!_boObjet && y1 < y2) // Si a droite c'est plus gros ca veut dire que la pente est positive. donc mettre le y1 à 0.
+				y1 = 0;
 
 			fPente = ((y2 - y1) / (x2 - x1));
+
 			return (180 / M_PI) * atanf((fPente));
 
 

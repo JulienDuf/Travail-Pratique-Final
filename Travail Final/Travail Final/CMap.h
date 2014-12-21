@@ -91,9 +91,9 @@ public:
 			FichierMap.close();
 		}
 
-		for (int i = iNombreMines; i > 0; i--) {
+		for (int i = 0; i < iNombreMines; i++) {
 
-			m_pPackList->AjouterFin(new CMine(_pRenderer, _MapDestruction));
+			m_pPackList->AjouterFin(new CMine(_strEmplacementMap, _pRenderer, _MapDestruction));
 
 		}
 

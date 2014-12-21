@@ -12,11 +12,42 @@ private:
 	bool m_boStable; //Si la mine touche par terre.
 	bool m_boUse; // Si la mine explose.
 	double m_dAnglemine; //L'angle de la mine.
+	unsigned int m_uiRayon;
 
 	void(*m_pMapDestruction)(int _iRayon, int _iX, int _iY);
 
 public:
-	CMine(SDL_Renderer* _Renderer, void _MapDestruction(int _iRayon, int _iX, int _iY)){
+	CMine(string _strEmplacement, SDL_Renderer* _Renderer, void _MapDestruction(int _iRayon, int _iX, int _iY)) {
+		/*
+		// Initialisation des stats en liens avec le pack...
+		string strEmplacement(_strEmplacement);
+		int i = strEmplacement.length();
+
+		// Retour à debug...
+		for (int i2 = 0; i2 < 2; i2++) {
+			strEmplacement.resize(--i);
+			while (strEmplacement[--i] != '\\');
+			strEmplacement.resize(++i);
+		}
+
+		strEmplacement.append("Armes et Packs\\DescriptionMine.txt");
+		ifstream FichierDescriptionMine;
+		FichierDescriptionMine.open(strEmplacement);
+
+		// Si le fichier s'est ouvert...
+		if (FichierDescriptionMine.is_open()) {
+			char chrtmp[5];
+			FichierDescriptionMine.getline(chrtmp, 75);
+			string strRayon;
+			for (int j = 11; chrtmp[j] > 47 && chrtmp[j] < 58; j++) {
+				strRayon += chrtmp[j];
+			}
+			// Initialisation des stats...
+			m_uiRayon = SDL_atoi(strRayon.c_str());
+		}
+
+		FichierDescriptionMine.close();
+		*/
 		//initialisation de la texture.
 		m_pSurface = pGestionnaireSurface->ObtenirDonnee("pSurfaceMine");		
 		m_pTexture = pGestionnaireTexture->ObtenirDonnee("pTextureMine");

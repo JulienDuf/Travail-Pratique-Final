@@ -60,8 +60,10 @@ public:
 
 		if (m_boDebutPartie && m_boFinTour) {
 			m_boDebutPartie = !IsAllTeamStable();
-			if (!m_boDebutPartie)
+			if (!m_boDebutPartie) {
 				ChangerTour(_pRenderer);
+				m_boFinTour = false;
+			}
 		}
 
 		else if (m_boDebutPartie)
@@ -143,18 +145,18 @@ public:
 				unsigned int _uiYPieds;
 				unsigned int _uiXCorps;
 				unsigned int _uiYCorps;
-				SDL_Rect RectExplosion;
+				SDL_Point PointExplosion;
 
 				if (pPlayerActif->IsUsingTool())
 					PhysiqueTool(_pRenderer);
 
 				else if (!pPlayerActif->IsStable()) {
 
-					DetectionCollisionPack(pPlayerActif, &boExplosion, &RectExplosion);
+					DetectionCollisionPack(pPlayerActif, &boExplosion, &PointExplosion);
 					if (boExplosion) {
 
 						pPlayerActif->SetHealth(0);
-						DomageExplosion(RectExplosion, 45, _pRenderer);
+						DommageExplosion(PointExplosion, 45, _pRenderer);
 
 					}
 
@@ -378,17 +380,17 @@ public:
 							else {
 
 								bool boExplosion;
-								SDL_Rect RectTmp;
+								SDL_Point Pointexplosion;
 
 								RectPlayer.y -= (RectPlayer.h - _uiYPieds);
 								pPlayer->DefinirPositionY(RectPlayer.y);
 								pPlayer->ModifierStabiliteJoueur(true);
 
-								DetectionCollisionPack(pPlayer, &boExplosion, &RectTmp);
+								DetectionCollisionPack(pPlayer, &boExplosion, &Pointexplosion);
 
 								if (boExplosion) {
 									pPlayer->SetHealth(0);
-									DomageExplosion(RectTmp, 45, _pRenderer);
+									DommageExplosion(Pointexplosion, 45, _pRenderer);
 								}
 
 							}
@@ -447,8 +449,28 @@ public:
 				if (CollisionObjetMapChuteLibre(pPackListTmp->ObtenirElementCurseur()->GetSurface(), RectTmp, &iX, &iY)) {
 
 					RectTmp.y = iY;
-					pPackListTmp->ObtenirElementCurseur()->ModifierAnlge(RegressionLineaire({ 0, 0, RectTmp.w, RectTmp.h }, RectTmp, true));
-					pPackListTmp->ObtenirElementCurseur()->ModifierStabilePack(true);
+					double dAngle = RegressionTest({ iX, RectTmp.y }, RectTmp.w / 2, 1);
+					double d = abs(dAngle);
+					if (abs(dAngle) <= 3) {
+						int i = 0;
+						double dAngle = RegressionTest({ iX, RectTmp.y }, RectTmp.w / 2, 1);
+					}
+					if (abs(dAngle) >= 70) {
+						// GLISSADEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE à faire..........
+						if (dAngle < 0) {
+							RectTmp.x -= 50;
+						}
+						else
+						{
+							RectTmp.x += 50;
+						}
+						
+					}
+					else
+					{
+						pPackListTmp->ObtenirElementCurseur()->ModifierAnlge(dAngle);
+						pPackListTmp->ObtenirElementCurseur()->ModifierStabilePack(true);
+					}
 					pPackListTmp->ObtenirElementCurseur()->ModifierPosition(RectTmp);
 				}
 				else {
@@ -461,33 +483,33 @@ public:
 		}
 	}
 
+	// Procédure appliquant la physique sur les projectiles...
 	void PhysiqueTool(SDL_Renderer* _pRenderer) {
 
-		if (m_pToolBar->ObtenirPositionObjetDoubleClick() <= 3) {
+		// 0:Missile 1:Grenade
+		if (m_pToolBar->ObtenirPositionObjetDoubleClick() <= 1) {
 
+			// Pointeur sur le projectile...
 			CProjectile* pProjectileTmp = m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirProjectile(m_pToolBar->ObtenirPositionObjetDoubleClick());
-			SDL_Rect* RectTmp = NULL;
-			CVecteur2D* pVecteurVitesse;
-			int iX, iY;
-			
-			if (pProjectileTmp->ObtenirSprite("") != nullptr) {
+			// Initialisation de la position et du vecteur pour ne pas aller les chercher à répétition...
+			SDL_Rect* RectTmp = pProjectileTmp->ObtenirRectDestination();
+			CVecteur2D* pVecteurVitesse = pProjectileTmp->ObtenirVecteurVitesse();
+			int iX, iY; // Position d'une collision.
 
-				if (!pProjectileTmp->ObtenirSprite("")->IsActif() && pProjectileTmp->ExplosionEnCours()) {
-					m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->DefinirToolActif(false);
-					pProjectileTmp->DefinirExplosion(false);
-					m_boDebutPartie = true;
-					m_boFinTour = true;
-				}
+			// Si le sprite d'explosion est terminé et qu'une explosion était en cours...
+			if (!pProjectileTmp->ObtenirSprite("")->IsActif() && pProjectileTmp->ExplosionEnCours()) {
+				m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->DefinirToolActif(false);
+				pProjectileTmp->DefinirExplosion(false);
+				m_boDebutPartie = true;
+				m_boFinTour = true;
 			}
-			if (m_pToolBar->ObtenirPositionObjetDoubleClick() == 0 && pProjectileTmp->EstLancer())  {
 
-				RectTmp = pProjectileTmp->ObtenirRectDestination();
-				pVecteurVitesse = pProjectileTmp->ObtenirVecteurVitesse();
+			if (m_pToolBar->ObtenirPositionObjetDoubleClick() == 0 && pProjectileTmp->EstLancer())  {
 
 				if (CollisionMissile(pProjectileTmp->ObtenirSurface(), *pProjectileTmp->ObtenirRectDestination(), &iX, &iY)) {
 
 					pProjectileTmp->ReactionExplosion(pProjectileTmp->ObtenirRectDestination()->x + iX, pProjectileTmp->ObtenirRectDestination()->y + iY);
-					DomageExplosion({ pProjectileTmp->ObtenirRectDestination()->x + iX, pProjectileTmp->ObtenirRectDestination()->y + iY}, 50, _pRenderer);
+					DommageExplosion({ pProjectileTmp->ObtenirRectDestination()->x + iX, pProjectileTmp->ObtenirRectDestination()->y + iY}, 50, _pRenderer);
 				}
 
 				else if (RectTmp->x >= 1366 || RectTmp->x + RectTmp->w <= 0 || RectTmp->y >= 768) {
@@ -513,7 +535,18 @@ public:
 					pProjectileTmp->DefinirAngle(360 - (180 / M_PI) * atanf((((float)pVecteurVitesse->ObtenirComposanteY()) / ((float)pVecteurVitesse->ObtenirComposanteX()))));
 
 			}
+			// Si une grenade est lancée
 			else if (m_pToolBar->ObtenirPositionObjetDoubleClick() == 1 && pProjectileTmp->EstLancer()) {
+
+				if (pProjectileTmp->ObtenirSprite("") != nullptr) {
+
+					if (!pProjectileTmp->ObtenirSprite("")->IsActif() && pProjectileTmp->ExplosionEnCours()) {
+						m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->DefinirToolActif(false);
+						pProjectileTmp->DefinirExplosion(false);
+						m_boDebutPartie = true;
+						m_boFinTour = true;
+					}
+				}
 
 				bool boSensRotation = false;
 				RectTmp = pProjectileTmp->ObtenirRectDestination();
@@ -521,10 +554,11 @@ public:
 				// AutoDesctruction de la grenade...
 				if (pProjectileTmp->ReactionExplosion(0, 0)) {
 					RectTmp = pProjectileTmp->ObtenirRectDestination();
-					DomageExplosion({ RectTmp->x, RectTmp->y }, RectTmp->w / 2, _pRenderer);
+					DommageExplosion({ RectTmp->x + pProjectileTmp->ObtenirRayonExplosion(), RectTmp->y + pProjectileTmp->ObtenirRayonExplosion() }, pProjectileTmp->ObtenirRayonExplosion(), _pRenderer);
+
 				}
 				else if (RectTmp->x >= 1366 || RectTmp->x + RectTmp->w <= 0 || RectTmp->y >= 768) {
-					pProjectileTmp->DestructionProjectile();
+					pProjectileTmp->ReinitialisationProjectile();
 				}
 				else
 				{
@@ -537,16 +571,15 @@ public:
 					if (CollisionGrenadeJoueur(pProjectileTmp->ObtenirSurface(), *pProjectileTmp->ObtenirRectDestination(), &iX, &iY)) {
 
 						pVecteurVitesse->ModifierVecteur(m_pGameMap->ObtenirGravite()->ObtenirComposanteY(),pVecteurVitesse->ObtenirOrientation() + 180);
-						//pProjectileTmp->ReactionColision(pProjectileTmp->ObtenirRectDestination()->x + iX, pProjectileTmp->ObtenirRectDestination()->y + iY);
-						//DomageExplosion({ pProjectileTmp->ObtenirRectDestination()->x + iX, pProjectileTmp->ObtenirRectDestination()->y }, 40);
-						//ChangerTour()
 					}
 					
 					if (CollisionObjetMap(pProjectileTmp->ObtenirSurface(), *RectTmp, nullptr, nullptr)) {
 						RectTmp->x = x;
 						RectTmp->y = y;
-						RepositionnementGrenadeMap(pProjectileTmp->ObtenirSurface(), pVecteurVitesse, RectTmp, &boSensRotation);
-						float angle = (float)RegressionLineaire(*pProjectileTmp->ObtenirRectDestination(), *pProjectileTmp->ObtenirRectDestination(), true);
+						int iW;
+						RepositionnementGrenadeMap(pProjectileTmp->ObtenirSurface(), pVecteurVitesse, RectTmp, &boSensRotation, &iW, nullptr);
+						float angle = RegressionTest({ RectTmp->x + iW, RectTmp->y }, RectTmp->w / 2, 1);
+						//float angle = (float)RegressionLineaire(*pProjectileTmp->ObtenirRectDestination(), *pProjectileTmp->ObtenirRectDestination(), true);
 						if (pVecteurVitesse->ObtenirNorme() >= 35) {
 							CVecteur2D VecteurNormal = CVecteur2D(1, angle + 90);
 							double dScalaire = 2 * pVecteurVitesse->Scalaire(VecteurNormal.ObtenirComposanteX(), VecteurNormal.ObtenirComposanteY());
@@ -556,11 +589,12 @@ public:
 						else
 						{
 							pVecteurVitesse->ModifierVecteur(35, angle);
+							pProjectileTmp->DefinirRotation(0);
 						}
 						if (boSensRotation)
-							pProjectileTmp->DefinirRotation(-pVecteurVitesse->ObtenirNorme());
-						else
 							pProjectileTmp->DefinirRotation(pVecteurVitesse->ObtenirNorme());
+						else
+							pProjectileTmp->DefinirRotation(-pVecteurVitesse->ObtenirNorme());
 					}
 					
 					*pVecteurVitesse += *m_pGameMap->ObtenirGravite();
@@ -596,6 +630,59 @@ public:
 		}
 
 		return true;
+	}
+
+	// RegressionTest bas
+	double RegressionTest(SDL_Point _StartPoint, unsigned int _uiLimit, double _dTolerance) {
+		double dTolerance = _dTolerance;
+		double dDiminutionTolerance = 0.0000000000001;
+		unsigned short int usiGauche = 1;
+		unsigned short int usiDroit = 1;
+		bool boPremiere = true;
+		bool boDeuxieme = true;
+		bool boPremierePenteDiffZero = false;
+		double dPente = 0;
+		double dNouvellePente = 0;
+		SDL_Point PointGauche;
+		SDL_Point PointDroit;
+		SDL_Surface* pSurfaceMap = m_pGameMap->ObtenirSurfaceMap();
+
+		// Tant que la différence entre la nouvelle pente et l'ancienne <= tol et que j'e n'ai pas atteint la limite...
+		while ((abs(dPente - dNouvellePente) <= dTolerance / (dDiminutionTolerance) || !boPremierePenteDiffZero) && usiGauche <= _uiLimit) {
+			
+			// Pas la première fois...
+			if (!boPremiere) {
+				dPente = (dPente + dNouvellePente) / 2;
+			}
+			// Initialisation des points
+			PointGauche = { _StartPoint.x - usiGauche, _StartPoint.y };
+			PointDroit = { _StartPoint.x + usiDroit, _StartPoint.y };
+
+			// Descente pointgauche...
+			while (((unsigned int*)pSurfaceMap->pixels)[PointGauche.y * pSurfaceMap->w + PointGauche.x] == 0 || ((unsigned int*)pSurfaceMap->pixels)[PointGauche.y * pSurfaceMap->w + PointGauche.x] == TRANSPARENCE32BIT) {
+				PointGauche.y++;
+			}
+
+			// Descente pointdroit...
+			while (((unsigned int*)pSurfaceMap->pixels)[PointDroit.y * pSurfaceMap->w + PointDroit.x] == 0 || ((unsigned int*)pSurfaceMap->pixels)[PointDroit.y * pSurfaceMap->w + PointDroit.x] == TRANSPARENCE32BIT) {
+				PointDroit.y++;
+			}
+			// Calcul de la nouvelle pente
+			dNouvellePente = ((double)PointDroit.y - (double)PointGauche.y) / ((double)PointDroit.x - (double)PointGauche.x);
+			if (dNouvellePente != 0)
+				boPremierePenteDiffZero = true;
+			usiGauche++;
+			usiDroit++;
+			if (boPremierePenteDiffZero)
+				dDiminutionTolerance++;
+			// Si c'est la première fois
+			if (boPremiere && boPremierePenteDiffZero) {
+				dPente = dNouvellePente;
+				boPremiere = false;
+			}
+		}
+
+		return (180 / M_PI) * atanf(dPente);
 	}
 
 	// Procédure qui retourne la pente 
@@ -818,7 +905,7 @@ public:
 				iPixelObjetMapY--;
 				iArret++;
 			}
-			*_iX = _RectDestinationObjet.x;
+			*_iX = iPixelObjetMapX;
 			*_iY = iPixelObjetMapY - iY;
 			return boCollision;
 		}
@@ -833,9 +920,11 @@ public:
 	// Param4: La position en Y qui sera retourné.
 	bool CollisionObjetMap(SDL_Surface* _pSurfaceObjet, SDL_Rect _RectDestinationObjet, int* _iX, int* _iY) {
 
+		// Objet dans la map...
+		if (_RectDestinationObjet.x + _RectDestinationObjet.w < 1366 && _RectDestinationObjet.x >= 0 && _RectDestinationObjet.y + _RectDestinationObjet.h < 768 && _RectDestinationObjet.y >= 0) {
 
+			SDL_Surface* pSurfaceMap = m_pGameMap->ObtenirSurfaceMap();
 
-		if (_RectDestinationObjet.x + _RectDestinationObjet.w <= 1366 && _RectDestinationObjet.x >= 0 && _RectDestinationObjet.y + _RectDestinationObjet.h <= 768 && _RectDestinationObjet.y >= 0) {
 			// Tous les y
 			for (int y = 0; y < _RectDestinationObjet.h; y++) {
 				// Tous les x
@@ -846,17 +935,14 @@ public:
 						// Position de la pixel dans le rect du joueur
 						int iPixelObjetMapX = _RectDestinationObjet.x + x;
 						int iPixelObjetMapY = _RectDestinationObjet.y + y;
+
 						// Vérifier Transparence
-
-						if (iPixelObjetMapX > 0 && iPixelObjetMapX < 1366 && iPixelObjetMapY > 0 && iPixelObjetMapY < 768) {
-
-							if (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(iPixelObjetMapY - 1) * m_pGameMap->ObtenirSurfaceMap()->w + iPixelObjetMapX] != 0 && ((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(iPixelObjetMapY - 1)* m_pGameMap->ObtenirSurfaceMap()->w + iPixelObjetMapX] != TRANSPARENCE32BIT) {
-								if (_iX != nullptr)
-									*_iX = iPixelObjetMapX - _RectDestinationObjet.x;
-								if (_iY != nullptr)
-									*_iY = iPixelObjetMapY - _RectDestinationObjet.y;
-								return true;
-							}
+						if (((unsigned int*)pSurfaceMap->pixels)[iPixelObjetMapY * pSurfaceMap->w + iPixelObjetMapX] != 0 && ((unsigned int*)pSurfaceMap->pixels)[iPixelObjetMapY* pSurfaceMap->w + iPixelObjetMapX] != TRANSPARENCE32BIT) {
+							if (_iX != nullptr)
+								*_iX = iPixelObjetMapX - _RectDestinationObjet.x; // Pixel en collision dans la surface de l'objet en X.
+							if (_iY != nullptr)
+								*_iY = iPixelObjetMapY - _RectDestinationObjet.y; // Pixel en collision dans la surface de l'objet en Y.
+							return true;
 						}
 					}
 				}
@@ -980,7 +1066,7 @@ public:
 		return CollisionObjetMap(_pSurfaceMissile, _RectDestination, _iX, _iY);
 	}
 
-	void RepositionnementGrenadeMap(SDL_Surface* _pSurfaceGrenade, CVecteur2D* _pVecteurGrenade, SDL_Rect* _RectDestinationGrenade, bool* _boSensRotation) {
+	void RepositionnementGrenadeMap(SDL_Surface* _pSurfaceGrenade, CVecteur2D* _pVecteurGrenade, SDL_Rect* _RectDestinationGrenade, bool* _boSensRotation, int* _iX, int* _iY) {
 		
 		int iIncrementationX = 0;
 		int iIncrementationY = 0;
@@ -988,19 +1074,19 @@ public:
 		int iVecteurY = _pVecteurGrenade->ObtenirComposanteY()/35;
 
 
-		for (int i = 0; i < _pVecteurGrenade->ObtenirNorme(); i++) {
-			if (!CollisionObjetMap(_pSurfaceGrenade, *_RectDestinationGrenade, nullptr, nullptr)) {
+		for (int i = 0; i <= abs(iVecteurX) || i <= abs(iVecteurY); i++) {
+			if (!CollisionObjetMap(_pSurfaceGrenade, *_RectDestinationGrenade, _iX, _iY)) {
 				if (iIncrementationX <= abs(iVecteurX) && iVecteurX != 0) {
-					_RectDestinationGrenade->x -= iVecteurX / abs(iVecteurX);
+					_RectDestinationGrenade->x += iVecteurX / abs(iVecteurX);
 					iIncrementationX++;
 				}
 				if (iIncrementationY <= abs(iVecteurY) && iVecteurY != 0) {
-					_RectDestinationGrenade->y -= iVecteurY / abs(iVecteurY);
+					_RectDestinationGrenade->y += iVecteurY / abs(iVecteurY);
 					iIncrementationY++;
 				}
 			}
 			else
-				i = _pVecteurGrenade->ObtenirNorme();
+				i = 600;
 		}
 
 		
@@ -1198,7 +1284,7 @@ public:
 	_Pack = Pack sur lequel la collision sera verifiée
 	¸retour: true = une collision a lieu
 	*/
-	bool DetectionCollisionPack(CPlayer* _pPlayer, bool* _boExplosion, SDL_Rect* _RectExplosion) {
+	bool DetectionCollisionPack(CPlayer* _pPlayer, bool* _boExplosion, SDL_Point* _PointExplosion) {
 
 		CPack* pPackTmp;
 
@@ -1344,7 +1430,7 @@ public:
 
 									if (pPackTmp->Use(_pPlayer)) {
 										*_boExplosion = true;
-										*_RectExplosion = { pPackTmp->GetRectDestination().x + pPackTmp->GetRectDestination().w / 2, pPackTmp->GetRectDestination().y + pPackTmp->GetRectDestination().h / 2, pPackTmp->GetRectDestination().w, pPackTmp->GetRectDestination().h };
+										*_PointExplosion = { pPackTmp->GetRectDestination().x + pPackTmp->GetRectDestination().w / 2, pPackTmp->GetRectDestination().y + pPackTmp->GetRectDestination().h / 2 };
 									}
 
 									return true;
@@ -1361,7 +1447,7 @@ public:
 
 	}
 
-	void DomageExplosion(SDL_Rect _RectPositionExplosion, int _iRayon, SDL_Renderer* _pRenderer) {
+	void DommageExplosion(SDL_Point _ExplosionPoint, unsigned int _uiRayon, SDL_Renderer* _pRenderer) {
 
 		CListeDC<CPlayer*>* pPlayerList;
 		CListeDC<CPack*>* pPackList;
@@ -1369,11 +1455,7 @@ public:
 		CPack* pPackTmp;
 		SDL_Rect RectDestinationPlayer;
 		SDL_Rect RectDestinationPack;
-
-		_RectPositionExplosion.w = 2 * _iRayon;
-		_RectPositionExplosion.h = _RectPositionExplosion.w;
-		_RectPositionExplosion.x -= _iRayon;
-		_RectPositionExplosion.y -= _iRayon;
+		SDL_Rect RectExplosion = { _ExplosionPoint.x - _uiRayon, _ExplosionPoint.y - _uiRayon, 2 * _uiRayon, 2 * _uiRayon };
 
 		int iDistanceRayon, iDomage;
 		float fPourcentage;
@@ -1392,10 +1474,10 @@ public:
 				pPlayerTmp = pPlayerList->ObtenirElementTrieur();
 				RectDestinationPlayer = pPlayerTmp->ObtenirRectDestination();
 
-				if ((RectDestinationPlayer.x < _RectPositionExplosion.x && RectDestinationPlayer.x + RectDestinationPlayer.w >= _RectPositionExplosion.x) && (RectDestinationPlayer.y + RectDestinationPlayer.h >= _RectPositionExplosion.y && RectDestinationPlayer.y <= _RectPositionExplosion.y + _RectPositionExplosion.h)) {
+				if ((RectDestinationPlayer.x < RectExplosion.x && RectDestinationPlayer.x + RectDestinationPlayer.w >= RectExplosion.x) && (RectDestinationPlayer.y + RectDestinationPlayer.h >= RectExplosion.y && RectDestinationPlayer.y <= RectExplosion.y + RectExplosion.h)) {
 
-					iDistanceRayon = (_RectPositionExplosion.x + _iRayon) - (RectDestinationPlayer.x + RectDestinationPlayer.w);
-					fPourcentage = ((float)iDistanceRayon / (float)_iRayon);
+					iDistanceRayon = (RectExplosion.x + _uiRayon) - (RectDestinationPlayer.x + RectDestinationPlayer.w);
+					fPourcentage = ((float)iDistanceRayon / (float)_uiRayon);
 
 					iDomage = (float)((1 - fPourcentage) * pPlayerTmp->GetHealth()) * 100;
 
@@ -1407,10 +1489,10 @@ public:
 					pPlayerTmp->ModifierStabiliteJoueur(false);
 				}
 
-				else if ((RectDestinationPlayer.x <= _RectPositionExplosion.x + _RectPositionExplosion.w && RectDestinationPlayer.x + RectDestinationPlayer.w > _RectPositionExplosion.x + _RectPositionExplosion.w) && (RectDestinationPlayer.y + RectDestinationPlayer.h >= _RectPositionExplosion.y && RectDestinationPlayer.y <= _RectPositionExplosion.y + _RectPositionExplosion.h)) {
+				else if ((RectDestinationPlayer.x <= RectExplosion.x + RectExplosion.w && RectDestinationPlayer.x + RectDestinationPlayer.w > RectExplosion.x + RectExplosion.w) && (RectDestinationPlayer.y + RectDestinationPlayer.h >= RectExplosion.y && RectDestinationPlayer.y <= RectExplosion.y + RectExplosion.h)) {
 
-					iDistanceRayon = RectDestinationPlayer.x - (_RectPositionExplosion.x + _iRayon);
-					fPourcentage = ((float)iDistanceRayon / (float)_iRayon);
+					iDistanceRayon = RectDestinationPlayer.x - (RectExplosion.x + _uiRayon);
+					fPourcentage = ((float)iDistanceRayon / (float)_uiRayon);
 					
 					iDomage = (float)((1 - fPourcentage) * pPlayerTmp->GetHealth()) * 100;
 
@@ -1422,18 +1504,18 @@ public:
 					pPlayerTmp->ModifierStabiliteJoueur(false);
 				}
 
-				else if ((RectDestinationPlayer.x >= _RectPositionExplosion.x && RectDestinationPlayer.x + RectDestinationPlayer.w <= _RectPositionExplosion.x + _RectPositionExplosion.w) && (RectDestinationPlayer.y >= _RectPositionExplosion.y && RectDestinationPlayer.y + RectDestinationPlayer.h <= _RectPositionExplosion.y + _RectPositionExplosion.h)) {
+				else if ((RectDestinationPlayer.x >= RectExplosion.x && RectDestinationPlayer.x + RectDestinationPlayer.w <= RectExplosion.x + RectExplosion.w) && (RectDestinationPlayer.y >= RectExplosion.y && RectDestinationPlayer.y + RectDestinationPlayer.h <= RectExplosion.y + RectExplosion.h)) {
 
-					if (RectDestinationPlayer.x + RectDestinationPlayer.w >= _RectPositionExplosion.x + _iRayon && RectDestinationPlayer.x <= _RectPositionExplosion.x + _iRayon)
+					if (RectDestinationPlayer.x + RectDestinationPlayer.w >= RectExplosion.x + _uiRayon && RectDestinationPlayer.x <= RectExplosion.x + _uiRayon)
 						iDistanceRayon = 0;
 
-					else if (RectDestinationPlayer.x + RectDestinationPlayer.w < _RectPositionExplosion.x + _iRayon && RectDestinationPlayer.x > _RectPositionExplosion.x)
-						iDistanceRayon = (_RectPositionExplosion.x + _iRayon) - (RectDestinationPlayer.x + RectDestinationPlayer.w);
+					else if (RectDestinationPlayer.x + RectDestinationPlayer.w < RectExplosion.x + _uiRayon && RectDestinationPlayer.x > RectExplosion.x)
+						iDistanceRayon = (RectExplosion.x + _uiRayon) - (RectDestinationPlayer.x + RectDestinationPlayer.w);
 
 					else
-						iDistanceRayon = RectDestinationPlayer.x - (_RectPositionExplosion.x + _iRayon);
+						iDistanceRayon = RectDestinationPlayer.x - (RectExplosion.x + _uiRayon);
 
-					fPourcentage = ((float)iDistanceRayon / (float)_iRayon);
+					fPourcentage = ((float)iDistanceRayon / (float)_uiRayon);
 					
 					iDomage = (float)((1 - fPourcentage) * pPlayerTmp->GetHealth()) * 100;
 
@@ -1446,10 +1528,10 @@ public:
 
 				}
 
-				else if ((RectDestinationPlayer.x >= _RectPositionExplosion.x && RectDestinationPlayer.x + RectDestinationPlayer.w <= _RectPositionExplosion.x + _RectPositionExplosion.w) && (RectDestinationPlayer.y < _RectPositionExplosion.y && RectDestinationPlayer.y + RectDestinationPlayer.h >= _RectPositionExplosion.y)) {
+				else if ((RectDestinationPlayer.x >= RectExplosion.x && RectDestinationPlayer.x + RectDestinationPlayer.w <= RectExplosion.x + RectExplosion.w) && (RectDestinationPlayer.y < RectExplosion.y && RectDestinationPlayer.y + RectDestinationPlayer.h >= RectExplosion.y)) {
 
-					iDistanceRayon = (_RectPositionExplosion.y + _iRayon) - (RectDestinationPlayer.y + RectDestinationPlayer.h);
-					fPourcentage = ((float)iDistanceRayon / (float)_iRayon);
+					iDistanceRayon = (RectExplosion.y + _uiRayon) - (RectDestinationPlayer.y + RectDestinationPlayer.h);
+					fPourcentage = ((float)iDistanceRayon / (float)_uiRayon);
 					
 					iDomage = (float)((1 - fPourcentage) * pPlayerTmp->GetHealth()) * 100;
 
@@ -1461,10 +1543,10 @@ public:
 					pPlayerTmp->ModifierStabiliteJoueur(false);
 				}
 
-				else if ((RectDestinationPlayer.x >= _RectPositionExplosion.x && RectDestinationPlayer.x + RectDestinationPlayer.w <= _RectPositionExplosion.x + _RectPositionExplosion.w) && (RectDestinationPlayer.y <= _RectPositionExplosion.y + _RectPositionExplosion.h && RectDestinationPlayer.y + RectDestinationPlayer.h > _RectPositionExplosion.y + _RectPositionExplosion.h)) {
+				else if ((RectDestinationPlayer.x >= RectExplosion.x && RectDestinationPlayer.x + RectDestinationPlayer.w <= RectExplosion.x + RectExplosion.w) && (RectDestinationPlayer.y <= RectExplosion.y + RectExplosion.h && RectDestinationPlayer.y + RectDestinationPlayer.h > RectExplosion.y + RectExplosion.h)) {
 
-					iDistanceRayon = RectDestinationPlayer.y - (_RectPositionExplosion.y + _iRayon);
-					fPourcentage = ((float)iDistanceRayon / (float)_iRayon);
+					iDistanceRayon = RectDestinationPlayer.y - (RectExplosion.y + _uiRayon);
+					fPourcentage = ((float)iDistanceRayon / (float)_uiRayon);
 					
 					iDomage = (float)((1 - fPourcentage) * pPlayerTmp->GetHealth()) * 100;
 
@@ -1503,36 +1585,42 @@ public:
 
 			if (!pPackTmp->IsUse()) {
 
-				if ((RectDestinationPack.x < _RectPositionExplosion.x && RectDestinationPack.x + RectDestinationPack.w >= _RectPositionExplosion.x) && (RectDestinationPack.y + RectDestinationPack.h >= _RectPositionExplosion.y && RectDestinationPack.y <= _RectPositionExplosion.y + _RectPositionExplosion.h)) {
+				if ((RectDestinationPack.x < RectExplosion.x && RectDestinationPack.x + RectDestinationPack.w >= RectExplosion.x) && (RectDestinationPack.y + RectDestinationPack.h >= RectExplosion.y && RectDestinationPack.y <= RectExplosion.y + RectExplosion.h)) {
 
 					pPackTmp->Use(nullptr);
-					DomageExplosion(pPackTmp->GetRectDestination(), 45, _pRenderer);
+					SDL_Point PointTmp = { RectDestinationPack.x + RectDestinationPack.w / 2, RectDestinationPack.y + RectDestinationPack.h / 2 };
+					DommageExplosion(PointTmp, 45, _pRenderer);
 				}
 
-				else if ((RectDestinationPack.x <= _RectPositionExplosion.x + _RectPositionExplosion.w && RectDestinationPack.x + RectDestinationPack.w > _RectPositionExplosion.x + _RectPositionExplosion.w) && (RectDestinationPack.y + RectDestinationPack.h >= _RectPositionExplosion.y && RectDestinationPack.y <= _RectPositionExplosion.y + _RectPositionExplosion.h)) {
+				else if ((RectDestinationPack.x <= RectExplosion.x + RectExplosion.w && RectDestinationPack.x + RectDestinationPack.w > RectExplosion.x + RectExplosion.w) && (RectDestinationPack.y + RectDestinationPack.h >= RectExplosion.y && RectDestinationPack.y <= RectExplosion.y + RectExplosion.h)) {
 
 					pPackTmp->Use(nullptr);
-					DomageExplosion(pPackTmp->GetRectDestination(), 45, _pRenderer);
+					SDL_Point PointTmp = { RectDestinationPack.x + RectDestinationPack.w / 2, RectDestinationPack.y + RectDestinationPack.h / 2 };
+					DommageExplosion(PointTmp, 45, _pRenderer);
 				}
 
-				else if ((RectDestinationPack.x >= _RectPositionExplosion.x && RectDestinationPack.x + RectDestinationPack.w <= _RectPositionExplosion.x + _RectPositionExplosion.w) && (RectDestinationPack.y >= _RectPositionExplosion.y && RectDestinationPack.y + RectDestinationPack.h <= _RectPositionExplosion.y + _RectPositionExplosion.h)) {
+				else if ((RectDestinationPack.x >= RectExplosion.x && RectDestinationPack.x + RectDestinationPack.w <= RectExplosion.x + RectExplosion.w) && (RectDestinationPack.y >= RectExplosion.y && RectDestinationPack.y + RectDestinationPack.h <= RectExplosion.y + RectExplosion.h)) {
 
 					pPackTmp->Use(nullptr);
-					DomageExplosion(pPackTmp->GetRectDestination(), 45, _pRenderer);
+					SDL_Point PointTmp = { RectDestinationPack.x + RectDestinationPack.w / 2, RectDestinationPack.y + RectDestinationPack.h / 2 };
+					DommageExplosion(PointTmp, 45, _pRenderer);
 				}
 
-				else if ((RectDestinationPack.x >= _RectPositionExplosion.x && RectDestinationPack.x + RectDestinationPack.w <= _RectPositionExplosion.x + _RectPositionExplosion.w) && (RectDestinationPack.y < _RectPositionExplosion.y && RectDestinationPack.y + RectDestinationPack.h >= _RectPositionExplosion.y)) {
+				else if ((RectDestinationPack.x >= RectExplosion.x && RectDestinationPack.x + RectDestinationPack.w <= RectExplosion.x + RectExplosion.w) && (RectDestinationPack.y < RectExplosion.y && RectDestinationPack.y + RectDestinationPack.h >= RectExplosion.y)) {
 
 					pPackTmp->Use(nullptr);
-					DomageExplosion(pPackTmp->GetRectDestination(), 45, _pRenderer);
+					SDL_Point PointTmp = { RectDestinationPack.x + RectDestinationPack.w / 2, RectDestinationPack.y + RectDestinationPack.h / 2 };
+					DommageExplosion(PointTmp, 45, _pRenderer);
 				}
 
-				else if ((RectDestinationPack.x >= _RectPositionExplosion.x && RectDestinationPack.x + RectDestinationPack.w <= _RectPositionExplosion.x + _RectPositionExplosion.w) && (RectDestinationPack.y <= _RectPositionExplosion.y + _RectPositionExplosion.h && RectDestinationPack.y + RectDestinationPack.h > _RectPositionExplosion.y + _RectPositionExplosion.h)) {
+				else if ((RectDestinationPack.x >= RectExplosion.x && RectDestinationPack.x + RectDestinationPack.w <= RectExplosion.x + RectExplosion.w) && (RectDestinationPack.y <= RectExplosion.y + RectExplosion.h && RectDestinationPack.y + RectDestinationPack.h > RectExplosion.y + RectExplosion.h)) {
 
 					pPackTmp->Use(nullptr);
-					DomageExplosion(pPackTmp->GetRectDestination(), 45, _pRenderer);
+					SDL_Point PointTmp = { RectDestinationPack.x + RectDestinationPack.w / 2, RectDestinationPack.y + RectDestinationPack.h / 2 };
+					DommageExplosion(PointTmp, 45, _pRenderer);
 				}
 			}
+			pPackList->AllerSuivantCurseur();
 		}
 		
 	}

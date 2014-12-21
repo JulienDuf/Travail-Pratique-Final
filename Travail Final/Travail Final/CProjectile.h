@@ -32,9 +32,9 @@ public:
 
 	virtual void DefinirExplosion(bool _boExplosion) = 0;
 
-	virtual void DestructionProjectile() = 0;
-
 	virtual bool EstLancer() = 0;
 
 	virtual bool ExplosionEnCours() = 0;
+
+	virtual unsigned int ObtenirRayonExplosion() = 0;
 };

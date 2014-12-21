@@ -34,13 +34,16 @@ public:
 		_player: Joueur utilisant le pack.
 	*/
 	bool Use(CPlayer* _Player){
-		_Player->SetHealth(_Player->GetHealth() + ((_Player->GetHealth())*0.25));
+		
+		if (_Player != nullptr) {
+			_Player->SetHealth(_Player->GetHealth() + ((_Player->GetHealth())*0.25));
 
-		if (_Player->GetHealth() > 1)
-			_Player->SetHealth(1);
-
+			if (_Player->GetHealth() > 1)
+				_Player->SetHealth(1);
+		}
+			
 		m_boUse = true;
-
+		
 		return false;
 	}
 

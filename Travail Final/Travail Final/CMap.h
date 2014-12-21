@@ -115,7 +115,7 @@ public:
 
 		// Affiche tous les packs...
 		m_pPackList->AllerDebut();
-		for (int i = 0; i < m_pPackList->ObtenirCompte(); i++) {
+		for (int i = m_pPackList->ObtenirCompte(); i > 0; i--) {
 
 			if (m_pPackList->ObtenirElementCurseur()->GetSpriteExplosion() != nullptr) {
 				if (m_pPackList->ObtenirElementCurseur()->IsUse() && !m_pPackList->ObtenirElementCurseur()->GetSpriteExplosion()->IsActif())
@@ -127,8 +127,10 @@ public:
 					m_pPackList->Retirer(true);
 			}
 
-			m_pPackList->ObtenirElementCurseur()->ShowPack(_pSDLRenderer);
-			m_pPackList->AllerSuivantCurseur();
+			if (m_pPackList->ObtenirCompte() > 0) {
+				m_pPackList->ObtenirElementCurseur()->ShowPack(_pSDLRenderer);
+				m_pPackList->AllerSuivantCurseur();
+			}
 			
 		}
 			

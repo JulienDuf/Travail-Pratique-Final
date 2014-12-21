@@ -666,11 +666,6 @@ int main(int argc, char* argv[]) {
 							boExecution = !(pEvent->key.keysym.scancode == SDL_SCANCODE_ESCAPE);
 					}
 					break;
-				case SDL_SCANCODE_T:
-					//pWindowJeu->ObtenirGame()->ChangerTour(pGestionnaireFont->ObtenirDonnee("pFontBouton"), pWindowJeu->ObtenirRenderer());
-					if (!pWindowJeu->ObtenirGame()->IsDebut())
-						pWindowJeu->ObtenirGame()->ReverseShowToolBar();
-					break;
 				}
 				break;
 

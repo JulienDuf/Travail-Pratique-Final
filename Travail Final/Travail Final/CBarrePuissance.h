@@ -101,7 +101,7 @@ public:
 	}
 
 	void Reinitialisation() {
-		m_uiForce = 0;
+		ModifierForceBarre(0);
 		m_iAngle = 0;
 	}
 

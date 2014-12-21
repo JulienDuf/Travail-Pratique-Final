@@ -165,8 +165,12 @@ public:
 
 					DetectionCollisionPack(pPlayerActif, &boExplosion, &PointExplosion, _pRenderer);
 
-					if (boExplosion)
+					if (boExplosion) {
+						m_pTeamList->ObtenirElementCurseur()->ObtenirListePlayer()->Retirer(true);
+						m_pTeamList->ObtenirElementCurseur()->ObtenirListePlayer()->AllerPrecedentCurseur();
+						m_pGameMap->CreateHealthPack();
 						DommageExplosion(PointExplosion, 45, _pRenderer);
+					}
 
 
 					else if (pPlayerActif->ObtenirSpriteCourse()->IsActif()) {
@@ -417,13 +421,20 @@ public:
 
 								DetectionCollisionPack(pPlayer, &boExplosion, &Pointexplosion, _pRenderer);
 
-								if (boExplosion)
-									DommageExplosion(Pointexplosion, 45, _pRenderer);
-
-
-
-								else if (DommageChuteLibre(pPlayer, _pRenderer))
+								if (boExplosion) {
 									pPlayerListTmp->RetirerTrieur(true);
+									DommageExplosion(Pointexplosion, 45, _pRenderer);
+									m_pGameMap->CreateHealthPack();
+									m_boFinTour = true;
+									m_boDebutPartie = true;
+								}
+
+
+
+								else if (DommageChuteLibre(pPlayer, _pRenderer)) {
+									pPlayerListTmp->RetirerTrieur(true);
+									m_pGameMap->CreateHealthPack();
+								}
 
 							}
 						}
@@ -470,7 +481,6 @@ public:
 		}
 	}
 	
-
 	void PhysiquePack(SDL_Renderer* _pRenderer) {
 
 		CListeDC<CPack*>* pPackListTmp = m_pGameMap->ObtenirPackList();
@@ -533,8 +543,8 @@ public:
 	// ProcÈdure appliquant la physique sur les projectiles...
 	void PhysiqueTool(SDL_Renderer* _pRenderer) {
 
-		// 0:Missile 1:Grenade
-		if (m_pToolBar->ObtenirPositionObjetDoubleClick() <= 1) {
+		// 0:Missile 1:Grenade 2:Melee
+		if (m_pToolBar->ObtenirPositionObjetDoubleClick() <= 2) {
 
 			// Pointeur sur le projectile...
 			CProjectile* pProjectileTmp = m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirProjectile(m_pToolBar->ObtenirPositionObjetDoubleClick());
@@ -543,17 +553,6 @@ public:
 			SDL_Rect* RectTmp = pProjectileTmp->ObtenirRectDestination();
 			CVecteur2D* pVecteurVitesse = pProjectileTmp->ObtenirVecteurVitesse();
 			int iX, iY; // Position d'une collision.
-			
-			if (pProjectileTmp->ObtenirSprite("") != nullptr) {
-
-				if (!pProjectileTmp->ObtenirSprite("")->IsActif() && pProjectileTmp->ExplosionEnCours()) {
-					m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->DefinirToolActif(false);
-					pProjectileTmp->DefinirExplosion(false);
-					m_boDebutPartie = true;
-					m_boFinTour = true;
-					m_pToolBar->NouveauTour();
-				}
-			}
 
 			// Si le sprite d'explosion est terminÈ et qu'une explosion Ètait en cours...
 			if (!pProjectileTmp->ObtenirSprite("")->IsActif() && pProjectileTmp->ExplosionEnCours()) {
@@ -561,7 +560,7 @@ public:
 				pProjectileTmp->DefinirExplosion(false);
 				m_boDebutPartie = true;
 				m_boFinTour = true;
-
+				m_pToolBar->NouveauTour();
 			}
 
 			if (m_pToolBar->ObtenirPositionObjetDoubleClick() == 0 && pProjectileTmp->EstLancer())  {
@@ -614,7 +613,7 @@ public:
 				// AutoDesctruction de la grenade...
 				if (pProjectileTmp->ReactionExplosion(0, 0)) {
 					RectTmp = pProjectileTmp->ObtenirRectDestination();
-					DommageExplosion({ RectTmp->x + pProjectileTmp->ObtenirRayonExplosion(), RectTmp->y + pProjectileTmp->ObtenirRayonExplosion() }, pProjectileTmp->ObtenirRayonExplosion(), _pRenderer);
+					DommageExplosion({ RectTmp->x + pProjectileTmp->ObtenirRayonDommage(), RectTmp->y + pProjectileTmp->ObtenirRayonDommage() }, pProjectileTmp->ObtenirRayonDommage(), _pRenderer);
 
 				}
 				else if (RectTmp->x >= 1366 || RectTmp->x + RectTmp->w <= 0 || RectTmp->y >= 768) {
@@ -659,6 +658,12 @@ public:
 					
 					*pVecteurVitesse += *m_pGameMap->ObtenirGravite();
 				}
+			}
+
+			else if (m_pToolBar->ObtenirPositionObjetDoubleClick() == 2 && pProjectileTmp->EstLancer()) {
+
+
+
 			}
 		}
 	}
@@ -719,7 +724,7 @@ public:
 			PointDroit = { _StartPoint.x + usiDroit, _StartPoint.y };
 
 			// Descente pointgauche...
-			while (((unsigned int*)pSurfaceMap->pixels)[PointGauche.y * pSurfaceMap->w + PointGauche.x] == 0 || ((unsigned int*)pSurfaceMap->pixels)[PointGauche.y * pSurfaceMap->w + PointGauche.x] == TRANSPARENCE32BIT) {
+  			while (((unsigned int*)pSurfaceMap->pixels)[PointGauche.y * pSurfaceMap->w + PointGauche.x] == 0 || ((unsigned int*)pSurfaceMap->pixels)[PointGauche.y * pSurfaceMap->w + PointGauche.x] == TRANSPARENCE32BIT) {
 				PointGauche.y++;
 			}
 
@@ -979,6 +984,11 @@ public:
 	// Param3: La position en X qui sera retournÈ.
 	// Param4: La position en Y qui sera retournÈ.
 	bool CollisionObjetMap(SDL_Surface* _pSurfaceObjet, SDL_Rect _RectDestinationObjet, int* _iX, int* _iY) {
+
+		if (_iX != nullptr)
+			*_iX = 0;
+		if (_iY != nullptr)
+			*_iY = 0;
 
 		// Objet dans la map...
 		if (_RectDestinationObjet.x + _RectDestinationObjet.w < 1366 && _RectDestinationObjet.x >= 0 && _RectDestinationObjet.y + _RectDestinationObjet.h < 768 && _RectDestinationObjet.y >= 0) {
@@ -1396,6 +1406,7 @@ public:
 		bool boCollsionPack;
 		string strDommage;
 		char chrTmp[8];
+		SDL_Color CouleurDommage;
 
 		*_boExplosion = false;
 
@@ -1451,115 +1462,120 @@ public:
 			pPackTmp = m_pGameMap->ObtenirPackList()->ObtenirElementCurseur();
 			RectPack = pPackTmp->GetRectDestination();
 
-			// Si le pack est ‡ gauche du joueur, partiellement dans le joueur en x et au moins dans le joueur en y.
-			if (RectPack.x + RectPack.w >= RectPlayer.x && RectPack.x < RectPlayer.x && RectPack.y + RectPack.h >= RectPlayer.y && RectPack.y <= (RectPlayer.y + RectPlayer.h)) {
+			if (!pPackTmp->IsUse()) {
 
-				// On dÈfinie oÅÅÅ˘ regarder dans le surface du joueur et dans la surface du pack.
-				xPlayer = 0;
-				yPlayer = RectPack.y - RectPlayer.y;
-				xPack = RectPlayer.x - RectPack.x;
-				yPack = 0;
-				FinX = RectPack.w;
-				FinY = RectPack.h;
-				boCollsionPack = true;
-			}
+				// Si le pack est ‡ gauche du joueur, partiellement dans le joueur en x et au moins dans le joueur en y.
+				if (RectPack.x + RectPack.w >= RectPlayer.x && RectPack.x < RectPlayer.x && RectPack.y + RectPack.h >= RectPlayer.y && RectPack.y <= (RectPlayer.y + RectPlayer.h)) {
 
-			// Si le pack est complËtement dans le joueur...
-			else if (RectPack.x >= RectPlayer.x && RectPack.x + RectPack.w <= RectPlayer.x + RectPlayer.w && RectPack.y >= RectPlayer.y && RectPack.y + RectPack.h <= (RectPlayer.y + RectPlayer.h)) {
+					// On dÈfinie oÅÅÅ˘ regarder dans le surface du joueur et dans la surface du pack.
+					xPlayer = 0;
+					yPlayer = RectPack.y - RectPlayer.y;
+					xPack = RectPlayer.x - RectPack.x;
+					yPack = 0;
+					FinX = RectPack.w;
+					FinY = RectPack.h;
+					boCollsionPack = true;
+				}
 
-				// On dÈfinie oÅÅÅ˘ regarder dans le surface du joueur et dans la surface du pack.
-				xPlayer = RectPack.x - RectPlayer.x;
-				yPlayer = RectPack.y - RectPlayer.y;
-				xPack = 0;
-				yPack = 0;
-				FinX = RectPack.w;
-				FinY = RectPack.h;
-				boCollsionPack = true;
-			}
-			// Si le pack est ‡ droite du joueur, partiellement dans le joueur en x et au moins dans le joueur en y. 
-			else if (RectPack.x <= RectPlayer.x + RectPlayer.w && RectPack.x + RectPack.w > RectPlayer.x + RectPlayer.w && RectPack.y + RectPack.h >= RectPlayer.y && RectPack.y <= (RectPlayer.y + RectPlayer.h)) {
+				// Si le pack est complËtement dans le joueur...
+				else if (RectPack.x >= RectPlayer.x && RectPack.x + RectPack.w <= RectPlayer.x + RectPlayer.w && RectPack.y >= RectPlayer.y && RectPack.y + RectPack.h <= (RectPlayer.y + RectPlayer.h)) {
 
-				// On dÈfinie oÅÅÅ˘ regarder dans le surface du joueur et dans la surface du pack.
-				xPlayer = RectPlayer.w - ((RectPlayer.x + RectPlayer.w) - RectPack.x);
-				yPlayer = RectPack.y - RectPlayer.y;
-				xPack = 0;
-				yPack = 0;
-				FinX = (RectPlayer.x + RectPlayer.w) - RectPack.x;
-				FinY = RectPack.h;
-				boCollsionPack = true;
-			}
-			// Si le pack est en haut du joueur, partiellement dans le joueur en y et au moins dans le joueur en x.
-			else if (RectPack.x >= RectPlayer.x && RectPack.x + RectPack.w <= RectPlayer.x + RectPlayer.w && RectPack.y < RectPlayer.y && RectPack.y + RectPack.h >= RectPlayer.y) {
-				// On dÈfinie oÅÅÅ˘ regarder dans le surface du joueur et dans la surface du pack.
-				xPlayer = RectPack.x - RectPlayer.x;
-				yPlayer = 0;
-				xPack = 0;
-				yPack = RectPlayer.y - RectPack.y;
-				FinX = RectPack.w;
-				FinY = RectPack.h;
-				boCollsionPack = true;
-			}
-			// Si le pack est en bas du joueur, partiellement dans le joueur en y et au moins dans le joueur en x.
-			else if (RectPack.x + RectPack.w >= RectPlayer.x && RectPack.x <= RectPlayer.x + RectPlayer.w && RectPack.y <= RectPlayer.y + RectPlayer.h && RectPack.y + RectPack.h > RectPlayer.y + RectPlayer.h) {
+					// On dÈfinie oÅÅÅ˘ regarder dans le surface du joueur et dans la surface du pack.
+					xPlayer = RectPack.x - RectPlayer.x;
+					yPlayer = RectPack.y - RectPlayer.y;
+					xPack = 0;
+					yPack = 0;
+					FinX = RectPack.w;
+					FinY = RectPack.h;
+					boCollsionPack = true;
+				}
+				// Si le pack est ‡ droite du joueur, partiellement dans le joueur en x et au moins dans le joueur en y. 
+				else if (RectPack.x <= RectPlayer.x + RectPlayer.w && RectPack.x + RectPack.w > RectPlayer.x + RectPlayer.w && RectPack.y + RectPack.h >= RectPlayer.y && RectPack.y <= (RectPlayer.y + RectPlayer.h)) {
 
-				// On dÈfinie oÅÅÅ˘ regarder dans le surface du joueur et dans la surface du pack.
-				xPlayer = RectPack.x - RectPlayer.x;
-				yPlayer = RectPlayer.h - ((RectPlayer.y + RectPlayer.h) - RectPack.y);
-				xPack = 0;
-				yPack = 0;
-				FinX = RectPack.w;
-				FinY = (RectPlayer.y + RectPlayer.h) - RectPack.y;
-				boCollsionPack = true;
-			}
+					// On dÈfinie oÅÅÅ˘ regarder dans le surface du joueur et dans la surface du pack.
+					xPlayer = RectPlayer.w - ((RectPlayer.x + RectPlayer.w) - RectPack.x);
+					yPlayer = RectPack.y - RectPlayer.y;
+					xPack = 0;
+					yPack = 0;
+					FinX = (RectPlayer.x + RectPlayer.w) - RectPack.x;
+					FinY = RectPack.h;
+					boCollsionPack = true;
+				}
+				// Si le pack est en haut du joueur, partiellement dans le joueur en y et au moins dans le joueur en x.
+				else if (RectPack.x >= RectPlayer.x && RectPack.x + RectPack.w <= RectPlayer.x + RectPlayer.w && RectPack.y < RectPlayer.y && RectPack.y + RectPack.h >= RectPlayer.y) {
+					// On dÈfinie oÅÅÅ˘ regarder dans le surface du joueur et dans la surface du pack.
+					xPlayer = RectPack.x - RectPlayer.x;
+					yPlayer = 0;
+					xPack = 0;
+					yPack = RectPlayer.y - RectPack.y;
+					FinX = RectPack.w;
+					FinY = RectPack.h;
+					boCollsionPack = true;
+				}
+				// Si le pack est en bas du joueur, partiellement dans le joueur en y et au moins dans le joueur en x.
+				else if (RectPack.x + RectPack.w >= RectPlayer.x && RectPack.x <= RectPlayer.x + RectPlayer.w && RectPack.y <= RectPlayer.y + RectPlayer.h && RectPack.y + RectPack.h > RectPlayer.y + RectPlayer.h) {
 
-			else {
+					// On dÈfinie oÅÅÅ˘ regarder dans le surface du joueur et dans la surface du pack.
+					xPlayer = RectPack.x - RectPlayer.x;
+					yPlayer = RectPlayer.h - ((RectPlayer.y + RectPlayer.h) - RectPack.y);
+					xPack = 0;
+					yPack = 0;
+					FinX = RectPack.w;
+					FinY = (RectPlayer.y + RectPlayer.h) - RectPack.y;
+					boCollsionPack = true;
+				}
 
-				// Il n'y a pas de collision...
-				boCollsionPack = false;
-			}
+				else {
 
-			// S'il y a une collison entre le pack et le joeur...
-			if (boCollsionPack) {
+					// Il n'y a pas de collision...
+					boCollsionPack = false;
+				}
 
-				// Pour toute la hauteur du pack qui est ‡ vÈrifier...
-				for (; yPack < FinY; yPlayer++, yPack++) {
+				// S'il y a une collison entre le pack et le joeur...
+				if (boCollsionPack) {
 
-					// Pour toute la largeur du pack qui est ‡ vÈrifier...
-					for (XPlayer = xPlayer, XPack = xPack; XPack < FinX; XPlayer++, XPack++) {
+					// Pour toute la hauteur du pack qui est ‡ vÈrifier...
+					for (; yPack < FinY; yPlayer++, yPack++) {
 
-						// Si la surface du joueur n'est pas ‡ transparente au point yPlayer et XPlayer.
-						if (((unsigned int*)pSurfacePlayer->pixels)[(yPlayer + RectSourcePlayer.y) * pSurfacePlayer->w + (XPlayer + RectSourcePlayer.x)] != 0)
+						// Pour toute la largeur du pack qui est ‡ vÈrifier...
+						for (XPlayer = xPlayer, XPack = xPack; XPack < FinX; XPlayer++, XPack++) {
 
-							// Si la surface du pack n'est pas ‡ transparente au point yPack et XPack.
-							if (((unsigned int*)pPackTmp->GetSurface()->pixels)[(yPack)* pPackTmp->GetSurface()->w + (XPack)] != 0) {
+							// Si la surface du joueur n'est pas ‡ transparente au point yPlayer et XPlayer.
+							if (((unsigned int*)pSurfacePlayer->pixels)[(yPlayer + RectSourcePlayer.y) * pSurfacePlayer->w + (XPlayer + RectSourcePlayer.x)] != 0)
 
-								// Si c'est un healthpack...
-								if (pPackTmp->GetSpriteExplosion() == nullptr) {
-									strDommage.append("+");
-									strDommage.append(SDL_itoa((_pPlayer->GetHealth() * 100) * 0.25, chrTmp, 10));
+								// Si la surface du pack n'est pas ‡ transparente au point yPack et XPack.
+								if (((unsigned int*)pPackTmp->GetSurface()->pixels)[(yPack)* pPackTmp->GetSurface()->w + (XPack)] != 0) {
+
+									// Si c'est un healthpack...
+									if (pPackTmp->GetSpriteExplosion() == nullptr) {
+										strDommage.append("+");
+										strDommage.append(SDL_itoa((_pPlayer->GetHealth() * 100) * 0.25, chrTmp, 10));
+										CouleurDommage = { 0, 200, 0, 255 };
+									}
+
+									// Si c'est une mine...
+									else {
+										strDommage.append("-");
+										strDommage.append(SDL_itoa(_pPlayer->GetHealth() * 100, chrTmp, 10));
+										CouleurDommage = { 200, 0, 0, 255 };
+									}
+
+									// CrÈÈ un label indiquant un dommage (ou un gain de santÈ).
+									m_pListeDomage->AjouterFin(new CTemporaryLabel(strDommage, CouleurDommage, { RectPlayer.x, RectPlayer.y - 20, 0, 0 }, { RectPlayer.x, RectPlayer.y - 80, 0, 0 }, 30, 2000, _pRenderer));
+
+									// Si c'est une mine...
+									if (pPackTmp->Use(_pPlayer)) {
+										*_boExplosion = true;
+										*_RectExplosion = { pPackTmp->GetRectDestination().x + pPackTmp->GetRectDestination().w / 2, pPackTmp->GetRectDestination().y + pPackTmp->GetRectDestination().h / 2 };
+									}
+
+									return true;
+
+
+
 								}
 
-								// Si c'est une mine...
-								else {
-									strDommage.append("-");
-									strDommage.append(SDL_itoa(_pPlayer->GetHealth() * 100, chrTmp, 10));
-
-								}
-
-								// CrÈÈ un label indiquant un dommage (ou un gain de santÈ).
-								m_pListeDomage->AjouterFin(new CTemporaryLabel(strDommage, { 200, 0, 0, 255 }, { RectPlayer.x, RectPlayer.y - 20, 0, 0 }, { RectPlayer.x, RectPlayer.y - 80, 0, 0 }, 30, 2000, _pRenderer));
-
-								// Si c'est une mine...
-								if (pPackTmp->Use(_pPlayer)) {
-									*_boExplosion = true;
-									*_RectExplosion = { pPackTmp->GetRectDestination().x + pPackTmp->GetRectDestination().w / 2, pPackTmp->GetRectDestination().y + pPackTmp->GetRectDestination().h / 2 };
-								}
-
-								return true;
-
-
-
-							}
+						}
 					}
 				}
 			}

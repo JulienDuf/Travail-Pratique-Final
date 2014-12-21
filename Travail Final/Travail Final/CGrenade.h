@@ -248,7 +248,7 @@ public:
 	
 		m_pBarrePuissance->ReactToEvent(_pEvent);
 
-		if (!m_boGrenadeLancer) {
+		if (!m_boGrenadeLancer && !m_boExplosion) {
 
 			switch (_pEvent->type) {
 
@@ -353,7 +353,7 @@ public:
 		return m_boExplosion;
 	}
 
-	unsigned int ObtenirRayonExplosion() {
+	unsigned int ObtenirRayonDommage() {
 		return m_uiRayon;
 	}
 };

@@ -3,7 +3,7 @@ Classe qui gere les armes de melee
 Crée par Samuel Rambaud le 25 novembre 2014
 */
 
-class CMelee : public CMouvement {
+class CMelee : public CProjectile {
 private:
 
 	float m_fDommage; //Degats de l'arme de melee
@@ -99,7 +99,7 @@ public:
 	}
 
 
-	void ReactToEvent(SDL_Event* _pEvent, CVecteur2D* _pVecteurVitesse, bool* _boStable) { 
+	void ReactToEvent(SDL_Event* _pEvent) { 
 		m_pSprite->DefinirActif(true);
    		if (_pEvent->key.keysym.scancode == SDL_SCANCODE_SPACE && !m_boSpace) {
 			m_boSpace = true;
@@ -108,7 +108,7 @@ public:
 		}
 	}
 
-	void ShowPlayer(SDL_Renderer* _pRenderer, SDL_Rect _RectPlayerDestination) {
+	void ShowTool(SDL_Renderer* _pRenderer, SDL_Rect _RectPlayerDestination) {
 		if (m_pSprite->ModifierAnnimation()) { // Fin du tour...
 			m_pSprite->DefinirPositionDeBouclage(0, 1);
 			m_pSprite->DefinirActif(true);
@@ -135,7 +135,10 @@ public:
 		return NULL;
 	}
 
-	CSprite* ObtenirSprite(string _strNom) { return m_pSprite; }
+	CSprite* ObtenirSprite(string _strNom) {
+		
+		return m_pSprite; 
+	}
 
 	void UpdateDescription(bool _boShow, SDL_Rect _RectPositionDescription) {
 		
@@ -154,13 +157,60 @@ public:
 			m_pLblDescription->SetRectDestinationY(_RectPositionDescription.y);
 	}
 
-	bool IsActive(void) {
+	unsigned int ObtenirRayonDommage() {
 
-		return true;
+		return m_uiRayon;
 	}
 
-	CVecteur2D* ObtenirVecteur(void) {
+	bool EstLancer() {
+
+		return m_boSpace;
+	}
+
+	// Méthodes inutiles pour cette classe.......
+
+	CVecteur2D* ObtenirVecteurVitesse(void) {
 
 		return nullptr;
+	}
+
+	bool ReactionExplosion(int iX, int iY) {
+
+		return false;
+	}
+
+	void DefinirRotation(int _iVitesseAngulaire) {
+
+	}
+
+	void ReinitialisationProjectile(void) {
+
+	}
+
+	SDL_Rect* ObtenirRectDestination() {
+
+		return NULL;
+	}
+
+	SDL_Surface* ObtenirSurface() {
+
+		return nullptr;
+	}
+
+	void DefinirAngle(double _dAngle) {
+
+	}
+
+	void DefinirPosition(SDL_Rect _Rect) {
+
+	}
+
+	void DefinirExplosion(bool _boExplosion) {
+
+	}
+
+	bool ExplosionEnCours() {
+
+		return false;
 	}
 };

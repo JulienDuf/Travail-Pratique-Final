@@ -236,11 +236,13 @@ public:
 
 						}
 
-						if (abs(RegressionTest({ RectTmp.x + RectTmp.w / 2, RectTmp.y }, RectTmp.w / 2, 1)) >= 60) {
-							pPlayerActif->ModifierGlissadeJoueur(true);
-							pPlayerActif->ObtenirSpriteCourse()->DefinirActif(false);
-							pPlayerActif->ObtenirSpriteRepos()->DefinirActif(true);
-							pPlayerActif->DefinirToolActif(false);
+						if (abs(RegressionTest({ RectTmp.x + RectTmp.w / 2, RectTmp.y }, RectTmp.w / 2, 1,true)) >= 60) {
+							//if ((((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(RectTmp.x + RectTmp.w) + ((RectTmp.y + RectTmp.h) * m_pGameMap->ObtenirSurfaceMap()->w)] == 0 && pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 0) || (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(RectTmp.x) + ((RectTmp.y + RectTmp.h)* m_pGameMap->ObtenirSurfaceMap()->w)] == 0 && pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1)) {
+								pPlayerActif->ModifierGlissadeJoueur(true);
+								pPlayerActif->ObtenirSpriteCourse()->DefinirActif(false);
+								pPlayerActif->ObtenirSpriteRepos()->DefinirActif(true);
+								pPlayerActif->DefinirToolActif(false);
+							//}
 
 						}
 
@@ -256,22 +258,22 @@ public:
 
 					else if (pPlayerActif->IsSliding()) {
 						CVecteur2D* VecteurFrottement = new CVecteur2D(0.0f, 0.0f);
-						double doAngle = RegressionTest({ RectTmp.x + RectTmp.w / 2, RectTmp.y }, RectTmp.w / 2, 1); // Variable qui sert a calcul juste 1 fois l'angle.
+						double doAngle = RegressionTest({ RectTmp.x + RectTmp.w / 2, RectTmp.y }, RectTmp.w / 2, 1, true); // Variable qui sert a calcul juste 1 fois l'angle.
 						VecteurFrottement->ModifierVecteur(1, doAngle + 180);
 
 						if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1) { // Si le joueur se déplace vers la droite.
-							
+
 							if (doAngle > 0) { // Si le joueur se déplace vers la gauche et que la pente est vers le haut à gauche.
-								
+
 								pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(doAngle);
 								//pPlayerActif->ObtenirVecteurPoids()->ModifierOrientation(doAngle + 180);
 								pPlayerActif->ObtenirVecteurPoids()->ModifierVecteur(m_pGameMap->ObtenirGravite()->ObtenirNorme(), doAngle + 180);
 								*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
-								VecteurFrottement->ModifierOrientation(doAngle + 180);
+								//VecteurFrottement->ModifierOrientation(doAngle + 180);
 								*pPlayerActif->ObtenirVecteurVitesse() += *VecteurFrottement;
 								pPlayerActif->DefinirPositionY(pPlayerActif->ObtenirPositionY() + (pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35));
 								pPlayerActif->DefinirPositionX(pPlayerActif->ObtenirPositionX() + (pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35));
-								
+
 							}
 
 							if (doAngle < 0) { // Si le joueur se déplace vers la le bas a gauche.
@@ -279,25 +281,24 @@ public:
 								//pPlayerActif->ObtenirVecteurPoids()->ModifierOrientation(doAngle);
 								pPlayerActif->ObtenirVecteurPoids()->ModifierVecteur(m_pGameMap->ObtenirGravite()->ObtenirNorme(), doAngle);
 								*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
-								VecteurFrottement->ModifierOrientation(doAngle - 180);
+								//VecteurFrottement->ModifierOrientation(doAngle + 180);
 								*pPlayerActif->ObtenirVecteurVitesse() += *VecteurFrottement;
 								pPlayerActif->DefinirPositionY(pPlayerActif->ObtenirPositionY() - (pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35));
 								pPlayerActif->DefinirPositionX(pPlayerActif->ObtenirPositionX() - (pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35));
 							}
 
 
-							
+
 
 
 						}
 						else { // Si le joueur va vers la droite
 
 							if (doAngle > 0) { // Si le joueur se déplace vers la droite et que la pente est vers le bas à droite.
-								pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(doAngle);
-								//pPlayerActif->ObtenirVecteurPoids()->ModifierOrientation(doAngle);
-								pPlayerActif->ObtenirVecteurPoids()->ModifierVecteur(m_pGameMap->ObtenirGravite()->ObtenirNorme(), doAngle);
+								pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(doAngle + 180);
+								pPlayerActif->ObtenirVecteurPoids()->ModifierVecteur(m_pGameMap->ObtenirGravite()->ObtenirNorme(), doAngle + 180);
 								*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
-								VecteurFrottement->ModifierOrientation(doAngle - 180);
+								VecteurFrottement->ModifierOrientation(doAngle);
 								*pPlayerActif->ObtenirVecteurVitesse() += *VecteurFrottement;
 								pPlayerActif->DefinirPositionY(pPlayerActif->ObtenirPositionY() - (pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35));
 								pPlayerActif->DefinirPositionX(pPlayerActif->ObtenirPositionX() - (pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35));
@@ -305,7 +306,6 @@ public:
 
 							if (doAngle < 0) { // Si la pente est en haut a droite.
 								pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(doAngle);
-								//pPlayerActif->ObtenirVecteurPoids()->ModifierOrientation(doAngle + 180);
 								pPlayerActif->ObtenirVecteurPoids()->ModifierVecteur(m_pGameMap->ObtenirGravite()->ObtenirNorme(), doAngle + 180);
 								*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
 								VecteurFrottement->ModifierOrientation(doAngle + 180);
@@ -314,9 +314,19 @@ public:
 								pPlayerActif->DefinirPositionX(pPlayerActif->ObtenirPositionX() - (pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35));
 							}
 						}
-						
-						if (pPlayerActif->ObtenirVecteurVitesse() == 0 && doAngle < 60) // Si la glissade est fini.
+
+						if (pPlayerActif->ObtenirVecteurVitesse() == 0)  { // Si la glissade est fini.
 							pPlayerActif->ModifierGlissadeJoueur(false);
+							pPlayerActif->ModifierStabiliteJoueur(true);
+						}
+						/*if (!VerifierCollisionJoueurMap(pPlayerActif, RectTmp, &boCorps, &boPied, &_uiXPieds, &_uiYPieds, &_uiXCorps, &_uiYCorps)) {
+							pPlayerActif->ObtenirVecteurPoids()->ModifierComposantY(pPlayerActif->ObtenirVecteurPoids()->ObtenirComposanteY() + m_pGameMap->ObtenirGravite()->ObtenirComposanteY());
+
+							dComposanteY += pPlayerActif->ObtenirVecteurPoids()->ObtenirComposanteY() / 35;
+
+							pPlayerActif->DefinirPositionX(dComposanteX);
+							pPlayerActif->DefinirPositionY(dComposanteY);
+						}*/
 					}
 
 

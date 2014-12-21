@@ -213,8 +213,8 @@ public:
 					
 				}
 				m_uiTempsPropulsionInitiale++;
-				if (boFleche)
-					boFleche = boFleche;
+				
+
 				if (m_uiTempsPropulsionInitiale >= 3) {
 					m_pSpriteJetPack->DefinirPositionDeBouclage(4, 6);
 				}
@@ -244,6 +244,7 @@ public:
 
 	void DefinirActif(bool _boActif) {
 		m_pSpriteJetPack->DefinirActif(_boActif);
+		boDecoller = _boActif;
 	}
 
 	CSprite* ObtenirSprite(string _strNom) {

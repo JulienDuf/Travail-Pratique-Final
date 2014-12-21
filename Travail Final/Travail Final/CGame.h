@@ -475,11 +475,11 @@ public:
 				if (CollisionObjetMapChuteLibre(pPackListTmp->ObtenirElementCurseur()->GetSurface(), RectTmp, &iX, &iY)) {
 
 					RectTmp.y = iY;
-					double dAngle = RegressionTest({ iX, RectTmp.y }, RectTmp.w / 2, 1);
+					double dAngle = RegressionTest({ iX, RectTmp.y }, RectTmp.w / 2, 2*RectTmp.h, true);
 					double d = abs(dAngle);
 					if (abs(dAngle) <= 3) {
 						int i = 0;
-						double dAngle = RegressionTest({ iX, RectTmp.y }, RectTmp.w / 2, 1);
+						double dAngle = RegressionTest({ iX, RectTmp.y }, RectTmp.w / 2, 2 * RectTmp.h, true);
 					}
 					if (abs(dAngle) >= 70) {
 						// GLISSADEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE à faire..........
@@ -606,6 +606,10 @@ public:
 					int y = RectTmp->y;
 					RectTmp->x += pVecteurVitesse->ObtenirComposanteX() / 35;
 					RectTmp->y += pVecteurVitesse->ObtenirComposanteY() / 35;
+					if (pVecteurVitesse->ObtenirComposanteX() < 0)
+						RectTmp->x++;
+					if (pVecteurVitesse->ObtenirComposanteY() < 0)
+						RectTmp->y++;
 
 					if (CollisionGrenadeJoueur(pProjectileTmp->ObtenirSurface(), *pProjectileTmp->ObtenirRectDestination(), &iX, &iY)) {
 
@@ -616,22 +620,40 @@ public:
 						RectTmp->x = x;
 						RectTmp->y = y;
 						int iW;
+						float fangle;
 						RepositionnementGrenadeMap(pProjectileTmp->ObtenirSurface(), pVecteurVitesse, RectTmp, &boSensRotation, &iW, nullptr);
-						float angle = RegressionTest({ RectTmp->x + iW, RectTmp->y }, RectTmp->w / 2, 1);
-						//float angle = (float)RegressionLineaire(*pProjectileTmp->ObtenirRectDestination(), *pProjectileTmp->ObtenirRectDestination(), true);
-						if (pVecteurVitesse->ObtenirNorme() >= 35) {
-							CVecteur2D VecteurNormal = CVecteur2D(1, angle + 90);
-							double dScalaire = 2 * pVecteurVitesse->Scalaire(VecteurNormal.ObtenirComposanteX(), VecteurNormal.ObtenirComposanteY());
-							*pVecteurVitesse -= VecteurNormal * dScalaire;
-							*pVecteurVitesse = *pVecteurVitesse * 0.35;
+						if (abs(iW) >= RectTmp->w)
+							iW = RectTmp->w / 2;
+
+						// Évaluation de la pente...
+						if (pVecteurVitesse->ObtenirComposanteY() >= 0) {
+							fangle = RegressionTest({ RectTmp->x + iW, RectTmp->y }, RectTmp->w / 2, 2 * RectTmp->h, true);
 						}
 						else
 						{
-							pVecteurVitesse->ModifierVecteur(35, angle);
-							pProjectileTmp->DefinirRotation(0);
+							fangle = -RegressionTest({ RectTmp->x + iW, RectTmp->y }, RectTmp->w / 2, 2 * RectTmp->h, false);
 						}
-						if (boSensRotation)
+						
+						// Modification du vecteur par rapport au rebond...
+						if (pVecteurVitesse->ObtenirNorme() >= 35) {
+							CVecteur2D VecteurNormal = CVecteur2D(1, fangle + 90);
+							double dScalaire = 2 * pVecteurVitesse->Scalaire(VecteurNormal.ObtenirComposanteX(), VecteurNormal.ObtenirComposanteY());
+							*pVecteurVitesse -= VecteurNormal * dScalaire;
+							*pVecteurVitesse = *pVecteurVitesse * 0.5;
+						}
+						else
+						{
+							if (abs(fangle) <= 10) {
+								pVecteurVitesse->ModifierVecteur(0, fangle);
+							}
+							else {
+								pVecteurVitesse->ModifierVecteur(pVecteurVitesse->ObtenirNorme(), fangle);
+							}
+						}
+
+						if (boSensRotation) {
 							pProjectileTmp->DefinirRotation(pVecteurVitesse->ObtenirNorme());
+						}
 						else
 							pProjectileTmp->DefinirRotation(-pVecteurVitesse->ObtenirNorme());
 					}
@@ -671,10 +693,24 @@ public:
 		return true;
 	}
 
+	//outils tolerance...
+	/*
+	double dTolerance = _dTolerance;
+	double dDiminutionTolerance = 0.0000000000001;
+	while ((abs(dPente - dNouvellePente) <= dTolerance / (dDiminutionTolerance) || !boPremierePenteDiffZero) && usiGauche <= _uiLimitX) {
+	*/
+
+
 	// RegressionTest bas
-	double RegressionTest(SDL_Point _StartPoint, unsigned int _uiLimit, double _dTolerance) {
-		double dTolerance = _dTolerance;
-		double dDiminutionTolerance = 0.0000000000001;
+	// En entrée:
+	// Param1: Position de dépar de l'évalutation de la pente.
+	// Préférences: Partir le x au point de collision et le y en haut du point, habituellement le y du rect.
+	// Param2: Limite de l'évalutation de la pente (Mettre la moitié de la largeur du rect).
+	// Param3: Limite de l'évaluation de la pente en y. (Mettre 2 * le hauteur du Rect).
+	// Param4: Direction de l'objet(True = vers le bas(chute libre habituellement) et False = vers le haut).
+	// Retour: l'angle de la pent(Une pent montante donne un angle négatif).
+	double RegressionTest(SDL_Point _StartPoint, unsigned int _uiLimitX, unsigned int _uiLimiteY, bool boDirrection) {
+		_uiLimiteY += _StartPoint.y - 1;
 		unsigned short int usiGauche = 1;
 		unsigned short int usiDroit = 1;
 		bool boPremiere = true;
@@ -686,38 +722,74 @@ public:
 		SDL_Point PointDroit;
 		SDL_Surface* pSurfaceMap = m_pGameMap->ObtenirSurfaceMap();
 
-		// Tant que la différence entre la nouvelle pente et l'ancienne <= tol et que j'e n'ai pas atteint la limite...
-		while ((abs(dPente - dNouvellePente) <= dTolerance / (dDiminutionTolerance) || !boPremierePenteDiffZero) && usiGauche <= _uiLimit) {
-			
-			// Pas la première fois...
-			if (!boPremiere) {
-				dPente = (dPente + dNouvellePente) / 2;
-			}
-			// Initialisation des points
-			PointGauche = { _StartPoint.x - usiGauche, _StartPoint.y };
-			PointDroit = { _StartPoint.x + usiDroit, _StartPoint.y };
+		if (boDirrection) {
 
-			// Descente pointgauche...
-			while (((unsigned int*)pSurfaceMap->pixels)[PointGauche.y * pSurfaceMap->w + PointGauche.x] == 0 || ((unsigned int*)pSurfaceMap->pixels)[PointGauche.y * pSurfaceMap->w + PointGauche.x] == TRANSPARENCE32BIT) {
-				PointGauche.y++;
-			}
+			// Tant que la différence entre la nouvelle pente et l'ancienne <= tol et que j'e n'ai pas atteint la limite...
+			while ((abs(dPente - dNouvellePente) <= dPente / 2 || !boPremierePenteDiffZero) && usiGauche <= _uiLimitX) {
 
-			// Descente pointdroit...
-			while (((unsigned int*)pSurfaceMap->pixels)[PointDroit.y * pSurfaceMap->w + PointDroit.x] == 0 || ((unsigned int*)pSurfaceMap->pixels)[PointDroit.y * pSurfaceMap->w + PointDroit.x] == TRANSPARENCE32BIT) {
-				PointDroit.y++;
+				// Pas la première fois...
+				if (!boPremiere) {
+					dPente = (dPente + dNouvellePente) / 2;
+				}
+				// Initialisation des points
+				PointGauche = { _StartPoint.x - usiGauche, _StartPoint.y };
+				PointDroit = { _StartPoint.x + usiDroit, _StartPoint.y };
+
+				// Descente pointgauche...
+				while ((((unsigned int*)pSurfaceMap->pixels)[PointGauche.y * pSurfaceMap->w + PointGauche.x] == 0 || ((unsigned int*)pSurfaceMap->pixels)[PointGauche.y * pSurfaceMap->w + PointGauche.x] == TRANSPARENCE32BIT) && PointGauche.y <= _uiLimiteY) {
+					PointGauche.y++;
+				}
+
+				// Descente pointdroit...
+				while ((((unsigned int*)pSurfaceMap->pixels)[PointDroit.y * pSurfaceMap->w + PointDroit.x] == 0 || ((unsigned int*)pSurfaceMap->pixels)[PointDroit.y * pSurfaceMap->w + PointDroit.x] == TRANSPARENCE32BIT) && PointDroit.y <= _uiLimiteY) {
+					PointDroit.y++;
+				}
+				// Calcul de la nouvelle pente
+				dNouvellePente = ((double)PointDroit.y - (double)PointGauche.y) / ((double)PointDroit.x - (double)PointGauche.x);
+				if (dNouvellePente != 0)
+					boPremierePenteDiffZero = true;
+				usiGauche++;
+				usiDroit++;
+				// Si c'est la première fois
+				if (boPremiere && boPremierePenteDiffZero) {
+					dPente = dNouvellePente;
+					boPremiere = false;
+				}
 			}
-			// Calcul de la nouvelle pente
-			dNouvellePente = ((double)PointDroit.y - (double)PointGauche.y) / ((double)PointDroit.x - (double)PointGauche.x);
-			if (dNouvellePente != 0)
-				boPremierePenteDiffZero = true;
-			usiGauche++;
-			usiDroit++;
-			if (boPremierePenteDiffZero)
-				dDiminutionTolerance++;
-			// Si c'est la première fois
-			if (boPremiere && boPremierePenteDiffZero) {
-				dPente = dNouvellePente;
-				boPremiere = false;
+		}
+		else
+		{
+			// Tant que la différence entre la nouvelle pente et l'ancienne <= tol et que j'e n'ai pas atteint la limite...
+			while ((abs(dPente - dNouvellePente) <= dPente / 2 || !boPremierePenteDiffZero) && usiGauche <= _uiLimitX) {
+
+				// Pas la première fois...
+				if (!boPremiere) {
+					dPente = (dPente + dNouvellePente) / 2;
+				}
+				// Initialisation des points
+				PointGauche = { _StartPoint.x - usiGauche, _StartPoint.y };
+				PointDroit = { _StartPoint.x + usiDroit, _StartPoint.y };
+
+				// Descente pointgauche...
+				while ((((unsigned int*)pSurfaceMap->pixels)[PointGauche.y * pSurfaceMap->w + PointGauche.x] == 0 || ((unsigned int*)pSurfaceMap->pixels)[PointGauche.y * pSurfaceMap->w + PointGauche.x] == TRANSPARENCE32BIT) && PointGauche.y >= _uiLimiteY) {
+					PointGauche.y--;
+				}
+
+				// Descente pointdroit...
+				while ((((unsigned int*)pSurfaceMap->pixels)[PointDroit.y * pSurfaceMap->w + PointDroit.x] == 0 || ((unsigned int*)pSurfaceMap->pixels)[PointDroit.y * pSurfaceMap->w + PointDroit.x] == TRANSPARENCE32BIT) && PointDroit.y >= _uiLimiteY) {
+					PointDroit.y--;
+				}
+				// Calcul de la nouvelle pente
+				dNouvellePente = ((double)PointDroit.y - (double)PointGauche.y) / ((double)PointDroit.x - (double)PointGauche.x);
+				if (dNouvellePente != 0)
+					boPremierePenteDiffZero = true;
+				usiGauche++;
+				usiDroit++;
+				// Si c'est la première fois
+				if (boPremiere && boPremierePenteDiffZero) {
+					dPente = dNouvellePente;
+					boPremiere = false;
+				}
 			}
 		}
 
@@ -1151,6 +1223,16 @@ public:
 		int iVecteurX = _pVecteurGrenade->ObtenirComposanteX()/35;
 		int iVecteurY = _pVecteurGrenade->ObtenirComposanteY()/35;
 
+		if (iVecteurX >= 0) {
+			*_boSensRotation = true;
+		}
+		else
+		{
+			*_boSensRotation = false;
+		}
+		if (iVecteurY <= 0) {
+			(*_boSensRotation) = !(*_boSensRotation);
+		}
 
 		for (int i = 0; i <= abs(iVecteurX) || i <= abs(iVecteurY); i++) {
 			if (!CollisionObjetMap(_pSurfaceGrenade, *_RectDestinationGrenade, _iX, _iY)) {

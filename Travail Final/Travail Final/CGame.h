@@ -162,17 +162,11 @@ public:
 
 				else if (!pPlayerActif->IsStable()) {
 
-<<<<<<< HEAD
-					DetectionCollisionPack(pPlayerActif, &boExplosion, &RectExplosion, _pRenderer);
-=======
-					DetectionCollisionPack(pPlayerActif, &boExplosion, &PointExplosion);
->>>>>>> origin/Branche-jeu
-					if (boExplosion) {
 
-						pPlayerActif->SetHealth(0);
+					DetectionCollisionPack(pPlayerActif, &boExplosion, &PointExplosion, _pRenderer);
+
+					if (boExplosion)
 						DommageExplosion(PointExplosion, 45, _pRenderer);
-
-					}
 
 
 					else if (pPlayerActif->ObtenirSpriteCourse()->IsActif()) {
@@ -261,7 +255,7 @@ public:
 
 
 					else if (pPlayerActif->IsSliding()) {
-						
+
 						CVecteur2D* VecteurFrottement = new CVecteur2D(1, 0.0f);
 						double doAngle = RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination(), false); // Variable qui sert a calcul juste 1 fois l'angle.
 						if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1) { // Si le joueur se déplace vers la droite.
@@ -314,7 +308,7 @@ public:
 							pPlayerActif->ModifierGlissadeJoueur(false);
 					}
 
-					
+
 
 
 					else if (pPlayerActif->ObtenirJetPack()->ObtenirSprite("")->IsActif()) {
@@ -410,27 +404,18 @@ public:
 								pPlayer->DefinirPositionY(dPositionY);
 								pPlayer->ModifierStabiliteJoueur(true);
 
-<<<<<<< HEAD
-								DetectionCollisionPack(pPlayer, &boExplosion, &RectTmp, _pRenderer);
+								DetectionCollisionPack(pPlayer, &boExplosion, &Pointexplosion, _pRenderer);
 
-								if (boExplosion) {
-
-									pPlayerListTmp->RetirerTrieur(true);
-									DomageExplosion(RectTmp, 45, _pRenderer);
-=======
-								DetectionCollisionPack(pPlayer, &boExplosion, &Pointexplosion);
-
-								if (boExplosion) {
-									pPlayer->SetHealth(0);
+								if (boExplosion)
 									DommageExplosion(Pointexplosion, 45, _pRenderer);
->>>>>>> origin/Branche-jeu
-								}
+
+
 
 								else if (DommageChuteLibre(pPlayer, _pRenderer))
 									pPlayerListTmp->RetirerTrieur(true);
+
 							}
 						}
-
 
 						else if (pPlayer->ObtenirSpriteParachute()->IsActif()) {
 							RectPlayer = pPlayer->ObtenirRectDestinationParachute();
@@ -457,9 +442,9 @@ public:
 								RectPlayer.y += (pPlayer->ObtenirRectDestinationParachute().h - pPlayer->ObtenirRectDestination().h);
 								pPlayer->DefinirPositionX(RectPlayer.x);
 								pPlayer->DefinirPositionY(RectPlayer.y);
-								if (RectPlayer.x >= (1366 / 2)) 
+								if (RectPlayer.x >= (1366 / 2))
 									pPlayer->ObtenirSpriteRepos()->DefinirEtage(1);
-								
+
 							}
 
 
@@ -473,6 +458,7 @@ public:
 			}
 		}
 	}
+	
 
 	void PhysiquePack(SDL_Renderer* _pRenderer) {
 
@@ -531,10 +517,11 @@ public:
 
 			// Pointeur sur le projectile...
 			CProjectile* pProjectileTmp = m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirProjectile(m_pToolBar->ObtenirPositionObjetDoubleClick());
-<<<<<<< HEAD
-			SDL_Rect* RectTmp = NULL;
-			CVecteur2D* pVecteurVitesse;
-			int iX, iY;
+
+			// Initialisation de la position et du vecteur pour ne pas aller les chercher à répétition...
+			SDL_Rect* RectTmp = pProjectileTmp->ObtenirRectDestination();
+			CVecteur2D* pVecteurVitesse = pProjectileTmp->ObtenirVecteurVitesse();
+			int iX, iY; // Position d'une collision.
 			
 			if (pProjectileTmp->ObtenirSprite("") != nullptr) {
 
@@ -545,11 +532,7 @@ public:
 					m_boFinTour = true;
 					m_pToolBar->NouveauTour();
 				}
-=======
-			// Initialisation de la position et du vecteur pour ne pas aller les chercher à répétition...
-			SDL_Rect* RectTmp = pProjectileTmp->ObtenirRectDestination();
-			CVecteur2D* pVecteurVitesse = pProjectileTmp->ObtenirVecteurVitesse();
-			int iX, iY; // Position d'une collision.
+			}
 
 			// Si le sprite d'explosion est terminé et qu'une explosion était en cours...
 			if (!pProjectileTmp->ObtenirSprite("")->IsActif() && pProjectileTmp->ExplosionEnCours()) {
@@ -557,7 +540,7 @@ public:
 				pProjectileTmp->DefinirExplosion(false);
 				m_boDebutPartie = true;
 				m_boFinTour = true;
->>>>>>> origin/Branche-jeu
+
 			}
 
 			if (m_pToolBar->ObtenirPositionObjetDoubleClick() == 0 && pProjectileTmp->EstLancer())  {
@@ -1155,11 +1138,9 @@ public:
 
 			m_pTeamList->AllerSuivantTrieur(); // Prochaine équipe.
 		}
-<<<<<<< HEAD
+
 
 		// Regarde s'il y a une collision avec la map...
-=======
->>>>>>> origin/Branche-jeu
 		return CollisionObjetMap(_pSurfaceMissile, _RectDestination, _iX, _iY);
 	}
 
@@ -1374,22 +1355,11 @@ public:
 
 	}
 
-<<<<<<< HEAD
+
 	// Fonction vérifiant s'il y a une collision entre un joueur et un pack.
 	// En entrée:
 	// Param1: Le joeur...
-=======
-	/*
-	Fonction qui detecte si un personnage marche sur une mine ou un pack
-	parametres:
-	_pTeamList = liste d'equipes pour obtenir les joueurs
-	_Pack = Pack sur lequel la collision sera verifiée
-	¸retour: true = une collision a lieu
-	*/
-	bool DetectionCollisionPack(CPlayer* _pPlayer, bool* _boExplosion, SDL_Point* _PointExplosion) {
->>>>>>> origin/Branche-jeu
-
-	bool DetectionCollisionPack(CPlayer* _pPlayer, bool* _boExplosion, SDL_Rect* _RectExplosion, SDL_Renderer* _pRenderer) {
+	bool DetectionCollisionPack(CPlayer* _pPlayer, bool* _boExplosion, SDL_Point* _RectExplosion, SDL_Renderer* _pRenderer) {
 
 		// Variables temporaire...
 		CPack* pPackTmp;
@@ -1539,15 +1509,8 @@ public:
 						// Si la surface du joueur n'est pas à transparente au point yPlayer et XPlayer.
 						if (((unsigned int*)pSurfacePlayer->pixels)[(yPlayer + RectSourcePlayer.y) * pSurfacePlayer->w + (XPlayer + RectSourcePlayer.x)] != 0)
 
-<<<<<<< HEAD
 							// Si la surface du pack n'est pas à transparente au point yPack et XPack.
 							if (((unsigned int*)pPackTmp->GetSurface()->pixels)[(yPack)* pPackTmp->GetSurface()->w + (XPack)] != 0) {
-=======
-									if (pPackTmp->Use(_pPlayer)) {
-										*_boExplosion = true;
-										*_PointExplosion = { pPackTmp->GetRectDestination().x + pPackTmp->GetRectDestination().w / 2, pPackTmp->GetRectDestination().y + pPackTmp->GetRectDestination().h / 2 };
-									}
->>>>>>> origin/Branche-jeu
 
 								// Si c'est un healthpack...
 								if (pPackTmp->GetSpriteExplosion() == nullptr) {
@@ -1568,7 +1531,7 @@ public:
 								// Si c'est une mine...
 								if (pPackTmp->Use(_pPlayer)) {
 									*_boExplosion = true;
-									*_RectExplosion = { pPackTmp->GetRectDestination().x + pPackTmp->GetRectDestination().w / 2, pPackTmp->GetRectDestination().y + pPackTmp->GetRectDestination().h / 2, pPackTmp->GetRectDestination().w, pPackTmp->GetRectDestination().h };
+									*_RectExplosion = { pPackTmp->GetRectDestination().x + pPackTmp->GetRectDestination().w / 2, pPackTmp->GetRectDestination().y + pPackTmp->GetRectDestination().h / 2 };
 								}
 
 								return true;

@@ -101,12 +101,8 @@ public:
 	}
 
 	void Reinitialisation() {
-<<<<<<< HEAD
+
 		ModifierForceBarre(0);
-=======
-		m_RectSourceBarre.x = 0;
-		m_uiForce = 0;
->>>>>>> origin/Branche-jeu
 		m_iAngle = 0;
 	}
 

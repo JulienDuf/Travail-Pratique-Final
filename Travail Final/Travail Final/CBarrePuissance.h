@@ -101,6 +101,7 @@ public:
 	}
 
 	void Reinitialisation() {
+		m_RectSourceBarre.x = 0;
 		m_uiForce = 0;
 		m_iAngle = 0;
 	}

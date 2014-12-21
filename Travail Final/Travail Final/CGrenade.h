@@ -1,5 +1,5 @@
 /*
-Classe qui gere les grenades et leur rebondissement
+Classe qui gere les grenades...
 Crée par Samuel Rambaud le 25 novembre 2014
 Modifiée par Gabriel Beaudry
 -Ajout de la description(BlitText, ModifierMunition, Load de la description, ShowDescription)
@@ -20,19 +20,18 @@ EstLancer
 class CGrenade: public CProjectile {
 private:
 
-	bool m_boGrenadeLancer,
-		m_boRotation,
+	bool m_boGrenadeLancer, // Lancée = true
 		m_boShowDescription,
-		m_boExplosion;
+		m_boExplosion; // Explosion en cours = true
 
 	int m_iAngle, // Angle du lancement de la grenade
-		m_iVitesseRotationAngulaire;
+		m_iVitesseRotationAngulaire; // Vitesse de rotation de la grenade en degré/sec.
 
 	unsigned int m_uiForce, // Force du lancement de la grenade
 		m_uiMunition,
-		m_uiRayon;
+		m_uiRayon; // Rayon d'explosion de la grenade.
 
-	CBarrePuissance *m_pBarrePuissance; // Barre de puissance de la grenade
+	CBarrePuissance *m_pBarrePuissance;
 	CVecteur2D *m_pVecteurVitesseGrenade;
 
 	CSprite* m_pSpriteExplosion;
@@ -40,7 +39,6 @@ private:
 	CTimer *m_pTimerExplosion,
 		*m_pTimerRotation;
 
-	SDL_Point m_PointRotation;
 	SDL_Texture *m_pTextureGrenade; //Texture de la grenade
 	SDL_Surface *m_pSurfaceGrenade, // Surface de base
 		*m_pSurfaceGrenadeRotation; // Surface d'affichage
@@ -48,9 +46,10 @@ private:
 
 	// Pointeurs de fonciton
 	void(*m_pMapDestruction)(int _iRayon, int _iX, int _iY); // La destruction de la map.
-	SDL_Surface *(*m_pRotation)(SDL_Surface* _pSurfaceRotation, float _fAngle); // Rotation
+	SDL_Surface *(*m_pRotation)(SDL_Surface* _pSurfaceRotation, float _fAngle); // Rotation de la grenade.
 
-	CLabel *m_pLblDescription; // La descripton du missile.
+	// La descripton du missile.
+	CLabel *m_pLblDescription; 
 	string m_strDescription[8];
 
 	// Fonction qui permet de blit du texte dans une Surface de couleur
@@ -82,11 +81,10 @@ private:
 		return pSurfaceBlitin;
 	}
 
-	char chr[3]; // Char pour mettre à jour les munitions, s'il n'était pas en variable de classe, le jeu plantait.
-
 	// Procédure permettant de mettre à jour le nombre de munition dans le label de description.
 	// Param1; Renderer pour mettre à jour la surface.
 	void MiseajourMunition(SDL_Renderer* _pRenderer) {
+		char chr[10];
 		SDL_itoa(m_uiMunition, chr, 10);
 		m_strDescription[0] = "";
 		m_strDescription[0].append("Munition : ");
@@ -100,23 +98,19 @@ public:
 	// Param1; Emplacement dans le chemin d'arborescence.
 	// Param2: Render pour créer la texture du label.
 	// Param3: Procédure de la destruction de la map.
-	// Param4: Procédure de la collision avec la map.
-	// Param5: Fonction pour la rotation de la grenade.
+	// Param4: Fonction pour la rotation de la grenade.
 	CGrenade(string _strEmplacement, SDL_Renderer* _pRenderer, void _MapDestruction(int _iRayon, int _iX, int _iY), SDL_Surface* _Rotation(SDL_Surface* _pSurfaceRotation, float _fAngle)){
 
-		m_boShowDescription = false;
-		m_boRotation = false;
 		m_boGrenadeLancer = false;
+		m_boShowDescription = false;
 		m_boExplosion = false;
 
-		m_iAngle = 0;
-		m_uiForce = 0;
-
-		// Initialisation de la description de l'arme et des munitions...
+		// Initialisation de la description de l'arme et des stats en liens avec celle-ci...
 		m_strDescription;
 		string strEmplacement(_strEmplacement);
 		int i = strEmplacement.length();
 		
+		// Retour à debug...
 		for (int i2 = 0; i2 < 2; i2++) {
 			strEmplacement.resize(--i);
 			while (strEmplacement[--i] != '\\');
@@ -126,28 +120,32 @@ public:
 		strEmplacement.append("Armes et Packs\\DescriptionGrenade.txt");
 		ifstream FichierDescription;
 		FichierDescription.open(strEmplacement);
+
+		// Si le fichier s'est ouvert...
 		if (FichierDescription.is_open()) {
 			char chrtmp[55];
 			string strMunition;
 			string strRayon;
 			string strDelai;
+			// Boucle sur toutes les lignes du fichier texte(jusqu'à 8)...
 			for (int i = 0; i < 8; i++) {
 				FichierDescription.getline(chrtmp, 75);
 				m_strDescription[i] = chrtmp;
+				// Switch pour initialiser les stats propres à l'arme...
 				switch (i) {
-				case 0:
+				case 0: // Munition
 
 					for (int j = 11; chrtmp[j] > 47 && chrtmp[j] < 58; j++) {
 						strMunition += chrtmp[j];
 					}
 					break;
-				case 2:
+				case 2: // Rayon d'explosion
 
 					for (int j = 20; chrtmp[j] > 47 && chrtmp[j] < 58; j++) {
 						strRayon += chrtmp[j];
 					}
 					break;
-				case 4:
+				case 4: // Délai d'explosion(en seconde ds le fichier texte)
 
 					for (int j = 20; chrtmp[j] > 47 && chrtmp[j] < 58; j++) {
 						strDelai += chrtmp[j];
@@ -155,16 +153,19 @@ public:
 					break;
 				}
 			}
+			// Initialisation des stats...
 			m_uiMunition = SDL_atoi(strMunition.c_str());
 			m_uiRayon = SDL_atoi(strRayon.c_str());
 			m_pTimerExplosion = new CTimer(SDL_atoi(strDelai.c_str()) * 1000);
 		}
 
-		m_pTimerRotation = new CTimer(50);
-
 		FichierDescription.close();
 
-		m_pLblDescription = new CLabel(SDL_CreateTextureFromSurface(_pRenderer, BlitText(m_strDescription, 7, { 0, 0, 0 })), { 0, 0, 0, 0 });
+		m_pTimerRotation = new CTimer(50);
+
+		SDL_Surface* pSurfacetmp = BlitText(m_strDescription, 7, { 0, 0, 0 });
+		m_pLblDescription = new CLabel(SDL_CreateTextureFromSurface(_pRenderer, pSurfacetmp), { 0, 0, 0, 0 });
+		SDL_FreeSurface(pSurfacetmp);
 
 		m_pSurfaceGrenadeRotation = m_pSurfaceGrenade = pGestionnaireSurface->ObtenirDonnee("pSurfaceGrenade");
 
@@ -178,22 +179,23 @@ public:
 		m_pRotation = _Rotation;
 
 		m_pSpriteExplosion = new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceExplosionGrenade"), pGestionnaireTexture->ObtenirDonnee("pTextureExplosionGrenade"), { 0, 0, m_uiRayon, m_uiRayon }, 10, 50, false, false, 1);
-
-		m_PointRotation = { m_RectDestinationGrenade.w, m_RectDestinationGrenade.h / 2 };
 	}
 	
+	// Fontion qui "trigger" l'explosion...
+	// En entrée: Aucun, Si grenade, explosion à partir de son centre.
+	// Retour: Si l'explosion a eu lieu.
 	bool ReactionExplosion(int iX, int iY) {
+
+		// Timer fini...
 		if (m_pTimerExplosion->IsDone()) {
 			m_boExplosion = true;
 			m_pSpriteExplosion->DefinirActif(true);
 			m_boGrenadeLancer = false;
-			m_boRotation = false;
-			m_pBarrePuissance->Reinitialisation();
-			m_RectDestinationGrenade.x += m_RectDestinationGrenade.w / 2;
-			m_RectDestinationGrenade.y += m_RectDestinationGrenade.h / 2;
-			m_pMapDestruction(m_uiRayon, m_RectDestinationGrenade.x, m_RectDestinationGrenade.y);
-			m_RectDestinationGrenade.w = 2 * m_uiRayon;
-			m_RectDestinationGrenade.h = 2 * m_uiRayon;
+			// Initialisation position d'explosion...
+			iX = m_RectDestinationGrenade.x + m_RectDestinationGrenade.w / 2;
+			iY = m_RectDestinationGrenade.y + m_RectDestinationGrenade.h / 2;
+			m_pMapDestruction(m_uiRayon, iX, iY);
+			m_RectDestinationGrenade = { iX - m_uiRayon, iY - m_uiRayon, 2*m_uiRayon, 2*m_uiRayon }; // Utilisation du rect pour les dommages
 			delete m_pVecteurVitesseGrenade;
 			m_pVecteurVitesseGrenade = nullptr;
 			return true;
@@ -205,7 +207,7 @@ public:
 	
 		if (m_boGrenadeLancer) {
 
-			if (m_boRotation && m_pTimerRotation->IsDone()) {
+			if (m_pTimerRotation->IsDone()) {
 
 				m_iAngle += (float)m_iVitesseRotationAngulaire * m_pTimerRotation->ObtenirTimer();
 				m_iAngle %= 360;
@@ -255,19 +257,18 @@ public:
 				if (_pEvent->key.keysym.scancode == SDL_SCANCODE_SPACE) {
 
 					m_iAngle = m_pBarrePuissance->ObtenirAngle();
-
-					if (m_iAngle <= 90 || m_iAngle >= 270)
-						m_iVitesseRotationAngulaire = 300;
-					else
-						m_iVitesseRotationAngulaire = -300;
-					m_uiForce = (m_pBarrePuissance->ObtenirForce() + 3) * 50;
+					m_uiForce = (m_pBarrePuissance->ObtenirForce() + 3) * 40;
 					m_boGrenadeLancer = true;
-					m_boRotation = true;
 					m_uiMunition--;
 					m_pVecteurVitesseGrenade = new CVecteur2D((float)m_uiForce, (float)m_iAngle);
+					if (m_iAngle <= 90 || m_iAngle >= 270)
+						m_iVitesseRotationAngulaire = m_uiForce;
+					else
+						m_iVitesseRotationAngulaire = -(int)m_uiForce;
 					m_iAngle = 0;
 
 					m_pBarrePuissance->ObtenirPosition(&m_RectDestinationGrenade.x, &m_RectDestinationGrenade.y);
+					m_pBarrePuissance->Reinitialisation();
 					m_RectDestinationGrenade.y -= m_RectDestinationGrenade.h;
 					m_pTimerExplosion->Start();
 					m_pTimerRotation->Start();
@@ -310,11 +311,7 @@ public:
 			m_pLblDescription->SetRectDestinationY(_RectPositionDescription.y);
 	}
 
-	void ReinitialisationProjectile(void) {
-
-		m_pBarrePuissance->Reinitialisation();
-		m_pBarrePuissance->ModidierActivite(true);
-	}
+	void ReinitialisationProjectile(void) {}
 
 	CVecteur2D* ObtenirVecteurVitesse() {
 
@@ -346,15 +343,6 @@ public:
 		m_boExplosion = _boExplosion;
 	}
 
-	void DestructionProjectile() {
-		m_boExplosion = false;
-		m_boGrenadeLancer = false;
-		m_boRotation = false;
-		m_pBarrePuissance->Reinitialisation();
-		delete m_pVecteurVitesseGrenade;
-		m_pVecteurVitesseGrenade = nullptr;
-	}
-
 	bool EstLancer() {
 
 		return m_boGrenadeLancer;
@@ -363,5 +351,9 @@ public:
 	bool ExplosionEnCours(void) {
 
 		return m_boExplosion;
+	}
+
+	unsigned int ObtenirRayonExplosion() {
+		return m_uiRayon;
 	}
 };

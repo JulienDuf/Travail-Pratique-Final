@@ -51,7 +51,7 @@ private:
 		unsigned int uiH = pSurfaceBlitSource->h;
 
 		pSurfaceBlitin = SDL_CreateRGBSurface(pSurfaceBlitSource->flags, 300, pSurfaceBlitSource->h * _uiNombreElementTableau, pSurfaceBlitSource->format->BitsPerPixel, 0, 0, 0, 0);
-		SDL_FillRect(pSurfaceBlitin, NULL, SDL_MapRGB(pSurfaceBlitin->format, 255, 255, 255));
+		SDL_FillRect(pSurfaceBlitin, NULL, SDL_MapRGB(pSurfaceBlitin->format, 255, 255, 255)); // Violation d'acces
 
 		SDL_BlitSurface(pSurfaceBlitSource, NULL, pSurfaceBlitin, &Rect);
 
@@ -164,7 +164,7 @@ public:
 	// Param2: Le position en Y de la collision.
 	bool ReactionExplosion(int iX, int iY) {
 	
-		// Détruit la map avec la position et la rayon de 50, met le missile inactif.
+		// Détruit la map avec la position et la rayon en paramêtre, met le missile inactif.
 		m_pMapDestruction(m_uiRayon, iX, iY);
 		m_boMissileLancer = false;
 		m_boExplosion = true;
@@ -311,10 +311,6 @@ public:
 		m_boExplosion = _boExplosion;
 	}
 
-	void DestructionProjectile() {
-
-	}
-
 	void ModifierActivationBarre(bool _boActive) {
 
 		m_pBarrePuissance->ModidierActivite(_boActive);
@@ -353,5 +349,9 @@ public:
 
 	unsigned int ObtenirMunition() {
 		return m_uiMunition;
+	}
+
+	unsigned int ObtenirRayonExplosion() {
+		return m_uiRayon;
 	}
 };

@@ -203,11 +203,6 @@ public:
 		m_RectParachuteDestination = _RectDestination;
 	}
 
-	void AjouterAPositionY(int _iY) {
-
-		m_RectPlayerDestination.x += _iY;
-	}
-
 	void ModifierStabiliteJoueur(bool _boStable) {
 
 		m_boStable = _boStable;

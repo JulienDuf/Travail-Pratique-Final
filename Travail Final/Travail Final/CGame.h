@@ -236,7 +236,7 @@ public:
 
 						}
 
-						if (RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination(), false) >= 30 || RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination(), false) <= -30) {
+						if (abs(RegressionTest({ RectTmp.x + RectTmp.w / 2, RectTmp.y }, RectTmp.w / 2, 1)) >= 60) {
 							pPlayerActif->ModifierGlissadeJoueur(true);
 							pPlayerActif->ObtenirSpriteCourse()->DefinirActif(false);
 							pPlayerActif->ObtenirSpriteRepos()->DefinirActif(true);
@@ -255,18 +255,23 @@ public:
 
 
 					else if (pPlayerActif->IsSliding()) {
+						CVecteur2D* VecteurFrottement = new CVecteur2D(0.0f, 0.0f);
+						double doAngle = RegressionTest({ RectTmp.x + RectTmp.w / 2, RectTmp.y }, RectTmp.w / 2, 1); // Variable qui sert a calcul juste 1 fois l'angle.
+						VecteurFrottement->ModifierVecteur(1, doAngle + 180);
 
-						CVecteur2D* VecteurFrottement = new CVecteur2D(1, 0.0f);
-						double doAngle = RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination(), false); // Variable qui sert a calcul juste 1 fois l'angle.
 						if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1) { // Si le joueur se déplace vers la droite.
-
+							
 							if (doAngle > 0) { // Si le joueur se déplace vers la gauche et que la pente est vers le haut à gauche.
+								
 								pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(doAngle);
 								//pPlayerActif->ObtenirVecteurPoids()->ModifierOrientation(doAngle + 180);
 								pPlayerActif->ObtenirVecteurPoids()->ModifierVecteur(m_pGameMap->ObtenirGravite()->ObtenirNorme(), doAngle + 180);
 								*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
 								VecteurFrottement->ModifierOrientation(doAngle + 180);
-								*pPlayerActif->ObtenirVecteurVitesse() -= *VecteurFrottement;
+								*pPlayerActif->ObtenirVecteurVitesse() += *VecteurFrottement;
+								pPlayerActif->DefinirPositionY(pPlayerActif->ObtenirPositionY() + (pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35));
+								pPlayerActif->DefinirPositionX(pPlayerActif->ObtenirPositionX() + (pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35));
+								
 							}
 
 							if (doAngle < 0) { // Si le joueur se déplace vers la le bas a gauche.
@@ -275,11 +280,13 @@ public:
 								pPlayerActif->ObtenirVecteurPoids()->ModifierVecteur(m_pGameMap->ObtenirGravite()->ObtenirNorme(), doAngle);
 								*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
 								VecteurFrottement->ModifierOrientation(doAngle - 180);
-								*pPlayerActif->ObtenirVecteurVitesse() -= *VecteurFrottement;
+								*pPlayerActif->ObtenirVecteurVitesse() += *VecteurFrottement;
+								pPlayerActif->DefinirPositionY(pPlayerActif->ObtenirPositionY() - (pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35));
+								pPlayerActif->DefinirPositionX(pPlayerActif->ObtenirPositionX() - (pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35));
 							}
 
 
-
+							
 
 
 						}
@@ -291,7 +298,9 @@ public:
 								pPlayerActif->ObtenirVecteurPoids()->ModifierVecteur(m_pGameMap->ObtenirGravite()->ObtenirNorme(), doAngle);
 								*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
 								VecteurFrottement->ModifierOrientation(doAngle - 180);
-								*pPlayerActif->ObtenirVecteurVitesse() -= *VecteurFrottement;
+								*pPlayerActif->ObtenirVecteurVitesse() += *VecteurFrottement;
+								pPlayerActif->DefinirPositionY(pPlayerActif->ObtenirPositionY() - (pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35));
+								pPlayerActif->DefinirPositionX(pPlayerActif->ObtenirPositionX() - (pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35));
 							}
 
 							if (doAngle < 0) { // Si la pente est en haut a droite.
@@ -299,12 +308,14 @@ public:
 								//pPlayerActif->ObtenirVecteurPoids()->ModifierOrientation(doAngle + 180);
 								pPlayerActif->ObtenirVecteurPoids()->ModifierVecteur(m_pGameMap->ObtenirGravite()->ObtenirNorme(), doAngle + 180);
 								*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
-								VecteurFrottement->ModifierOrientation(-doAngle);
-								*pPlayerActif->ObtenirVecteurVitesse() -= *VecteurFrottement;
+								VecteurFrottement->ModifierOrientation(doAngle + 180);
+								*pPlayerActif->ObtenirVecteurVitesse() += *VecteurFrottement;
+								pPlayerActif->DefinirPositionY(pPlayerActif->ObtenirPositionY() - (pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35));
+								pPlayerActif->DefinirPositionX(pPlayerActif->ObtenirPositionX() - (pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35));
 							}
 						}
-
-						if (pPlayerActif->ObtenirVecteurVitesse() == 0 && RegressionLineaire(pPlayerActif->ObtenirHitboxPieds(), pPlayerActif->ObtenirRectDestination(), false) < 60) // Si la glissade est fini.
+						
+						if (pPlayerActif->ObtenirVecteurVitesse() == 0 && doAngle < 60) // Si la glissade est fini.
 							pPlayerActif->ModifierGlissadeJoueur(false);
 					}
 
@@ -465,6 +476,7 @@ public:
 		CListeDC<CPack*>* pPackListTmp = m_pGameMap->ObtenirPackList();
 		SDL_Rect RectTmp;
 		int iX, iY;
+		
 
 		for (int i = 0; i < pPackListTmp->ObtenirCompte(); i++) {
 
@@ -483,7 +495,16 @@ public:
 					}
 					if (abs(dAngle) >= 70) {
 						// GLISSADEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE à faire..........
+						/*CVecteur2D* VecteurVitessePack = new CVecteur2D(0.0f,0.0f);
+						CVecteur2D* VecteurFrottement = new CVecteur2D(0.0f,0.0f);*/
 						if (dAngle < 0) {
+							/*VecteurFrottement->ModifierVecteur(1, dAngle + 180);
+							VecteurVitessePack->ModifierVecteur(m_pGameMap->ObtenirGravite()->ObtenirNorme(), dAngle);
+							pPackListTmp->ObtenirElementCurseur()->ModifierStabilePack(false);
+							*VecteurVitessePack += *VecteurFrottement;
+
+							RectTmp.x -= VecteurVitessePack->ObtenirComposanteX();
+							RectTmp.y -= VecteurVitessePack->ObtenirComposanteY();*/
 							RectTmp.x -= 50;
 						}
 						else

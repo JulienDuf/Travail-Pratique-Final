@@ -195,9 +195,10 @@ public:
 					if (boExplosion)
 						DommageExplosion(PointExplosion, 45, _pRenderer);
 					// Player en course...
-					else if (pPlayerActif->ObtenirSpriteCourse()->IsActif()) {
+					else if (pPlayerActif->ObtenirSpriteCourse()->IsActif() || pPlayerActif->ObtenirSpriteSaut()->IsActif() || pPlayerActif->ObtenirSpriteRepos()->IsActif()) {
 
 						dComposanteX += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35.0;
+						dComposanteY += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35.0;
 
 						if (!VerifierCollisionJoueurMap(pPlayerActif, RectTmp, &boCorps, &boPied, &_uiXPieds, &_uiYPieds, &_uiXCorps, &_uiYCorps)) {
 
@@ -211,47 +212,59 @@ public:
 						}
 
 						else {
+							/*
+							if (boCorps) {
 
-							pPlayerActif->ObtenirVecteurPoids()->ModifierComposantY(0);
+								if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 0)
+									dComposanteX -= (RectTmp.w - _uiXCorps);
 
-							if (boPied && !boCorps) {
+								if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1)
+									dComposanteX += _uiXCorps;
 
 
-								if (boCorps) {
+							}
+							*/
+							if (boPied) {
+
+								pPlayerActif->ObtenirVecteurPoids()->ModifierComposantY(0);
+								pPlayerActif->ObtenirVecteurVitesse()->ModifierComposantY(0);
+
+								if (!boCorps) {
+
+									if (pPlayerActif->ObtenirSpriteSaut()->IsActif()) {
+										pPlayerActif->ObtenirSpriteSaut()->DefinirActif(false);
+										pPlayerActif->ObtenirSpriteRepos()->DefinirActif(true);
+										pPlayerActif->ObtenirVecteurVitesse()->ModifierComposantX(0);
+									}
+									/*
+									if (boCorps) {
 
 									if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 0)
-										dComposanteX -= (RectTmp.w - _uiXCorps);
+									dComposanteX -= (RectTmp.w - _uiXCorps);
 
 									if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1)
-										dComposanteX += _uiXCorps;
-
-									pPlayerActif->DefinirPositionX(dComposanteX);
-									pPlayerActif->DefinirPositionY(dComposanteY);
-
-								}
-
-								unsigned int uiH = 0;
-
-								while ((((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[RectTmp.x + 1 + _uiXPieds + (RectTmp.y + _uiYPieds - uiH) *m_pGameMap->ObtenirSurfaceMap()->w] != 0) && (uiH <= 2))
-									uiH++;
-
-								if (uiH <= 2) {
-
-									dComposanteY -= uiH;
+									dComposanteX += _uiXCorps;
 
 
-									pPlayerActif->DefinirPositionX(dComposanteX);
-									pPlayerActif->DefinirPositionY(dComposanteY);
+									}
+									*/
+									unsigned int uiH = 0;
 
-								}
+									while ((((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[RectTmp.x + 1 + _uiXPieds + (RectTmp.y + _uiYPieds - uiH) *m_pGameMap->ObtenirSurfaceMap()->w] != 0) && (uiH <= 2))
+										uiH++;
 
-								else {
+									if (uiH <= 2)
+										dComposanteY -= uiH;
 
-									if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 0 && (_uiXPieds > RectTmp.w / 2))
-										dComposanteX -= (RectTmp.w - _uiXPieds);
+									else {
 
-									if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1 && (_uiXPieds < RectTmp.w / 2))
-										dComposanteX += _uiXPieds;
+										if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 0 && (_uiXPieds > RectTmp.w / 2))
+											dComposanteX -= (RectTmp.w - _uiXPieds);
+
+										if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1 && (_uiXPieds < RectTmp.w / 2))
+											dComposanteX += _uiXPieds;
+
+									}
 
 									pPlayerActif->DefinirPositionX(dComposanteX);
 									pPlayerActif->DefinirPositionY(dComposanteY);
@@ -273,11 +286,8 @@ public:
 					
 						
 					}
-					else if (pPlayerActif->ObtenirSpriteSaut()->IsActif()) {
+					
 
-
-
-					}
 					else if (pPlayerActif->IsSliding()) {
 						CVecteur2D* VecteurFrottement = new CVecteur2D(0.0f, 0.0f);
 						VerifierCollisionJoueurMap(pPlayerActif, RectTmp, &boCorps, &boPied, &_uiXPieds, &_uiYPieds, &_uiXCorps, &_uiYCorps);

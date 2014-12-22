@@ -113,6 +113,7 @@ public:
 	void DefinirPositionDeBouclage(unsigned int _uiPositionBouclageDebut, unsigned int _uiPositionBouclageFin) {
 		m_uiPositionBouclageDebut = _uiPositionBouclageDebut;
 		m_uiPositionBouclageFin = _uiPositionBouclageFin;
+		m_RectSource.x = m_uiPositionBouclageDebut * m_RectSource.w; // Retour au départ voulu.
 	}
 
 	void DefinirActif(bool _boActif) {

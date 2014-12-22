@@ -231,7 +231,7 @@ public:
 		m_pBarrePuissance->ReactToEvent(_pEvent);
 
 		// Si le missile n'est pas lancé.
-		if (!m_boMissileLancer) {
+		if (!m_boMissileLancer && !m_boExplosion) {
 
 			// Pour tous les types d'événements...
 			switch (_pEvent->type) {
@@ -350,7 +350,12 @@ public:
 		return m_uiMunition;
 	}
 
-	unsigned int ObtenirRayonExplosion() {
+	unsigned int ObtenirRayonDommage() {
 		return m_uiRayon;
+	}
+
+	float ObtenirDommage(void) {
+
+		return 0;
 	}
 };

@@ -101,6 +101,10 @@ public:
 			m_pTeamList->AllerSuivantCurseur();
 		}
 
+		// Affichage d'un cercle vert pour reconnaÓtre le player actif...
+		if (!m_boDebutPartie)
+			m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ShowEtoile(_pRenderer);
+
 		// Si le jeu n'est pas en pause, affichage de la toolbar et des descriptions...
 		if (!_boPause) {
 			m_pToolBar->ShowToolBar(_pRenderer);
@@ -192,10 +196,17 @@ public:
 					DetectionCollisionPack(pPlayerActif, &boExplosion, &PointExplosion, _pRenderer);
 
 					// Explosion de mine en collision...
-					if (boExplosion)
-						DommageExplosion(PointExplosion, 45, _pRenderer);
+					if (boExplosion) {
+						m_pTeamList->ObtenirElementCurseur()->ObtenirListePlayer()->Retirer(true);
+						m_pTeamList->ObtenirElementCurseur()->ObtenirListePlayer()->AllerPrecedentCurseur();
+						m_pGameMap->CreateHealthPack();
+						DommageExplosion(PointExplosion, m_pGameMap->ObtenirPackList()->ObtenirElementCurseur()->GetRayon(), _pRenderer);
+					}
+
 					// Player en course...
+
 					else if (pPlayerActif->ObtenirSpriteCourse()->IsActif() || pPlayerActif->ObtenirSpriteSaut()->IsActif()) {
+
 
 						dComposanteX += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35.0;
 						dComposanteY += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35.0;
@@ -213,18 +224,14 @@ public:
 
 						else {
 
-							if (pPlayerActif->ObtenirSpriteSaut()->IsActif()) 
+							if (pPlayerActif->ObtenirSpriteSaut()->IsActif())
 								pPlayerActif->ObtenirVecteurVitesse()->ModifierComposantX(0);
-							
-							
+
+
 							if (boCorps) {
 
 								if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 0)
 									dComposanteX -= (RectTmp.w - _uiXCorps);
-
-								if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1)
-									dComposanteX += _uiXCorps;
-
 
 								if (!boPied) {
 
@@ -244,7 +251,12 @@ public:
 							if (boPied) {
 
 								pPlayerActif->ObtenirVecteurPoids()->ModifierComposantY(0);
-								pPlayerActif->ObtenirVecteurVitesse()->ModifierComposantY(0);
+
+								if (pPlayerActif->ObtenirSpriteSaut()->IsActif()) {
+									pPlayerActif->ObtenirVecteurVitesse()->ModifierComposantY(0);
+									pPlayerActif->ObtenirSpriteSaut()->DefinirActif(false);
+									pPlayerActif->ObtenirSpriteRepos()->DefinirActif(true);
+								}
 
 								if (pPlayerActif->ObtenirSpriteSaut()->IsActif()) {
 
@@ -252,7 +264,7 @@ public:
 								}
 
 								if (!boCorps) {
-									
+
 									unsigned int uiH = 0;
 
 									while ((((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[RectTmp.x + 1 + _uiXPieds + (RectTmp.y + _uiYPieds - uiH) *m_pGameMap->ObtenirSurfaceMap()->w] != 0) && (uiH <= 2))
@@ -263,7 +275,7 @@ public:
 										pPlayerActif->DefinirPositionX(dComposanteX);
 										pPlayerActif->DefinirPositionY(dComposanteY);
 									}
-									
+
 									else {
 
 										if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 0 && (_uiXPieds > RectTmp.w / 2))
@@ -272,43 +284,39 @@ public:
 										if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1 && (_uiXPieds < RectTmp.w / 2))
 											dComposanteX += _uiXPieds;
 
+										pPlayerActif->DefinirPositionX(dComposanteX);
+										pPlayerActif->DefinirPositionY(dComposanteY);
+
 									}
-									
-									
 
 								}
 
 							}
-
-						}
-						/*
-						if (abs(RegressionTest({ RectTmp.x + RectTmp.w / 2, RectTmp.y }, RectTmp.w / 2, 1, true)) >= 60) {
-							//if ((((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(RectTmp.x + RectTmp.w) + ((RectTmp.y + RectTmp.h) * m_pGameMap->ObtenirSurfaceMap()->w)] == 0 && pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 0) || (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(RectTmp.x) + ((RectTmp.y + RectTmp.h)* m_pGameMap->ObtenirSurfaceMap()->w)] == 0 && pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1)) {
-							pPlayerActif->ModifierGlissadeJoueur(true);
-							pPlayerActif->ObtenirSpriteCourse()->DefinirActif(false);
-							pPlayerActif->ObtenirSpriteRepos()->DefinirActif(true);
-							pPlayerActif->DefinirToolActif(false);
-							//}
-							if (abs(RegressionTest({ RectTmp.x + RectTmp.w / 2, RectTmp.y }, RectTmp.w / 2, 2 * RectTmp.h, true)) >= 60) {
-								pPlayerActif->ModifierGlissadeJoueur(true);
-								pPlayerActif->ObtenirSpriteCourse()->DefinirActif(false);
-								pPlayerActif->ObtenirSpriteRepos()->DefinirActif(true);
-								pPlayerActif->DefinirToolActif(false);
+							/*
+							if (!pPlayerActif->IsSliding() && !pPlayerActif->ObtenirSpriteJetPack()->IsActif()) {
+								if (abs(RegressionTest({ _uiXPieds + RectTmp.x, RectTmp.y }, RectTmp.w / 2, 2 * RectTmp.h, true)) >= 60) {
+									pPlayerActif->ModifierGlissadeJoueur(true);
+									pPlayerActif->ModifierChuteLibreJoueur(false);
+									pPlayerActif->ObtenirSpriteCourse()->DefinirActif(false);
+									pPlayerActif->ObtenirSpriteRepos()->DefinirActif(true);
+								}
 							}
-
+							*/
 						}
-						*/
+
 					}
-					
-					
-					else if (pPlayerActif->IsSliding()) {
+
+					else if (pPlayerActif->IsSliding() && !pPlayerActif->ObtenirSpriteJetPack()->IsActif()) {
+						pPlayerActif->ModifierChuteLibreJoueur(false);
 						CVecteur2D* VecteurFrottement = new CVecteur2D(0.0f, 0.0f);
-						double doAngle = RegressionTest({ RectTmp.x + RectTmp.w / 2, RectTmp.y }, RectTmp.w / 2, 1, true); // Variable qui sert a calcul juste 1 fois l'angle.
+						VerifierCollisionJoueurMap(pPlayerActif, RectTmp, &boCorps, &boPied, &_uiXPieds, &_uiYPieds, &_uiXCorps, &_uiYCorps);
+
 						//double doAngle = RegressionTest({ RectTmp.x + RectTmp.w / 2, RectTmp.y }, RectTmp.w / 2, 2 * RectTmp.h, true); // Variable qui sert a calcul juste 1 fois l'angle.
-						VecteurFrottement->ModifierVecteur(1, doAngle + 180);
+
 
 						if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1) { // Si le joueur se dÈplace vers la droite.
-
+							double doAngle = RegressionTest({ _uiXPieds + RectTmp.x, RectTmp.y }, RectTmp.w / 2, 2 * RectTmp.h, true); // Variable qui sert a calcul juste 1 fois l'angle.
+							VecteurFrottement->ModifierVecteur(1, doAngle + 180);
 							if (doAngle > 0) { // Si le joueur se dÈplace vers la gauche et que la pente est vers le haut ‡ gauche.
 
 								pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(doAngle);
@@ -335,7 +343,8 @@ public:
 
 						}
 						else { // Si le joueur va vers la droite
-
+							double doAngle = RegressionTest({ _uiXPieds + RectTmp.x, RectTmp.y }, RectTmp.w / 2, 2 * RectTmp.h, true); // Variable qui sert a calcul juste 1 fois l'angle.
+							VecteurFrottement->ModifierVecteur(1, doAngle);
 							if (doAngle > 0) { // Si le joueur se dÈplace vers la droite et que la pente est vers le bas ‡ droite.
 								pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(doAngle + 180);
 								pPlayerActif->ObtenirVecteurPoids()->ModifierVecteur(m_pGameMap->ObtenirGravite()->ObtenirNorme(), doAngle + 180);
@@ -357,11 +366,11 @@ public:
 							}
 						}
 
-						if (pPlayerActif->ObtenirVecteurVitesse() == 0)  { // Si la glissade est fini.
+						if (pPlayerActif->ObtenirVecteurVitesse() == 0 || RectTmp.x > 1366 || RectTmp.y > 768)  { // Si la glissade est fini. IL RESTE A TUER LE JOUEUR ...... aussi il faut optimiser la glissade ...................
 							pPlayerActif->ModifierGlissadeJoueur(false);
 							pPlayerActif->ModifierStabiliteJoueur(true);
 						}
-						
+
 					}
 					
 
@@ -383,7 +392,7 @@ public:
 
 								pPlayerActif->ObtenirJetPack()->ObtenirSprite("")->DefinirActif(false);
 								pPlayerActif->ObtenirSpriteRepos()->DefinirEtage(pPlayerActif->ObtenirJetPack()->ObtenirSprite("")->ObtenirEtage());
-								pPlayerActif->ModifierTypeMouvement(2);
+								pPlayerActif->ModifierTypeMouvement(1);
 								pPlayerActif->ObtenirSpriteRepos()->DefinirActif(true);
 								pPlayerActif->ModifierStabiliteJoueur(false);
 								m_boFinTour = true;
@@ -455,13 +464,23 @@ public:
 
 								DetectionCollisionPack(pPlayer, &boExplosion, &Pointexplosion, _pRenderer);
 
-								if (boExplosion)
-									DommageExplosion(Pointexplosion, 45, _pRenderer);
-
-
-
-								else if (DommageChuteLibre(pPlayer, _pRenderer))
+								if (boExplosion) {
 									pPlayerListTmp->RetirerTrieur(true);
+									DommageExplosion(Pointexplosion, 45, _pRenderer);
+									m_pGameMap->CreateHealthPack();
+									m_boFinTour = true;
+									m_boDebutPartie = true;
+								}
+
+								if (boExplosion)
+									DommageExplosion(Pointexplosion, m_pGameMap->ObtenirPackList()->ObtenirElementCurseur()->GetRayon(), _pRenderer);
+
+
+
+								else if (DommageChuteLibre(pPlayer, _pRenderer)) {
+									pPlayerListTmp->RetirerTrieur(true);
+									m_pGameMap->CreateHealthPack();
+								}
 
 							}
 						}
@@ -502,12 +521,12 @@ public:
 					}
 					m_pTeamList->AllerSuivantTrieur();
 				}
-
 				m_pTimerPhysique->Start();
 			}
 		}
 	}
 	
+
 	// ProcÈdure permettant d'appliquer la physique sur les packs...
 	// En entrÈe:
 	// Param1: Le renderer de la fenetre.
@@ -577,8 +596,8 @@ public:
 	// ProcÈdure appliquant la physique sur les projectiles...
 	void PhysiqueTool(SDL_Renderer* _pRenderer) {
 
-		// 0:Missile 1:Grenade
-		if (m_pToolBar->ObtenirPositionObjetDoubleClick() <= 1) {
+		// 0:Missile 1:Grenade 2:Melee
+		if (m_pToolBar->ObtenirPositionObjetDoubleClick() <= 2) {
 
 			// Pointeur sur le projectile...
 			CProjectile* pProjectileTmp = m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirProjectile(m_pToolBar->ObtenirPositionObjetDoubleClick());
@@ -587,10 +606,13 @@ public:
 			SDL_Rect* RectTmp = pProjectileTmp->ObtenirRectDestination();
 			CVecteur2D* pVecteurVitesse = pProjectileTmp->ObtenirVecteurVitesse();
 			int iX, iY; // Position d'une collision.
+			float fangle;
 
 			if (!pProjectileTmp->ObtenirSprite("")->IsActif() && pProjectileTmp->ExplosionEnCours()) {
 				m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->DefinirToolActif(false);
 				pProjectileTmp->DefinirExplosion(false);
+				pProjectileTmp->ObtenirSprite("")->DefinirActif(false);
+				m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteRepos()->DefinirActif(true);
 				m_boDebutPartie = true;
 				m_boFinTour = true;
 				m_pToolBar->NouveauTour();
@@ -628,6 +650,7 @@ public:
 						pProjectileTmp->DefinirAngle(360 - (180 / M_PI) * atanf((((float)pVecteurVitesse->ObtenirComposanteY()) / ((float)pVecteurVitesse->ObtenirComposanteX()))));
 
 				}
+
 				// Si une grenade est lancÈe...
 				else if (m_pToolBar->ObtenirPositionObjetDoubleClick() == 1 && pProjectileTmp->EstLancer()) {
 
@@ -636,7 +659,7 @@ public:
 					// AutoDesctruction de la grenade...
 					if (pProjectileTmp->ReactionExplosion(0, 0)) {
 						RectTmp = pProjectileTmp->ObtenirRectDestination();
-						DommageExplosion({ RectTmp->x + pProjectileTmp->ObtenirRayonExplosion(), RectTmp->y + pProjectileTmp->ObtenirRayonExplosion() }, pProjectileTmp->ObtenirRayonExplosion(), _pRenderer);
+						DommageExplosion({ RectTmp->x + pProjectileTmp->ObtenirRayonDommage(), RectTmp->y + pProjectileTmp->ObtenirRayonDommage() }, pProjectileTmp->ObtenirRayonDommage(), _pRenderer);
 
 					}
 					// Grenade en dehors de la map...
@@ -651,9 +674,11 @@ public:
 					{
 						// Ajout de l'influence de la gravitÈ au vecteur...
 						*pVecteurVitesse += *m_pGameMap->ObtenirGravite();
+
 						// Sauvergarde de l'ancienne position de la grenade...
 						int x = RectTmp->x;
 						int y = RectTmp->y;
+
 						// Modification de la position de la grenade...
 						RectTmp->x += pVecteurVitesse->ObtenirComposanteX() / 35;
 						RectTmp->y += pVecteurVitesse->ObtenirComposanteY() / 35;
@@ -730,13 +755,20 @@ public:
 						}
 					}
 				}
+
+				else if (m_pToolBar->ObtenirPositionObjetDoubleClick() == 2 && pProjectileTmp->EstLancer()) {
+
+					pProjectileTmp->ReactionExplosion(0, 0);
+					DommageMelee(m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif(), _pRenderer);
+
+				}
 			}
 		}
 	}
 
 	// RegressionTest bas
 	// En entrÈe:
-	// Param1: Position de dÈpar de l'Èvalutation de la pente.
+	// Param1: Position de dÈpart de l'Èvalutation de la pente.
 	// PrÈfÈrences: Partir le x au point de collision et le y en haut du point, habituellement le y du rect.
 	// Param2: Limite de l'Èvalutation de la pente (Mettre la moitiÈ de la largeur du rect).
 	// Param3: Limite de l'Èvaluation de la pente en y. (Mettre 2 * le hauteur du Rect).
@@ -828,7 +860,7 @@ public:
 
 		return (180 / M_PI) * atanf(dPente);
 	}
-
+	
 	// ProcÈdure dÈterminant la position d'une collision entre un objet et la map, si il y en a une, ‡ partir du point au milieu, bas de l'objet.
 	// En entrÈe:
 	// Param1: La surface de l'objet.
@@ -864,7 +896,7 @@ public:
 		}
 		return false;
 	}
-
+	
 	// ProcÈdure dÈterminant la position d'une collision entre un objet et la map, si il y en a une.
 	// En entrÈe:
 	// Param1: La surface de l'objet.
@@ -872,6 +904,11 @@ public:
 	// Param3: La position en X qui sera retournÈ.
 	// Param4: La position en Y qui sera retournÈ.
 	bool CollisionObjetMap(SDL_Surface* _pSurfaceObjet, SDL_Rect _RectDestinationObjet, int* _iX, int* _iY) {
+
+		if (_iX != nullptr)
+			*_iX = 0;
+		if (_iY != nullptr)
+			*_iY = 0;
 
 		// Objet dans la map...
 		if (_RectDestinationObjet.x + _RectDestinationObjet.w < 1366 && _RectDestinationObjet.x >= 0 && _RectDestinationObjet.y + _RectDestinationObjet.h < 768 && _RectDestinationObjet.y >= 0) {
@@ -904,7 +941,7 @@ public:
 
 		return false;
 	}
-
+	
 	// Fontion dÈterminant s'il y a une collison avac le missile.
 	// En entrÈe:
 	// Param1: La surface du missile.
@@ -1278,6 +1315,7 @@ public:
 		bool boCollsionPack;
 		string strDommage;
 		char chrTmp[8];
+		SDL_Color CouleurDommage;
 
 		*_boExplosion = false;
 
@@ -1333,115 +1371,121 @@ public:
 			pPackTmp = m_pGameMap->ObtenirPackList()->ObtenirElementCurseur();
 			RectPack = pPackTmp->GetRectDestination();
 
-			// Si le pack est ‡ gauche du joueur, partiellement dans le joueur en x et au moins dans le joueur en y.
-			if (RectPack.x + RectPack.w >= RectPlayer.x && RectPack.x < RectPlayer.x && RectPack.y + RectPack.h >= RectPlayer.y && RectPack.y <= (RectPlayer.y + RectPlayer.h)) {
+			if (!pPackTmp->IsUse()) {
 
-				// On dÈfinie oÅÅÅ˘ regarder dans le surface du joueur et dans la surface du pack.
-				xPlayer = 0;
-				yPlayer = RectPack.y - RectPlayer.y;
-				xPack = RectPlayer.x - RectPack.x;
-				yPack = 0;
-				FinX = RectPack.w;
-				FinY = RectPack.h;
-				boCollsionPack = true;
-			}
+				// Si le pack est ‡ gauche du joueur, partiellement dans le joueur en x et au moins dans le joueur en y.
+				if (RectPack.x + RectPack.w >= RectPlayer.x && RectPack.x < RectPlayer.x && RectPack.y + RectPack.h >= RectPlayer.y && RectPack.y <= (RectPlayer.y + RectPlayer.h)) {
 
-			// Si le pack est complËtement dans le joueur...
-			else if (RectPack.x >= RectPlayer.x && RectPack.x + RectPack.w <= RectPlayer.x + RectPlayer.w && RectPack.y >= RectPlayer.y && RectPack.y + RectPack.h <= (RectPlayer.y + RectPlayer.h)) {
+					// On dÈfinie oÅÅÅ˘ regarder dans le surface du joueur et dans la surface du pack.
+					xPlayer = 0;
+					yPlayer = RectPack.y - RectPlayer.y;
+					xPack = RectPlayer.x - RectPack.x;
+					yPack = 0;
+					FinX = RectPack.w;
+					FinY = RectPack.h;
+					boCollsionPack = true;
+				}
 
-				// On dÈfinie oÅÅÅ˘ regarder dans le surface du joueur et dans la surface du pack.
-				xPlayer = RectPack.x - RectPlayer.x;
-				yPlayer = RectPack.y - RectPlayer.y;
-				xPack = 0;
-				yPack = 0;
-				FinX = RectPack.w;
-				FinY = RectPack.h;
-				boCollsionPack = true;
-			}
-			// Si le pack est ‡ droite du joueur, partiellement dans le joueur en x et au moins dans le joueur en y. 
-			else if (RectPack.x <= RectPlayer.x + RectPlayer.w && RectPack.x + RectPack.w > RectPlayer.x + RectPlayer.w && RectPack.y + RectPack.h >= RectPlayer.y && RectPack.y <= (RectPlayer.y + RectPlayer.h)) {
+				// Si le pack est complËtement dans le joueur...
+				else if (RectPack.x >= RectPlayer.x && RectPack.x + RectPack.w <= RectPlayer.x + RectPlayer.w && RectPack.y >= RectPlayer.y && RectPack.y + RectPack.h <= (RectPlayer.y + RectPlayer.h)) {
 
-				// On dÈfinie oÅÅÅ˘ regarder dans le surface du joueur et dans la surface du pack.
-				xPlayer = RectPlayer.w - ((RectPlayer.x + RectPlayer.w) - RectPack.x);
-				yPlayer = RectPack.y - RectPlayer.y;
-				xPack = 0;
-				yPack = 0;
-				FinX = (RectPlayer.x + RectPlayer.w) - RectPack.x;
-				FinY = RectPack.h;
-				boCollsionPack = true;
-			}
-			// Si le pack est en haut du joueur, partiellement dans le joueur en y et au moins dans le joueur en x.
-			else if (RectPack.x >= RectPlayer.x && RectPack.x + RectPack.w <= RectPlayer.x + RectPlayer.w && RectPack.y < RectPlayer.y && RectPack.y + RectPack.h >= RectPlayer.y) {
-				// On dÈfinie oÅÅÅ˘ regarder dans le surface du joueur et dans la surface du pack.
-				xPlayer = RectPack.x - RectPlayer.x;
-				yPlayer = 0;
-				xPack = 0;
-				yPack = RectPlayer.y - RectPack.y;
-				FinX = RectPack.w;
-				FinY = RectPack.h;
-				boCollsionPack = true;
-			}
-			// Si le pack est en bas du joueur, partiellement dans le joueur en y et au moins dans le joueur en x.
-			else if (RectPack.x + RectPack.w >= RectPlayer.x && RectPack.x <= RectPlayer.x + RectPlayer.w && RectPack.y <= RectPlayer.y + RectPlayer.h && RectPack.y + RectPack.h > RectPlayer.y + RectPlayer.h) {
+					// On dÈfinie oÅÅÅ˘ regarder dans le surface du joueur et dans la surface du pack.
+					xPlayer = RectPack.x - RectPlayer.x;
+					yPlayer = RectPack.y - RectPlayer.y;
+					xPack = 0;
+					yPack = 0;
+					FinX = RectPack.w;
+					FinY = RectPack.h;
+					boCollsionPack = true;
+				}
+				// Si le pack est ‡ droite du joueur, partiellement dans le joueur en x et au moins dans le joueur en y. 
+				else if (RectPack.x <= RectPlayer.x + RectPlayer.w && RectPack.x + RectPack.w > RectPlayer.x + RectPlayer.w && RectPack.y + RectPack.h >= RectPlayer.y && RectPack.y <= (RectPlayer.y + RectPlayer.h)) {
 
-				// On dÈfinie oÅÅÅ˘ regarder dans le surface du joueur et dans la surface du pack.
-				xPlayer = RectPack.x - RectPlayer.x;
-				yPlayer = RectPlayer.h - ((RectPlayer.y + RectPlayer.h) - RectPack.y);
-				xPack = 0;
-				yPack = 0;
-				FinX = RectPack.w;
-				FinY = (RectPlayer.y + RectPlayer.h) - RectPack.y;
-				boCollsionPack = true;
-			}
+					// On dÈfinie oÅÅÅ˘ regarder dans le surface du joueur et dans la surface du pack.
+					xPlayer = RectPlayer.w - ((RectPlayer.x + RectPlayer.w) - RectPack.x);
+					yPlayer = RectPack.y - RectPlayer.y;
+					xPack = 0;
+					yPack = 0;
+					FinX = (RectPlayer.x + RectPlayer.w) - RectPack.x;
+					FinY = RectPack.h;
+					boCollsionPack = true;
+				}
+				// Si le pack est en haut du joueur, partiellement dans le joueur en y et au moins dans le joueur en x.
+				else if (RectPack.x >= RectPlayer.x && RectPack.x + RectPack.w <= RectPlayer.x + RectPlayer.w && RectPack.y < RectPlayer.y && RectPack.y + RectPack.h >= RectPlayer.y) {
+					// On dÈfinie oÅÅÅ˘ regarder dans le surface du joueur et dans la surface du pack.
+					xPlayer = RectPack.x - RectPlayer.x;
+					yPlayer = 0;
+					xPack = 0;
+					yPack = RectPlayer.y - RectPack.y;
+					FinX = RectPack.w;
+					FinY = RectPack.h;
+					boCollsionPack = true;
+				}
+				// Si le pack est en bas du joueur, partiellement dans le joueur en y et au moins dans le joueur en x.
+				else if (RectPack.x + RectPack.w >= RectPlayer.x && RectPack.x <= RectPlayer.x + RectPlayer.w && RectPack.y <= RectPlayer.y + RectPlayer.h && RectPack.y + RectPack.h > RectPlayer.y + RectPlayer.h) {
 
-			else {
+					// On dÈfinie oÅÅÅ˘ regarder dans le surface du joueur et dans la surface du pack.
+					xPlayer = RectPack.x - RectPlayer.x;
+					yPlayer = RectPlayer.h - ((RectPlayer.y + RectPlayer.h) - RectPack.y);
+					xPack = 0;
+					yPack = 0;
+					FinX = RectPack.w;
+					FinY = (RectPlayer.y + RectPlayer.h) - RectPack.y;
+					boCollsionPack = true;
+				}
 
-				// Il n'y a pas de collision...
-				boCollsionPack = false;
-			}
+				else {
 
-			// S'il y a une collison entre le pack et le joeur...
-			if (boCollsionPack) {
+					// Il n'y a pas de collision...
+					boCollsionPack = false;
+				}
 
-				// Pour toute la hauteur du pack qui est ‡ vÈrifier...
-				for (; yPack < FinY; yPlayer++, yPack++) {
+				// S'il y a une collison entre le pack et le joeur...
+				if (boCollsionPack) {
 
-					// Pour toute la largeur du pack qui est ‡ vÈrifier...
-					for (XPlayer = xPlayer, XPack = xPack; XPack < FinX; XPlayer++, XPack++) {
+					// Pour toute la hauteur du pack qui est ‡ vÈrifier...
+					for (; yPack < FinY; yPlayer++, yPack++) {
 
-						// Si la surface du joueur n'est pas ‡ transparente au point yPlayer et XPlayer.
-						if (((unsigned int*)pSurfacePlayer->pixels)[(yPlayer + RectSourcePlayer.y) * pSurfacePlayer->w + (XPlayer + RectSourcePlayer.x)] != 0)
+						// Pour toute la largeur du pack qui est ‡ vÈrifier...
+						for (XPlayer = xPlayer, XPack = xPack; XPack < FinX; XPlayer++, XPack++) {
 
-							// Si la surface du pack n'est pas ‡ transparente au point yPack et XPack.
-							if (((unsigned int*)pPackTmp->GetSurface()->pixels)[(yPack)* pPackTmp->GetSurface()->w + (XPack)] != 0) {
+							// Si la surface du joueur n'est pas ‡ transparente au point yPlayer et XPlayer.
+							if (((unsigned int*)pSurfacePlayer->pixels)[(yPlayer + RectSourcePlayer.y) * pSurfacePlayer->w + (XPlayer + RectSourcePlayer.x)] != 0)
 
-								// Si c'est un healthpack...
-								if (pPackTmp->GetSpriteExplosion() == nullptr) {
-									strDommage.append("+");
-									strDommage.append(SDL_itoa((_pPlayer->GetHealth() * 100) * 0.25, chrTmp, 10));
+								// Si la surface du pack n'est pas ‡ transparente au point yPack et XPack.
+								if (((unsigned int*)pPackTmp->GetSurface()->pixels)[(yPack)* pPackTmp->GetSurface()->w + (XPack)] != 0) {
+
+									// Si c'est un healthpack...
+									if (pPackTmp->GetSpriteExplosion() == nullptr) {
+										strDommage.append("+");
+										strDommage.append(SDL_itoa((_pPlayer->GetHealth() * 100) * 0.25, chrTmp, 10));
+										CouleurDommage = { 0, 200, 0, 255 };
+									}
+
+									// Si c'est une mine...
+									else {
+										strDommage.append("-");
+										strDommage.append(SDL_itoa(_pPlayer->GetHealth() * 100, chrTmp, 10));
+										CouleurDommage = { 200, 0, 0, 255 };
+									}
+
+
+									// CrÈÈ un label indiquant un dommage (ou un gain de santÈ).
+									m_pListeDommage->AjouterFin(new CTemporaryLabel(strDommage, CouleurDommage, { RectPlayer.x, RectPlayer.y - 20, 0, 0 }, { RectPlayer.x, RectPlayer.y - 80, 0, 0 }, 30, 2000, _pRenderer));
+
+									// Si c'est une mine...
+									if (pPackTmp->Use(_pPlayer)) {
+										*_boExplosion = true;
+										*_RectExplosion = { pPackTmp->GetRectDestination().x + pPackTmp->GetRectDestination().w / 2, pPackTmp->GetRectDestination().y + pPackTmp->GetRectDestination().h / 2 };
+									}
+
+									return true;
+
+
+
 								}
 
-								// Si c'est une mine...
-								else {
-									strDommage.append("-");
-									strDommage.append(SDL_itoa(_pPlayer->GetHealth() * 100, chrTmp, 10));
-
-								}
-
-								// CrÈÈ un label indiquant un dommage (ou un gain de santÈ).
-								m_pListeDommage->AjouterFin(new CTemporaryLabel(strDommage, { 200, 0, 0, 255 }, { RectPlayer.x, RectPlayer.y - 20, 0, 0 }, { RectPlayer.x, RectPlayer.y - 80, 0, 0 }, 30, 2000, _pRenderer));
-
-								// Si c'est une mine...
-								if (pPackTmp->Use(_pPlayer)) {
-									*_boExplosion = true;
-									*_RectExplosion = { pPackTmp->GetRectDestination().x + pPackTmp->GetRectDestination().w / 2, pPackTmp->GetRectDestination().y + pPackTmp->GetRectDestination().h / 2 };
-								}
-
-								return true;
-
-
-
-							}
+						}
 					}
 				}
 			}
@@ -1593,35 +1637,35 @@ public:
 
 					pPackTmp->Use(nullptr);
 					SDL_Point PointTmp = { RectDestinationPack.x + RectDestinationPack.w / 2, RectDestinationPack.y + RectDestinationPack.h / 2 };
-					DommageExplosion(PointTmp, 45, _pRenderer);
+					DommageExplosion(PointTmp, pPackTmp->GetRayon(), _pRenderer);
 				}
 
 				else if ((RectDestinationPack.x <= RectExplosion.x + RectExplosion.w && RectDestinationPack.x + RectDestinationPack.w > RectExplosion.x + RectExplosion.w) && (RectDestinationPack.y + RectDestinationPack.h >= RectExplosion.y && RectDestinationPack.y <= RectExplosion.y + RectExplosion.h)) {
 
 					pPackTmp->Use(nullptr);
 					SDL_Point PointTmp = { RectDestinationPack.x + RectDestinationPack.w / 2, RectDestinationPack.y + RectDestinationPack.h / 2 };
-					DommageExplosion(PointTmp, 45, _pRenderer);
+					DommageExplosion(PointTmp, pPackTmp->GetRayon(), _pRenderer);
 				}
 
 				else if ((RectDestinationPack.x >= RectExplosion.x && RectDestinationPack.x + RectDestinationPack.w <= RectExplosion.x + RectExplosion.w) && (RectDestinationPack.y >= RectExplosion.y && RectDestinationPack.y + RectDestinationPack.h <= RectExplosion.y + RectExplosion.h)) {
 
 					pPackTmp->Use(nullptr);
 					SDL_Point PointTmp = { RectDestinationPack.x + RectDestinationPack.w / 2, RectDestinationPack.y + RectDestinationPack.h / 2 };
-					DommageExplosion(PointTmp, 45, _pRenderer);
+					DommageExplosion(PointTmp, pPackTmp->GetRayon(), _pRenderer);
 				}
 
 				else if ((RectDestinationPack.x >= RectExplosion.x && RectDestinationPack.x + RectDestinationPack.w <= RectExplosion.x + RectExplosion.w) && (RectDestinationPack.y < RectExplosion.y && RectDestinationPack.y + RectDestinationPack.h >= RectExplosion.y)) {
 
 					pPackTmp->Use(nullptr);
 					SDL_Point PointTmp = { RectDestinationPack.x + RectDestinationPack.w / 2, RectDestinationPack.y + RectDestinationPack.h / 2 };
-					DommageExplosion(PointTmp, 45, _pRenderer);
+					DommageExplosion(PointTmp, pPackTmp->GetRayon(), _pRenderer);
 				}
 
 				else if ((RectDestinationPack.x >= RectExplosion.x && RectDestinationPack.x + RectDestinationPack.w <= RectExplosion.x + RectExplosion.w) && (RectDestinationPack.y <= RectExplosion.y + RectExplosion.h && RectDestinationPack.y + RectDestinationPack.h > RectExplosion.y + RectExplosion.h)) {
 
 					pPackTmp->Use(nullptr);
 					SDL_Point PointTmp = { RectDestinationPack.x + RectDestinationPack.w / 2, RectDestinationPack.y + RectDestinationPack.h / 2 };
-					DommageExplosion(PointTmp, 45, _pRenderer);
+					DommageExplosion(PointTmp, pPackTmp->GetRayon(), _pRenderer);
 				}
 			}
 			pPackList->AllerSuivantCurseur();
@@ -1702,6 +1746,69 @@ public:
 		return true;
 	}
 
+
+	bool DommageMelee(CPlayer* _pPlayerActif, SDL_Renderer* _pRenderer) {
+
+		CListeDC<CPlayer*>* pPlayerListTmp;
+		CPlayer* pPlayerTmp;
+		string strDommage;
+		char chrTmp[8];
+
+		strDommage.append("-");
+
+		m_pTeamList->AllerATrieur(0);
+		for (int i = 0; i < m_pTeamList->ObtenirCompte(); i++) {
+
+			pPlayerListTmp = m_pTeamList->ObtenirElementTrieur()->ObtenirListePlayer();
+			pPlayerListTmp->AllerATrieur(0);
+
+			for (int j = 0; j < pPlayerListTmp->ObtenirCompte(); j++) {
+
+				pPlayerTmp = pPlayerListTmp->ObtenirElementTrieur();
+
+				if (_pPlayerActif != pPlayerTmp) {
+
+					if (_pPlayerActif->ObtenirSpriteRepos()->ObtenirEtage() == 0) {
+
+						if (_pPlayerActif->ObtenirRectDestination().x + _pPlayerActif->ObtenirRectDestination().w >= pPlayerTmp->ObtenirRectDestination().x && _pPlayerActif->ObtenirRectDestination().x + _pPlayerActif->ObtenirRectDestination().w < pPlayerTmp->ObtenirRectDestination().x + pPlayerTmp->ObtenirRectDestination().w) {
+
+							if (_pPlayerActif->ObtenirProjectile(2)->ObtenirRectDestination()->y + _pPlayerActif->ObtenirProjectile(2)->ObtenirRectDestination()->h / 2 >= pPlayerTmp->ObtenirRectDestination().y &&_pPlayerActif->ObtenirProjectile(2)->ObtenirRectDestination()->y + _pPlayerActif->ObtenirProjectile(2)->ObtenirRectDestination()->h / 2 <= pPlayerTmp->ObtenirRectDestination().y + pPlayerTmp->ObtenirRectDestination().h) {
+								strDommage.append(SDL_itoa(_pPlayerActif->ObtenirProjectile(2)->ObtenirDommage() * 100, chrTmp, 10));
+								m_pListeDommage->AjouterFin(new CTemporaryLabel(strDommage, { 200, 0, 0, 255 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 20, 0, 0 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 80, 0, 0 }, 30, 2000, _pRenderer));
+								pPlayerTmp->SetHealth(pPlayerTmp->GetHealth() - _pPlayerActif->ObtenirProjectile(2)->ObtenirDommage());
+								if (pPlayerTmp->GetHealth() <= 0)
+									pPlayerListTmp->RetirerTrieur(true);
+
+								return true;
+							}
+
+						}
+					}
+
+					else {
+
+						if (_pPlayerActif->ObtenirProjectile(2)->ObtenirRectDestination()->x <= pPlayerTmp->ObtenirRectDestination().x + pPlayerTmp->ObtenirRectDestination().w && _pPlayerActif->ObtenirProjectile(2)->ObtenirRectDestination()->x > pPlayerTmp->ObtenirRectDestination().x) {
+
+							if (_pPlayerActif->ObtenirProjectile(2)->ObtenirRectDestination()->y + _pPlayerActif->ObtenirProjectile(2)->ObtenirRectDestination()->h / 2 >= pPlayerTmp->ObtenirRectDestination().y &&_pPlayerActif->ObtenirProjectile(2)->ObtenirRectDestination()->y + _pPlayerActif->ObtenirProjectile(2)->ObtenirRectDestination()->h / 2 <= pPlayerTmp->ObtenirRectDestination().y + pPlayerTmp->ObtenirRectDestination().h) {
+								strDommage.append(SDL_itoa(_pPlayerActif->ObtenirProjectile(2)->ObtenirDommage() * 100, chrTmp, 10));
+								m_pListeDommage->AjouterFin(new CTemporaryLabel(strDommage, { 200, 0, 0, 255 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 20, 0, 0 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 80, 0, 0 }, 30, 2000, _pRenderer));
+								pPlayerTmp->SetHealth(pPlayerTmp->GetHealth() - _pPlayerActif->ObtenirProjectile(2)->ObtenirDommage());
+								if (pPlayerTmp->GetHealth() <= 0)
+									pPlayerListTmp->RetirerTrieur(true);
+
+								return true;
+							}
+
+						}
+					}
+
+				}
+				pPlayerListTmp->AllerSuivantTrieur();
+			}
+			m_pTeamList->AllerSuivantTrieur();
+		}
+	}
+	
 	bool IsDebut() {
 		return m_boDebutPartie;
 	}

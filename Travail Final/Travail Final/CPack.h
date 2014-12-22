@@ -16,6 +16,8 @@ public:
 
 	virtual void ModifierUse(bool _boUse) = 0;
 
+	virtual unsigned int GetRayon() = 0;
+
 	virtual SDL_Surface* GetSurface(void) = 0;
 
 	virtual SDL_Rect GetRectDestination(void) = 0;

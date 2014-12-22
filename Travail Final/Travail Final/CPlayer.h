@@ -23,7 +23,8 @@ private:
 	double m_dPositionX;
 	double m_dPositionY;
 
-
+	string m_strTextureEtoile;
+	SDL_Rect m_RectDestinationEtoile;
 	CListeDC<CProjectile*>* m_pListeTools;
 
 	CListeDC<CMouvement*>* m_pListeMouvement;
@@ -53,6 +54,14 @@ public:
 
 	CPlayer(string _strEmplacement, SDL_Renderer* _pRenderer, unsigned int _uiIDTeam, SDL_Rect _RectDestination, void _MapDestruction(int _iRayon, int _iX, int _iY), SDL_Surface* _Rotation(SDL_Surface* _pSurfaceRotation, float _fAngle)) {
 		
+		// Initialisation de l'étoile qui precise le joueur actif...
+		m_strTextureEtoile = "EtoileJoueurActif";
+
+		int iW, iH;
+		SDL_QueryTexture(pGestionnaireTexture->ObtenirDonnee(m_strTextureEtoile), nullptr, nullptr, &iW, &iH);
+		m_RectDestinationEtoile.w = iW;
+		m_RectDestinationEtoile.h = iH;
+
 		m_pListeTools = new CListeDC<CProjectile*>();
 		m_pListeMouvement = new CListeDC<CMouvement*>();
 
@@ -61,19 +70,18 @@ public:
 		m_boGlissade = false;
 		m_boChuteLibre = false;
 
-		
-		m_pListeMouvement->AjouterFin(new CMelee(_strEmplacement, new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceMelee"), pGestionnaireTexture->ObtenirDonnee("pTextureMelee"), _RectDestination, 30, 30, true, true, 2), _pRenderer));
+		m_pListeMouvement->AjouterFin(new CJetPack(_strEmplacement, new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceJetPack"), pGestionnaireTexture->ObtenirDonnee("pTextureJetPack"), _RectDestination, 6, 80, true, false, 2), new CBarreVie(5), _pRenderer));
 
-		m_pListeMouvement->AjouterFin(new CJetPack(_strEmplacement, new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceJetPack"), pGestionnaireTexture->ObtenirDonnee("pTextureJetPack"), _RectDestination, 6, 80, true, false, 2), new CBarreVie({ _RectDestination.x, _RectDestination.y + _RectDestination.h - 2, 0, 0 }, 5), _pRenderer));
-		
 		m_pListeMouvement->AjouterFin(new CDeplacement(_RectDestination));
 
-		m_pListeMouvement->AllerACurseur(2);
+		m_pListeMouvement->AllerACurseur(1);
 		m_pListeMouvement->AllerATrieur(0);
 
 		m_pListeTools->AjouterFin(new CMissile(_strEmplacement, _pRenderer, _MapDestruction, _Rotation));
 
 		m_pListeTools->AjouterFin(new CGrenade(_strEmplacement, _pRenderer, _MapDestruction, _Rotation));
+
+		m_pListeTools->AjouterFin(new CMelee(_strEmplacement, new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceMelee"), pGestionnaireTexture->ObtenirDonnee("pTextureMelee"), _RectDestination, 30, 30, false, true, 2), _pRenderer));
 
 		m_pListeTools->AllerACurseur(0);
 		m_pListeTools->AllerATrieur(0);
@@ -108,7 +116,7 @@ public:
 		m_RectHitboxPiedsParachute.w = 58;
 		m_RectHitboxPiedsParachute.h = 19;
 
-		m_pBarreVie = new CBarreVie({ _RectDestination.x, _RectDestination.y - 2, 0, 0 }, _uiIDTeam);
+		m_pBarreVie = new CBarreVie(_uiIDTeam);
 
 		m_pVecteurVitesse = new CVecteur2D(0, 0.0f);
 		m_pVecteurPoids = new CVecteur2D(0, 0.0f);
@@ -120,24 +128,37 @@ public:
 	// Retour: Rien.
 	void ReactToEvent(SDL_Event* _pSDLEvent, unsigned int _uiObjetSelectionner) {
 		if (!m_pSpriteParachute->IsActif()) {
-			if (_uiObjetSelectionner <= 1) {
+			if (_uiObjetSelectionner <= 2) {
 				m_boToolActif = true;
 				m_pListeTools->AllerACurseur(_uiObjetSelectionner);
 				m_pListeTools->ObtenirElementCurseur()->ReactToEvent(_pSDLEvent);
 				
+				if (_uiObjetSelectionner == 2) {
+					m_pListeTools->ObtenirElementCurseur()->ObtenirSprite("")->DefinirEtage(ObtenirSpriteRepos()->ObtenirEtage());
+					ObtenirSpriteRepos()->DefinirActif(false);
+				}
 			}
 			else
 			{
 				if (_uiObjetSelectionner <= 3) {
-					m_pListeMouvement->AllerACurseur(_uiObjetSelectionner - 2);
+
+					m_pListeMouvement->AllerATrieur(1);
+					m_pListeMouvement->ObtenirElementTrieur()->ObtenirSprite("Repos")->DefinirActif(false);
+
+					m_pListeMouvement->AllerACurseur(_uiObjetSelectionner - 3);
 					if (!m_pListeMouvement->ObtenirElementCurseur()->ObtenirSprite("")->IsActif()) 
 						m_pListeMouvement->ObtenirElementCurseur()->ObtenirSprite("")->DefinirEtage(ObtenirSpriteRepos()->ObtenirEtage());
 						
 					
 				}
+
 				else {
-					if (!m_boChuteLibre || !m_boGlissade)
+					if (!m_boChuteLibre && !m_boGlissade)
 						m_pListeMouvement->AllerACurseur(2);
+
+
+					else
+						m_pListeMouvement->AllerACurseur(1);
 				}
 				m_pListeMouvement->ObtenirElementCurseur()->ReactToEvent(_pSDLEvent, m_pVecteurVitesse, &m_boStable);
 			}
@@ -151,8 +172,6 @@ public:
 		
 		m_RectPlayerDestination.x = m_dPositionX;
 		m_RectPlayerDestination.y = m_dPositionY;
-		
-		m_pBarreVie->ModifierPositionBarre(m_RectPlayerDestination.x, m_RectPlayerDestination.y - 2);
 
 		if (m_pSpriteParachute->IsActif()) {
 			m_pSpriteParachute->ModifierAnnimation();
@@ -162,24 +181,29 @@ public:
 		{
 			m_pListeMouvement->ObtenirElementCurseur()->ShowPlayer(_pRenderer, m_RectPlayerDestination);
 
-			m_pBarreVie->ShowBarre(_pRenderer, { m_RectPlayerDestination.x, m_RectPlayerDestination.y - 2, 40, 6 });
+			// Affichage de la barre de vie...
+			m_pBarreVie->ShowBarre(_pRenderer, { m_RectPlayerDestination.x, m_RectPlayerDestination.y - 2 });
 
 			if (m_boToolActif)
 				m_pListeTools->ObtenirElementCurseur()->ShowTool(_pRenderer, m_RectPlayerDestination);
 		}
-		SDL_SetRenderDrawColor(_pRenderer, 0, 0, 0, 255);
-		//SDL_RenderDrawRect(_pRenderer, &m_RectPlayerDestination);
 	}
 
 	void ShowDescription(SDL_Renderer* _pRenderer) {
 		m_pListeMouvement->AllerATrieur(0);
 		m_pListeTools->AllerATrieur(0);
-		for (int i = 0; i < 2; i++) {
+		for (int i = 0; i < 3; i++) {
 			m_pListeMouvement->ObtenirElementTrieur()->ShowDescription(_pRenderer);
 			m_pListeTools->ObtenirElementTrieur()->ShowDescription(_pRenderer);
 			m_pListeMouvement->AllerSuivantTrieur();
 			m_pListeTools->AllerSuivantTrieur();
 		}
+	}
+
+	void ShowEtoile(SDL_Renderer* _pRenderer) {
+		m_RectDestinationEtoile.x = m_pBarreVie->ObtenirRectDestination().x + m_pBarreVie->ObtenirRectDestination().w / 2 - m_RectDestinationEtoile.w / 2;
+		m_RectDestinationEtoile.y = m_pBarreVie->ObtenirRectDestination().y - m_RectDestinationEtoile.h - 2;
+		SDL_RenderCopy(_pRenderer, pGestionnaireTexture->ObtenirDonnee(m_strTextureEtoile), nullptr, &m_RectDestinationEtoile);
 	}
 
 	// Accesseur ... 
@@ -240,22 +264,22 @@ public:
 	}
 
 	CSprite* ObtenirSpriteCourse() {
-		m_pListeMouvement->AllerATrieur(2);
+		m_pListeMouvement->AllerATrieur(1);
 		return m_pListeMouvement->ObtenirElementTrieur()->ObtenirSprite("Course");
 	}
 
 	CSprite* ObtenirSpriteRepos() {
-		m_pListeMouvement->AllerATrieur(2);
+		m_pListeMouvement->AllerATrieur(1);
 		return m_pListeMouvement->ObtenirElementTrieur()->ObtenirSprite("Repos");
 	}
 
 	CSprite* ObtenirSpriteSaut() {
-		m_pListeMouvement->AllerATrieur(2);
+		m_pListeMouvement->AllerATrieur(1);
 		return m_pListeMouvement->ObtenirElementTrieur()->ObtenirSprite("Saut");
 	}
 
 	CSprite* ObtenirSpriteJetPack() {
-		m_pListeMouvement->AllerATrieur(1);
+		m_pListeMouvement->AllerATrieur(0);
 		return m_pListeMouvement->ObtenirElementTrieur()->ObtenirSprite("");
 	}
 
@@ -354,8 +378,8 @@ public:
 
 	CMouvement* ObtenirJetPack(void) {
 
-		m_pListeMouvement->AllerACurseur(1);
-		return m_pListeMouvement->ObtenirElementCurseur();
+		m_pListeMouvement->AllerATrieur(0);
+		return m_pListeMouvement->ObtenirElementTrieur();
 	}
 
 	float GetHealth(void) {
@@ -363,8 +387,11 @@ public:
 		return m_pBarreVie->ObtenirVie();
 	}
 
+
 	void UpdateDescription(unsigned int _uiPosition, SDL_Point _PositionSouris) {
-		if (_uiPosition <= 1) {
+
+		if (_uiPosition <= 2) {
+
 			m_pListeTools->AllerATrieur(_uiPosition);
 			m_pListeTools->ObtenirElementTrieur()->UpdateDescription(true, _PositionSouris);
 			m_pListeTools->AllerSuivantTrieur();
@@ -375,7 +402,7 @@ public:
 			m_pListeMouvement->ObtenirElementTrieur()->UpdateDescription(false, _PositionSouris);
 		}
 		else if (_uiPosition <= 3) {
-			int i = _uiPosition - 2;
+			int i = _uiPosition - 3;
 			m_pListeMouvement->AllerATrieur(i);
 			m_pListeMouvement->ObtenirElementTrieur()->UpdateDescription(true, _PositionSouris);
 
@@ -408,12 +435,12 @@ public:
 	}
 
 	unsigned int ObtenirMunition(unsigned int _uiPosition) {
-		if (_uiPosition <= 1) {
+		if (_uiPosition <= 2) {
 			m_pListeTools->AllerATrieur(_uiPosition);
 			return m_pListeTools->ObtenirElementTrieur()->ObtenirMunition();
 		}
 		else if (_uiPosition == 3) {
-			m_pListeMouvement->AllerATrieur(_uiPosition - 2);
+			m_pListeMouvement->AllerATrieur(_uiPosition - 3);
 			return m_pListeMouvement->ObtenirElementTrieur()->ObtenirMunition();
 		}
 	}
@@ -421,6 +448,4 @@ public:
 	void ParcoursChangementTour() {
 
 	}
-
-	
 };

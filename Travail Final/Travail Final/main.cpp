@@ -483,6 +483,11 @@ void Start(char* _strApplicationFilename) {
 	strEmplacement.append("Personnege\\bazooka.png");
 	pGestionnaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTexturePlayerBazooka");
 
+	// Étoile pour reconnaître le joueur actif...
+	strEmplacement = strApplicationPath;
+	strEmplacement.append("Personnage\\EtoileJoueurActif.png");
+	pGestionnaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "EtoileJoueurActif");
+
 	// Chargement de la surface des mines...
 	strEmplacement = strApplicationPath;
 	strEmplacement.append("Armes et Packs\\Mine.png");

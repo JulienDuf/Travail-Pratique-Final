@@ -10,12 +10,6 @@ private:
 
 	bool m_boSpace;
 
-	/*
-	m_uiCompte++;
-	if (m_uiCompte == 100) {
-		char chr = 'lol';
-	}
-	*/
 public:
 
 	CDeplacement(SDL_Rect _RectDestination) {
@@ -24,7 +18,7 @@ public:
 
 		m_pSpriteCourse = new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceCourse"), pGestionnaireTexture->ObtenirDonnee("pTextureCourse"), _RectDestination, 9, 50, true, false, 2);
 
-		m_pSpriteSaut = new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceSaut"), pGestionnaireTexture->ObtenirDonnee("pTextureSaut"), _RectDestination, 5, 400, false, false, 2);
+		m_pSpriteSaut = new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceSaut"), pGestionnaireTexture->ObtenirDonnee("pTextureSaut"), _RectDestination, 5, 70, false, false, 2);
 
 		m_pSpriteRepos = new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceRepos"), pGestionnaireTexture->ObtenirDonnee("pTextureRepos"), _RectDestination, 1, 50, true, false, 2);
 	}
@@ -56,7 +50,6 @@ public:
 					m_pSpriteCourse->DefinirActif(false);
 					_pVecteurVitesse->ModifierComposantX(0);
 					m_pSpriteRepos->DefinirActif(true);
-					*_boStable = true;
 
 				}
 
@@ -86,7 +79,6 @@ public:
 					m_pSpriteCourse->DefinirActif(false);
 					_pVecteurVitesse->ModifierComposantX(0);
 					m_pSpriteRepos->DefinirActif(true);
-					*_boStable = true;
 
 				}
 

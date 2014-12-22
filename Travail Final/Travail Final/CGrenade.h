@@ -230,10 +230,10 @@ public:
 			}
 		}
 		else {
-
-			_RectPlayerDestination.x -= 22;
-			_RectPlayerDestination.y -= 10;
-			m_pBarrePuissance->AfficherBarre(_pRenderer, _RectPlayerDestination);
+			m_RectDestinationGrenade = { _RectPlayerDestination.x + _RectPlayerDestination.w / 2 - m_RectDestinationGrenade.w / 2, _RectPlayerDestination.y - 10, m_pSurfaceGrenade->w, m_pSurfaceGrenade->h };
+			SDL_RenderCopyEx(_pRenderer, m_pTextureGrenade, nullptr, &m_RectDestinationGrenade, m_pBarrePuissance->ObtenirAngle(), NULL, SDL_FLIP_NONE);
+			// Positionnement de la barre de puissance avec rotation autour de la tête...
+			m_pBarrePuissance->AfficherBarre(_pRenderer, { _RectPlayerDestination.x + 32, _RectPlayerDestination.y - 2, -12, NULL });
 		}
 	}
 
@@ -266,10 +266,8 @@ public:
 					else
 						m_iVitesseRotationAngulaire = -(int)m_uiForce;
 					m_iAngle = 0;
-
-					m_pBarrePuissance->ObtenirPosition(&m_RectDestinationGrenade.x, &m_RectDestinationGrenade.y);
 					m_pBarrePuissance->Reinitialisation();
-					m_RectDestinationGrenade.y -= m_RectDestinationGrenade.h;
+					m_RectDestinationGrenade.y -= 20;
 					m_pTimerExplosion->Start();
 					m_pTimerRotation->Start();
 				}
@@ -311,7 +309,13 @@ public:
 			m_pLblDescription->SetRectDestinationY(_RectPositionDescription.y);
 	}
 
-	void ReinitialisationProjectile(void) {}
+	void ReinitialisationProjectile(void) {
+		m_boGrenadeLancer = false;
+		m_boExplosion = false;
+		delete m_pVecteurVitesseGrenade;
+		m_pVecteurVitesseGrenade = nullptr;
+		m_pSpriteExplosion->DefinirActif(false);
+	}
 
 	CVecteur2D* ObtenirVecteurVitesse() {
 

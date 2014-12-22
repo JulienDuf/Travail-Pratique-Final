@@ -13,6 +13,9 @@ private:
 
 public:
 
+	// Constructeur par defaut...
+	CVecteur2D() {}
+
 	// Constructeur...
 	// En entrée:
 	// Param1: La composante en x du vecteur.

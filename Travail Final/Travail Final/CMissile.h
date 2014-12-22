@@ -198,14 +198,12 @@ public:
 
 				m_RectDestinationBazooka.x = _RectPlayerDestination.x;
 				m_RectDestinationBazooka.y = _RectPlayerDestination.y + (_RectPlayerDestination.h / 2);
-				_RectPlayerDestination.x -= 22;
-				_RectPlayerDestination.y -= 10;
-				m_pBarrePuissance->AfficherBarre(_pRenderer, _RectPlayerDestination);
+				// Positionnement de la barre de puissance avec rotation autour de la tête...
+				m_pBarrePuissance->AfficherBarre(_pRenderer, { _RectPlayerDestination.x + 32, _RectPlayerDestination.y - 2, -12, NULL });
 				m_pSpritePlayer->Render(_pRenderer, _RectPlayerDestination);
 				m_pSpritePlayer->ModifierAnnimation();
 				SDL_RenderCopyEx(_pRenderer, m_pTextureBazooka, NULL, &m_RectDestinationBazooka, m_pBarrePuissance->ObtenirAngle(), NULL, SDL_FLIP_NONE);
 			}
-
 			else {
 				m_pSpriteExplosion->Render(_pRenderer, m_RectDestinationExplosion);
 				m_pSpriteExplosion->ModifierAnnimation();

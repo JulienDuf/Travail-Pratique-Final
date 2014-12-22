@@ -5,17 +5,29 @@
 class CVent {
 private:
 
-	SDL_Texture* m_pDirectionVent;
-	SDL_Texture* m_pForceVent;
-	SDL_Point* m_RotPoint;
-	SDL_Rect m_RectDestinationFleche;
-	SDL_Rect m_RectDestinationText;
-	int m_iAngle;
+	SDL_Texture* m_pDirectionVent, // Texture représentant la direction du vent.
+		*m_pForceVent; // Texture représentant la force du vent.
+
+	SDL_Point* m_RotPoint; // Point de rotation de la texture représentant la direction du vent.
+
+	SDL_Rect m_RectDestinationFleche, // Rect de destination de la texture de la direction du vent.
+		m_RectDestinationText; // Rect de destination du texte pour la force du vent.
+
 	CVecteur2D* m_pVecteurVitesseVent; // Le vecteur de la force du vent.
+
+	int m_iAngle; // Angle de la force du vent.
 
 public:
 
-	// 
+	// Constructeur de CVent...
+	// En entrée:
+	// Param1: Font du texte pour la force.
+	// Param2: Force du vent.
+	// Param3: Couleur du texte.
+	// Param4: Texture représentant la direction du vent.
+	// Param5: Rect de destination du texte.
+	// Param6: Angle de la direction du vent.
+	// Param7: Render d'affichage pour la classe.
 	CVent(TTF_Font* _pFont, char* _chrForceVent, SDL_Color _ColorText, SDL_Texture* _pTextureDirectionVent, SDL_Rect _RectDestinationText, int _uiAngle, SDL_Renderer* _pRenderer) {
 		
 		m_iAngle = _uiAngle;
@@ -52,11 +64,23 @@ public:
 		m_pVecteurVitesseVent = new CVecteur2D(0, 0.0f);
 	}
 
+	// Desctructeur de CVent...
 	~CVent() {
 		SDL_DestroyTexture(m_pForceVent);
 	}
 
-	
+	// Procédure qui affichage le vent et sa force...
+	void ShowVent(SDL_Renderer* _pSDLRenderer) {
+		SDL_RenderCopyEx(_pSDLRenderer, m_pDirectionVent, NULL, &m_RectDestinationFleche, m_iAngle, m_RotPoint, SDL_FLIP_NONE);
+		SDL_RenderCopy(_pSDLRenderer, m_pForceVent, NULL, &m_RectDestinationText);
+	}
+
+	// Procédure permettant de modifier la force du vent...
+	// En entrée:
+	// Param1: Font du texte pour la force.
+	// Param2: Force du vent.
+	// Param3: Couleur du texte.
+	// Param4: Render d'affichage de la classe.
 	void ModifierForce(TTF_Font* _pFont, const char* _chrForceVent, SDL_Color _ColorText, SDL_Renderer* _pRenderer) {
 
    		SDL_DestroyTexture(m_pForceVent);
@@ -78,19 +102,23 @@ public:
 
 	}
 
+	// Procédure permettant de modifier l'angle du vent...
+	// En entrée:
+	// Param1: Nouvel angle.
 	void ModifierAngle(unsigned int _iAngle) {
 		m_iAngle = _iAngle;
 	}
 
+	// Procédure permettant de modifier le vecteur du vent...
+	// En entrée:
+	// Param1: Nouvelle force.
+	// Param2: Nouvel angle.
 	void ModifierVecteurVent(double _dforceVent, float _fAngle) {
 
 		m_pVecteurVitesseVent->ModifierVecteur(_dforceVent, _fAngle);
 	}
 
-	void ShowVent(SDL_Renderer* _pSDLRenderer) {
-		SDL_RenderCopyEx(_pSDLRenderer, m_pDirectionVent, NULL, &m_RectDestinationFleche, m_iAngle, m_RotPoint, SDL_FLIP_NONE);
-		SDL_RenderCopy(_pSDLRenderer, m_pForceVent, NULL, &m_RectDestinationText);
-	}
+	// Accesseurs...
 
 	CVecteur2D* ObtenirVecteurVent(void) {
 

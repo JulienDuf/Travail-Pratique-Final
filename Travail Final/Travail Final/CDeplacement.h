@@ -10,12 +10,6 @@ private:
 
 	bool m_boSpace;
 
-	/*
-	m_uiCompte++;
-	if (m_uiCompte == 100) {
-		char chr = 'lol';
-	}
-	*/
 public:
 
 	CDeplacement(SDL_Rect _RectDestination) {

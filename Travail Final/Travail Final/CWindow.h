@@ -68,9 +68,16 @@ public:
 		va_end(parametres);
 	}
 	
-
+	// Procédure permettant de créer une partie...
+	// En entrée:
+	// Param1: Chemin de l'emplacement des maps.
+	// Param2: Nombre d'équipe.
+	// Param3: Nombre de joueur.
+	// Param4: Vent de la map.
+	// Param5: Pointeur de fonction sur la destruction de la map.
+	// Param6: Pointeur de fonction sur la rotation.
+	// Param7: Renderer de la fenetre d'affichage de la game.
 	void CreateGame(string _strEmplacementMap, int _iNombreÉquipe, int _iNombreJoueur, CVent* _pVent, void _MapDestruction(int _iRayon, int _iX, int _iY), SDL_Surface* _Rotation(SDL_Surface* _pSurfaceRotation, float _fAngle)) {
-
 
 		m_pGame = new CGame(_strEmplacementMap, _iNombreÉquipe, _iNombreJoueur, _pVent, _MapDestruction, _Rotation, m_pSDLRenderer);
 	}
@@ -97,6 +104,7 @@ public:
 		m_iFrame++;
 	}
 
+	// Procédure qui fait appel les destructeur en fonction d'une fin de partie...
 	void FinDePartie(void) {
 		delete m_pGame;
 		m_pGame = nullptr;
@@ -108,6 +116,8 @@ public:
 	void DefinirTitre(char* _Titre) {
 		SDL_SetWindowTitle(m_pSDLWindow, _Titre);
 	}
+
+	// Accesseurs...
 
 	// Fonction qui retourne le Renderer de la window.
 	// Retour : SDL_Renderer

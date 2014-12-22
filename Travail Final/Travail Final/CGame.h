@@ -101,6 +101,10 @@ public:
 			m_pTeamList->AllerSuivantCurseur();
 		}
 
+		// Affichage d'un cercle vert pour reconnaître le player actif...
+		if (!m_boDebutPartie)
+			m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ShowEtoile(_pRenderer);
+
 		// Si le jeu n'est pas en pause, affichage de la toolbar et des descriptions...
 		if (!_boPause) {
 			m_pToolBar->ShowToolBar(_pRenderer);
@@ -191,6 +195,79 @@ public:
 					// Détection de collision avec pack...
 					DetectionCollisionPack(pPlayerActif, &boExplosion, &PointExplosion, _pRenderer);
 
+<<<<<<< HEAD
+=======
+					// Explosion de mine en collision...
+					if (boExplosion)
+						DommageExplosion(PointExplosion, m_pGameMap->ObtenirPackList()->ObtenirElementCurseur()->GetRayon(), _pRenderer);
+					// Player en course...
+					else if (pPlayerActif->ObtenirSpriteCourse()->IsActif()) {
+
+						dComposanteX += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35.0;
+
+						if (!VerifierCollisionJoueurMap(pPlayerActif, RectTmp, &boCorps, &boPied, &_uiXPieds, &_uiYPieds, &_uiXCorps, &_uiYCorps)) {
+
+							pPlayerActif->ObtenirVecteurPoids()->ModifierComposantY(pPlayerActif->ObtenirVecteurPoids()->ObtenirComposanteY() + m_pGameMap->ObtenirGravite()->ObtenirComposanteY());
+
+							dComposanteY += pPlayerActif->ObtenirVecteurPoids()->ObtenirComposanteY() / 35;
+
+							pPlayerActif->DefinirPositionX(dComposanteX);
+							pPlayerActif->DefinirPositionY(dComposanteY);
+
+						}
+
+						else {
+
+							pPlayerActif->ObtenirVecteurPoids()->ModifierComposantY(0);
+
+							if (boPied && !boCorps) {
+
+
+								if (boCorps) {
+
+									if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 0)
+										dComposanteX -= (RectTmp.w - _uiXCorps);
+
+									if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1)
+										dComposanteX += _uiXCorps;
+
+									pPlayerActif->DefinirPositionX(dComposanteX);
+									pPlayerActif->DefinirPositionY(dComposanteY);
+
+								}
+
+								unsigned int uiH = 0;
+
+								while ((((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[RectTmp.x + 1 + _uiXPieds + (RectTmp.y + _uiYPieds - uiH) *m_pGameMap->ObtenirSurfaceMap()->w] != 0) && (uiH <= 2))
+									uiH++;
+
+								if (uiH <= 2) {
+
+									dComposanteY -= uiH;
+
+
+									pPlayerActif->DefinirPositionX(dComposanteX);
+									pPlayerActif->DefinirPositionY(dComposanteY);
+
+								}
+
+								else {
+
+									if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 0 && (_uiXPieds > RectTmp.w / 2))
+										dComposanteX -= (RectTmp.w - _uiXPieds);
+
+									if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1 && (_uiXPieds < RectTmp.w / 2))
+										dComposanteX += _uiXPieds;
+
+									pPlayerActif->DefinirPositionX(dComposanteX);
+									pPlayerActif->DefinirPositionY(dComposanteY);
+
+								}
+
+							}
+
+						}
+>>>>>>> origin/Branche-Player
 
 					// Explosion de mine en collision...
 					if (boExplosion) {
@@ -454,6 +531,7 @@ public:
 
 								DetectionCollisionPack(pPlayer, &boExplosion, &Pointexplosion, _pRenderer);
 
+<<<<<<< HEAD
 								if (boExplosion) {
 									pPlayerListTmp->RetirerTrieur(true);
 									DommageExplosion(Pointexplosion, 45, _pRenderer);
@@ -461,6 +539,10 @@ public:
 									m_boFinTour = true;
 									m_boDebutPartie = true;
 								}
+=======
+								if (boExplosion)
+									DommageExplosion(Pointexplosion, m_pGameMap->ObtenirPackList()->ObtenirElementCurseur()->GetRayon(), _pRenderer);
+>>>>>>> origin/Branche-Player
 
 
 
@@ -1600,35 +1682,35 @@ public:
 
 					pPackTmp->Use(nullptr);
 					SDL_Point PointTmp = { RectDestinationPack.x + RectDestinationPack.w / 2, RectDestinationPack.y + RectDestinationPack.h / 2 };
-					DommageExplosion(PointTmp, 45, _pRenderer);
+					DommageExplosion(PointTmp, pPackTmp->GetRayon(), _pRenderer);
 				}
 
 				else if ((RectDestinationPack.x <= RectExplosion.x + RectExplosion.w && RectDestinationPack.x + RectDestinationPack.w > RectExplosion.x + RectExplosion.w) && (RectDestinationPack.y + RectDestinationPack.h >= RectExplosion.y && RectDestinationPack.y <= RectExplosion.y + RectExplosion.h)) {
 
 					pPackTmp->Use(nullptr);
 					SDL_Point PointTmp = { RectDestinationPack.x + RectDestinationPack.w / 2, RectDestinationPack.y + RectDestinationPack.h / 2 };
-					DommageExplosion(PointTmp, 45, _pRenderer);
+					DommageExplosion(PointTmp, pPackTmp->GetRayon(), _pRenderer);
 				}
 
 				else if ((RectDestinationPack.x >= RectExplosion.x && RectDestinationPack.x + RectDestinationPack.w <= RectExplosion.x + RectExplosion.w) && (RectDestinationPack.y >= RectExplosion.y && RectDestinationPack.y + RectDestinationPack.h <= RectExplosion.y + RectExplosion.h)) {
 
 					pPackTmp->Use(nullptr);
 					SDL_Point PointTmp = { RectDestinationPack.x + RectDestinationPack.w / 2, RectDestinationPack.y + RectDestinationPack.h / 2 };
-					DommageExplosion(PointTmp, 45, _pRenderer);
+					DommageExplosion(PointTmp, pPackTmp->GetRayon(), _pRenderer);
 				}
 
 				else if ((RectDestinationPack.x >= RectExplosion.x && RectDestinationPack.x + RectDestinationPack.w <= RectExplosion.x + RectExplosion.w) && (RectDestinationPack.y < RectExplosion.y && RectDestinationPack.y + RectDestinationPack.h >= RectExplosion.y)) {
 
 					pPackTmp->Use(nullptr);
 					SDL_Point PointTmp = { RectDestinationPack.x + RectDestinationPack.w / 2, RectDestinationPack.y + RectDestinationPack.h / 2 };
-					DommageExplosion(PointTmp, 45, _pRenderer);
+					DommageExplosion(PointTmp, pPackTmp->GetRayon(), _pRenderer);
 				}
 
 				else if ((RectDestinationPack.x >= RectExplosion.x && RectDestinationPack.x + RectDestinationPack.w <= RectExplosion.x + RectExplosion.w) && (RectDestinationPack.y <= RectExplosion.y + RectExplosion.h && RectDestinationPack.y + RectDestinationPack.h > RectExplosion.y + RectExplosion.h)) {
 
 					pPackTmp->Use(nullptr);
 					SDL_Point PointTmp = { RectDestinationPack.x + RectDestinationPack.w / 2, RectDestinationPack.y + RectDestinationPack.h / 2 };
-					DommageExplosion(PointTmp, 45, _pRenderer);
+					DommageExplosion(PointTmp, pPackTmp->GetRayon(), _pRenderer);
 				}
 			}
 			pPackList->AllerSuivantCurseur();

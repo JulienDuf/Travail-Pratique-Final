@@ -4,9 +4,6 @@
 // Créé le 28 octobre 2014 par Xavier St-Georges (xavierst-georges@hotmail.com)
 //
 
-#define MouseButtonDown 0
-#define MouseButtonUp 1
-
 class CControl {
 public:
 

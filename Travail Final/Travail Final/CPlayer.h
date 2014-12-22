@@ -23,7 +23,8 @@ private:
 	double m_dPositionX;
 	double m_dPositionY;
 
-
+	string m_strTextureEtoile;
+	SDL_Rect m_RectDestinationEtoile;
 	CListeDC<CProjectile*>* m_pListeTools;
 
 	CListeDC<CMouvement*>* m_pListeMouvement;
@@ -53,6 +54,14 @@ public:
 
 	CPlayer(string _strEmplacement, SDL_Renderer* _pRenderer, unsigned int _uiIDTeam, SDL_Rect _RectDestination, void _MapDestruction(int _iRayon, int _iX, int _iY), SDL_Surface* _Rotation(SDL_Surface* _pSurfaceRotation, float _fAngle)) {
 		
+		// Initialisation de l'étoile qui precise le joueur actif...
+		m_strTextureEtoile = "EtoileJoueurActif";
+
+		int iW, iH;
+		SDL_QueryTexture(pGestionnaireTexture->ObtenirDonnee(m_strTextureEtoile), nullptr, nullptr, &iW, &iH);
+		m_RectDestinationEtoile.w = iW;
+		m_RectDestinationEtoile.h = iH;
+
 		m_pListeTools = new CListeDC<CProjectile*>();
 		m_pListeMouvement = new CListeDC<CMouvement*>();
 
@@ -61,7 +70,14 @@ public:
 		m_boGlissade = false;
 		m_boChuteLibre = false;
 
+<<<<<<< HEAD
 		m_pListeMouvement->AjouterFin(new CJetPack(_strEmplacement, new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceJetPack"), pGestionnaireTexture->ObtenirDonnee("pTextureJetPack"), _RectDestination, 6, 80, true, false, 2), new CBarreVie({ _RectDestination.x, _RectDestination.y + _RectDestination.h - 2, 0, 0 }, 5), _pRenderer));
+=======
+		
+		m_pListeMouvement->AjouterFin(new CMelee(_strEmplacement, new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceMelee"), pGestionnaireTexture->ObtenirDonnee("pTextureMelee"), _RectDestination, 30, 30, true, true, 2), _pRenderer));
+
+		m_pListeMouvement->AjouterFin(new CJetPack(_strEmplacement, new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceJetPack"), pGestionnaireTexture->ObtenirDonnee("pTextureJetPack"), _RectDestination, 6, 80, true, false, 2), new CBarreVie(5), _pRenderer));
+>>>>>>> origin/Branche-Player
 		
 		m_pListeMouvement->AjouterFin(new CDeplacement(_RectDestination));
 
@@ -107,7 +123,7 @@ public:
 		m_RectHitboxPiedsParachute.w = 58;
 		m_RectHitboxPiedsParachute.h = 19;
 
-		m_pBarreVie = new CBarreVie({ _RectDestination.x, _RectDestination.y - 2, 0, 0 }, _uiIDTeam);
+		m_pBarreVie = new CBarreVie(_uiIDTeam);
 
 		m_pVecteurVitesse = new CVecteur2D(0, 0.0f);
 		m_pVecteurPoids = new CVecteur2D(0, 0.0f);
@@ -163,8 +179,6 @@ public:
 		
 		m_RectPlayerDestination.x = m_dPositionX;
 		m_RectPlayerDestination.y = m_dPositionY;
-		
-		m_pBarreVie->ModifierPositionBarre(m_RectPlayerDestination.x, m_RectPlayerDestination.y - 2);
 
 		if (m_pSpriteParachute->IsActif()) {
 			m_pSpriteParachute->ModifierAnnimation();
@@ -174,7 +188,8 @@ public:
 		{
 			m_pListeMouvement->ObtenirElementCurseur()->ShowPlayer(_pRenderer, m_RectPlayerDestination);
 
-			m_pBarreVie->ShowBarre(_pRenderer, { m_RectPlayerDestination.x, m_RectPlayerDestination.y - 2, 40, 6 });
+			// Affichage de la barre de vie...
+			m_pBarreVie->ShowBarre(_pRenderer, { m_RectPlayerDestination.x, m_RectPlayerDestination.y - 2 });
 
 			if (m_boToolActif)
 				m_pListeTools->ObtenirElementCurseur()->ShowTool(_pRenderer, m_RectPlayerDestination);
@@ -190,6 +205,12 @@ public:
 			m_pListeMouvement->AllerSuivantTrieur();
 			m_pListeTools->AllerSuivantTrieur();
 		}
+	}
+
+	void ShowEtoile(SDL_Renderer* _pRenderer) {
+		m_RectDestinationEtoile.x = m_pBarreVie->ObtenirRectDestination().x + m_pBarreVie->ObtenirRectDestination().w / 2 - m_RectDestinationEtoile.w / 2;
+		m_RectDestinationEtoile.y = m_pBarreVie->ObtenirRectDestination().y - m_RectDestinationEtoile.h - 2;
+		SDL_RenderCopy(_pRenderer, pGestionnaireTexture->ObtenirDonnee(m_strTextureEtoile), nullptr, &m_RectDestinationEtoile);
 	}
 
 	// Accesseur ... 
@@ -434,6 +455,4 @@ public:
 	void ParcoursChangementTour() {
 
 	}
-
-	
 };

@@ -201,6 +201,7 @@ public:
 			m_RectDestinationGrenade = { iX - m_uiRayon, iY - m_uiRayon, 2*m_uiRayon, 2*m_uiRayon }; // Utilisation du rect pour les dommages
 			delete m_pVecteurVitesseGrenade;
 			m_pVecteurVitesseGrenade = nullptr;
+			m_uiMunition--;
 			return true;
 		}
 		return false;
@@ -252,7 +253,7 @@ public:
 			m_pLblDescription->ShowControl(_pRenderer);
 		}
 	}
-	
+
 	// Procédure des événements liés à la grenade...
 	void ReactToEvent(SDL_Event* _pEvent) {
 		
@@ -270,18 +271,21 @@ public:
 
 					// Initialisation de la grenade pour le lancement...
 					m_iAngle = m_pBarrePuissance->ObtenirAngle();
-					m_uiForce = (m_pBarrePuissance->ObtenirForce() + 3) * 40;
+					m_uiForce = (m_pBarrePuissance->ObtenirForce() + 3) * 55;
 					m_boGrenadeLancer = true;
-					m_uiMunition--;
 					m_pVecteurVitesseGrenade = new CVecteur2D((float)m_uiForce, (float)m_iAngle);
+
 					// Signe de la vitesse angulaire...
-					if (m_iAngle <= 90 || m_iAngle >= 270)
+					if (m_iAngle <= 90 || m_iAngle >= 270) {
+						m_RectDestinationGrenade.x += 5;
 						m_iVitesseRotationAngulaire = m_uiForce;
-					else
+					}
+					else {
+						m_RectDestinationGrenade.x -= 5;
 						m_iVitesseRotationAngulaire = -(int)m_uiForce;
+					}
 					m_iAngle = 0;
 					m_pBarrePuissance->Reinitialisation();
-					m_RectDestinationGrenade.y -= 20;
 					m_pTimerExplosion->Start();
 					m_pTimerRotation->Start();
 				}

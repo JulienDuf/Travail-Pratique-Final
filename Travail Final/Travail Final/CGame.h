@@ -212,7 +212,13 @@ public:
 						}
 
 						else {
-							/*
+
+							if (pPlayerActif->ObtenirSpriteSaut()->IsActif()) {
+								pPlayerActif->ObtenirSpriteSaut()->DefinirActif(false);
+								pPlayerActif->ObtenirSpriteRepos()->DefinirActif(true);
+								pPlayerActif->ObtenirVecteurVitesse()->ModifierComposantX(0);
+							}
+							
 							if (boCorps) {
 
 								if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 0)
@@ -222,12 +228,9 @@ public:
 									dComposanteX += _uiXCorps;
 
 
-							}
-							*/
-							/*
-							if (boCorps) {
+								if (!boPied) {
 
-								
+
 
 									pPlayerActif->ObtenirVecteurPoids()->ModifierComposantY(pPlayerActif->ObtenirVecteurPoids()->ObtenirComposanteY() + m_pGameMap->ObtenirGravite()->ObtenirComposanteY());
 
@@ -235,14 +238,9 @@ public:
 
 									pPlayerActif->DefinirPositionY(dComposanteY);
 
-								
 
-							}
-							*/
-							if (pPlayerActif->ObtenirSpriteSaut()->IsActif()) {
-								pPlayerActif->ObtenirSpriteSaut()->DefinirActif(false);
-								pPlayerActif->ObtenirSpriteRepos()->DefinirActif(true);
-								pPlayerActif->ObtenirVecteurVitesse()->ModifierComposantX(0);
+
+								}
 							}
 
 							if (boPied) {
@@ -251,18 +249,6 @@ public:
 								pPlayerActif->ObtenirVecteurVitesse()->ModifierComposantY(0);
 
 								if (!boCorps) {
-
-									
-									if (boCorps) {
-
-									if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 0)
-									dComposanteX -= (RectTmp.w - _uiXCorps);
-
-									if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1)
-									dComposanteX += _uiXCorps;
-
-
-									}
 									
 									unsigned int uiH = 0;
 
@@ -274,7 +260,7 @@ public:
 										pPlayerActif->DefinirPositionX(dComposanteX);
 										pPlayerActif->DefinirPositionY(dComposanteY);
 									}
-									/*
+									
 									else {
 
 										if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 0 && (_uiXPieds > RectTmp.w / 2))
@@ -284,7 +270,7 @@ public:
 											dComposanteX += _uiXPieds;
 
 									}
-									*/
+									
 									
 
 								}
@@ -1142,6 +1128,12 @@ public:
 			TmpSDLRectPlayerSource = _pPlayer->ObtenirSpriteCourse()->ObtenirRectSource();		// On se sert du Rect source du sprite de course.
 
 			TmpSDLRectPlayerHitboxPieds = _pPlayer->ObtenirHitboxPieds();						// On se sert du hitbox des pieds approprié pour le sprite de course.
+
+			if (_pPlayer->ObtenirSpriteCourse()->ObtenirEtage() == 0)					// Si le jueur est orienté vers la droite...
+				TmpSDLRectPlayerHitboxCorps = _pPlayer->ObtenirHitboxCorpsDroite();		// On se sert du rectangle pour le corps de droite. 
+			else																		// Sinon...
+				TmpSDLRectPlayerHitboxCorps = _pPlayer->ObtenirHitboxCorpsGauche();		// On se sert du rectangle pour le corps de gauche.	
+
 		}
 
 		else if (_pPlayer->ObtenirSpriteSaut()->IsActif()) {
@@ -1151,6 +1143,12 @@ public:
 			TmpSDLRectPlayerSource = _pPlayer->ObtenirSpriteSaut()->ObtenirRectSource();		// On se sert du Rect source du sprite de saut.
 
 			TmpSDLRectPlayerHitboxPieds = _pPlayer->ObtenirHitboxPieds();						// On se sert du hitbox des pieds approprié pour le sprite de saut.
+
+			if (_pPlayer->ObtenirSpriteSaut()->ObtenirEtage() == 0)					// Si le jueur est orienté vers la droite...
+				TmpSDLRectPlayerHitboxCorps = _pPlayer->ObtenirHitboxCorpsDroite();		// On se sert du rectangle pour le corps de droite. 
+			else																		// Sinon...
+				TmpSDLRectPlayerHitboxCorps = _pPlayer->ObtenirHitboxCorpsGauche();		// On se sert du rectangle pour le corps de gauche.	
+
 		}
 
 		else if (_pPlayer->ObtenirSpriteParachute()->IsActif()) {
@@ -1160,6 +1158,12 @@ public:
 			TmpSDLRectPlayerSource = _pPlayer->ObtenirSpriteParachute()->ObtenirRectSource();		// On se sert du Rect source du sprite de parachute.
 
 			TmpSDLRectPlayerHitboxPieds = _pPlayer->ObtenirHitboxPiedsParachute();						// On se sert du hitbox des pieds approprié pour le sprite de parachute.
+
+			if (_pPlayer->ObtenirSpriteParachute()->ObtenirEtage() == 0)					// Si le jueur est orienté vers la droite...
+				TmpSDLRectPlayerHitboxCorps = _pPlayer->ObtenirHitboxCorpsDroite();		// On se sert du rectangle pour le corps de droite. 
+			else																		// Sinon...
+				TmpSDLRectPlayerHitboxCorps = _pPlayer->ObtenirHitboxCorpsGauche();		// On se sert du rectangle pour le corps de gauche.	
+
 		}
 
 		else if (_pPlayer->ObtenirSpriteRepos()->IsActif()) {
@@ -1169,6 +1173,12 @@ public:
 			TmpSDLRectPlayerSource = _pPlayer->ObtenirSpriteRepos()->ObtenirRectSource();		// On se sert du Rect source du sprite de repos.
 
 			TmpSDLRectPlayerHitboxPieds = _pPlayer->ObtenirHitboxPieds();						// On se sert du hitbox des pieds approprié pour le sprite de repos.
+
+			if (_pPlayer->ObtenirSpriteRepos()->ObtenirEtage() == 0)					// Si le jueur est orienté vers la droite...
+				TmpSDLRectPlayerHitboxCorps = _pPlayer->ObtenirHitboxCorpsDroite();		// On se sert du rectangle pour le corps de droite. 
+			else																		// Sinon...
+				TmpSDLRectPlayerHitboxCorps = _pPlayer->ObtenirHitboxCorpsGauche();		// On se sert du rectangle pour le corps de gauche.	
+
 		}
 		else if (_pPlayer->ObtenirSpriteJetPack()->IsActif()) {
 
@@ -1177,12 +1187,13 @@ public:
 			TmpSDLRectPlayerSource = _pPlayer->ObtenirSpriteJetPack()->ObtenirRectSource();
 
 			TmpSDLRectPlayerHitboxPieds = _pPlayer->ObtenirHitboxPieds();
-		}
 
-		if (_pPlayer->ObtenirSpriteCourse()->ObtenirEtage() == 0)					// Si le jueur est orienté vers la droite...
-			TmpSDLRectPlayerHitboxCorps = _pPlayer->ObtenirHitboxCorpsDroite();		// On se sert du rectangle pour le corps de droite. 
-		else																		// Sinon...
-			TmpSDLRectPlayerHitboxCorps = _pPlayer->ObtenirHitboxCorpsGauche();		// On se sert du rectangle pour le corps de gauche.	
+			if (_pPlayer->ObtenirSpriteJetPack()->ObtenirEtage() == 0)					// Si le jueur est orienté vers la droite...
+				TmpSDLRectPlayerHitboxCorps = _pPlayer->ObtenirHitboxCorpsDroite();		// On se sert du rectangle pour le corps de droite. 
+			else																		// Sinon...
+				TmpSDLRectPlayerHitboxCorps = _pPlayer->ObtenirHitboxCorpsGauche();		// On se sert du rectangle pour le corps de gauche.	
+
+		}
 
 
 		*_pboCollisionCorps = false;

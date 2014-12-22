@@ -56,7 +56,7 @@ public:
 					m_pSpriteCourse->DefinirActif(false);
 					_pVecteurVitesse->ModifierComposantX(0);
 					m_pSpriteRepos->DefinirActif(true);
-					*_boStable = true;
+					//*_boStable = true;
 
 				}
 
@@ -86,7 +86,7 @@ public:
 					m_pSpriteCourse->DefinirActif(false);
 					_pVecteurVitesse->ModifierComposantX(0);
 					m_pSpriteRepos->DefinirActif(true);
-					*_boStable = true;
+					//*_boStable = true;
 
 				}
 

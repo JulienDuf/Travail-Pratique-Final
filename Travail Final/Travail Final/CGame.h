@@ -195,11 +195,14 @@ public:
 					// Détection de collision avec pack...
 					DetectionCollisionPack(pPlayerActif, &boExplosion, &PointExplosion, _pRenderer);
 
-<<<<<<< HEAD
-=======
 					// Explosion de mine en collision...
-					if (boExplosion)
+					if (boExplosion) {
+						m_pTeamList->ObtenirElementCurseur()->ObtenirListePlayer()->Retirer(true);
+						m_pTeamList->ObtenirElementCurseur()->ObtenirListePlayer()->AllerPrecedentCurseur();
+						m_pGameMap->CreateHealthPack();
 						DommageExplosion(PointExplosion, m_pGameMap->ObtenirPackList()->ObtenirElementCurseur()->GetRayon(), _pRenderer);
+					}
+
 					// Player en course...
 					else if (pPlayerActif->ObtenirSpriteCourse()->IsActif()) {
 
@@ -263,21 +266,9 @@ public:
 									pPlayerActif->DefinirPositionY(dComposanteY);
 
 								}
-
 							}
-
 						}
->>>>>>> origin/Branche-Player
-
-					// Explosion de mine en collision...
-					if (boExplosion) {
-						m_pTeamList->ObtenirElementCurseur()->ObtenirListePlayer()->Retirer(true);
-						m_pTeamList->ObtenirElementCurseur()->ObtenirListePlayer()->AllerPrecedentCurseur();
-						m_pGameMap->CreateHealthPack();
-
-						DommageExplosion(PointExplosion, 45, _pRenderer);
 					}
-
 					else if (pPlayerActif->IsSliding() && !pPlayerActif->ObtenirSpriteJetPack()->IsActif()) {
 						pPlayerActif->ModifierChuteLibreJoueur(false);
 						CVecteur2D* VecteurFrottement = new CVecteur2D(0.0f, 0.0f);
@@ -433,13 +424,7 @@ public:
 								pPlayerActif->ObtenirSpriteRepos()->DefinirActif(true);
 							}
 						}
-						
-					
-						
 					}
-					
-
-					
 
 					else if (pPlayerActif->ObtenirJetPack()->ObtenirSprite("")->IsActif()) {
 
@@ -469,8 +454,8 @@ public:
 						}
 					}
 				}
-				m_pTimerPhysique->Start();
 			}
+			m_pTimerPhysique->Start();
 		}
 
 		else {
@@ -531,7 +516,6 @@ public:
 
 								DetectionCollisionPack(pPlayer, &boExplosion, &Pointexplosion, _pRenderer);
 
-<<<<<<< HEAD
 								if (boExplosion) {
 									pPlayerListTmp->RetirerTrieur(true);
 									DommageExplosion(Pointexplosion, 45, _pRenderer);
@@ -539,10 +523,9 @@ public:
 									m_boFinTour = true;
 									m_boDebutPartie = true;
 								}
-=======
+
 								if (boExplosion)
 									DommageExplosion(Pointexplosion, m_pGameMap->ObtenirPackList()->ObtenirElementCurseur()->GetRayon(), _pRenderer);
->>>>>>> origin/Branche-Player
 
 
 
@@ -590,7 +573,6 @@ public:
 					}
 					m_pTeamList->AllerSuivantTrieur();
 				}
-
 				m_pTimerPhysique->Start();
 			}
 		}

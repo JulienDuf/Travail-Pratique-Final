@@ -213,11 +213,9 @@ public:
 
 						else {
 
-							if (pPlayerActif->ObtenirSpriteSaut()->IsActif()) {
-								pPlayerActif->ObtenirSpriteSaut()->DefinirActif(false);
-								pPlayerActif->ObtenirSpriteRepos()->DefinirActif(true);
+							if (pPlayerActif->ObtenirSpriteSaut()->IsActif()) 
 								pPlayerActif->ObtenirVecteurVitesse()->ModifierComposantX(0);
-							}
+							
 							
 							if (boCorps) {
 
@@ -247,6 +245,11 @@ public:
 
 								pPlayerActif->ObtenirVecteurPoids()->ModifierComposantY(0);
 								pPlayerActif->ObtenirVecteurVitesse()->ModifierComposantY(0);
+
+								if (pPlayerActif->ObtenirSpriteSaut()->IsActif()) {
+
+
+								}
 
 								if (!boCorps) {
 									

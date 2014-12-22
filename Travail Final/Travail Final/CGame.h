@@ -345,7 +345,7 @@ public:
 
 								pPlayerActif->ObtenirJetPack()->ObtenirSprite("")->DefinirActif(false);
 								pPlayerActif->ObtenirSpriteRepos()->DefinirEtage(pPlayerActif->ObtenirJetPack()->ObtenirSprite("")->ObtenirEtage());
-								pPlayerActif->ModifierTypeMouvement(2);
+								pPlayerActif->ModifierTypeMouvement(1);
 								pPlayerActif->ObtenirSpriteRepos()->DefinirActif(true);
 								pPlayerActif->ModifierStabiliteJoueur(false);
 								m_boFinTour = true;
@@ -558,6 +558,8 @@ public:
 			if (!pProjectileTmp->ObtenirSprite("")->IsActif() && pProjectileTmp->ExplosionEnCours()) {
 				m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->DefinirToolActif(false);
 				pProjectileTmp->DefinirExplosion(false);
+				pProjectileTmp->ObtenirSprite("")->DefinirActif(false);
+				m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteRepos()->DefinirActif(true);
 				m_boDebutPartie = true;
 				m_boFinTour = true;
 				m_pToolBar->NouveauTour();
@@ -662,7 +664,8 @@ public:
 
 			else if (m_pToolBar->ObtenirPositionObjetDoubleClick() == 2 && pProjectileTmp->EstLancer()) {
 
-
+				pProjectileTmp->ReactionExplosion(0, 0);
+				DommageMelee(m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif(), _pRenderer);
 
 			}
 		}
@@ -1804,6 +1807,68 @@ public:
 		return false;
 	}
 
+	bool DommageMelee(CPlayer* _pPlayerActif, SDL_Renderer* _pRenderer) {
+
+		CListeDC<CPlayer*>* pPlayerListTmp;
+		CPlayer* pPlayerTmp;
+		string strDommage;
+		char chrTmp[8];
+
+		strDommage.append("-");
+
+		m_pTeamList->AllerATrieur(0);
+		for (int i = 0; i < m_pTeamList->ObtenirCompte(); i++) {
+
+			pPlayerListTmp = m_pTeamList->ObtenirElementTrieur()->ObtenirListePlayer();
+			pPlayerListTmp->AllerATrieur(0);
+
+			for (int j = 0; j < pPlayerListTmp->ObtenirCompte(); j++) {
+
+				pPlayerTmp = pPlayerListTmp->ObtenirElementTrieur();
+
+				if (_pPlayerActif != pPlayerTmp) {
+
+					if (_pPlayerActif->ObtenirSpriteRepos()->ObtenirEtage() == 0) {
+
+						if (_pPlayerActif->ObtenirRectDestination().x + _pPlayerActif->ObtenirRectDestination().w >= pPlayerTmp->ObtenirRectDestination().x && _pPlayerActif->ObtenirRectDestination().x + _pPlayerActif->ObtenirRectDestination().w < pPlayerTmp->ObtenirRectDestination().x + pPlayerTmp->ObtenirRectDestination().w) {
+
+							if (_pPlayerActif->ObtenirProjectile(2)->ObtenirRectDestination()->y + _pPlayerActif->ObtenirProjectile(2)->ObtenirRectDestination()->h / 2 >= pPlayerTmp->ObtenirRectDestination().y &&_pPlayerActif->ObtenirProjectile(2)->ObtenirRectDestination()->y + _pPlayerActif->ObtenirProjectile(2)->ObtenirRectDestination()->h / 2 <= pPlayerTmp->ObtenirRectDestination().y + pPlayerTmp->ObtenirRectDestination().h) {
+								strDommage.append(SDL_itoa(_pPlayerActif->ObtenirProjectile(2)->ObtenirDommage() * 100, chrTmp, 10));
+								m_pListeDomage->AjouterFin(new CTemporaryLabel(strDommage, { 200, 0, 0, 255 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 20, 0, 0 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 80, 0, 0 }, 30, 2000, _pRenderer));
+								pPlayerTmp->SetHealth(pPlayerTmp->GetHealth() - _pPlayerActif->ObtenirProjectile(2)->ObtenirDommage());
+								if (pPlayerTmp->GetHealth() <= 0)
+									pPlayerListTmp->RetirerTrieur(true);
+
+								return true;
+							}
+
+						}
+					}
+
+					else {
+
+						if (_pPlayerActif->ObtenirProjectile(2)->ObtenirRectDestination()->x <= pPlayerTmp->ObtenirRectDestination().x + pPlayerTmp->ObtenirRectDestination().w && _pPlayerActif->ObtenirProjectile(2)->ObtenirRectDestination()->x > pPlayerTmp->ObtenirRectDestination().x) {
+
+							if (_pPlayerActif->ObtenirProjectile(2)->ObtenirRectDestination()->y + _pPlayerActif->ObtenirProjectile(2)->ObtenirRectDestination()->h / 2 >= pPlayerTmp->ObtenirRectDestination().y &&_pPlayerActif->ObtenirProjectile(2)->ObtenirRectDestination()->y + _pPlayerActif->ObtenirProjectile(2)->ObtenirRectDestination()->h / 2 <= pPlayerTmp->ObtenirRectDestination().y + pPlayerTmp->ObtenirRectDestination().h) {
+								strDommage.append(SDL_itoa(_pPlayerActif->ObtenirProjectile(2)->ObtenirDommage() * 100, chrTmp, 10));
+								m_pListeDomage->AjouterFin(new CTemporaryLabel(strDommage, { 200, 0, 0, 255 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 20, 0, 0 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 80, 0, 0 }, 30, 2000, _pRenderer));
+								pPlayerTmp->SetHealth(pPlayerTmp->GetHealth() - _pPlayerActif->ObtenirProjectile(2)->ObtenirDommage());
+								if (pPlayerTmp->GetHealth() <= 0)
+									pPlayerListTmp->RetirerTrieur(true);
+
+								return true;
+							}
+
+						}
+					}
+
+				}
+				pPlayerListTmp->AllerSuivantTrieur();
+			}
+			m_pTeamList->AllerSuivantTrieur();
+		}
+	}
+	
 	bool IsDebut() {
 		return m_boDebutPartie;
 	}

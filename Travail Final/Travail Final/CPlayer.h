@@ -72,7 +72,7 @@ public:
 
 		m_pListeTools->AjouterFin(new CGrenade(_strEmplacement, _pRenderer, _MapDestruction, _Rotation));
 
-		m_pListeTools->AjouterFin(new CMelee(_strEmplacement, new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceMelee"), pGestionnaireTexture->ObtenirDonnee("pTextureMelee"), _RectDestination, 30, 30, true, true, 2), _pRenderer));
+		m_pListeTools->AjouterFin(new CMelee(_strEmplacement, new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceMelee"), pGestionnaireTexture->ObtenirDonnee("pTextureMelee"), _RectDestination, 30, 30, false, true, 2), _pRenderer));
 
 		m_pListeTools->AllerACurseur(0);
 		m_pListeTools->AllerATrieur(0);
@@ -119,11 +119,15 @@ public:
 	// Retour: Rien.
 	void ReactToEvent(SDL_Event* _pSDLEvent, unsigned int _uiObjetSelectionner) {
 		if (!m_pSpriteParachute->IsActif()) {
-			if (_uiObjetSelectionner <= 3) {
+			if (_uiObjetSelectionner <= 2) {
 				m_boToolActif = true;
 				m_pListeTools->AllerACurseur(_uiObjetSelectionner);
 				m_pListeTools->ObtenirElementCurseur()->ReactToEvent(_pSDLEvent);
 				
+				if (_uiObjetSelectionner == 2) {
+					m_pListeTools->ObtenirElementCurseur()->ObtenirSprite("")->DefinirEtage(ObtenirSpriteRepos()->ObtenirEtage());
+					ObtenirSpriteRepos()->DefinirActif(false);
+				}
 			}
 			else
 			{
@@ -164,14 +168,13 @@ public:
 			if (m_boToolActif)
 				m_pListeTools->ObtenirElementCurseur()->ShowTool(_pRenderer, m_RectPlayerDestination);
 		}
-		SDL_SetRenderDrawColor(_pRenderer, 0, 0, 0, 255);
-		SDL_RenderDrawRect(_pRenderer, &m_RectPlayerDestination);
+		
 	}
 
 	void ShowDescription(SDL_Renderer* _pRenderer) {
 		m_pListeMouvement->AllerATrieur(0);
 		m_pListeTools->AllerATrieur(0);
-		for (int i = 0; i < 2; i++) {
+		for (int i = 0; i < 3; i++) {
 			m_pListeMouvement->ObtenirElementTrieur()->ShowDescription(_pRenderer);
 			m_pListeTools->ObtenirElementTrieur()->ShowDescription(_pRenderer);
 			m_pListeMouvement->AllerSuivantTrieur();
@@ -351,8 +354,8 @@ public:
 
 	CMouvement* ObtenirJetPack(void) {
 
-		m_pListeMouvement->AllerACurseur(1);
-		return m_pListeMouvement->ObtenirElementCurseur();
+		m_pListeMouvement->AllerATrieur(0);
+		return m_pListeMouvement->ObtenirElementTrieur();
 	}
 
 	float GetHealth(void) {
@@ -405,12 +408,12 @@ public:
 	}
 
 	unsigned int ObtenirMunition(unsigned int _uiPosition) {
-		if (_uiPosition <= 1) {
+		if (_uiPosition <= 2) {
 			m_pListeTools->AllerATrieur(_uiPosition);
 			return m_pListeTools->ObtenirElementTrieur()->ObtenirMunition();
 		}
 		else if (_uiPosition == 3) {
-			m_pListeMouvement->AllerATrieur(_uiPosition - 2);
+			m_pListeMouvement->AllerATrieur(_uiPosition - 3);
 			return m_pListeMouvement->ObtenirElementTrieur()->ObtenirMunition();
 		}
 	}

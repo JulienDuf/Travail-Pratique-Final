@@ -356,4 +356,8 @@ public:
 	unsigned int ObtenirRayonDommage() {
 		return m_uiRayon;
 	}
+
+	float ObtenirDommage(void) {
+		return 0;
+	}
 };

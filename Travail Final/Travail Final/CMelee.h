@@ -9,11 +9,13 @@ private:
 	float m_fDommage; //Degats de l'arme de melee
 	unsigned int m_uiRayon; // Rayon de dégat de l'attaque.
 	CSprite* m_pSprite; //sprite du personnage qui utilise l'arme de melee
+	SDL_Rect m_RectDestinationMelee; // La destination de l'arme de melee.
 
 	CLabel* m_pLblDescription; // La descripton du missile.
 	string m_strDescription[8];
 	bool m_boShowDescription;
 	bool m_boSpace;
+	bool m_boFinUtilisation;
 
 	SDL_Surface* BlitText(string _strTexte[], unsigned int _uiNombreElementTableau, SDL_Color _Couleur) {
 
@@ -45,6 +47,7 @@ public:
 	CMelee(string _strEmplacement, CSprite* _pSprite, SDL_Renderer* _pRenderer) {
 
 		m_boShowDescription = false;
+		m_boFinUtilisation = false;
 
 		m_strDescription;
 		string strEmplacement(_strEmplacement);
@@ -96,12 +99,14 @@ public:
 		m_pSprite->DefinirPositionDeBouclage(0, 1);
 
 		m_boSpace = false;
+
+		m_RectDestinationMelee = { 0, 0, m_pSprite->ObtenirRectSource().w, m_pSprite->ObtenirRectSource().h };
 	}
 
 
 	void ReactToEvent(SDL_Event* _pEvent) { 
 		m_pSprite->DefinirActif(true);
-   		if (_pEvent->key.keysym.scancode == SDL_SCANCODE_SPACE && !m_boSpace) {
+   		if (_pEvent->key.keysym.scancode == SDL_SCANCODE_SPACE && !m_boSpace && !m_boFinUtilisation) {
 			m_boSpace = true;
 			m_pSprite->DefinirboBoucle(false);
 			m_pSprite->DefinirPositionDeBouclage(0, 30);
@@ -109,16 +114,17 @@ public:
 	}
 
 	void ShowTool(SDL_Renderer* _pRenderer, SDL_Rect _RectPlayerDestination) {
-		if (m_pSprite->ModifierAnnimation()) { // Fin du tour...
+		if (m_pSprite->ModifierAnnimation() && !m_boFinUtilisation) { // Fin du tour...
 			m_pSprite->DefinirPositionDeBouclage(0, 1);
 			m_pSprite->DefinirActif(true);
-			m_pSprite->DefinirboBoucle(true);
-			m_boSpace = false;
 		}
-		_RectPlayerDestination.w += 20;
-		_RectPlayerDestination.h += 10;
-		_RectPlayerDestination.y -= 5;
-		m_pSprite->Render(_pRenderer, _RectPlayerDestination);
+		m_RectDestinationMelee.x = _RectPlayerDestination.x;
+		m_RectDestinationMelee.y = _RectPlayerDestination.y - 5;
+
+		if (m_pSprite->ObtenirEtage() == 1)
+			m_RectDestinationMelee.x -= 25;
+
+		m_pSprite->Render(_pRenderer, m_RectDestinationMelee);
 	}
 
 	void ShowDescription(SDL_Renderer* _pRenderer) {
@@ -129,6 +135,7 @@ public:
 	void DefinirActif(bool _boActif) {
 
 		m_pSprite->DefinirActif(_boActif);
+		m_boSpace = false;
 	}
 
 	unsigned int ObtenirMunition() {
@@ -167,6 +174,15 @@ public:
 		return m_boSpace;
 	}
 
+	SDL_Rect* ObtenirRectDestination() {
+
+		return &m_RectDestinationMelee;
+	}
+
+	float ObtenirDommage(void) {
+
+		return m_fDommage;
+	}
 	// Méthodes inutiles pour cette classe.......
 
 	CVecteur2D* ObtenirVecteurVitesse(void) {
@@ -175,6 +191,9 @@ public:
 	}
 
 	bool ReactionExplosion(int iX, int iY) {
+
+		m_boSpace = false;
+		m_boFinUtilisation = true;
 
 		return false;
 	}
@@ -185,11 +204,6 @@ public:
 
 	void ReinitialisationProjectile(void) {
 
-	}
-
-	SDL_Rect* ObtenirRectDestination() {
-
-		return NULL;
 	}
 
 	SDL_Surface* ObtenirSurface() {
@@ -207,10 +221,12 @@ public:
 
 	void DefinirExplosion(bool _boExplosion) {
 
+		m_boFinUtilisation = _boExplosion;
+
 	}
 
 	bool ExplosionEnCours() {
 
-		return false;
+		return m_boFinUtilisation;
 	}
 };

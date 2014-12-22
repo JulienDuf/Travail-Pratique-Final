@@ -191,15 +191,13 @@ public:
 					// Détection de collision avec pack...
 					DetectionCollisionPack(pPlayerActif, &boExplosion, &PointExplosion, _pRenderer);
 
-<<<<<<< HEAD
+
 					// Explosion de mine en collision...
-					if (boExplosion)
-=======
 					if (boExplosion) {
 						m_pTeamList->ObtenirElementCurseur()->ObtenirListePlayer()->Retirer(true);
 						m_pTeamList->ObtenirElementCurseur()->ObtenirListePlayer()->AllerPrecedentCurseur();
 						m_pGameMap->CreateHealthPack();
->>>>>>> origin/Branche-Julien
+
 						DommageExplosion(PointExplosion, 45, _pRenderer);
 					}
 
@@ -516,12 +514,10 @@ public:
 		}
 	}
 	
-<<<<<<< HEAD
+
 	// Procédure permettant d'appliquer la physique sur les packs...
 	// En entrée:
 	// Param1: Le renderer de la fenetre.
-=======
->>>>>>> origin/Branche-Julien
 	void PhysiquePack(SDL_Renderer* _pRenderer) {
 
 		CListeDC<CPack*>* pPackListTmp = m_pGameMap->ObtenirPackList(); // Obtention de la liste de packs.
@@ -598,6 +594,7 @@ public:
 			SDL_Rect* RectTmp = pProjectileTmp->ObtenirRectDestination();
 			CVecteur2D* pVecteurVitesse = pProjectileTmp->ObtenirVecteurVitesse();
 			int iX, iY; // Position d'une collision.
+			float fangle;
 
 			if (!pProjectileTmp->ObtenirSprite("")->IsActif() && pProjectileTmp->ExplosionEnCours()) {
 				m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->DefinirToolActif(false);
@@ -641,6 +638,7 @@ public:
 						pProjectileTmp->DefinirAngle(360 - (180 / M_PI) * atanf((((float)pVecteurVitesse->ObtenirComposanteY()) / ((float)pVecteurVitesse->ObtenirComposanteX()))));
 
 				}
+
 				// Si une grenade est lancée...
 				else if (m_pToolBar->ObtenirPositionObjetDoubleClick() == 1 && pProjectileTmp->EstLancer()) {
 
@@ -649,7 +647,7 @@ public:
 					// AutoDesctruction de la grenade...
 					if (pProjectileTmp->ReactionExplosion(0, 0)) {
 						RectTmp = pProjectileTmp->ObtenirRectDestination();
-						DommageExplosion({ RectTmp->x + pProjectileTmp->ObtenirRayonExplosion(), RectTmp->y + pProjectileTmp->ObtenirRayonExplosion() }, pProjectileTmp->ObtenirRayonExplosion(), _pRenderer);
+						DommageExplosion({ RectTmp->x + pProjectileTmp->ObtenirRayonDommage(), RectTmp->y + pProjectileTmp->ObtenirRayonDommage() }, pProjectileTmp->ObtenirRayonDommage(), _pRenderer);
 
 					}
 					// Grenade en dehors de la map...
@@ -660,14 +658,15 @@ public:
 						m_boFinTour = true;
 						m_pToolBar->NouveauTour();
 					}
-<<<<<<< HEAD
 					else
 					{
 						// Ajout de l'influence de la gravité au vecteur...
 						*pVecteurVitesse += *m_pGameMap->ObtenirGravite();
+
 						// Sauvergarde de l'ancienne position de la grenade...
 						int x = RectTmp->x;
 						int y = RectTmp->y;
+
 						// Modification de la position de la grenade...
 						RectTmp->x += pVecteurVitesse->ObtenirComposanteX() / 35;
 						RectTmp->y += pVecteurVitesse->ObtenirComposanteY() / 35;
@@ -698,17 +697,6 @@ public:
 							{
 								fangle = RegressionTest({ RectTmp->x + iX, RectTmp->y + RectTmp->h }, RectTmp->w / 2, -2 * RectTmp->h, false);
 							}
-=======
-				}
-
-				bool boSensRotation = false;
-				RectTmp = pProjectileTmp->ObtenirRectDestination();
-
-				// AutoDesctruction de la grenade...
-				if (pProjectileTmp->ReactionExplosion(0, 0)) {
-					RectTmp = pProjectileTmp->ObtenirRectDestination();
-					DommageExplosion({ RectTmp->x + pProjectileTmp->ObtenirRayonDommage(), RectTmp->y + pProjectileTmp->ObtenirRayonDommage() }, pProjectileTmp->ObtenirRayonDommage(), _pRenderer);
->>>>>>> origin/Branche-Julien
 
 							// Modification du vecteur par rapport au rebond si il est assez puissant pour rebondir soit jusqu'à 35...
 							if (pVecteurVitesse->ObtenirNorme() >= 35) {
@@ -755,21 +743,20 @@ public:
 						}
 					}
 				}
-			}
 
-			else if (m_pToolBar->ObtenirPositionObjetDoubleClick() == 2 && pProjectileTmp->EstLancer()) {
+				else if (m_pToolBar->ObtenirPositionObjetDoubleClick() == 2 && pProjectileTmp->EstLancer()) {
 
-				pProjectileTmp->ReactionExplosion(0, 0);
-				DommageMelee(m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif(), _pRenderer);
+					pProjectileTmp->ReactionExplosion(0, 0);
+					DommageMelee(m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif(), _pRenderer);
 
+				}
 			}
 		}
 	}
 
 	// RegressionTest bas
-<<<<<<< HEAD
 	// En entrée:
-	// Param1: Position de dépar de l'évalutation de la pente.
+	// Param1: Position de départ de l'évalutation de la pente.
 	// Préférences: Partir le x au point de collision et le y en haut du point, habituellement le y du rect.
 	// Param2: Limite de l'évalutation de la pente (Mettre la moitié de la largeur du rect).
 	// Param3: Limite de l'évaluation de la pente en y. (Mettre 2 * le hauteur du Rect).
@@ -796,98 +783,6 @@ public:
 				// Pas la première fois...
 				if (!boPremiere) {
 					dPente = (dPente + dNouvellePente) / 2;
-=======
-	double RegressionTest(SDL_Point _StartPoint, unsigned int _uiLimit, double _dTolerance) {
-		double dTolerance = _dTolerance;
-		double dDiminutionTolerance = 0.0000000000001;
-		unsigned short int usiGauche = 1;
-		unsigned short int usiDroit = 1;
-		bool boPremiere = true;
-		bool boDeuxieme = true;
-		bool boPremierePenteDiffZero = false;
-		double dPente = 0;
-		double dNouvellePente = 0;
-		SDL_Point PointGauche;
-		SDL_Point PointDroit;
-		SDL_Surface* pSurfaceMap = m_pGameMap->ObtenirSurfaceMap();
-
-		// Tant que la différence entre la nouvelle pente et l'ancienne <= tol et que j'e n'ai pas atteint la limite...
-		while ((abs(dPente - dNouvellePente) <= dTolerance / (dDiminutionTolerance) || !boPremierePenteDiffZero) && usiGauche <= _uiLimit) {
-			
-			// Pas la première fois...
-			if (!boPremiere) {
-				dPente = (dPente + dNouvellePente) / 2;
-			}
-			// Initialisation des points
-			PointGauche = { _StartPoint.x - usiGauche, _StartPoint.y };
-			PointDroit = { _StartPoint.x + usiDroit, _StartPoint.y };
-
-			// Descente pointgauche...
-  			while (((unsigned int*)pSurfaceMap->pixels)[PointGauche.y * pSurfaceMap->w + PointGauche.x] == 0 || ((unsigned int*)pSurfaceMap->pixels)[PointGauche.y * pSurfaceMap->w + PointGauche.x] == TRANSPARENCE32BIT) {
-				PointGauche.y++;
-			}
-
-			// Descente pointdroit...
-			while (((unsigned int*)pSurfaceMap->pixels)[PointDroit.y * pSurfaceMap->w + PointDroit.x] == 0 || ((unsigned int*)pSurfaceMap->pixels)[PointDroit.y * pSurfaceMap->w + PointDroit.x] == TRANSPARENCE32BIT) {
-				PointDroit.y++;
-			}
-			// Calcul de la nouvelle pente
-			dNouvellePente = ((double)PointDroit.y - (double)PointGauche.y) / ((double)PointDroit.x - (double)PointGauche.x);
-			if (dNouvellePente != 0)
-				boPremierePenteDiffZero = true;
-			usiGauche++;
-			usiDroit++;
-			if (boPremierePenteDiffZero)
-				dDiminutionTolerance++;
-			// Si c'est la première fois
-			if (boPremiere && boPremierePenteDiffZero) {
-				dPente = dNouvellePente;
-				boPremiere = false;
-			}
-		}
-
-		return (180 / M_PI) * atanf(dPente);
-	}
-
-	// Procédure qui retourne la pente 
-	// Paramètre : _RectPiedJoueur : Le rect pied du joueur acitf. Si c'est des mines ou des objets le mettre à 0.
-	//			 : _RectJoueur -> L'emplacement de l'objet ou le joueur dans la maop.
-	//			 : _boObjet -> Si c'est un objet ou non.
-	// Retour : integer double qui représente l'angle de la pente.
-	double RegressionLineaire(SDL_Rect _RectPiedJoueur, SDL_Rect _RectJoueur, bool _boObjet) {
-		float fPente = 0;
-		float iCov = 0; // Variable en y moyenne.
-		float iVar = 0; // Variable en x moyen.
-		float fX = 0; // Valeur en x pour la régression.
-		float fY = 0; // Valeur en y pour la régression.
-		int iN = 0; // Le nombre de fois qu'il y a des "différent de transparent" Sert a savoir le milieu de la régressuion.
-		SDL_Rect _RectRegression;
-		//if (!_boObjet) {
-			/*_RectRegression.x = _RectPiedJoueur.x + (_RectJoueur.w / 2); // Le rect commence au milieu du joueur.
-			_RectRegression.y = _RectPiedJoueur.y + _RectPiedJoueur.h;
-			_RectRegression.w = 15; // Largeur du Rect.
-			int y = 0; // Utiliser pour ma boucle au lieu d'utiliser mon rect pour vérifier.
-			if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 1) {
-				_RectRegression.x = _RectRegression.x - (_RectRegression.w / 2);
-				while (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(_RectRegression.x + _RectJoueur.x) + ((y + _RectRegression.y + _RectJoueur.y) * m_pGameMap->ObtenirSurfaceMap()->w)] == 0) {
-					y++;
-					_RectRegression.h = y;
-
-				}
-				y = 0; // Au cas qu'il est entrer dans la premiere boucle.
-				while (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(_RectRegression.x + _RectJoueur.x) + ((y + _RectRegression.y + _RectJoueur.y) * m_pGameMap->ObtenirSurfaceMap()->w)] != 0) {
-					y--;
-					_RectRegression.h = abs(y);
-
-				}
-			}
-
-			else if (m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteCourse()->ObtenirEtage() == 0) {
-				while (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(_RectRegression.w + _RectRegression.x + _RectJoueur.x) + ((y + _RectRegression.y + _RectJoueur.y) * m_pGameMap->ObtenirSurfaceMap()->w)] == 0) {
-					y++;
-					_RectRegression.h = y;
-
->>>>>>> origin/Branche-Julien
 				}
 				// Initialisation des points
 				PointGauche = { _StartPoint.x - usiGauche, _StartPoint.y };
@@ -953,7 +848,7 @@ public:
 
 		return (180 / M_PI) * atanf(dPente);
 	}
-
+	
 	// Procédure déterminant la position d'une collision entre un objet et la map, si il y en a une, à partir du point au milieu, bas de l'objet.
 	// En entrée:
 	// Param1: La surface de l'objet.
@@ -989,7 +884,7 @@ public:
 		}
 		return false;
 	}
-
+	
 	// Procédure déterminant la position d'une collision entre un objet et la map, si il y en a une.
 	// En entrée:
 	// Param1: La surface de l'objet.
@@ -1034,7 +929,7 @@ public:
 
 		return false;
 	}
-
+	
 	// Fontion déterminant s'il y a une collison avac le missile.
 	// En entrée:
 	// Param1: La surface du missile.
@@ -1530,20 +1425,16 @@ public:
 										CouleurDommage = { 0, 200, 0, 255 };
 									}
 
-<<<<<<< HEAD
-								// Créé un label indiquant un dommage (ou un gain de santé).
-								m_pListeDommage->AjouterFin(new CTemporaryLabel(strDommage, { 200, 0, 0, 255 }, { RectPlayer.x, RectPlayer.y - 20, 0, 0 }, { RectPlayer.x, RectPlayer.y - 80, 0, 0 }, 30, 2000, _pRenderer));
-=======
 									// Si c'est une mine...
 									else {
 										strDommage.append("-");
 										strDommage.append(SDL_itoa(_pPlayer->GetHealth() * 100, chrTmp, 10));
 										CouleurDommage = { 200, 0, 0, 255 };
 									}
->>>>>>> origin/Branche-Julien
+
 
 									// Créé un label indiquant un dommage (ou un gain de santé).
-									m_pListeDomage->AjouterFin(new CTemporaryLabel(strDommage, CouleurDommage, { RectPlayer.x, RectPlayer.y - 20, 0, 0 }, { RectPlayer.x, RectPlayer.y - 80, 0, 0 }, 30, 2000, _pRenderer));
+									m_pListeDommage->AjouterFin(new CTemporaryLabel(strDommage, CouleurDommage, { RectPlayer.x, RectPlayer.y - 20, 0, 0 }, { RectPlayer.x, RectPlayer.y - 80, 0, 0 }, 30, 2000, _pRenderer));
 
 									// Si c'est une mine...
 									if (pPackTmp->Use(_pPlayer)) {
@@ -1786,7 +1677,6 @@ public:
 		return false;
 	}
 
-<<<<<<< HEAD
 	CMap* ObtenirMap(void) {
 		return m_pGameMap;
 	}
@@ -1819,7 +1709,7 @@ public:
 		return true;
 	}
 
-=======
+
 	bool DommageMelee(CPlayer* _pPlayerActif, SDL_Renderer* _pRenderer) {
 
 		CListeDC<CPlayer*>* pPlayerListTmp;
@@ -1847,7 +1737,7 @@ public:
 
 							if (_pPlayerActif->ObtenirProjectile(2)->ObtenirRectDestination()->y + _pPlayerActif->ObtenirProjectile(2)->ObtenirRectDestination()->h / 2 >= pPlayerTmp->ObtenirRectDestination().y &&_pPlayerActif->ObtenirProjectile(2)->ObtenirRectDestination()->y + _pPlayerActif->ObtenirProjectile(2)->ObtenirRectDestination()->h / 2 <= pPlayerTmp->ObtenirRectDestination().y + pPlayerTmp->ObtenirRectDestination().h) {
 								strDommage.append(SDL_itoa(_pPlayerActif->ObtenirProjectile(2)->ObtenirDommage() * 100, chrTmp, 10));
-								m_pListeDomage->AjouterFin(new CTemporaryLabel(strDommage, { 200, 0, 0, 255 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 20, 0, 0 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 80, 0, 0 }, 30, 2000, _pRenderer));
+								m_pListeDommage->AjouterFin(new CTemporaryLabel(strDommage, { 200, 0, 0, 255 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 20, 0, 0 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 80, 0, 0 }, 30, 2000, _pRenderer));
 								pPlayerTmp->SetHealth(pPlayerTmp->GetHealth() - _pPlayerActif->ObtenirProjectile(2)->ObtenirDommage());
 								if (pPlayerTmp->GetHealth() <= 0)
 									pPlayerListTmp->RetirerTrieur(true);
@@ -1864,7 +1754,7 @@ public:
 
 							if (_pPlayerActif->ObtenirProjectile(2)->ObtenirRectDestination()->y + _pPlayerActif->ObtenirProjectile(2)->ObtenirRectDestination()->h / 2 >= pPlayerTmp->ObtenirRectDestination().y &&_pPlayerActif->ObtenirProjectile(2)->ObtenirRectDestination()->y + _pPlayerActif->ObtenirProjectile(2)->ObtenirRectDestination()->h / 2 <= pPlayerTmp->ObtenirRectDestination().y + pPlayerTmp->ObtenirRectDestination().h) {
 								strDommage.append(SDL_itoa(_pPlayerActif->ObtenirProjectile(2)->ObtenirDommage() * 100, chrTmp, 10));
-								m_pListeDomage->AjouterFin(new CTemporaryLabel(strDommage, { 200, 0, 0, 255 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 20, 0, 0 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 80, 0, 0 }, 30, 2000, _pRenderer));
+								m_pListeDommage->AjouterFin(new CTemporaryLabel(strDommage, { 200, 0, 0, 255 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 20, 0, 0 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 80, 0, 0 }, 30, 2000, _pRenderer));
 								pPlayerTmp->SetHealth(pPlayerTmp->GetHealth() - _pPlayerActif->ObtenirProjectile(2)->ObtenirDommage());
 								if (pPlayerTmp->GetHealth() <= 0)
 									pPlayerListTmp->RetirerTrieur(true);
@@ -1882,7 +1772,6 @@ public:
 		}
 	}
 	
->>>>>>> origin/Branche-Julien
 	bool IsDebut() {
 		return m_boDebutPartie;
 	}

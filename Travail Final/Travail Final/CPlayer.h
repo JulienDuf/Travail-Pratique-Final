@@ -132,27 +132,25 @@ public:
 			else
 			{
 				if (_uiObjetSelectionner <= 3) {
-<<<<<<< HEAD
-					m_pListeMouvement->AllerATrieur(2);
+
+					m_pListeMouvement->AllerATrieur(1);
 					m_pListeMouvement->ObtenirElementTrieur()->ObtenirSprite("Repos")->DefinirActif(false);
-					m_pListeMouvement->AllerACurseur(_uiObjetSelectionner - 2);
-=======
+
 					m_pListeMouvement->AllerACurseur(_uiObjetSelectionner - 3);
->>>>>>> origin/Branche-Julien
 					if (!m_pListeMouvement->ObtenirElementCurseur()->ObtenirSprite("")->IsActif()) 
 						m_pListeMouvement->ObtenirElementCurseur()->ObtenirSprite("")->DefinirEtage(ObtenirSpriteRepos()->ObtenirEtage());
 						
 					
 				}
-<<<<<<< HEAD
+
 				else {
 					if (!m_boChuteLibre && !m_boGlissade)
 						m_pListeMouvement->AllerACurseur(2);
+
+
+					else
+						m_pListeMouvement->AllerACurseur(1);
 				}
-=======
-				else
-					m_pListeMouvement->AllerACurseur(1);
->>>>>>> origin/Branche-Julien
 				m_pListeMouvement->ObtenirElementCurseur()->ReactToEvent(_pSDLEvent, m_pVecteurVitesse, &m_boStable);
 			}
 		}
@@ -181,12 +179,6 @@ public:
 			if (m_boToolActif)
 				m_pListeTools->ObtenirElementCurseur()->ShowTool(_pRenderer, m_RectPlayerDestination);
 		}
-<<<<<<< HEAD
-		SDL_SetRenderDrawColor(_pRenderer, 0, 0, 0, 255);
-		//SDL_RenderDrawRect(_pRenderer, &m_RectPlayerDestination);
-=======
-		
->>>>>>> origin/Branche-Julien
 	}
 
 	void ShowDescription(SDL_Renderer* _pRenderer) {
@@ -381,13 +373,11 @@ public:
 		return m_pBarreVie->ObtenirVie();
 	}
 
-<<<<<<< HEAD
+
 	void UpdateDescription(unsigned int _uiPosition, SDL_Point _PositionSouris) {
-		if (_uiPosition <= 1) {
-=======
-	void UpdateDescription(unsigned int _uiPosition, SDL_Rect _RectPositionSouris) {
+
 		if (_uiPosition <= 2) {
->>>>>>> origin/Branche-Julien
+
 			m_pListeTools->AllerATrieur(_uiPosition);
 			m_pListeTools->ObtenirElementTrieur()->UpdateDescription(true, _PositionSouris);
 			m_pListeTools->AllerSuivantTrieur();

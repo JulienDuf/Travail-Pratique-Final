@@ -264,13 +264,8 @@ public:
 
 	// Procédure modifiant la position et l'activité de la description.
 	// Param1: Si la description est active.
-<<<<<<< HEAD
 	// Param2: La position de la descrition.
 	void UpdateDescription(bool _boShow, SDL_Point _PositionDescription) {
-=======
-	//Param2: La position de la descrition.
-	void UpdateDescription(bool _boShow, SDL_Rect _RectPositionDescription) {
->>>>>>> origin/Branche-Julien
 
 		m_boShowDescription = _boShow;
 		int uiW, 

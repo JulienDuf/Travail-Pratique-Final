@@ -256,16 +256,11 @@ public:
 	// Procédure des événements liés à la grenade...
 	void ReactToEvent(SDL_Event* _pEvent) {
 		
+		// événements barre de puissance...
+		m_pBarrePuissance->ReactToEvent(_pEvent);
 
-<<<<<<< HEAD
-		// Si la grenade n'est pas lancée...
-		if (!m_boGrenadeLancer) {
-			// événements barre de puissance...
-			m_pBarrePuissance->ReactToEvent(_pEvent);
-=======
 		if (!m_boGrenadeLancer && !m_boExplosion) {
 
->>>>>>> origin/Branche-Julien
 			switch (_pEvent->type) {
 
 			case SDL_KEYDOWN: // Touche enfoncée...

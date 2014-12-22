@@ -98,27 +98,31 @@ public:
 			if (_pEvent->type == SDL_KEYDOWN) {
 
 				if (!m_pSpriteSaut->IsActif()) {
-					m_boSpace = true;
+					//m_boSpace = true;
 
 					if (m_pSpriteRepos->IsActif()) {
 						m_pSpriteRepos->DefinirActif(false);
 						m_pSpriteSaut->DefinirEtage(m_pSpriteRepos->ObtenirEtage()); // Pour que le saut sois du même bord que le repos.
+						_pVecteurVitesse->ModifierComposantX(50 + m_pSpriteRepos->ObtenirEtage() * -100 );
 					}
 
 					else if (m_pSpriteCourse->IsActif()) {
 						m_pSpriteCourse->DefinirActif(false);
 						m_pSpriteSaut->DefinirEtage(m_pSpriteCourse->ObtenirEtage()); // Pour que le saut sois du même bord que le repos.
+						_pVecteurVitesse->ModifierComposantX(50 + m_pSpriteCourse->ObtenirEtage() * -100);
 					}
 
+					m_pSpriteSaut->DefinirPositionDeBouclage(0, 5);
+					m_pSpriteSaut->DefinirboBoucle(false);
 					m_pSpriteSaut->DefinirActif(true);
-					_pVecteurVitesse->ModifierComposantY(-100);
+					_pVecteurVitesse->ModifierComposantY(-150);
 					*_boStable = false;
 				}
 
 			}
 
-			else
-				m_boSpace = false;
+			//else
+				//m_boSpace = false;
 
 			break;
 
@@ -127,24 +131,22 @@ public:
 
 	void ShowPlayer(SDL_Renderer* _pRenderer, SDL_Rect _RectPlayerDestination) {
 		
-		if (m_pSpriteCourse->IsActif()) {
-			m_pSpriteCourse->ModifierAnnimation();
-			m_pSpriteCourse->Render(_pRenderer, _RectPlayerDestination);
-		}
-		else if (m_pSpriteSaut->IsActif()) {
+		
+		m_pSpriteCourse->ModifierAnnimation();
+		m_pSpriteCourse->Render(_pRenderer, _RectPlayerDestination);
+		
+		if (m_pSpriteSaut->IsActif()) {
 			m_pSpriteSaut->ModifierAnnimation();
 			m_pSpriteSaut->Render(_pRenderer, _RectPlayerDestination);
 			if (!m_pSpriteSaut->IsActif()) {
-				m_pSpriteRepos->DefinirActif(true);
+				m_pSpriteSaut->DefinirboBoucle(true);
+				m_pSpriteSaut->DefinirPositionDeBouclage(4, 5);
 				
 			}
 		}
-		if (m_pSpriteRepos->IsActif())
-		{
-			m_pSpriteRepos->DefinirActif(true);
-			m_pSpriteRepos->ModifierAnnimation();
-			m_pSpriteRepos->Render(_pRenderer, _RectPlayerDestination);
-		}
+		
+		m_pSpriteRepos->Render(_pRenderer, _RectPlayerDestination);
+		
 	}
 
 	void ShowDescription(SDL_Renderer* _pRenderer) {}

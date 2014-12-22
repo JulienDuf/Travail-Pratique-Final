@@ -4,6 +4,7 @@
 
 class CHealthPack: public CPack{
 private:
+
 	SDL_Rect m_RectDestination; //Position du pack sur la map
 	SDL_Texture* m_pTexture; //Texture du pack
 	SDL_Surface* m_pSurface; //Surface du pack
@@ -12,8 +13,9 @@ private:
 	double m_dAnglePack; //L'angle de le pack.
 
 public:
-	//constructeur
+	// Constructeur de HealthPack
 	CHealthPack(){
+
 		//initialisation de la texture
 		m_pTexture = pGestionnaireTexture->ObtenirDonnee("pTextureHealthPack");
 		m_pSurface = pGestionnaireSurface->ObtenirDonnee("pSurfaceHealthPack");
@@ -54,6 +56,8 @@ public:
 		SDL_RenderCopyEx(_Renderer, m_pTexture, NULL, &m_RectDestination, m_dAnglePack, NULL, SDL_FLIP_NONE);
 	}
 
+	// Méthodes...
+
 	void ModifierPosition(SDL_Rect _RectDestination) {
 
 		m_RectDestination = _RectDestination;
@@ -72,6 +76,8 @@ public:
 	void ModifierUse(bool _boUse) {
 
 	}
+
+	// Accesseurs...
 
 	SDL_Surface* GetSurface(void) {
 
@@ -96,4 +102,6 @@ public:
 	bool IsUse(void) {
 		return m_boUse;
 	}
+
+	unsigned int GetRayon() { return 0; }
 };

@@ -101,6 +101,10 @@ public:
 			m_pTeamList->AllerSuivantCurseur();
 		}
 
+		// Affichage d'un cercle vert pour reconnaître le player actif...
+		if (!m_boDebutPartie)
+			m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ShowEtoile(_pRenderer);
+
 		// Si le jeu n'est pas en pause, affichage de la toolbar et des descriptions...
 		if (!_boPause) {
 			m_pToolBar->ShowToolBar(_pRenderer);
@@ -193,7 +197,7 @@ public:
 
 					// Explosion de mine en collision...
 					if (boExplosion)
-						DommageExplosion(PointExplosion, 45, _pRenderer);
+						DommageExplosion(PointExplosion, m_pGameMap->ObtenirPackList()->ObtenirElementCurseur()->GetRayon(), _pRenderer);
 					// Player en course...
 					else if (pPlayerActif->ObtenirSpriteCourse()->IsActif()) {
 
@@ -444,7 +448,7 @@ public:
 								DetectionCollisionPack(pPlayer, &boExplosion, &Pointexplosion, _pRenderer);
 
 								if (boExplosion)
-									DommageExplosion(Pointexplosion, 45, _pRenderer);
+									DommageExplosion(Pointexplosion, m_pGameMap->ObtenirPackList()->ObtenirElementCurseur()->GetRayon(), _pRenderer);
 
 
 
@@ -639,9 +643,11 @@ public:
 					{
 						// Ajout de l'influence de la gravité au vecteur...
 						*pVecteurVitesse += *m_pGameMap->ObtenirGravite();
+
 						// Sauvergarde de l'ancienne position de la grenade...
 						int x = RectTmp->x;
 						int y = RectTmp->y;
+
 						// Modification de la position de la grenade...
 						RectTmp->x += pVecteurVitesse->ObtenirComposanteX() / 35;
 						RectTmp->y += pVecteurVitesse->ObtenirComposanteY() / 35;
@@ -724,7 +730,7 @@ public:
 
 	// RegressionTest bas
 	// En entrée:
-	// Param1: Position de dépar de l'évalutation de la pente.
+	// Param1: Position de départ de l'évalutation de la pente.
 	// Préférences: Partir le x au point de collision et le y en haut du point, habituellement le y du rect.
 	// Param2: Limite de l'évalutation de la pente (Mettre la moitié de la largeur du rect).
 	// Param3: Limite de l'évaluation de la pente en y. (Mettre 2 * le hauteur du Rect).
@@ -1556,35 +1562,35 @@ public:
 
 					pPackTmp->Use(nullptr);
 					SDL_Point PointTmp = { RectDestinationPack.x + RectDestinationPack.w / 2, RectDestinationPack.y + RectDestinationPack.h / 2 };
-					DommageExplosion(PointTmp, 45, _pRenderer);
+					DommageExplosion(PointTmp, pPackTmp->GetRayon(), _pRenderer);
 				}
 
 				else if ((RectDestinationPack.x <= RectExplosion.x + RectExplosion.w && RectDestinationPack.x + RectDestinationPack.w > RectExplosion.x + RectExplosion.w) && (RectDestinationPack.y + RectDestinationPack.h >= RectExplosion.y && RectDestinationPack.y <= RectExplosion.y + RectExplosion.h)) {
 
 					pPackTmp->Use(nullptr);
 					SDL_Point PointTmp = { RectDestinationPack.x + RectDestinationPack.w / 2, RectDestinationPack.y + RectDestinationPack.h / 2 };
-					DommageExplosion(PointTmp, 45, _pRenderer);
+					DommageExplosion(PointTmp, pPackTmp->GetRayon(), _pRenderer);
 				}
 
 				else if ((RectDestinationPack.x >= RectExplosion.x && RectDestinationPack.x + RectDestinationPack.w <= RectExplosion.x + RectExplosion.w) && (RectDestinationPack.y >= RectExplosion.y && RectDestinationPack.y + RectDestinationPack.h <= RectExplosion.y + RectExplosion.h)) {
 
 					pPackTmp->Use(nullptr);
 					SDL_Point PointTmp = { RectDestinationPack.x + RectDestinationPack.w / 2, RectDestinationPack.y + RectDestinationPack.h / 2 };
-					DommageExplosion(PointTmp, 45, _pRenderer);
+					DommageExplosion(PointTmp, pPackTmp->GetRayon(), _pRenderer);
 				}
 
 				else if ((RectDestinationPack.x >= RectExplosion.x && RectDestinationPack.x + RectDestinationPack.w <= RectExplosion.x + RectExplosion.w) && (RectDestinationPack.y < RectExplosion.y && RectDestinationPack.y + RectDestinationPack.h >= RectExplosion.y)) {
 
 					pPackTmp->Use(nullptr);
 					SDL_Point PointTmp = { RectDestinationPack.x + RectDestinationPack.w / 2, RectDestinationPack.y + RectDestinationPack.h / 2 };
-					DommageExplosion(PointTmp, 45, _pRenderer);
+					DommageExplosion(PointTmp, pPackTmp->GetRayon(), _pRenderer);
 				}
 
 				else if ((RectDestinationPack.x >= RectExplosion.x && RectDestinationPack.x + RectDestinationPack.w <= RectExplosion.x + RectExplosion.w) && (RectDestinationPack.y <= RectExplosion.y + RectExplosion.h && RectDestinationPack.y + RectDestinationPack.h > RectExplosion.y + RectExplosion.h)) {
 
 					pPackTmp->Use(nullptr);
 					SDL_Point PointTmp = { RectDestinationPack.x + RectDestinationPack.w / 2, RectDestinationPack.y + RectDestinationPack.h / 2 };
-					DommageExplosion(PointTmp, 45, _pRenderer);
+					DommageExplosion(PointTmp, pPackTmp->GetRayon(), _pRenderer);
 				}
 			}
 			pPackList->AllerSuivantCurseur();

@@ -12,13 +12,13 @@ private:
 	bool m_boStable; //Si la mine touche par terre.
 	bool m_boUse; // Si la mine explose.
 	double m_dAnglemine; //L'angle de la mine.
-	unsigned int m_uiRayon;
+	unsigned int m_uiRayon; // Rayon d'explosion de la mine...
 
 	void(*m_pMapDestruction)(int _iRayon, int _iX, int _iY);
 
 public:
 	CMine(string _strEmplacement, SDL_Renderer* _Renderer, void _MapDestruction(int _iRayon, int _iX, int _iY)) {
-		/*
+		
 		// Initialisation des stats en liens avec le pack...
 		string strEmplacement(_strEmplacement);
 		int i = strEmplacement.length();
@@ -34,8 +34,8 @@ public:
 		ifstream FichierDescriptionMine;
 		FichierDescriptionMine.open(strEmplacement);
 
-		// Si le fichier s'est ouvert...
-		if (FichierDescriptionMine.is_open()) {
+		// Si le fichier s'est ouvert et qu'il y de quoi...
+		if (FichierDescriptionMine.is_open() && FichierDescriptionMine.gcount() != 0) { // Description mine ouvrait, mais le getline donnait une violation d'accès. Weird.
 			char chrtmp[5];
 			FichierDescriptionMine.getline(chrtmp, 75);
 			string strRayon;
@@ -45,9 +45,12 @@ public:
 			// Initialisation des stats...
 			m_uiRayon = SDL_atoi(strRayon.c_str());
 		}
-
+		else
+		{
+			m_uiRayon = 45;
+		}
 		FichierDescriptionMine.close();
-		*/
+		
 		//initialisation de la texture.
 		m_pSurface = pGestionnaireSurface->ObtenirDonnee("pSurfaceMine");		
 		m_pTexture = pGestionnaireTexture->ObtenirDonnee("pTextureMine");
@@ -59,8 +62,8 @@ public:
 		m_RectDestination.y = 0;
 		m_RectDestination.x = rand() % (1366 - m_pSurface->w);
 
-		m_RectExplosion.h = 300;
-		m_RectExplosion.w = 260;
+		m_RectExplosion.h = 2 * m_uiRayon + 40;
+		m_RectExplosion.w = 2 * m_uiRayon + 40;
 		m_RectExplosion.x = m_RectDestination.x;
 		m_RectExplosion.y = 0;
 
@@ -82,9 +85,9 @@ public:
 
 
 		m_RectExplosion.x = (m_RectDestination.x + (m_RectDestination.w/2)) - (m_RectExplosion.w/2);
-		m_RectExplosion.y = (m_RectDestination.y + m_RectDestination.h) - (m_RectExplosion.h/2);
+		m_RectExplosion.y = (m_RectDestination.y + m_RectDestination.h) - (m_RectExplosion.h/2) - 20;
 		m_pSpriteExplosion->DefinirActif(true);
-		m_pMapDestruction(45, m_RectDestination.x + m_RectDestination.w / 2, m_RectDestination.y + m_RectDestination.h);
+		m_pMapDestruction(m_uiRayon, m_RectDestination.x + m_RectDestination.w / 2, m_RectDestination.y + m_RectDestination.h);
 		m_boUse = true;
 		
 		
@@ -124,6 +127,10 @@ public:
 	void ModifierUse(bool _boUse) {
 
 		m_boUse = _boUse;
+	}
+
+	unsigned int GetRayon() {
+		return m_uiRayon;
 	}
 
 	SDL_Surface* GetSurface(){

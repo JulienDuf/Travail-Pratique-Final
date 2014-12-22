@@ -123,7 +123,7 @@ public:
 
 		m_pSpriteJetPack->DefinirActif(true);
 		// Barre de carburant vide
-		if (m_pBarreDeCarburant->ObtenirPourcentage() <= 0) {
+		if (m_pBarreDeCarburant->ObtenirVie() <= 0) {
 			m_pSpriteJetPack->DefinirPositionDeBouclage(0, 1);
 			*_boStable = false;
 		}
@@ -233,7 +233,7 @@ public:
 		m_pSpriteJetPack->ModifierAnnimation();
 		m_pSpriteJetPack->Render(_pRenderer, _RectPlayerDestination);
 		if (m_pSpriteJetPack->IsActif())
-			m_pBarreDeCarburant->ShowBarre(_pRenderer, { _RectPlayerDestination.x, _RectPlayerDestination.y + _RectPlayerDestination.h + 2, 40, 6 });
+			m_pBarreDeCarburant->ShowBarre(_pRenderer, { _RectPlayerDestination.x, _RectPlayerDestination.y + _RectPlayerDestination.h + 2});
 	}
 
 	void ShowDescription(SDL_Renderer* _pRenderer) {
@@ -253,7 +253,7 @@ public:
 	}
 
 	unsigned int ObtenirMunition() {
-		return m_pBarreDeCarburant->ObtenirPourcentage() * 100;
+		return m_pBarreDeCarburant->ObtenirVie() * 100;
 	}
 
 	void UpdateDescription(bool _boShow, SDL_Point _PositionDescription) {

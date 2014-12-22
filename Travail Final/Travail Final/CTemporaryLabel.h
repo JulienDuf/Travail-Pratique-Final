@@ -10,8 +10,8 @@ private:
 	SDL_Rect m_RectLabelFin;
 	CTimer* m_pTimer;
 	CTimer* m_pTimerFinDeVie;
-	int m_iNombrePixelParDeplacementX;
-	int m_iNombrePixelParDeplacementY;
+	double m_dNombrePixelParDeplacementX;
+	double m_dNombrePixelParDeplacementY;
 
 public:
 
@@ -34,8 +34,8 @@ public:
 		m_pTimer->Start();
 		m_pTimerFinDeVie->Start();
 
-		m_iNombrePixelParDeplacementX = (m_RectLabelFin.x - m_RectLabelDebut.x) / _iVitesseDeplacement;
-		m_iNombrePixelParDeplacementY = (m_RectLabelFin.y - m_RectLabelDebut.y) / _iVitesseDeplacement;
+		m_dNombrePixelParDeplacementX = (m_RectLabelFin.x - m_RectLabelDebut.x) / _iVitesseDeplacement;
+		m_dNombrePixelParDeplacementY = (m_RectLabelFin.y - m_RectLabelDebut.y) / _iVitesseDeplacement;
 	}
 
 	void ShowControl(SDL_Renderer* _pRenderer) {
@@ -43,8 +43,8 @@ public:
 		if (m_RectLabel.x != m_RectLabelFin.x || m_RectLabel.y != m_RectLabelFin.y) {
 
 			if (m_pTimer->IsDone()) {
-				m_RectLabel.x += m_iNombrePixelParDeplacementX;
-				m_RectLabel.y += m_iNombrePixelParDeplacementY;
+				m_RectLabel.x += m_dNombrePixelParDeplacementX;
+				m_RectLabel.y += m_dNombrePixelParDeplacementY;
 
 				m_pTimer->Start();
 			}

@@ -36,5 +36,7 @@ public:
 
 	virtual bool ExplosionEnCours() = 0;
 
-	virtual unsigned int ObtenirRayonExplosion() = 0;
+	virtual unsigned int ObtenirRayonDommage() = 0;
+
+	virtual float ObtenirDommage(void) = 0;
 };

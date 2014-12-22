@@ -231,7 +231,7 @@ public:
 		m_pBarrePuissance->ReactToEvent(_pEvent);
 
 		// Si le missile n'est pas lancé.
-		if (!m_boMissileLancer) {
+		if (!m_boMissileLancer && !m_boExplosion) {
 
 			// Pour tous les types d'événements...
 			switch (_pEvent->type) {
@@ -264,8 +264,13 @@ public:
 
 	// Procédure modifiant la position et l'activité de la description.
 	// Param1: Si la description est active.
+<<<<<<< HEAD
 	// Param2: La position de la descrition.
 	void UpdateDescription(bool _boShow, SDL_Point _PositionDescription) {
+=======
+	//Param2: La position de la descrition.
+	void UpdateDescription(bool _boShow, SDL_Rect _RectPositionDescription) {
+>>>>>>> origin/Branche-Julien
 
 		m_boShowDescription = _boShow;
 		int uiW, 
@@ -350,7 +355,12 @@ public:
 		return m_uiMunition;
 	}
 
-	unsigned int ObtenirRayonExplosion() {
+	unsigned int ObtenirRayonDommage() {
 		return m_uiRayon;
+	}
+
+	float ObtenirDommage(void) {
+
+		return 0;
 	}
 };

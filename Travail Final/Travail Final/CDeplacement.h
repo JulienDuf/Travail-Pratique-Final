@@ -98,7 +98,6 @@ public:
 			if (_pEvent->type == SDL_KEYDOWN) {
 
 				if (!m_pSpriteSaut->IsActif()) {
-					//m_boSpace = true;
 
 					if (m_pSpriteRepos->IsActif()) {
 						m_pSpriteRepos->DefinirActif(false);
@@ -115,14 +114,11 @@ public:
 					m_pSpriteSaut->DefinirPositionDeBouclage(0, 5);
 					m_pSpriteSaut->DefinirboBoucle(false);
 					m_pSpriteSaut->DefinirActif(true);
-					_pVecteurVitesse->ModifierComposantY(-150);
+					_pVecteurVitesse->ModifierComposantY(-125);
 					*_boStable = false;
 				}
 
 			}
-
-			//else
-				//m_boSpace = false;
 
 			break;
 
@@ -139,11 +135,13 @@ public:
 			m_pSpriteSaut->ModifierAnnimation();
 			m_pSpriteSaut->Render(_pRenderer, _RectPlayerDestination);
 			if (!m_pSpriteSaut->IsActif()) {
+				m_pSpriteSaut->DefinirActif(true);
 				m_pSpriteSaut->DefinirboBoucle(true);
 				m_pSpriteSaut->DefinirPositionDeBouclage(4, 5);
 				
 			}
 		}
+		
 		
 		m_pSpriteRepos->Render(_pRenderer, _RectPlayerDestination);
 		

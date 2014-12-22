@@ -195,7 +195,7 @@ public:
 					if (boExplosion)
 						DommageExplosion(PointExplosion, 45, _pRenderer);
 					// Player en course...
-					else if (pPlayerActif->ObtenirSpriteCourse()->IsActif() || pPlayerActif->ObtenirSpriteSaut()->IsActif() || pPlayerActif->ObtenirSpriteRepos()->IsActif()) {
+					else if (pPlayerActif->ObtenirSpriteCourse()->IsActif() || pPlayerActif->ObtenirSpriteSaut()->IsActif()) {
 
 						dComposanteX += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35.0;
 						dComposanteY += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35.0;
@@ -224,6 +224,27 @@ public:
 
 							}
 							*/
+							/*
+							if (boCorps) {
+
+								
+
+									pPlayerActif->ObtenirVecteurPoids()->ModifierComposantY(pPlayerActif->ObtenirVecteurPoids()->ObtenirComposanteY() + m_pGameMap->ObtenirGravite()->ObtenirComposanteY());
+
+									dComposanteY += pPlayerActif->ObtenirVecteurPoids()->ObtenirComposanteY() / 35;
+
+									pPlayerActif->DefinirPositionY(dComposanteY);
+
+								
+
+							}
+							*/
+							if (pPlayerActif->ObtenirSpriteSaut()->IsActif()) {
+								pPlayerActif->ObtenirSpriteSaut()->DefinirActif(false);
+								pPlayerActif->ObtenirSpriteRepos()->DefinirActif(true);
+								pPlayerActif->ObtenirVecteurVitesse()->ModifierComposantX(0);
+							}
+
 							if (boPied) {
 
 								pPlayerActif->ObtenirVecteurPoids()->ModifierComposantY(0);
@@ -231,12 +252,7 @@ public:
 
 								if (!boCorps) {
 
-									if (pPlayerActif->ObtenirSpriteSaut()->IsActif()) {
-										pPlayerActif->ObtenirSpriteSaut()->DefinirActif(false);
-										pPlayerActif->ObtenirSpriteRepos()->DefinirActif(true);
-										pPlayerActif->ObtenirVecteurVitesse()->ModifierComposantX(0);
-									}
-									/*
+									
 									if (boCorps) {
 
 									if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 0)
@@ -247,15 +263,18 @@ public:
 
 
 									}
-									*/
+									
 									unsigned int uiH = 0;
 
 									while ((((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[RectTmp.x + 1 + _uiXPieds + (RectTmp.y + _uiYPieds - uiH) *m_pGameMap->ObtenirSurfaceMap()->w] != 0) && (uiH <= 2))
 										uiH++;
 
-									if (uiH <= 2)
+									if (uiH <= 2) {
 										dComposanteY -= uiH;
-
+										pPlayerActif->DefinirPositionX(dComposanteX);
+										pPlayerActif->DefinirPositionY(dComposanteY);
+									}
+									/*
 									else {
 
 										if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 0 && (_uiXPieds > RectTmp.w / 2))
@@ -265,16 +284,15 @@ public:
 											dComposanteX += _uiXPieds;
 
 									}
-
-									pPlayerActif->DefinirPositionX(dComposanteX);
-									pPlayerActif->DefinirPositionY(dComposanteY);
+									*/
+									
 
 								}
 
 							}
 
 						}
-
+						/*
 						if (abs(RegressionTest({ RectTmp.x + RectTmp.w / 2, RectTmp.y }, RectTmp.w / 2, 1, true)) >= 60) {
 							//if ((((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(RectTmp.x + RectTmp.w) + ((RectTmp.y + RectTmp.h) * m_pGameMap->ObtenirSurfaceMap()->w)] == 0 && pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 0) || (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(RectTmp.x) + ((RectTmp.y + RectTmp.h)* m_pGameMap->ObtenirSurfaceMap()->w)] == 0 && pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1)) {
 							pPlayerActif->ModifierGlissadeJoueur(true);
@@ -290,9 +308,10 @@ public:
 							}
 
 						}
+						*/
 					}
 					
-
+					
 					else if (pPlayerActif->IsSliding()) {
 						CVecteur2D* VecteurFrottement = new CVecteur2D(0.0f, 0.0f);
 						double doAngle = RegressionTest({ RectTmp.x + RectTmp.w / 2, RectTmp.y }, RectTmp.w / 2, 1, true); // Variable qui sert a calcul juste 1 fois l'angle.
@@ -353,15 +372,9 @@ public:
 							pPlayerActif->ModifierGlissadeJoueur(false);
 							pPlayerActif->ModifierStabiliteJoueur(true);
 						}
-						/*if (!VerifierCollisionJoueurMap(pPlayerActif, RectTmp, &boCorps, &boPied, &_uiXPieds, &_uiYPieds, &_uiXCorps, &_uiYCorps)) {
-							pPlayerActif->ObtenirVecteurPoids()->ModifierComposantY(pPlayerActif->ObtenirVecteurPoids()->ObtenirComposanteY() + m_pGameMap->ObtenirGravite()->ObtenirComposanteY());
-
-							dComposanteY += pPlayerActif->ObtenirVecteurPoids()->ObtenirComposanteY() / 35;
-
-							pPlayerActif->DefinirPositionX(dComposanteX);
-							pPlayerActif->DefinirPositionY(dComposanteY);
-							}*/
+						
 					}
+					
 
 					else if (pPlayerActif->ObtenirJetPack()->ObtenirSprite("")->IsActif()) {
 

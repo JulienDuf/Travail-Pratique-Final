@@ -136,7 +136,7 @@ public:
 					
 				}
 				else {
-					if (!m_boChuteLibre || !m_boGlissade)
+					if (!m_boChuteLibre && !m_boGlissade)
 						m_pListeMouvement->AllerACurseur(2);
 				}
 				m_pListeMouvement->ObtenirElementCurseur()->ReactToEvent(_pSDLEvent, m_pVecteurVitesse, &m_boStable);

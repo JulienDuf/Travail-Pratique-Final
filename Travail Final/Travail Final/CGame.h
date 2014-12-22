@@ -262,21 +262,16 @@ public:
 
 						}
 
-						if (abs(RegressionTest({ RectTmp.x + RectTmp.w / 2, RectTmp.y }, RectTmp.w / 2, 1, true)) >= 60) {
-							//if ((((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(RectTmp.x + RectTmp.w) + ((RectTmp.y + RectTmp.h) * m_pGameMap->ObtenirSurfaceMap()->w)] == 0 && pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 0) || (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(RectTmp.x) + ((RectTmp.y + RectTmp.h)* m_pGameMap->ObtenirSurfaceMap()->w)] == 0 && pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1)) {
-							pPlayerActif->ModifierGlissadeJoueur(true);
-							pPlayerActif->ObtenirSpriteCourse()->DefinirActif(false);
-							pPlayerActif->ObtenirSpriteRepos()->DefinirActif(true);
-							pPlayerActif->DefinirToolActif(false);
-							//}
-							if (abs(RegressionTest({ RectTmp.x + RectTmp.w / 2, RectTmp.y }, RectTmp.w / 2, 2 * RectTmp.h, true)) >= 60) {
+						
+							if (abs(RegressionTest({ _uiXPieds + RectTmp.x, RectTmp.y }, RectTmp.w / 2, 2 * RectTmp.h, true)) >= 60) {
 								pPlayerActif->ModifierGlissadeJoueur(true);
 								pPlayerActif->ObtenirSpriteCourse()->DefinirActif(false);
 								pPlayerActif->ObtenirSpriteRepos()->DefinirActif(true);
 								pPlayerActif->DefinirToolActif(false);
 							}
-
-						}
+						
+					
+						
 					}
 					else if (pPlayerActif->ObtenirSpriteSaut()->IsActif()) {
 
@@ -285,12 +280,14 @@ public:
 					}
 					else if (pPlayerActif->IsSliding()) {
 						CVecteur2D* VecteurFrottement = new CVecteur2D(0.0f, 0.0f);
-						double doAngle = RegressionTest({ RectTmp.x + RectTmp.w / 2, RectTmp.y }, RectTmp.w / 2, 1, true); // Variable qui sert a calcul juste 1 fois l'angle.
+						VerifierCollisionJoueurMap(pPlayerActif, RectTmp, &boCorps, &boPied, &_uiXPieds, &_uiYPieds, &_uiXCorps, &_uiYCorps);
+						
 						//double doAngle = RegressionTest({ RectTmp.x + RectTmp.w / 2, RectTmp.y }, RectTmp.w / 2, 2 * RectTmp.h, true); // Variable qui sert a calcul juste 1 fois l'angle.
-						VecteurFrottement->ModifierVecteur(1, doAngle + 180);
+						
 
 						if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1) { // Si le joueur se déplace vers la droite.
-
+							double doAngle = RegressionTest({ _uiXPieds + RectTmp.x, RectTmp.y }, RectTmp.w / 2, 2 * RectTmp.h, true); // Variable qui sert a calcul juste 1 fois l'angle.
+							VecteurFrottement->ModifierVecteur(1, doAngle + 180);
 							if (doAngle > 0) { // Si le joueur se déplace vers la gauche et que la pente est vers le haut à gauche.
 
 								pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(doAngle);
@@ -317,7 +314,8 @@ public:
 
 						}
 						else { // Si le joueur va vers la droite
-
+							double doAngle = RegressionTest({ _uiXPieds + RectTmp.x, RectTmp.y }, RectTmp.w / 2, 2 * RectTmp.h, true); // Variable qui sert a calcul juste 1 fois l'angle.
+							VecteurFrottement->ModifierVecteur(1, doAngle);
 							if (doAngle > 0) { // Si le joueur se déplace vers la droite et que la pente est vers le bas à droite.
 								pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(doAngle + 180);
 								pPlayerActif->ObtenirVecteurPoids()->ModifierVecteur(m_pGameMap->ObtenirGravite()->ObtenirNorme(), doAngle + 180);
@@ -343,14 +341,7 @@ public:
 							pPlayerActif->ModifierGlissadeJoueur(false);
 							pPlayerActif->ModifierStabiliteJoueur(true);
 						}
-						/*if (!VerifierCollisionJoueurMap(pPlayerActif, RectTmp, &boCorps, &boPied, &_uiXPieds, &_uiYPieds, &_uiXCorps, &_uiYCorps)) {
-							pPlayerActif->ObtenirVecteurPoids()->ModifierComposantY(pPlayerActif->ObtenirVecteurPoids()->ObtenirComposanteY() + m_pGameMap->ObtenirGravite()->ObtenirComposanteY());
-
-							dComposanteY += pPlayerActif->ObtenirVecteurPoids()->ObtenirComposanteY() / 35;
-
-							pPlayerActif->DefinirPositionX(dComposanteX);
-							pPlayerActif->DefinirPositionY(dComposanteY);
-							}*/
+						
 					}
 
 					else if (pPlayerActif->ObtenirJetPack()->ObtenirSprite("")->IsActif()) {

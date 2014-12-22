@@ -329,7 +329,7 @@ public:
 							}
 						}
 
-						if (pPlayerActif->ObtenirVecteurVitesse() == 0 ||RectTmp.x > 1366 || RectTmp.y > 768)  { // Si la glissade est fini. IL RESTE A TUER LE JOUEUR ...... aussi il faut optimiser la glissade ...................
+						if (pPlayerActif->ObtenirVecteurVitesse() == 0 || RectTmp.x > 1366 || RectTmp.y > 768)  { // Si la glissade est fini. IL RESTE A TUER LE JOUEUR ...... aussi il faut optimiser la glissade ...................
 							pPlayerActif->ModifierGlissadeJoueur(false);
 							pPlayerActif->ModifierStabiliteJoueur(true);
 						}
@@ -356,11 +356,11 @@ public:
 							/*
 							if (boCorps) {
 
-								if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 0)
-									dComposanteX -= (RectTmp.w - _uiXCorps);
+							if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 0)
+							dComposanteX -= (RectTmp.w - _uiXCorps);
 
-								if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1)
-									dComposanteX += _uiXCorps;
+							if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1)
+							dComposanteX += _uiXCorps;
 
 
 							}
@@ -454,8 +454,8 @@ public:
 						}
 					}
 				}
+				m_pTimerPhysique->Start();
 			}
-			m_pTimerPhysique->Start();
 		}
 
 		else {

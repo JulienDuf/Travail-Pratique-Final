@@ -194,6 +194,73 @@ public:
 					// Explosion de mine en collision...
 					if (boExplosion)
 						DommageExplosion(PointExplosion, 45, _pRenderer);
+
+					else if (pPlayerActif->IsSliding() && !pPlayerActif->ObtenirSpriteJetPack()->IsActif()) {
+						pPlayerActif->ModifierChuteLibreJoueur(false);
+						CVecteur2D* VecteurFrottement = new CVecteur2D(0.0f, 0.0f);
+						VerifierCollisionJoueurMap(pPlayerActif, RectTmp, &boCorps, &boPied, &_uiXPieds, &_uiYPieds, &_uiXCorps, &_uiYCorps);
+
+						//double doAngle = RegressionTest({ RectTmp.x + RectTmp.w / 2, RectTmp.y }, RectTmp.w / 2, 2 * RectTmp.h, true); // Variable qui sert a calcul juste 1 fois l'angle.
+
+
+						if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1) { // Si le joueur se déplace vers la droite.
+							double doAngle = RegressionTest({ _uiXPieds + RectTmp.x, RectTmp.y }, RectTmp.w / 2, 2 * RectTmp.h, true); // Variable qui sert a calcul juste 1 fois l'angle.
+							VecteurFrottement->ModifierVecteur(1, doAngle + 180);
+							if (doAngle > 0) { // Si le joueur se déplace vers la gauche et que la pente est vers le haut à gauche.
+
+								pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(doAngle);
+								//pPlayerActif->ObtenirVecteurPoids()->ModifierOrientation(doAngle + 180);
+								pPlayerActif->ObtenirVecteurPoids()->ModifierVecteur(m_pGameMap->ObtenirGravite()->ObtenirNorme(), doAngle + 180);
+								*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
+								//VecteurFrottement->ModifierOrientation(doAngle + 180);
+								*pPlayerActif->ObtenirVecteurVitesse() += *VecteurFrottement;
+								pPlayerActif->DefinirPositionY(pPlayerActif->ObtenirPositionY() + (pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35));
+								pPlayerActif->DefinirPositionX(pPlayerActif->ObtenirPositionX() + (pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35));
+
+							}
+
+							if (doAngle < 0) { // Si le joueur se déplace vers la le bas a gauche.
+								pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(doAngle);
+								//pPlayerActif->ObtenirVecteurPoids()->ModifierOrientation(doAngle);
+								pPlayerActif->ObtenirVecteurPoids()->ModifierVecteur(m_pGameMap->ObtenirGravite()->ObtenirNorme(), doAngle);
+								*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
+								//VecteurFrottement->ModifierOrientation(doAngle + 180);
+								*pPlayerActif->ObtenirVecteurVitesse() += *VecteurFrottement;
+								pPlayerActif->DefinirPositionY(pPlayerActif->ObtenirPositionY() - (pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35));
+								pPlayerActif->DefinirPositionX(pPlayerActif->ObtenirPositionX() - (pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35));
+							}
+
+						}
+						else { // Si le joueur va vers la droite
+							double doAngle = RegressionTest({ _uiXPieds + RectTmp.x, RectTmp.y }, RectTmp.w / 2, 2 * RectTmp.h, true); // Variable qui sert a calcul juste 1 fois l'angle.
+							VecteurFrottement->ModifierVecteur(1, doAngle);
+							if (doAngle > 0) { // Si le joueur se déplace vers la droite et que la pente est vers le bas à droite.
+								pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(doAngle + 180);
+								pPlayerActif->ObtenirVecteurPoids()->ModifierVecteur(m_pGameMap->ObtenirGravite()->ObtenirNorme(), doAngle + 180);
+								*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
+								VecteurFrottement->ModifierOrientation(doAngle);
+								*pPlayerActif->ObtenirVecteurVitesse() += *VecteurFrottement;
+								pPlayerActif->DefinirPositionY(pPlayerActif->ObtenirPositionY() - (pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35));
+								pPlayerActif->DefinirPositionX(pPlayerActif->ObtenirPositionX() - (pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35));
+							}
+
+							if (doAngle < 0) { // Si la pente est en haut a droite.
+								pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(doAngle);
+								pPlayerActif->ObtenirVecteurPoids()->ModifierVecteur(m_pGameMap->ObtenirGravite()->ObtenirNorme(), doAngle + 180);
+								*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
+								VecteurFrottement->ModifierOrientation(doAngle + 180);
+								*pPlayerActif->ObtenirVecteurVitesse() += *VecteurFrottement;
+								pPlayerActif->DefinirPositionY(pPlayerActif->ObtenirPositionY() - (pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35));
+								pPlayerActif->DefinirPositionX(pPlayerActif->ObtenirPositionX() - (pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35));
+							}
+						}
+
+						if (pPlayerActif->ObtenirVecteurVitesse() == 0 ||RectTmp.x > 1366 || RectTmp.y > 768)  { // Si la glissade est fini. IL RESTE A TUER LE JOUEUR ...... aussi il faut optimiser la glissade ...................
+							pPlayerActif->ModifierGlissadeJoueur(false);
+							pPlayerActif->ModifierStabiliteJoueur(true);
+						}
+
+					}
 					// Player en course...
 					else if (pPlayerActif->ObtenirSpriteCourse()->IsActif() || pPlayerActif->ObtenirSpriteSaut()->IsActif() || pPlayerActif->ObtenirSpriteRepos()->IsActif()) {
 
@@ -275,84 +342,21 @@ public:
 
 						}
 
-						
+						if (!pPlayerActif->IsSliding() && !pPlayerActif->ObtenirSpriteJetPack()->IsActif()) {
 							if (abs(RegressionTest({ _uiXPieds + RectTmp.x, RectTmp.y }, RectTmp.w / 2, 2 * RectTmp.h, true)) >= 60) {
 								pPlayerActif->ModifierGlissadeJoueur(true);
+								pPlayerActif->ModifierChuteLibreJoueur(false);
 								pPlayerActif->ObtenirSpriteCourse()->DefinirActif(false);
 								pPlayerActif->ObtenirSpriteRepos()->DefinirActif(true);
-								pPlayerActif->DefinirToolActif(false);
 							}
+						}
 						
 					
 						
 					}
 					
 
-					else if (pPlayerActif->IsSliding()) {
-						CVecteur2D* VecteurFrottement = new CVecteur2D(0.0f, 0.0f);
-						VerifierCollisionJoueurMap(pPlayerActif, RectTmp, &boCorps, &boPied, &_uiXPieds, &_uiYPieds, &_uiXCorps, &_uiYCorps);
-						
-						//double doAngle = RegressionTest({ RectTmp.x + RectTmp.w / 2, RectTmp.y }, RectTmp.w / 2, 2 * RectTmp.h, true); // Variable qui sert a calcul juste 1 fois l'angle.
-						
-
-						if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1) { // Si le joueur se déplace vers la droite.
-							double doAngle = RegressionTest({ _uiXPieds + RectTmp.x, RectTmp.y }, RectTmp.w / 2, 2 * RectTmp.h, true); // Variable qui sert a calcul juste 1 fois l'angle.
-							VecteurFrottement->ModifierVecteur(1, doAngle + 180);
-							if (doAngle > 0) { // Si le joueur se déplace vers la gauche et que la pente est vers le haut à gauche.
-
-								pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(doAngle);
-								//pPlayerActif->ObtenirVecteurPoids()->ModifierOrientation(doAngle + 180);
-								pPlayerActif->ObtenirVecteurPoids()->ModifierVecteur(m_pGameMap->ObtenirGravite()->ObtenirNorme(), doAngle + 180);
-								*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
-								//VecteurFrottement->ModifierOrientation(doAngle + 180);
-								*pPlayerActif->ObtenirVecteurVitesse() += *VecteurFrottement;
-								pPlayerActif->DefinirPositionY(pPlayerActif->ObtenirPositionY() + (pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35));
-								pPlayerActif->DefinirPositionX(pPlayerActif->ObtenirPositionX() + (pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35));
-
-							}
-
-							if (doAngle < 0) { // Si le joueur se déplace vers la le bas a gauche.
-								pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(doAngle);
-								//pPlayerActif->ObtenirVecteurPoids()->ModifierOrientation(doAngle);
-								pPlayerActif->ObtenirVecteurPoids()->ModifierVecteur(m_pGameMap->ObtenirGravite()->ObtenirNorme(), doAngle);
-								*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
-								//VecteurFrottement->ModifierOrientation(doAngle + 180);
-								*pPlayerActif->ObtenirVecteurVitesse() += *VecteurFrottement;
-								pPlayerActif->DefinirPositionY(pPlayerActif->ObtenirPositionY() - (pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35));
-								pPlayerActif->DefinirPositionX(pPlayerActif->ObtenirPositionX() - (pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35));
-							}
-
-						}
-						else { // Si le joueur va vers la droite
-							double doAngle = RegressionTest({ _uiXPieds + RectTmp.x, RectTmp.y }, RectTmp.w / 2, 2 * RectTmp.h, true); // Variable qui sert a calcul juste 1 fois l'angle.
-							VecteurFrottement->ModifierVecteur(1, doAngle);
-							if (doAngle > 0) { // Si le joueur se déplace vers la droite et que la pente est vers le bas à droite.
-								pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(doAngle + 180);
-								pPlayerActif->ObtenirVecteurPoids()->ModifierVecteur(m_pGameMap->ObtenirGravite()->ObtenirNorme(), doAngle + 180);
-								*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
-								VecteurFrottement->ModifierOrientation(doAngle);
-								*pPlayerActif->ObtenirVecteurVitesse() += *VecteurFrottement;
-								pPlayerActif->DefinirPositionY(pPlayerActif->ObtenirPositionY() - (pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35));
-								pPlayerActif->DefinirPositionX(pPlayerActif->ObtenirPositionX() - (pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35));
-							}
-
-							if (doAngle < 0) { // Si la pente est en haut a droite.
-								pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(doAngle);
-								pPlayerActif->ObtenirVecteurPoids()->ModifierVecteur(m_pGameMap->ObtenirGravite()->ObtenirNorme(), doAngle + 180);
-								*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
-								VecteurFrottement->ModifierOrientation(doAngle + 180);
-								*pPlayerActif->ObtenirVecteurVitesse() += *VecteurFrottement;
-								pPlayerActif->DefinirPositionY(pPlayerActif->ObtenirPositionY() - (pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35));
-								pPlayerActif->DefinirPositionX(pPlayerActif->ObtenirPositionX() - (pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35));
-							}
-						}
-
-						if (pPlayerActif->ObtenirVecteurVitesse() == 0)  { // Si la glissade est fini.
-							pPlayerActif->ModifierGlissadeJoueur(false);
-							pPlayerActif->ModifierStabiliteJoueur(true);
-						}
-						
-					}
+					
 
 					else if (pPlayerActif->ObtenirJetPack()->ObtenirSprite("")->IsActif()) {
 

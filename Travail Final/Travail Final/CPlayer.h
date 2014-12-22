@@ -129,6 +129,8 @@ public:
 			else
 			{
 				if (_uiObjetSelectionner <= 3) {
+					m_pListeMouvement->AllerATrieur(2);
+					m_pListeMouvement->ObtenirElementTrieur()->ObtenirSprite("Repos")->DefinirActif(false);
 					m_pListeMouvement->AllerACurseur(_uiObjetSelectionner - 2);
 					if (!m_pListeMouvement->ObtenirElementCurseur()->ObtenirSprite("")->IsActif()) 
 						m_pListeMouvement->ObtenirElementCurseur()->ObtenirSprite("")->DefinirEtage(ObtenirSpriteRepos()->ObtenirEtage());

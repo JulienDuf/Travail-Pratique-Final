@@ -363,47 +363,47 @@ public:
 		return m_pBarreVie->ObtenirVie();
 	}
 
-	void UpdateDescription(unsigned int _uiPosition, SDL_Rect _RectPositionSouris) {
+	void UpdateDescription(unsigned int _uiPosition, SDL_Point _PositionSouris) {
 		if (_uiPosition <= 1) {
 			m_pListeTools->AllerATrieur(_uiPosition);
-			m_pListeTools->ObtenirElementTrieur()->UpdateDescription(true, _RectPositionSouris);
+			m_pListeTools->ObtenirElementTrieur()->UpdateDescription(true, _PositionSouris);
 			m_pListeTools->AllerSuivantTrieur();
-			m_pListeTools->ObtenirElementTrieur()->UpdateDescription(false, _RectPositionSouris);
+			m_pListeTools->ObtenirElementTrieur()->UpdateDescription(false, _PositionSouris);
 			m_pListeMouvement->AllerATrieur(0);
-			m_pListeMouvement->ObtenirElementTrieur()->UpdateDescription(false, _RectPositionSouris);
+			m_pListeMouvement->ObtenirElementTrieur()->UpdateDescription(false, _PositionSouris);
 			m_pListeMouvement->AllerSuivantTrieur();
-			m_pListeMouvement->ObtenirElementTrieur()->UpdateDescription(false, _RectPositionSouris);
+			m_pListeMouvement->ObtenirElementTrieur()->UpdateDescription(false, _PositionSouris);
 		}
 		else if (_uiPosition <= 3) {
 			int i = _uiPosition - 2;
 			m_pListeMouvement->AllerATrieur(i);
-			m_pListeMouvement->ObtenirElementTrieur()->UpdateDescription(true, _RectPositionSouris);
+			m_pListeMouvement->ObtenirElementTrieur()->UpdateDescription(true, _PositionSouris);
 
 			if (i == 0)
 				m_pListeMouvement->AllerSuivantTrieur();
 			else
 				m_pListeMouvement->AllerPrecedentTrieur();
 
-			m_pListeMouvement->ObtenirElementTrieur()->UpdateDescription(false, _RectPositionSouris);
+			m_pListeMouvement->ObtenirElementTrieur()->UpdateDescription(false, _PositionSouris);
 			m_pListeTools->AllerATrieur(0);
-			m_pListeTools->ObtenirElementTrieur()->UpdateDescription(false, _RectPositionSouris);
+			m_pListeTools->ObtenirElementTrieur()->UpdateDescription(false, _PositionSouris);
 			m_pListeTools->AllerSuivantTrieur();
-			m_pListeTools->ObtenirElementTrieur()->UpdateDescription(false, _RectPositionSouris);
+			m_pListeTools->ObtenirElementTrieur()->UpdateDescription(false, _PositionSouris);
 			m_pListeTools->AllerSuivantTrieur();
-			m_pListeTools->ObtenirElementTrieur()->UpdateDescription(false, _RectPositionSouris);
+			m_pListeTools->ObtenirElementTrieur()->UpdateDescription(false, _PositionSouris);
 		}
 		else
 		{
 			m_pListeMouvement->AllerATrieur(0);
-			m_pListeMouvement->ObtenirElementTrieur()->UpdateDescription(false, _RectPositionSouris);
+			m_pListeMouvement->ObtenirElementTrieur()->UpdateDescription(false, _PositionSouris);
 			m_pListeMouvement->AllerSuivantTrieur();
-			m_pListeMouvement->ObtenirElementTrieur()->UpdateDescription(false, _RectPositionSouris);
+			m_pListeMouvement->ObtenirElementTrieur()->UpdateDescription(false, _PositionSouris);
 			m_pListeTools->AllerATrieur(0);
-			m_pListeTools->ObtenirElementTrieur()->UpdateDescription(false, _RectPositionSouris);
+			m_pListeTools->ObtenirElementTrieur()->UpdateDescription(false, _PositionSouris);
 			m_pListeTools->AllerSuivantTrieur();
-			m_pListeTools->ObtenirElementTrieur()->UpdateDescription(false, _RectPositionSouris);
+			m_pListeTools->ObtenirElementTrieur()->UpdateDescription(false, _PositionSouris);
 			m_pListeTools->AllerSuivantTrieur();
-			m_pListeTools->ObtenirElementTrieur()->UpdateDescription(false, _RectPositionSouris);
+			m_pListeTools->ObtenirElementTrieur()->UpdateDescription(false, _PositionSouris);
 		}
 	}
 

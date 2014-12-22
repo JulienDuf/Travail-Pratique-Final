@@ -45,8 +45,9 @@ public:
 	void AfficherBarre(SDL_Renderer* _pRenderer, SDL_Rect _RectBarreDestination) {
 
 		if (m_boActive) {
-			m_RectDestinationBarre.x = _RectBarreDestination.x + _RectBarreDestination.w;
+			m_RectDestinationBarre.x = _RectBarreDestination.x;
 			m_RectDestinationBarre.y = _RectBarreDestination.y;
+			m_PointRotation.x = _RectBarreDestination.w;
 			SDL_RenderCopyEx(_pRenderer, m_pSDLTextureBarrre, &m_RectSourceBarre, &m_RectDestinationBarre, m_iAngle, &m_PointRotation, SDL_FLIP_NONE);
 		}
 	}

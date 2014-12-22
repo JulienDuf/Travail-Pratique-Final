@@ -54,11 +54,12 @@ private:
 		SDL_FillRect(pSurfaceBlitin, NULL, SDL_MapRGB(pSurfaceBlitin->format, 255, 255, 255)); // Violation d'acces
 
 		SDL_BlitSurface(pSurfaceBlitSource, NULL, pSurfaceBlitin, &Rect);
-
+		SDL_FreeSurface(pSurfaceBlitSource);
 		for (int i = 1; i < _uiNombreElementTableau; i++) {
 			pSurfaceBlitSource = TTF_RenderText_Blended(pGestionnaireFont->ObtenirDonnee("pFontDescription"), _strTexte[i].c_str(), { 0, 0, 0 });
 			Rect.y = uiH * i;
 			SDL_BlitSurface(pSurfaceBlitSource, NULL, pSurfaceBlitin, &Rect);
+			SDL_FreeSurface(pSurfaceBlitSource);
 		}
 
 		return pSurfaceBlitin;
@@ -198,14 +199,12 @@ public:
 
 				m_RectDestinationBazooka.x = _RectPlayerDestination.x;
 				m_RectDestinationBazooka.y = _RectPlayerDestination.y + (_RectPlayerDestination.h / 2);
-				_RectPlayerDestination.x -= 22;
-				_RectPlayerDestination.y -= 10;
-				m_pBarrePuissance->AfficherBarre(_pRenderer, _RectPlayerDestination);
+				// Positionnement de la barre de puissance avec rotation autour de la tête...
+				m_pBarrePuissance->AfficherBarre(_pRenderer, { _RectPlayerDestination.x + 32, _RectPlayerDestination.y - 2, -12, NULL });
 				m_pSpritePlayer->Render(_pRenderer, _RectPlayerDestination);
 				m_pSpritePlayer->ModifierAnnimation();
 				SDL_RenderCopyEx(_pRenderer, m_pTextureBazooka, NULL, &m_RectDestinationBazooka, m_pBarrePuissance->ObtenirAngle(), NULL, SDL_FLIP_NONE);
 			}
-
 			else {
 				m_pSpriteExplosion->Render(_pRenderer, m_RectDestinationExplosion);
 				m_pSpriteExplosion->ModifierAnnimation();
@@ -265,22 +264,22 @@ public:
 
 	// Procédure modifiant la position et l'activité de la description.
 	// Param1: Si la description est active.
-	//Param2: LA position de la descrition.
-	void UpdateDescription(bool _boShow, SDL_Rect _RectPositionDescription) {
+	// Param2: La position de la descrition.
+	void UpdateDescription(bool _boShow, SDL_Point _PositionDescription) {
 
 		m_boShowDescription = _boShow;
 		int uiW, 
 			uiH;
 		m_pLblDescription->GetTextureDimension(0, &uiW, &uiH);
-		if (_RectPositionDescription.x + uiW >= 1366) 
-			m_pLblDescription->SetRectDestinationX(_RectPositionDescription.x - uiW);
+		if (_PositionDescription.x + uiW >= 1366)
+			m_pLblDescription->SetRectDestinationX(_PositionDescription.x - uiW);
 		else
-			m_pLblDescription->SetRectDestinationX(_RectPositionDescription.x);
+			m_pLblDescription->SetRectDestinationX(_PositionDescription.x);
 
-		if (_RectPositionDescription.y + uiH >= 768) 
-			m_pLblDescription->SetRectDestinationY(_RectPositionDescription.y - uiH);
+		if (_PositionDescription.y + uiH >= 768)
+			m_pLblDescription->SetRectDestinationY(_PositionDescription.y - uiH);
 		else
-			m_pLblDescription->SetRectDestinationY(_RectPositionDescription.y);
+			m_pLblDescription->SetRectDestinationY(_PositionDescription.y);
 	}
 
 	//Procédure permettant de réinitialisation du missile...

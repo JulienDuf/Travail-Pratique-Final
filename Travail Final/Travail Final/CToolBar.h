@@ -2,27 +2,26 @@
 // Classe d'une boîte qui contient plusieurs objets sélectionnables(un à la fois)
 // Créée par Gabriel Beaudry le 18 novembre 2014(gabriel.bdry@gmail.com)
 // 02 décembre 2014, Gabriel Beaudry
-// -Ajout d'une variable m_uiPositionListe pour le double-click.
 
 class CToolBar {
 private:
 
 	SDL_Texture* m_pTextureToolBar; // Texture du fond de la toolbar.
 	CListeDC<SDL_Texture*>* m_pListeObjet; // Liste des textures représentant les objet pour l'affichage.
-	SDL_Rect m_RectToolBarDestination, // Rect de destination de la toolbar.
-		m_RectPositionSouris, // Rect de la position de la souris.
-		m_RectTextureDestination; // Rect de destination de la ToolBar pour chaque texture.
 	CScrollBar *m_pScrollBar; // Barre de défilement permettant de manipuler l'affichage.
 	CTimer *m_pTimerClick; // Timer pour le double click.
 
-	unsigned int m_uiPositionSelection, // Position dans la liste de l'objet en sélection.
+	SDL_Rect m_RectToolBarDestination, // Rect de destination de la toolbar.
+		m_RectTextureDestination; // Rect de destination de la ToolBar pour chaque texture.
+	SDL_Point m_PositionSouris; // Point de la position de la souris.
+
+	unsigned int m_uiPositionSelection, // Position dans la liste de l'objet en sélection.m_pListeDommage
 		m_uiPositionDoubleClick, // Position dans la liste du double-click.
 		m_uiPositionHover, // Position de hovering
 		m_uiPositionAffichage, // Position de l'affichage lors qu'il y a une scrollbar par rapport à la vraie taille de la toolbar et non celle affichée.
 		m_uiMinimumSpace; // Espace minimum entre deux objets
 
 	bool m_boShow; // Booléen qui dit si la toolbar s'affiche.
-	bool m_boClick;
 
 public:
 
@@ -38,12 +37,11 @@ public:
 	// Param8: Textures des objets de la ToolBar.
 	CToolBar(SDL_Rect _RectDestination, SDL_Color _Color, SDL_Renderer* _pRenderer, unsigned int _uiObjectWidth, unsigned int _uiObjectHeight, unsigned int _uiMinimumSpace, unsigned int argc, ...) {
 
-		m_RectPositionSouris = { 0, 0, 0, 0 };
+		m_PositionSouris = { 0, 0 };
 
 		m_pTimerClick = new CTimer(500);
 
 		m_boShow = false;
-		m_boClick = false;
 
 		m_RectToolBarDestination = _RectDestination;
 
@@ -185,8 +183,8 @@ public:
 					else
 					{
 						m_uiPositionHover = uiPositionListe;
-						m_RectPositionSouris.x = _pEvent->motion.x;
-						m_RectPositionSouris.y = _pEvent->motion.y;
+						m_PositionSouris.x = _pEvent->motion.x;
+						m_PositionSouris.y = _pEvent->motion.y;
 						if (_pEvent->type == SDL_MOUSEBUTTONDOWN) {
 							m_uiPositionSelection = uiPositionListe;
 							if (!m_pTimerClick->IsDone()) {
@@ -219,8 +217,8 @@ public:
 		}
 	}
 
-	SDL_Rect ObtenirRectPositionSouris() {
-		return m_RectPositionSouris;
+	SDL_Point ObtenirRectPositionSouris() {
+		return m_PositionSouris;
 	}
 
 	void NouveauTour() {

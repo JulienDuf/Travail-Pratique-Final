@@ -29,11 +29,12 @@ private:
 		SDL_FillRect(pSurfaceBlitin, NULL, SDL_MapRGB(pSurfaceBlitin->format, 255, 255, 255));
 
 		SDL_BlitSurface(pSurfaceBlitSource, NULL, pSurfaceBlitin, &Rect);
-
+		SDL_FreeSurface(pSurfaceBlitSource);
 		for (int i = 1; i < _uiNombreElementTableau; i++) {
 			pSurfaceBlitSource = TTF_RenderText_Blended(pGestionnaireFont->ObtenirDonnee("pFontDescription"), _strTexte[i].c_str(), { 0, 0, 0 });
 			Rect.y = uiH * i;
 			SDL_BlitSurface(pSurfaceBlitSource, NULL, pSurfaceBlitin, &Rect);
+			SDL_FreeSurface(pSurfaceBlitSource);
 		}
 
 		return pSurfaceBlitin;
@@ -137,21 +138,21 @@ public:
 
 	CSprite* ObtenirSprite(string _strNom) { return m_pSprite; }
 
-	void UpdateDescription(bool _boShow, SDL_Rect _RectPositionDescription) {
+	void UpdateDescription(bool _boShow, SDL_Point _PositionDescription) {
 		
 		m_boShowDescription = _boShow;
 		int uiW,
 			uiH;
 		m_pLblDescription->GetTextureDimension(0, &uiW, &uiH);
-		if (_RectPositionDescription.x + uiW >= 1366)
-			m_pLblDescription->SetRectDestinationX(_RectPositionDescription.x - uiW);
+		if (_PositionDescription.x + uiW >= 1366)
+			m_pLblDescription->SetRectDestinationX(_PositionDescription.x - uiW);
 		else
-			m_pLblDescription->SetRectDestinationX(_RectPositionDescription.x);
+			m_pLblDescription->SetRectDestinationX(_PositionDescription.x);
 
-		if (_RectPositionDescription.y + uiH >= 768)
-			m_pLblDescription->SetRectDestinationY(_RectPositionDescription.y - uiH);
+		if (_PositionDescription.y + uiH >= 768)
+			m_pLblDescription->SetRectDestinationY(_PositionDescription.y - uiH);
 		else
-			m_pLblDescription->SetRectDestinationY(_RectPositionDescription.y);
+			m_pLblDescription->SetRectDestinationY(_PositionDescription.y);
 	}
 
 	bool IsActive(void) {

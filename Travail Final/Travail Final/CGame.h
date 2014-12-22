@@ -261,258 +261,259 @@ public:
 
 						}
 
-<<<<<<< HEAD
-						if (abs(RegressionTest({ RectTmp.x + RectTmp.w / 2, RectTmp.y }, RectTmp.w / 2, 1,true)) >= 60) {
+						<< << << < HEAD
+						if (abs(RegressionTest({ RectTmp.x + RectTmp.w / 2, RectTmp.y }, RectTmp.w / 2, 1, true)) >= 60) {
 							//if ((((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(RectTmp.x + RectTmp.w) + ((RectTmp.y + RectTmp.h) * m_pGameMap->ObtenirSurfaceMap()->w)] == 0 && pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 0) || (((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(RectTmp.x) + ((RectTmp.y + RectTmp.h)* m_pGameMap->ObtenirSurfaceMap()->w)] == 0 && pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1)) {
-								pPlayerActif->ModifierGlissadeJoueur(true);
-								pPlayerActif->ObtenirSpriteCourse()->DefinirActif(false);
-								pPlayerActif->ObtenirSpriteRepos()->DefinirActif(true);
-								pPlayerActif->DefinirToolActif(false);
-							//}
-=======
-						if (abs(RegressionTest({ RectTmp.x + RectTmp.w / 2, RectTmp.y }, RectTmp.w / 2, 2*RectTmp.h, true)) >= 60) {
 							pPlayerActif->ModifierGlissadeJoueur(true);
 							pPlayerActif->ObtenirSpriteCourse()->DefinirActif(false);
 							pPlayerActif->ObtenirSpriteRepos()->DefinirActif(true);
 							pPlayerActif->DefinirToolActif(false);
->>>>>>> origin/Branche-Player
+							//}
+							== == == =
+							if (abs(RegressionTest({ RectTmp.x + RectTmp.w / 2, RectTmp.y }, RectTmp.w / 2, 2 * RectTmp.h, true)) >= 60) {
+								pPlayerActif->ModifierGlissadeJoueur(true);
+								pPlayerActif->ObtenirSpriteCourse()->DefinirActif(false);
+								pPlayerActif->ObtenirSpriteRepos()->DefinirActif(true);
+								pPlayerActif->DefinirToolActif(false);
+								>> >> >> > origin / Branche - Player
+
+							}
 
 						}
 
-					}
 
-
-					else if (pPlayerActif->ObtenirSpriteSaut()->IsActif()) {
-
-
-
-					}
-
-
-					else if (pPlayerActif->IsSliding()) {
-						CVecteur2D* VecteurFrottement = new CVecteur2D(0.0f, 0.0f);
-<<<<<<< HEAD
-						double doAngle = RegressionTest({ RectTmp.x + RectTmp.w / 2, RectTmp.y }, RectTmp.w / 2, 1, true); // Variable qui sert a calcul juste 1 fois l'angle.
-=======
-						double doAngle = RegressionTest({ RectTmp.x + RectTmp.w / 2, RectTmp.y }, RectTmp.w / 2, 2 * RectTmp.h, true); // Variable qui sert a calcul juste 1 fois l'angle.
->>>>>>> origin/Branche-Player
-						VecteurFrottement->ModifierVecteur(1, doAngle + 180);
-
-						if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1) { // Si le joueur se déplace vers la droite.
-
-							if (doAngle > 0) { // Si le joueur se déplace vers la gauche et que la pente est vers le haut à gauche.
-
-								pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(doAngle);
-								//pPlayerActif->ObtenirVecteurPoids()->ModifierOrientation(doAngle + 180);
-								pPlayerActif->ObtenirVecteurPoids()->ModifierVecteur(m_pGameMap->ObtenirGravite()->ObtenirNorme(), doAngle + 180);
-								*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
-								//VecteurFrottement->ModifierOrientation(doAngle + 180);
-								*pPlayerActif->ObtenirVecteurVitesse() += *VecteurFrottement;
-								pPlayerActif->DefinirPositionY(pPlayerActif->ObtenirPositionY() + (pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35));
-								pPlayerActif->DefinirPositionX(pPlayerActif->ObtenirPositionX() + (pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35));
-
-							}
-
-							if (doAngle < 0) { // Si le joueur se déplace vers la le bas a gauche.
-								pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(doAngle);
-								//pPlayerActif->ObtenirVecteurPoids()->ModifierOrientation(doAngle);
-								pPlayerActif->ObtenirVecteurPoids()->ModifierVecteur(m_pGameMap->ObtenirGravite()->ObtenirNorme(), doAngle);
-								*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
-								//VecteurFrottement->ModifierOrientation(doAngle + 180);
-								*pPlayerActif->ObtenirVecteurVitesse() += *VecteurFrottement;
-								pPlayerActif->DefinirPositionY(pPlayerActif->ObtenirPositionY() - (pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35));
-								pPlayerActif->DefinirPositionX(pPlayerActif->ObtenirPositionX() - (pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35));
-							}
-
-
+						else if (pPlayerActif->ObtenirSpriteSaut()->IsActif()) {
 
 
 
 						}
-						else { // Si le joueur va vers la droite
 
-							if (doAngle > 0) { // Si le joueur se déplace vers la droite et que la pente est vers le bas à droite.
-								pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(doAngle + 180);
-								pPlayerActif->ObtenirVecteurPoids()->ModifierVecteur(m_pGameMap->ObtenirGravite()->ObtenirNorme(), doAngle + 180);
-								*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
-								VecteurFrottement->ModifierOrientation(doAngle);
-								*pPlayerActif->ObtenirVecteurVitesse() += *VecteurFrottement;
-								pPlayerActif->DefinirPositionY(pPlayerActif->ObtenirPositionY() - (pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35));
-								pPlayerActif->DefinirPositionX(pPlayerActif->ObtenirPositionX() - (pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35));
+
+						else if (pPlayerActif->IsSliding()) {
+							CVecteur2D* VecteurFrottement = new CVecteur2D(0.0f, 0.0f);
+							<< << << < HEAD
+								double doAngle = RegressionTest({ RectTmp.x + RectTmp.w / 2, RectTmp.y }, RectTmp.w / 2, 1, true); // Variable qui sert a calcul juste 1 fois l'angle.
+							== == == =
+								double doAngle = RegressionTest({ RectTmp.x + RectTmp.w / 2, RectTmp.y }, RectTmp.w / 2, 2 * RectTmp.h, true); // Variable qui sert a calcul juste 1 fois l'angle.
+							>> >> >> > origin / Branche - Player
+								VecteurFrottement->ModifierVecteur(1, doAngle + 180);
+
+							if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1) { // Si le joueur se déplace vers la droite.
+
+								if (doAngle > 0) { // Si le joueur se déplace vers la gauche et que la pente est vers le haut à gauche.
+
+									pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(doAngle);
+									//pPlayerActif->ObtenirVecteurPoids()->ModifierOrientation(doAngle + 180);
+									pPlayerActif->ObtenirVecteurPoids()->ModifierVecteur(m_pGameMap->ObtenirGravite()->ObtenirNorme(), doAngle + 180);
+									*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
+									//VecteurFrottement->ModifierOrientation(doAngle + 180);
+									*pPlayerActif->ObtenirVecteurVitesse() += *VecteurFrottement;
+									pPlayerActif->DefinirPositionY(pPlayerActif->ObtenirPositionY() + (pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35));
+									pPlayerActif->DefinirPositionX(pPlayerActif->ObtenirPositionX() + (pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35));
+
+								}
+
+								if (doAngle < 0) { // Si le joueur se déplace vers la le bas a gauche.
+									pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(doAngle);
+									//pPlayerActif->ObtenirVecteurPoids()->ModifierOrientation(doAngle);
+									pPlayerActif->ObtenirVecteurPoids()->ModifierVecteur(m_pGameMap->ObtenirGravite()->ObtenirNorme(), doAngle);
+									*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
+									//VecteurFrottement->ModifierOrientation(doAngle + 180);
+									*pPlayerActif->ObtenirVecteurVitesse() += *VecteurFrottement;
+									pPlayerActif->DefinirPositionY(pPlayerActif->ObtenirPositionY() - (pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35));
+									pPlayerActif->DefinirPositionX(pPlayerActif->ObtenirPositionX() - (pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35));
+								}
+
+
+
+
+
+							}
+							else { // Si le joueur va vers la droite
+
+								if (doAngle > 0) { // Si le joueur se déplace vers la droite et que la pente est vers le bas à droite.
+									pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(doAngle + 180);
+									pPlayerActif->ObtenirVecteurPoids()->ModifierVecteur(m_pGameMap->ObtenirGravite()->ObtenirNorme(), doAngle + 180);
+									*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
+									VecteurFrottement->ModifierOrientation(doAngle);
+									*pPlayerActif->ObtenirVecteurVitesse() += *VecteurFrottement;
+									pPlayerActif->DefinirPositionY(pPlayerActif->ObtenirPositionY() - (pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35));
+									pPlayerActif->DefinirPositionX(pPlayerActif->ObtenirPositionX() - (pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35));
+								}
+
+								if (doAngle < 0) { // Si la pente est en haut a droite.
+									pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(doAngle);
+									pPlayerActif->ObtenirVecteurPoids()->ModifierVecteur(m_pGameMap->ObtenirGravite()->ObtenirNorme(), doAngle + 180);
+									*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
+									VecteurFrottement->ModifierOrientation(doAngle + 180);
+									*pPlayerActif->ObtenirVecteurVitesse() += *VecteurFrottement;
+									pPlayerActif->DefinirPositionY(pPlayerActif->ObtenirPositionY() - (pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35));
+									pPlayerActif->DefinirPositionX(pPlayerActif->ObtenirPositionX() - (pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35));
+								}
 							}
 
-							if (doAngle < 0) { // Si la pente est en haut a droite.
-								pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(doAngle);
-								pPlayerActif->ObtenirVecteurPoids()->ModifierVecteur(m_pGameMap->ObtenirGravite()->ObtenirNorme(), doAngle + 180);
-								*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirVecteurPoids();
-								VecteurFrottement->ModifierOrientation(doAngle + 180);
-								*pPlayerActif->ObtenirVecteurVitesse() += *VecteurFrottement;
-								pPlayerActif->DefinirPositionY(pPlayerActif->ObtenirPositionY() - (pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35));
-								pPlayerActif->DefinirPositionX(pPlayerActif->ObtenirPositionX() - (pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35));
+							if (pPlayerActif->ObtenirVecteurVitesse() == 0)  { // Si la glissade est fini.
+								pPlayerActif->ModifierGlissadeJoueur(false);
+								pPlayerActif->ModifierStabiliteJoueur(true);
 							}
-						}
+							/*if (!VerifierCollisionJoueurMap(pPlayerActif, RectTmp, &boCorps, &boPied, &_uiXPieds, &_uiYPieds, &_uiXCorps, &_uiYCorps)) {
+								pPlayerActif->ObtenirVecteurPoids()->ModifierComposantY(pPlayerActif->ObtenirVecteurPoids()->ObtenirComposanteY() + m_pGameMap->ObtenirGravite()->ObtenirComposanteY());
 
-						if (pPlayerActif->ObtenirVecteurVitesse() == 0)  { // Si la glissade est fini.
-							pPlayerActif->ModifierGlissadeJoueur(false);
-							pPlayerActif->ModifierStabiliteJoueur(true);
-						}
-						/*if (!VerifierCollisionJoueurMap(pPlayerActif, RectTmp, &boCorps, &boPied, &_uiXPieds, &_uiYPieds, &_uiXCorps, &_uiYCorps)) {
-							pPlayerActif->ObtenirVecteurPoids()->ModifierComposantY(pPlayerActif->ObtenirVecteurPoids()->ObtenirComposanteY() + m_pGameMap->ObtenirGravite()->ObtenirComposanteY());
+								dComposanteY += pPlayerActif->ObtenirVecteurPoids()->ObtenirComposanteY() / 35;
 
-							dComposanteY += pPlayerActif->ObtenirVecteurPoids()->ObtenirComposanteY() / 35;
-
-							pPlayerActif->DefinirPositionX(dComposanteX);
-							pPlayerActif->DefinirPositionY(dComposanteY);
-						}*/
-					}
-
-
-
-
-					else if (pPlayerActif->ObtenirJetPack()->ObtenirSprite("")->IsActif()) {
-
-						if (pPlayerActif->ObtenirJetPack()->IsActive()) {
-							if (pPlayerActif->ObtenirJetPack()->ObtenirVecteur()->ObtenirComposanteX() == 0)
-								pPlayerActif->ObtenirVecteurVitesse()->ModifierComposantX(0);
-							*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirJetPack()->ObtenirVecteur();
-							*pPlayerActif->ObtenirVecteurVitesse() += *m_pGameMap->ObtenirGravite();
-							dComposanteX += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35;
-							dComposanteY += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35;
-
-							if (!VerifierCollisionJoueurMap(pPlayerActif, { dComposanteX, dComposanteY }, &boCorps, &boPied, &_uiXPieds, &_uiYPieds, &_uiXCorps, &_uiYPieds)) {
 								pPlayerActif->DefinirPositionX(dComposanteX);
 								pPlayerActif->DefinirPositionY(dComposanteY);
-							}
+								}*/
+						}
 
-							else {
 
-								pPlayerActif->ObtenirJetPack()->ObtenirSprite("")->DefinirActif(false);
-								pPlayerActif->ObtenirSpriteRepos()->DefinirEtage(pPlayerActif->ObtenirJetPack()->ObtenirSprite("")->ObtenirEtage());
-								pPlayerActif->ModifierTypeMouvement(2);
-								pPlayerActif->ObtenirSpriteRepos()->DefinirActif(true);
-								pPlayerActif->ModifierStabiliteJoueur(false);
-								m_boFinTour = true;
-								m_boDebutPartie = true;
-								m_pToolBar->NouveauTour();
+
+
+						else if (pPlayerActif->ObtenirJetPack()->ObtenirSprite("")->IsActif()) {
+
+							if (pPlayerActif->ObtenirJetPack()->IsActive()) {
+								if (pPlayerActif->ObtenirJetPack()->ObtenirVecteur()->ObtenirComposanteX() == 0)
+									pPlayerActif->ObtenirVecteurVitesse()->ModifierComposantX(0);
+								*pPlayerActif->ObtenirVecteurVitesse() += *pPlayerActif->ObtenirJetPack()->ObtenirVecteur();
+								*pPlayerActif->ObtenirVecteurVitesse() += *m_pGameMap->ObtenirGravite();
+								dComposanteX += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35;
+								dComposanteY += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35;
+
+								if (!VerifierCollisionJoueurMap(pPlayerActif, { dComposanteX, dComposanteY }, &boCorps, &boPied, &_uiXPieds, &_uiYPieds, &_uiXCorps, &_uiYPieds)) {
+									pPlayerActif->DefinirPositionX(dComposanteX);
+									pPlayerActif->DefinirPositionY(dComposanteY);
+								}
+
+								else {
+
+									pPlayerActif->ObtenirJetPack()->ObtenirSprite("")->DefinirActif(false);
+									pPlayerActif->ObtenirSpriteRepos()->DefinirEtage(pPlayerActif->ObtenirJetPack()->ObtenirSprite("")->ObtenirEtage());
+									pPlayerActif->ModifierTypeMouvement(2);
+									pPlayerActif->ObtenirSpriteRepos()->DefinirActif(true);
+									pPlayerActif->ModifierStabiliteJoueur(false);
+									m_boFinTour = true;
+									m_boDebutPartie = true;
+									m_pToolBar->NouveauTour();
+								}
 							}
 						}
+
 					}
 
-				}
+					m_pTimerPhysique->Start();
 
-				m_pTimerPhysique->Start();
+				}
 
 			}
 
-		}
+			else {
 
-		else {
+				bool _boCorps;
+				bool _boPieds;
 
-			bool _boCorps;
-			bool _boPieds;
+				unsigned int _uiXPieds;
+				unsigned int _uiYPieds;
+				unsigned int _uiXCorps;
+				unsigned int _uiYCorps;
 
-			unsigned int _uiXPieds;
-			unsigned int _uiYPieds;
-			unsigned int _uiXCorps;
-			unsigned int _uiYCorps;
+				double dPositionX;
+				double dPositionY;
 
-			double dPositionX;
-			double dPositionY;
+				CListeDC<CPlayer*>* pPlayerListTmp;
+				CPlayer* pPlayer;
+				SDL_Rect RectPlayer;
 
-			CListeDC<CPlayer*>* pPlayerListTmp;
-			CPlayer* pPlayer;
-			SDL_Rect RectPlayer;
+				if (m_pTimerPhysique->IsDone()) {
 
-			if (m_pTimerPhysique->IsDone()) {
+					m_pTeamList->AllerATrieur(0);
+					for (int i = 0; i < m_pTeamList->ObtenirCompte(); i++) {
 
-				m_pTeamList->AllerATrieur(0);
-				for (int i = 0; i < m_pTeamList->ObtenirCompte(); i++) {
+						pPlayerListTmp = m_pTeamList->ObtenirElementTrieur()->ObtenirListePlayer();
 
-					pPlayerListTmp = m_pTeamList->ObtenirElementTrieur()->ObtenirListePlayer();
+						pPlayerListTmp->AllerATrieur(0);
+						for (int j = 0; j < pPlayerListTmp->ObtenirCompte(); j++) {
 
-					pPlayerListTmp->AllerATrieur(0);
-					for (int j = 0; j < pPlayerListTmp->ObtenirCompte(); j++) {
+							pPlayer = pPlayerListTmp->ObtenirElementTrieur();
+							dPositionX = pPlayer->ObtenirPositionX();
+							dPositionY = pPlayer->ObtenirPositionY();
 
-						pPlayer = pPlayerListTmp->ObtenirElementTrieur();
-						dPositionX = pPlayer->ObtenirPositionX();
-						dPositionY = pPlayer->ObtenirPositionY();
+							if (pPlayer->ObtenirSpriteRepos()->IsActif() && !pPlayer->IsStable()) {
+								RectPlayer = pPlayer->ObtenirRectDestination();
+								*pPlayer->ObtenirVecteurVitesse() += *m_pGameMap->ObtenirGravite();
 
-						if (pPlayer->ObtenirSpriteRepos()->IsActif() && !pPlayer->IsStable()) {
-							RectPlayer = pPlayer->ObtenirRectDestination();
-							*pPlayer->ObtenirVecteurVitesse() += *m_pGameMap->ObtenirGravite();
+								dPositionX += pPlayer->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35;
+								dPositionY += pPlayer->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35;
 
-							dPositionX += pPlayer->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35;
-							dPositionY += pPlayer->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35;
-
-							if (RectPlayer.y >= 1366) {
-								pPlayerListTmp->RetirerTrieur(true);
-								m_pGameMap->CreateHealthPack();
-							}
-
-							else if (!VerifierCollisionJoueurMap(pPlayer, { dPositionX, dPositionY }, &_boCorps, &_boPieds, &_uiXPieds, &_uiYPieds, &_uiXCorps, &_uiYCorps))
-
-								pPlayer->DefinirPositionY(dPositionY);
-
-							else {
-
-								bool boExplosion;
-								SDL_Point Pointexplosion;
-
-								dPositionY -= (RectPlayer.h - _uiYPieds);
-								pPlayer->DefinirPositionY(dPositionY);
-								pPlayer->ModifierStabiliteJoueur(true);
-
-								DetectionCollisionPack(pPlayer, &boExplosion, &Pointexplosion, _pRenderer);
-
-								if (boExplosion)
-									DommageExplosion(Pointexplosion, 45, _pRenderer);
-
-
-
-								else if (DommageChuteLibre(pPlayer, _pRenderer))
+								if (RectPlayer.y >= 1366) {
 									pPlayerListTmp->RetirerTrieur(true);
+									m_pGameMap->CreateHealthPack();
+								}
+
+								else if (!VerifierCollisionJoueurMap(pPlayer, { dPositionX, dPositionY }, &_boCorps, &_boPieds, &_uiXPieds, &_uiYPieds, &_uiXCorps, &_uiYCorps))
+
+									pPlayer->DefinirPositionY(dPositionY);
+
+								else {
+
+									bool boExplosion;
+									SDL_Point Pointexplosion;
+
+									dPositionY -= (RectPlayer.h - _uiYPieds);
+									pPlayer->DefinirPositionY(dPositionY);
+									pPlayer->ModifierStabiliteJoueur(true);
+
+									DetectionCollisionPack(pPlayer, &boExplosion, &Pointexplosion, _pRenderer);
+
+									if (boExplosion)
+										DommageExplosion(Pointexplosion, 45, _pRenderer);
+
+
+
+									else if (DommageChuteLibre(pPlayer, _pRenderer))
+										pPlayerListTmp->RetirerTrieur(true);
+
+								}
+							}
+
+							else if (pPlayer->ObtenirSpriteParachute()->IsActif()) {
+								RectPlayer = pPlayer->ObtenirRectDestinationParachute();
+								RectPlayer.y += 1;
+
+								if (RectPlayer.y >= 1366) {
+									pPlayerListTmp->RetirerTrieur(true);
+									m_pGameMap->CreateHealthPack();
+								}
+
+								else if (!VerifierCollisionJoueurMap(pPlayer, RectPlayer, &_boCorps, &_boPieds, &_uiXPieds, &_uiYPieds, &_uiXCorps, &_uiYCorps)) {
+
+									pPlayer->ModifierRectDestinationParachute(RectPlayer);
+
+								}
+
+								else {
+
+
+									pPlayer->ObtenirSpriteParachute()->DefinirActif(false);
+									pPlayer->ObtenirSpriteRepos()->DefinirActif(true);
+									RectPlayer.w = pPlayer->ObtenirRectDestination().w;
+									RectPlayer.h = pPlayer->ObtenirRectDestination().h;
+									RectPlayer.y += (pPlayer->ObtenirRectDestinationParachute().h - pPlayer->ObtenirRectDestination().h);
+									pPlayer->DefinirPositionX(RectPlayer.x);
+									pPlayer->DefinirPositionY(RectPlayer.y);
+									if (RectPlayer.x >= (1366 / 2))
+										pPlayer->ObtenirSpriteRepos()->DefinirEtage(1);
+
+								}
+
 
 							}
+							pPlayerListTmp->AllerSuivantTrieur();
 						}
-
-						else if (pPlayer->ObtenirSpriteParachute()->IsActif()) {
-							RectPlayer = pPlayer->ObtenirRectDestinationParachute();
-							RectPlayer.y += 1;
-
-							if (RectPlayer.y >= 1366) {
-								pPlayerListTmp->RetirerTrieur(true);
-								m_pGameMap->CreateHealthPack();
-							}
-
-							else if (!VerifierCollisionJoueurMap(pPlayer, RectPlayer, &_boCorps, &_boPieds, &_uiXPieds, &_uiYPieds, &_uiXCorps, &_uiYCorps)) {
-
-								pPlayer->ModifierRectDestinationParachute(RectPlayer);
-
-							}
-
-							else {
-
-
-								pPlayer->ObtenirSpriteParachute()->DefinirActif(false);
-								pPlayer->ObtenirSpriteRepos()->DefinirActif(true);
-								RectPlayer.w = pPlayer->ObtenirRectDestination().w;
-								RectPlayer.h = pPlayer->ObtenirRectDestination().h;
-								RectPlayer.y += (pPlayer->ObtenirRectDestinationParachute().h - pPlayer->ObtenirRectDestination().h);
-								pPlayer->DefinirPositionX(RectPlayer.x);
-								pPlayer->DefinirPositionY(RectPlayer.y);
-								if (RectPlayer.x >= (1366 / 2))
-									pPlayer->ObtenirSpriteRepos()->DefinirEtage(1);
-
-							}
-
-
-						}
-						pPlayerListTmp->AllerSuivantTrieur();
+						m_pTeamList->AllerSuivantTrieur();
 					}
-					m_pTeamList->AllerSuivantTrieur();
-				}
 
-				m_pTimerPhysique->Start();
+					m_pTimerPhysique->Start();
+				}
 			}
 		}
 	}

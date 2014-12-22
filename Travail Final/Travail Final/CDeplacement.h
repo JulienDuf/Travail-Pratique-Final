@@ -163,7 +163,7 @@ public:
 		}
 	}
 
-	void UpdateDescription(bool _boShow, SDL_Rect _RectPositionDescription) {}
+	void UpdateDescription(bool _boShow, SDL_Point _PositionDescription) {}
 
 	// Accesseurs...
 	CSprite* ObtenirSpriteActif() {

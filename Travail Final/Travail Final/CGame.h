@@ -7,7 +7,7 @@ private:
 
 	CMap* m_pGameMap; //La map.
 	CListeDC<CTeam*>* m_pTeamList; // Liste d'équipe.
-	CListeDC<CTemporaryLabel*>* m_pListeDomage; // Listes des domages.
+	CListeDC<CTemporaryLabel*>* m_pListeDommage; // Listes des domages.
 	CToolBar* m_pToolBar; // La toolbar où le joueur choisi son outils pour son tour.
 	CTimer* m_pTimerPhysique; // Le timer pour la physique.
 
@@ -16,29 +16,45 @@ private:
 
 public:
 
-	CGame(string _strEmplacementMap, int _iNombreÉquipe, int _iNombreJoueur, CVent* _pVent, void _MapDestruction(int _iRayon, int _iX, int _iY), SDL_Surface* _Rotation(SDL_Surface* _pSurfaceRotation, float _fAngle), SDL_Renderer* _pRenderer) {
+	// Constructeur de CGame...
+	// En entrée:
+	// Param1: Chemin de l'emplacement des maps.
+	// Param2: Nombre d'équipe.
+	// Param3: Nombre de joueur.
+	// Param4: Vent de la map.
+	// Param5: Pointeur de fonction sur la destruction de la map.
+	// Param6: Pointeur de fonction sur la rotation.
+	// Param7: Renderer de la fenetre d'affichage de la game.
+	CGame(string _strEmplacementMap, unsigned int _iNombreÉquipe, unsigned int _iNombreJoueur, CVent* _pVent, void _MapDestruction(int _iRayon, int _iX, int _iY), SDL_Surface* _Rotation(SDL_Surface* _pSurfaceRotation, float _fAngle), SDL_Renderer* _pRenderer) {
 
 
 		m_boDebutPartie = true;
 		m_boFinTour = false;
 
 		m_pTeamList = new CListeDC<CTeam*>();
-		m_pListeDomage = new CListeDC<CTemporaryLabel*>();
+		m_pListeDommage = new CListeDC<CTemporaryLabel*>();
 
+		// Initialisation de la map...
 		m_pGameMap = new CMap(_strEmplacementMap, { 0, 0, 0, 0 }, _pVent, _pRenderer, _MapDestruction);
 
 		m_pTimerPhysique = new CTimer(20);
 
+		// Ajout des équipes...
 		for (int i = _iNombreÉquipe; i > 0; i--) {
 
 			m_pTeamList->AjouterFin(new CTeam(_strEmplacementMap, _pRenderer, i, _iNombreJoueur, _MapDestruction, _Rotation));
 		}
 		m_pTeamList->AllerDebut();
 
+		// Initialisation de la toolbar...
 		m_pToolBar = new CToolBar({ 0, 600, 1366, 168 }, { 0, 0, 0 }, _pRenderer, 265, 120, 60, 4, pGestionnaireTexture->ObtenirDonnee("BazookaTool"), pGestionnaireTexture->ObtenirDonnee("GrenadaTool"), pGestionnaireTexture->ObtenirDonnee("SwordTool"), pGestionnaireTexture->ObtenirDonnee("JetPackTool"));
+		// Début du Chrono de la physique
 		m_pTimerPhysique->Start();
 	}
 
+	// Procédure permettant de changer de tour...
+	// En entrée:
+	// Param1: Renderer d'affichage pour le nouveau vent.
 	void ChangerTour(SDL_Renderer* _pRenderer) {
 		m_pTeamList->AllerSuivantCurseur();
 		m_pTeamList->ObtenirElementCurseur()->ChangerPlayerActif();
@@ -51,14 +67,16 @@ public:
 		m_pTeamList->AllerSuivantCurseur();
 	}
 
-	CTeam* ObtenirTeamActive() {
-		return m_pTeamList->ObtenirElementCurseur();
-	}
-
+	// Procédure permettant d'afficher la game...
+	// En entrée:
+	// Param1: Renderer d'affichage.
+	// Param2: Si la game est en pause.
 	void AfficherGame(SDL_Renderer* _pRenderer, bool _boPause) {
 
+		// Si c'est le début de la partie ou qu'un tour vient de se terminer...
 		if (m_boDebutPartie && m_boFinTour) {
 			m_boDebutPartie = !IsAllTeamStable();
+			// Si tout le monde est stable, un nouveau tour sera fait...
 			if (!m_boDebutPartie) {
 				ChangerTour(_pRenderer);
 				m_boFinTour = false;
@@ -68,49 +86,56 @@ public:
 		else if (m_boDebutPartie)
 			m_boDebutPartie = !IsAllTeamStable();
 
+		// Affichage de la map...
 		m_pGameMap->ShowMap(_pRenderer);
 
+		// Si le jeu n'est pas en pause, on fait la physique...
 		if (!_boPause) {
 			PhysiquePlayer(_pRenderer);
 			PhysiquePack(_pRenderer);
 		}
 
+		// Affichage des players de toutes les teams...
 		for (int i = 0; i < m_pTeamList->ObtenirCompte(); i++) {
 			m_pTeamList->ObtenirElementCurseur()->ShowTeam(_pRenderer);
 			m_pTeamList->AllerSuivantCurseur();
 		}
 
+		// Si le jeu n'est pas en pause, affichage de la toolbar et des descriptions...
 		if (!_boPause) {
 			m_pToolBar->ShowToolBar(_pRenderer);
 			m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ShowDescription(_pRenderer);
 		}
 
-		m_pListeDomage->AllerDebut();
-		for (int i = 0; i < m_pListeDomage->ObtenirCompte(); i++) {
+		// Affichage des dommages infligés aux joueurs...
+		m_pListeDommage->AllerDebut();
+		for (int i = 0; i < m_pListeDommage->ObtenirCompte(); i++) {
 
-			m_pListeDomage->ObtenirElementCurseur()->ShowControl(_pRenderer);
-			if (m_pListeDomage->ObtenirElementCurseur()->IsDead())
-				m_pListeDomage->Retirer(true);
+			m_pListeDommage->ObtenirElementCurseur()->ShowControl(_pRenderer);
+			if (m_pListeDommage->ObtenirElementCurseur()->IsDead())
+				m_pListeDommage->Retirer(true);
 			else
-				m_pListeDomage->AllerSuivantCurseur();
+				m_pListeDommage->AllerSuivantCurseur();
 
 		}
 	}
 
 	void ReactToEvent(SDL_Event* _pEvent) {
 		
+		// Événement par rapport à la game...
 		switch (_pEvent->type) {
 
 		case SDL_KEYDOWN:
 
-			if (_pEvent->key.keysym.scancode == SDL_SCANCODE_T && !m_boDebutPartie && m_pToolBar->ObtenirPositionObjetDoubleClick() > 3)
+			if (_pEvent->key.keysym.scancode == SDL_SCANCODE_T && !m_boDebutPartie  && !m_boFinTour && m_pToolBar->ObtenirPositionObjetDoubleClick() > 3)
 				m_pToolBar->ReverseboShow();
 
 			break;
 		}
-
+		
 		m_pToolBar->ReactToEvent(_pEvent, m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif());
 
+		// Initialisation d'un entier correspondant à l'arme doubleclickée...
 		unsigned int uiMunition = m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirMunition(m_pToolBar->ObtenirPositionObjetDoubleClick());
 		switch (m_pToolBar->ObtenirPositionObjetDoubleClick()) {
 		case 0:
@@ -132,8 +157,8 @@ public:
 			}
 			break;
 		}
-
-		m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ReactToEvent(_pEvent, m_pToolBar->ObtenirPositionObjetDoubleClick());
+		if (uiMunition > 0)
+			m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ReactToEvent(_pEvent, m_pToolBar->ObtenirPositionObjetDoubleClick());
 
 		m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->UpdateDescription(m_pToolBar->ObtenirPositionObjetSuvol(), m_pToolBar->ObtenirRectPositionSouris());
 	}
@@ -386,7 +411,7 @@ public:
 					pPlayerListTmp->AllerATrieur(0);
 					for (int j = 0; j < pPlayerListTmp->ObtenirCompte(); j++) {
 
-						pPlayer = pPlayerListTmp->ObtenirElementTrieur(); // Quand je débogais, il y a eu une violation d'accès l'objet au curseur était à ??????? (deleted)
+						pPlayer = pPlayerListTmp->ObtenirElementTrieur();
 						dPositionX = pPlayer->ObtenirPositionX();
 						dPositionY = pPlayer->ObtenirPositionY();
 
@@ -626,14 +651,6 @@ public:
 						if (pVecteurVitesse->ObtenirComposanteY() < 0)
 							RectTmp->y++;
 
-						// Vérification de la collision avec les joueurs...
-						if (CollisionGrenadeJoueur(pProjectileTmp->ObtenirSurface(), *pProjectileTmp->ObtenirRectDestination(), &iX, &iY)) {
-
-							// Modification du vecteur et de la rotation de la grenade...
-							pVecteurVitesse->ModifierVecteur(m_pGameMap->ObtenirGravite()->ObtenirComposanteY(), 90);
-							pProjectileTmp->DefinirRotation(0);
-						}
-
 						// Vérification de la collision avec la map...
 						if (CollisionObjetMap(pProjectileTmp->ObtenirSurface(), *RectTmp, nullptr, nullptr)) {
 							// Retour à la position d'avant...
@@ -712,7 +729,7 @@ public:
 	// Param3: Limite de l'évaluation de la pente en y. (Mettre 2 * le hauteur du Rect).
 	// Param4: Direction de l'objet(True = vers le bas(chute libre habituellement) et False = vers le haut).
 	// Retour: l'angle de la pent(Une pent montante donne un angle négatif).
-	double RegressionTest(SDL_Point _StartPoint, unsigned int _uiLimitX, unsigned int _uiLimiteY, bool boDirrection) {
+	double RegressionTest(SDL_Point _StartPoint, unsigned int _uiLimitX, unsigned int _uiLimiteY, bool boDirection) {
 		_uiLimiteY += _StartPoint.y - 1; // Limite en y...
 		unsigned short int usiGauche = 1; // Déplacement vers la gauche...
 		unsigned short int usiDroit = 1; // Déplacement vers la droite...
@@ -725,7 +742,7 @@ public:
 		SDL_Surface* pSurfaceMap = m_pGameMap->ObtenirSurfaceMap(); // Surface de la map
 
 		// Position de la map par rapport à l'objet.
-		if (boDirrection) {
+		if (boDirection) {
 
 			// Tant que la différence entre la nouvelle pente et l'ancienne <= tol et que j'e n'ai pas atteint la limite...
 			while ((abs(dPente - dNouvellePente) <= abs(dPente) / 2 || !boPremierePenteDiffZero) && usiGauche <= _uiLimitX) {
@@ -798,9 +815,6 @@ public:
 
 		return (180 / M_PI) * atanf(dPente);
 	}
-
-	
-	
 
 	// Procédure déterminant la position d'une collision entre un objet et la map, si il y en a une, à partir du point au milieu, bas de l'objet.
 	// En entrée:
@@ -1007,7 +1021,7 @@ public:
 									// Crée un label avec le dommage infligé au joueur.
 									strDommage.append("-");
 									strDommage.append(SDL_itoa(pPlayerListTmp->ObtenirElementTrieur()->GetHealth() * 100, chrTmp, 10));
-									m_pListeDomage->AjouterFin(new CTemporaryLabel(strDommage, { 200, 0, 0, 255 }, { RectPlayer.x, RectPlayer.y - 20, 0, 0 }, { RectPlayer.x, RectPlayer.y - 80, 0, 0 }, 30, 2000, _pRenderer));
+									m_pListeDommage->AjouterFin(new CTemporaryLabel(strDommage, { 200, 0, 0, 255 }, { RectPlayer.x, RectPlayer.y - 20, 0, 0 }, { RectPlayer.x, RectPlayer.y - 80, 0, 0 }, 30, 2000, _pRenderer));
 									
 									// Retire le joueur de la partie.
 									pPlayerListTmp->RetirerTrieur(true);
@@ -1073,71 +1087,6 @@ public:
 
 		
 		
-	}
-
-	// Fonction permettant de vérifier les collisions entre la grenade et les joueurs...
-	// En entrée:
-	// Param1: Surface de la grenade.
-	// Param2: Rect de destination de la grenade.
-	// Param3 & 4: Position de la collision dans la surface de la grenade initialisée par la fonciton.
-	// Retourne true s'il y a eu une collision.
-	bool CollisionGrenadeJoueur(SDL_Surface* _pSurfaceGrenade, SDL_Rect _RectDestinationGrenade, int* iX, int* iY) {
-
-		SDL_Rect RectPlayer; // Rect du player, position et dimension.
-		SDL_Surface* pSurfacePlayer; // Surface du player.
-		SDL_Point PointCollisionPixelGrenade; // Point du pixel en possible collision dans la grenade.
-		SDL_Point PointCollisionPixelJoueur; // Point du pixel en possible collision dans la grenade.
-
-		// Boucle des teams
-		for (int i = 0; i < m_pTeamList->ObtenirCompte(); i++) {
-
-			m_pTeamList->AllerATrieur(i);
-
-			// Boucle des players
-			for (int j = 0; j < m_pTeamList->ObtenirElementTrieur()->ObtenirListePlayer()->ObtenirCompte(); j++) {
-
-				m_pTeamList->ObtenirElementTrieur()->ObtenirListePlayer()->AllerATrieur(j);
-
-				// Initialisation des rects du joueur et de sa surface...
-				RectPlayer = m_pTeamList->ObtenirElementTrieur()->ObtenirListePlayer()->ObtenirElementTrieur()->ObtenirRectDestination();
-				pSurfacePlayer = m_pTeamList->ObtenirElementTrieur()->ObtenirListePlayer()->ObtenirElementTrieur()->ObtenirSpriteRepos()->ObtenirSurface();
-
-				// Voir Si les deux rects sont en contact...
-				if ((_RectDestinationGrenade.x >= RectPlayer.x && _RectDestinationGrenade.x <= RectPlayer.x + RectPlayer.w) && (_RectDestinationGrenade.y >= RectPlayer.y && _RectDestinationGrenade.y <= RectPlayer.y + RectPlayer.h) || (RectPlayer.x >= _RectDestinationGrenade.x && RectPlayer.x <= _RectDestinationGrenade.x + _RectDestinationGrenade.w) && (RectPlayer.y >= _RectDestinationGrenade.y && RectPlayer.y <= _RectDestinationGrenade.y + _RectDestinationGrenade.h)) {
-					
-					// Tous les y
-					for (int y = 0; y < _RectDestinationGrenade.h; y++) {
-						// Tous les x
-						for (int x = 0; x < _RectDestinationGrenade.w; x++) {
-							// Vérifier transparence...
-							if (((unsigned int*)_pSurfaceGrenade->pixels)[y * _pSurfaceGrenade->w + x] != 0 && ((unsigned int*)_pSurfaceGrenade->pixels)[y * _pSurfaceGrenade->w + x] != TRANSPARENCE32BIT) {
-
-								// Position de la pixel dans la map
-								PointCollisionPixelGrenade = { _RectDestinationGrenade.x + x, _RectDestinationGrenade.y + y };
-								
-								// Si la pixel est dans le rect du joueur...
-								if ((PointCollisionPixelGrenade.x >= RectPlayer.x && PointCollisionPixelGrenade.x < RectPlayer.x + RectPlayer.w) && (PointCollisionPixelGrenade.y >= RectPlayer.y && PointCollisionPixelGrenade.y < RectPlayer.y + RectPlayer.h)) {
-									
-									// Position de la pixel dans le rect du joueur
-									PointCollisionPixelJoueur = { PointCollisionPixelGrenade.x - RectPlayer.x, PointCollisionPixelGrenade.y - RectPlayer.y };
-									
-									// Vérifier Transparence
-									if (((unsigned int*)pSurfacePlayer->pixels)[(PointCollisionPixelJoueur.y)* pSurfacePlayer->w + PointCollisionPixelJoueur.x] != 0 && ((unsigned int*)pSurfacePlayer->pixels)[(PointCollisionPixelJoueur.y)* pSurfacePlayer->w + PointCollisionPixelJoueur.x] != TRANSPARENCE32BIT) {
-									
-										// Initialisation de la position de la collision...
-										*iX = PointCollisionPixelGrenade.x;
-										*iY = PointCollisionPixelGrenade.y;
-										return true;
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-
-		return false;
 	}
 
 	// Fonction qui retourne la position d'une collision.
@@ -1442,7 +1391,7 @@ public:
 								}
 
 								// Créé un label indiquant un dommage (ou un gain de santé).
-								m_pListeDomage->AjouterFin(new CTemporaryLabel(strDommage, { 200, 0, 0, 255 }, { RectPlayer.x, RectPlayer.y - 20, 0, 0 }, { RectPlayer.x, RectPlayer.y - 80, 0, 0 }, 30, 2000, _pRenderer));
+								m_pListeDommage->AjouterFin(new CTemporaryLabel(strDommage, { 200, 0, 0, 255 }, { RectPlayer.x, RectPlayer.y - 20, 0, 0 }, { RectPlayer.x, RectPlayer.y - 80, 0, 0 }, 30, 2000, _pRenderer));
 
 								// Si c'est une mine...
 								if (pPackTmp->Use(_pPlayer)) {
@@ -1500,7 +1449,7 @@ public:
 
 					strDomage.append("-");
 					strDomage.append(SDL_itoa(iDomage, chrTmp, 10));
-					m_pListeDomage->AjouterFin(new CTemporaryLabel(strDomage, { 200, 0, 0, 255 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 20, 0, 0 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 80, 0, 0 }, 30, 2000, _pRenderer));
+					m_pListeDommage->AjouterFin(new CTemporaryLabel(strDomage, { 200, 0, 0, 255 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 20, 0, 0 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 80, 0, 0 }, 30, 2000, _pRenderer));
 
 					pPlayerTmp->SetHealth(pPlayerTmp->GetHealth() * fPourcentage);
 					pPlayerTmp->ModifierStabiliteJoueur(false);
@@ -1515,7 +1464,7 @@ public:
 
 					strDomage.append("-");
 					strDomage.append(SDL_itoa(iDomage, chrTmp, 10));
-					m_pListeDomage->AjouterFin(new CTemporaryLabel(strDomage, { 200, 0, 0, 255 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 20, 0, 0 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 80, 0, 0 }, 30, 2000, _pRenderer));
+					m_pListeDommage->AjouterFin(new CTemporaryLabel(strDomage, { 200, 0, 0, 255 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 20, 0, 0 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 80, 0, 0 }, 30, 2000, _pRenderer));
 					
 					pPlayerTmp->SetHealth(pPlayerTmp->GetHealth() * fPourcentage);
 					pPlayerTmp->ModifierStabiliteJoueur(false);
@@ -1538,7 +1487,7 @@ public:
 
 					strDomage.append("-");
 					strDomage.append(SDL_itoa(iDomage, chrTmp, 10));
-					m_pListeDomage->AjouterFin(new CTemporaryLabel(strDomage, { 200, 0, 0, 255 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 20, 0, 0 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 80, 0, 0 }, 30, 2000, _pRenderer));
+					m_pListeDommage->AjouterFin(new CTemporaryLabel(strDomage, { 200, 0, 0, 255 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 20, 0, 0 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 80, 0, 0 }, 30, 2000, _pRenderer));
 					
 					pPlayerTmp->SetHealth(pPlayerTmp->GetHealth() * fPourcentage);
 					pPlayerTmp->ModifierStabiliteJoueur(false);
@@ -1554,7 +1503,7 @@ public:
 
 					strDomage.append("-");
 					strDomage.append(SDL_itoa(iDomage, chrTmp, 10));
-					m_pListeDomage->AjouterFin(new CTemporaryLabel(strDomage, { 200, 0, 0, 255 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 20, 0, 0 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 80, 0, 0 }, 30, 2000, _pRenderer));
+					m_pListeDommage->AjouterFin(new CTemporaryLabel(strDomage, { 200, 0, 0, 255 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 20, 0, 0 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 80, 0, 0 }, 30, 2000, _pRenderer));
 					
 					pPlayerTmp->SetHealth(pPlayerTmp->GetHealth() * fPourcentage);
 					pPlayerTmp->ModifierStabiliteJoueur(false);
@@ -1569,7 +1518,7 @@ public:
 
 					strDomage.append("-");
 					strDomage.append(SDL_itoa(iDomage, chrTmp, 10));
-					m_pListeDomage->AjouterFin(new CTemporaryLabel(strDomage, { 200, 0, 0, 255 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 20, 0, 0 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 80, 0, 0 }, 30, 2000, _pRenderer));
+					m_pListeDommage->AjouterFin(new CTemporaryLabel(strDomage, { 200, 0, 0, 255 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 20, 0, 0 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 80, 0, 0 }, 30, 2000, _pRenderer));
 					
 					pPlayerTmp->SetHealth(pPlayerTmp->GetHealth() * fPourcentage);
 					pPlayerTmp->ModifierStabiliteJoueur(false);
@@ -1668,14 +1617,14 @@ public:
 			if (_pPlayer->GetHealth() > dPerteVie) {
 				strDommage.append(SDL_itoa(dPerteVie * 100, chrTmp, 10));
 				_pPlayer->SetHealth(_pPlayer->GetHealth() - dPerteVie);
-				m_pListeDomage->AjouterFin(new CTemporaryLabel(strDommage, { 200, 0, 0, 255 }, { _pPlayer->ObtenirPositionX(), _pPlayer->ObtenirPositionY() - 20, 0, 0 }, { _pPlayer->ObtenirPositionX(), _pPlayer->ObtenirPositionY() - 80, 0, 0 }, 30, 2000, _pRenderer));
+				m_pListeDommage->AjouterFin(new CTemporaryLabel(strDommage, { 200, 0, 0, 255 }, { _pPlayer->ObtenirPositionX(), _pPlayer->ObtenirPositionY() - 20, 0, 0 }, { _pPlayer->ObtenirPositionX(), _pPlayer->ObtenirPositionY() - 80, 0, 0 }, 30, 2000, _pRenderer));
 			}
 
 			// Si le dommage tu le joueur...
 			else {
 				strDommage.append(SDL_itoa(_pPlayer->GetHealth() * 100, chrTmp, 10));
 				_pPlayer->SetHealth(0);
-				m_pListeDomage->AjouterFin(new CTemporaryLabel(strDommage, { 200, 0, 0, 255 }, { _pPlayer->ObtenirPositionX(), _pPlayer->ObtenirPositionY() - 20, 0, 0 }, { _pPlayer->ObtenirPositionX(), _pPlayer->ObtenirPositionY() - 80, 0, 0 }, 30, 2000, _pRenderer));
+				m_pListeDommage->AjouterFin(new CTemporaryLabel(strDommage, { 200, 0, 0, 255 }, { _pPlayer->ObtenirPositionX(), _pPlayer->ObtenirPositionY() - 20, 0, 0 }, { _pPlayer->ObtenirPositionX(), _pPlayer->ObtenirPositionY() - 80, 0, 0 }, 30, 2000, _pRenderer));
 				return true;
 			}
 		}
@@ -1685,6 +1634,10 @@ public:
 
 	CMap* ObtenirMap(void) {
 		return m_pGameMap;
+	}
+
+	CTeam* ObtenirTeamActive() {
+		return m_pTeamList->ObtenirElementCurseur();
 	}
 
 	CListeDC<CTeam*>* ObtenirListePlayer(void) {

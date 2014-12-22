@@ -29,6 +29,7 @@ private:
 
 	unsigned int m_uiForce, // Force du lancement de la grenade
 		m_uiMunition,
+		m_uiMunitionPrecedente, // Munition precedente, afin de ne pas refaire la texture du label de description à chaque affichage.
 		m_uiRayon; // Rayon d'explosion de la grenade.
 
 	CBarrePuissance *m_pBarrePuissance;
@@ -71,11 +72,12 @@ private:
 		SDL_FillRect(pSurfaceBlitin, NULL, SDL_MapRGB(pSurfaceBlitin->format, 255, 255, 255));
 
 		SDL_BlitSurface(pSurfaceBlitSource, NULL, pSurfaceBlitin, &Rect);
-
+		SDL_FreeSurface(pSurfaceBlitSource);
 		for (int i = 1; i < _uiNombreElementTableau; i++) {
 			pSurfaceBlitSource = TTF_RenderText_Blended(pGestionnaireFont->ObtenirDonnee("pFontDescription"), _strTexte[i].c_str(), { 0, 0, 0 });
 			Rect.y = uiH * i;
 			SDL_BlitSurface(pSurfaceBlitSource, NULL, pSurfaceBlitin, &Rect);
+			SDL_FreeSurface(pSurfaceBlitSource);
 		}
 
 		return pSurfaceBlitin;
@@ -155,6 +157,7 @@ public:
 			}
 			// Initialisation des stats...
 			m_uiMunition = SDL_atoi(strMunition.c_str());
+			m_uiMunitionPrecedente = m_uiMunition;
 			m_uiRayon = SDL_atoi(strRayon.c_str());
 			m_pTimerExplosion = new CTimer(SDL_atoi(strDelai.c_str()) * 1000);
 		}
@@ -237,30 +240,41 @@ public:
 		}
 	}
 
+	// Procédure qui permet d'afficher la description de l'arme...
 	void ShowDescription(SDL_Renderer* _pRenderer) {
+		// Si l'affichage est à true(souris sur l'arme)...
 		if (m_boShowDescription) {
-			MiseajourMunition(_pRenderer);
+			// Réinitialisation de la texture de la description s'il y a eu un changement dans le nombre de munitions...
+			if (m_uiMunitionPrecedente != m_uiMunition) {
+				MiseajourMunition(_pRenderer);
+				m_uiMunitionPrecedente--;
+			}
 			m_pLblDescription->ShowControl(_pRenderer);
 		}
 	}
 	
+	// Procédure des événements liés à la grenade...
 	void ReactToEvent(SDL_Event* _pEvent) {
-	
-		m_pBarrePuissance->ReactToEvent(_pEvent);
+		
 
+		// Si la grenade n'est pas lancée...
 		if (!m_boGrenadeLancer) {
-
+			// événements barre de puissance...
+			m_pBarrePuissance->ReactToEvent(_pEvent);
 			switch (_pEvent->type) {
 
-			case SDL_KEYDOWN:
+			case SDL_KEYDOWN: // Touche enfoncée...
 
+				// Barre d'espace...
 				if (_pEvent->key.keysym.scancode == SDL_SCANCODE_SPACE) {
 
+					// Initialisation de la grenade pour le lancement...
 					m_iAngle = m_pBarrePuissance->ObtenirAngle();
 					m_uiForce = (m_pBarrePuissance->ObtenirForce() + 3) * 40;
 					m_boGrenadeLancer = true;
 					m_uiMunition--;
 					m_pVecteurVitesseGrenade = new CVecteur2D((float)m_uiForce, (float)m_iAngle);
+					// Signe de la vitesse angulaire...
 					if (m_iAngle <= 90 || m_iAngle >= 270)
 						m_iVitesseRotationAngulaire = m_uiForce;
 					else
@@ -274,6 +288,27 @@ public:
 				break;
 			}
 		}
+	}
+
+	// Procédure permettant de mettre à jour l'affichage de la description...
+	// En entrée:
+	// Param1: _boShow->true: la description affiche
+	// Param2: Nouvelle position de la description, ne tient compte que ne x et y
+	void UpdateDescription(bool _boShow, SDL_Point _PositionDescription) {
+
+		m_boShowDescription = _boShow;
+		int uiW,
+			uiH;
+		m_pLblDescription->GetTextureDimension(0, &uiW, &uiH);
+		if (_PositionDescription.x + uiW >= 1366)
+			m_pLblDescription->SetRectDestinationX(_PositionDescription.x - uiW);
+		else
+			m_pLblDescription->SetRectDestinationX(_PositionDescription.x);
+
+		if (_PositionDescription.y + uiH >= 768)
+			m_pLblDescription->SetRectDestinationY(_PositionDescription.y - uiH);
+		else
+			m_pLblDescription->SetRectDestinationY(_PositionDescription.y);
 	}
 
 	// Positif = vers la gauche...
@@ -290,23 +325,6 @@ public:
 	unsigned int ObtenirMunition() {
 
 		return m_uiMunition; 
-	}
-
-	void UpdateDescription(bool _boShow, SDL_Rect _RectPositionDescription) {
-
-		m_boShowDescription = _boShow;
-		int uiW,
-			uiH;
-		m_pLblDescription->GetTextureDimension(0, &uiW, &uiH);
-		if (_RectPositionDescription.x + uiW >= 1366)
-			m_pLblDescription->SetRectDestinationX(_RectPositionDescription.x - uiW);
-		else
-			m_pLblDescription->SetRectDestinationX(_RectPositionDescription.x);
-
-		if (_RectPositionDescription.y + uiH >= 768)
-			m_pLblDescription->SetRectDestinationY(_RectPositionDescription.y - uiH);
-		else
-			m_pLblDescription->SetRectDestinationY(_RectPositionDescription.y);
 	}
 
 	void ReinitialisationProjectile(void) {

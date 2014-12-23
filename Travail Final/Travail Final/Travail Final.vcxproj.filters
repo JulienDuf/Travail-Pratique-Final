@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CArbreAVL.h" />
+    <ClInclude Include="CBarrePuissance.h" />
+    <ClInclude Include="CBarreVie.h" />
+    <ClInclude Include="CButton.h" />
+    <ClInclude Include="CControl.h" />
+    <ClInclude Include="CGame.h" />
+    <ClInclude Include="CGestionaire.h" />
+    <ClInclude Include="CGrenade.h" />
+    <ClInclude Include="CHealthPack.h" />
+    <ClInclude Include="CLabel.h" />
+    <ClInclude Include="CLabelLeftRight.h" />
+    <ClInclude Include="CListeDC.h" />
+    <ClInclude Include="CMap.h" />
+    <ClInclude Include="CMelee.h" />
+    <ClInclude Include="CMenu.h" />
+    <ClInclude Include="CMine.h" />
+    <ClInclude Include="CMissile.h" />
+    <ClInclude Include="CNoeudArbreAVL.h" />
+    <ClInclude Include="CPack.h" />
+    <ClInclude Include="CPlayer.h" />
+    <ClInclude Include="CScrollBar.h" />
+    <ClInclude Include="CSprite.h" />
+    <ClInclude Include="CTeam.h" />
+    <ClInclude Include="CTimer.h" />
+    <ClInclude Include="CToolBar.h" />
+    <ClInclude Include="CVent.h" />
+    <ClInclude Include="CWindow.h" />
+    <ClInclude Include="CVecteur2D.h" />
+    <ClInclude Include="CJetPack.h" />
+    <ClInclude Include="CDeplacement.h" />
+    <ClInclude Include="CMouvement.h" />
+    <ClInclude Include="CProjectile.h" />
+    <ClInclude Include="CTemporaryLabel.h" />
+  </ItemGroup>
+</Project>

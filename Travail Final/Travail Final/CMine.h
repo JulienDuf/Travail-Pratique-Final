@@ -109,7 +109,6 @@ public:
 		}
 		else{
 			SDL_RenderCopyEx(_Renderer, m_pTexture, NULL, &m_RectDestination, m_dAnglemine, &m_PointRotation, SDL_FLIP_NONE);
-			SDL_RenderDrawRect(_Renderer, &m_RectDestination);
 		}
 	}
 

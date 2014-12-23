@@ -166,11 +166,15 @@ public:
 				case SDL_SCANCODE_SPACE:
  					m_pBarreDeCarburant->ModifierPourcentageVie(m_pBarreDeCarburant->ObtenirVie() - 0.002);
 					
+					if (m_pBarreDeCarburant->ObtenirVie() <= 0) {
+						m_pVecteur = 0;
+					}
+
 					if (!m_boSpace) {
 						if (m_boDecoller)
 							m_pVecteur->ModifierComposantY(-m_iVerticalThrust);
 						else {
-							m_pVecteur->ModifierComposantY(-100);
+							m_pVecteur->ModifierComposantY(-170);
 							m_boDecoller = true;
 						}
 					}
@@ -221,6 +225,10 @@ public:
 			// Si la barre d'espace est enfoncée... On fait comme dans le KEYDOWN...
 			if (m_boSpace) {
 				m_pBarreDeCarburant->ModifierPourcentageVie(m_pBarreDeCarburant->ObtenirVie() - 0.002);
+
+				if (m_pBarreDeCarburant->ObtenirVie() <= 0) {
+					m_pVecteur = 0;
+				}
 
 					if (m_boDecoller)
 						m_pVecteur->ModifierComposantY(-m_iVerticalThrust);

@@ -424,6 +424,19 @@ public:
 								m_boFinTour = true;
 								m_boDebutPartie = true;
 								m_pToolBar->NouveauTour();
+								pPlayerActif->DefinirPositionY(pPlayerActif->ObtenirPositionY() - 5);
+							}
+
+							if (pPlayerActif->ObtenirJetPack()->ObtenirMunition() <= 0) {
+								pPlayerActif->ObtenirJetPack()->ObtenirSprite("")->DefinirActif(false);
+								pPlayerActif->ObtenirSpriteRepos()->DefinirEtage(pPlayerActif->ObtenirJetPack()->ObtenirSprite("")->ObtenirEtage());
+								pPlayerActif->ModifierTypeMouvement(1);
+								pPlayerActif->ObtenirSpriteRepos()->DefinirActif(true);
+								pPlayerActif->ModifierStabiliteJoueur(false);
+								m_boFinTour = true;
+								m_boDebutPartie = true;
+								m_pToolBar->NouveauTour();
+
 							}
 						}
 					}
@@ -1263,11 +1276,8 @@ public:
 			TmpSDLRectPlayerSource = _pPlayer->ObtenirSpriteJetPack()->ObtenirRectSource();
 
 			TmpSDLRectPlayerHitboxPieds = _pPlayer->ObtenirHitboxPieds();
-
-			if (_pPlayer->ObtenirSpriteJetPack()->ObtenirEtage() == 0)					// Si le jueur est orienté vers la droite...
-				TmpSDLRectPlayerHitboxCorps = _pPlayer->ObtenirHitboxCorpsDroite();		// On se sert du rectangle pour le corps de droite. 
-			else																		// Sinon...
-				TmpSDLRectPlayerHitboxCorps = _pPlayer->ObtenirHitboxCorpsGauche();		// On se sert du rectangle pour le corps de gauche.	
+																					
+			TmpSDLRectPlayerHitboxCorps = { 0, 0, 40, 50 };
 
 		}
 

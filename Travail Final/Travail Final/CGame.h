@@ -188,6 +188,9 @@ public:
 		m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->UpdateDescription(m_pToolBar->ObtenirPositionObjetSuvol(), m_pToolBar->ObtenirRectPositionSouris());
 	}
 
+	// Procédure qui gère la physique du joueur actif...
+	// Paramètre : _pRenderer, Rendeur de la fenêtre de jeu.
+	// Ne retourne rien.
 	void PhysiquePlayer(SDL_Renderer* _pRenderer) {
 
 		if (!m_boDebutPartie) {
@@ -214,26 +217,56 @@ public:
 				else if (!pPlayerActif->IsStable()) {
 
 					// Détection de collision avec pack...
-					DetectionCollisionPack(pPlayerActif, &boExplosion, &PointExplosion, _pRenderer);
+					DetectionCollisionPack(pPlayerActif, &boExplosion, &PointExplosion, _pRenderer);		// On vérifie si il y a une collision entre le joueur et un pack.
 
 					// Explosion de mine en collision...
-					if (boExplosion) {
+					if (boExplosion) {									// Si il y a eu une explosion...
 						m_pTeamList->ObtenirElementCurseur()->ObtenirListePlayer()->Retirer(true);
 						m_pTeamList->ObtenirElementCurseur()->ObtenirListePlayer()->AllerPrecedentCurseur();
 						m_pGameMap->CreateHealthPack();
 						DommageExplosion(PointExplosion, m_pGameMap->ObtenirPackList()->ObtenirElementCurseur()->GetRayon(), _pRenderer);
 					}
 
-					// Player en course...
+					else if (pPlayerActif->IsFreeFalling()) {		// Si le personnage est en chute libre...
 
-					else if (pPlayerActif->ObtenirSpriteCourse()->IsActif() || pPlayerActif->ObtenirSpriteSaut()->IsActif()) {
+						if (VerifierCollisionJoueurMap(pPlayerActif, RectTmp, &boCorps, &boPied, &_uiXPieds, &_uiYPieds, &_uiXCorps, &_uiYCorps)) {			// Si il y a une collision entre le sol et le joueur...
+
+							pPlayerActif->ModifierChuteLibreJoueur(false);				// Le joueur n'est plus en chute libre.
+
+							pPlayerActif->ObtenirVecteurVitesse()->ModifierComposantY(pPlayerActif->ObtenirVecteurPoids()->ObtenirComposanteY());	
+							if (DommageChuteLibre(pPlayerActif, _pRenderer)) {
+								m_pTeamList->ObtenirElementCurseur()->ObtenirListePlayer()->Retirer(true);							// On ajoute du dommage au joueur si il va assez vite.
+								m_pTeamList->ObtenirElementCurseur()->ObtenirListePlayer()->AllerPrecedentCurseur();				//
+								m_pGameMap->CreateHealthPack();
+							}
+							pPlayerActif->ObtenirVecteurVitesse()->ModifierComposantY(0);
 
 
+						}
+
+						else {				// Si il n'y a pas de collision...
+
+							// Le joueur descend à une plus grande vitesse.
+							pPlayerActif->ObtenirVecteurPoids()->ModifierComposantY(pPlayerActif->ObtenirVecteurPoids()->ObtenirComposanteY() + m_pGameMap->ObtenirGravite()->ObtenirComposanteY());
+
+							dComposanteY += pPlayerActif->ObtenirVecteurPoids()->ObtenirComposanteY() / 35;
+							pPlayerActif->DefinirPositionY(dComposanteY);
+
+						}
+
+					}
+
+					
+
+					else if (pPlayerActif->ObtenirSpriteCourse()->IsActif() || pPlayerActif->ObtenirSpriteSaut()->IsActif() || pPlayerActif->ObtenirSpriteRepos()->IsActif()) {		// Si le personnage est en course, en saut ou en repos...
+
+						// On le fait bouger selon son vecteur de déplacement vecteur vitesse...
 						dComposanteX += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteX() / 35.0;
 						dComposanteY += pPlayerActif->ObtenirVecteurVitesse()->ObtenirComposanteY() / 35.0;
 
-						if (!VerifierCollisionJoueurMap(pPlayerActif, RectTmp, &boCorps, &boPied, &_uiXPieds, &_uiYPieds, &_uiXCorps, &_uiYCorps)) {
+						if (!VerifierCollisionJoueurMap(pPlayerActif, RectTmp, &boCorps, &boPied, &_uiXPieds, &_uiYPieds, &_uiXCorps, &_uiYCorps)) {			// Si il n'y a pas de collision...
 
+							// On fait bouger le joueur selon sa vitesse et la gravité
 							pPlayerActif->ObtenirVecteurPoids()->ModifierComposantY(pPlayerActif->ObtenirVecteurPoids()->ObtenirComposanteY() + m_pGameMap->ObtenirGravite()->ObtenirComposanteY());
 
 							dComposanteY += pPlayerActif->ObtenirVecteurPoids()->ObtenirComposanteY() / 35;
@@ -241,23 +274,74 @@ public:
 							pPlayerActif->DefinirPositionX(dComposanteX);
 							pPlayerActif->DefinirPositionY(dComposanteY);
 
+
+							// On vérifie si la distance est assez grande entre le joueur et le sol pour qu'il tombe en chute libre.
+							int iH = 0;
+
+							if (pPlayerActif->ObtenirSpriteCourse()->IsActif()) {
+								if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 0) {
+									if (dComposanteX >= 0 && dComposanteX < 1366 && dComposanteY + RectTmp.h + iH >= 0 && dComposanteY + iH < 768)
+										while ((((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(int)dComposanteX + ((int)dComposanteY + RectTmp.h + iH) * m_pGameMap->ObtenirSurfaceMap()->w] == 0) && iH < 50)
+											iH++;
+								}
+								else {
+									if (dComposanteX + RectTmp.w >= 0 && dComposanteX + RectTmp.w < 1366 && dComposanteY + RectTmp.h + iH >= 0 && dComposanteY + iH < 768)
+										while ((((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(int)dComposanteX + RectTmp.w + ((int)dComposanteY + RectTmp.h + iH) * m_pGameMap->ObtenirSurfaceMap()->w] == 0) && iH < 50)
+											iH++;
+								}
+							}
+
+							else if (pPlayerActif->ObtenirSpriteRepos()->IsActif()) {
+								if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 0) {
+									if (dComposanteX + 10 >= 0 && dComposanteX + 10 < 1366 && dComposanteY + RectTmp.h + iH >= 0 && dComposanteY + iH < 768)
+										while ((((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(int)dComposanteX + 10 + ((int)dComposanteY + RectTmp.h + iH) * m_pGameMap->ObtenirSurfaceMap()->w] == 0) && iH < 50)
+											iH++;
+								}
+								else {
+									if (dComposanteX + 30 >= 0 && dComposanteX + 30 < 1366 && dComposanteY + RectTmp.h + iH >= 0 && dComposanteY + iH < 768)
+										while ((((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[(int)dComposanteX + 30 + ((int)dComposanteY + RectTmp.h + iH) * m_pGameMap->ObtenirSurfaceMap()->w] == 0) && iH < 50)
+											iH++;
+								}
+							}
+
+							// Si la distance entre le joueur et le sol est assez grande on le fait tomber en chute libre.
+							if (iH == 50) {
+								pPlayerActif->ModifierChuteLibreJoueur(true);
+								pPlayerActif->ObtenirSpriteRepos()->DefinirActif(true);
+								pPlayerActif->ObtenirSpriteCourse()->DefinirActif(false);
+							}
+
+
 						}
 
-						else {
+						else {			// Sinon, si il y a une collision...
 
-							if (pPlayerActif->ObtenirSpriteSaut()->IsActif())
-								pPlayerActif->ObtenirVecteurVitesse()->ModifierComposantX(0);
+							if (pPlayerActif->ObtenirSpriteRepos()->IsActif())
+								pPlayerActif->ModifierStabiliteJoueur(true);		// Si le joueur est au repos et il touche la map, il devient stable.
+
+							if (pPlayerActif->ObtenirSpriteSaut()->IsActif()) {
+								pPlayerActif->ObtenirVecteurVitesse()->ModifierComposantX(0);		// Si le personnage est en saut, il ne bouge plus en x mais il peut bouger en y.
+								//pPlayerActif->ObtenirVecteurVitesse()->ModifierComposantY(pPlayerActif->ObtenirVecteurPoids()->ObtenirComposanteY());
+								//if (DommageChuteLibre(pPlayerActif, _pRenderer)) {
+									//m_pTeamList->ObtenirElementCurseur()->ObtenirListePlayer()->Retirer(true);
+									//m_pTeamList->ObtenirElementCurseur()->ObtenirListePlayer()->AllerPrecedentCurseur();
+									//m_pGameMap->CreateHealthPack();
+								//}
+								//pPlayerActif->ObtenirVecteurVitesse()->ModifierComposantY(0);
+							}
 
 
-							if (boCorps) {
+							if (boCorps) {			// Si il y a une collision avec le corps...
 
-								if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 0)
-									dComposanteX -= (RectTmp.w - _uiXCorps);
+								if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 0)	// On rajuste sa position selon la collision.
+									dComposanteX -= (RectTmp.w - _uiXCorps);					//
+								else
+									dComposanteX += _uiXCorps;
 
-								if (!boPied) {
+								if (!boPied) {			// Si il n'y a pas de collision avec le pieds...
 
 
-
+									// On continue à faire descendre le joueur selon la gravité.
 									pPlayerActif->ObtenirVecteurPoids()->ModifierComposantY(pPlayerActif->ObtenirVecteurPoids()->ObtenirComposanteY() + m_pGameMap->ObtenirGravite()->ObtenirComposanteY());
 
 									dComposanteY += pPlayerActif->ObtenirVecteurPoids()->ObtenirComposanteY() / 35;
@@ -269,38 +353,35 @@ public:
 								}
 							}
 
-							if (boPied) {
+							if (boPied) {		// Si il y a une collision avec le pieds...
 
-								pPlayerActif->ObtenirVecteurPoids()->ModifierComposantY(0);
+								pPlayerActif->ObtenirVecteurPoids()->ModifierComposantY(0);		// Le joueur ne vas plus descendre.
 
-								if (pPlayerActif->ObtenirSpriteSaut()->IsActif()) {
-									pPlayerActif->ObtenirVecteurVitesse()->ModifierComposantY(0);
+								if (pPlayerActif->ObtenirSpriteSaut()->IsActif()) {			// Si le sprite saut est actif...
+									pPlayerActif->ObtenirVecteurVitesse()->ModifierComposantY(0);		// On va le remettre au sprite repos et annuler sa vitesse.
 									pPlayerActif->ObtenirSpriteSaut()->DefinirActif(false);
 									pPlayerActif->ObtenirSpriteRepos()->DefinirActif(true);
 								}
 
-								if (pPlayerActif->ObtenirSpriteSaut()->IsActif()) {
+								if (!boCorps) {			// Si il n'y a pas de collision avec le corps...
 
 
-								}
-
-								if (!boCorps) {
-
+									// On vérifie si la pente est trop grande pour monter.
 									unsigned int uiH = 0;
 
 									while ((((unsigned int*)m_pGameMap->ObtenirSurfaceMap()->pixels)[RectTmp.x + 1 + _uiXPieds + (RectTmp.y + _uiYPieds - uiH) *m_pGameMap->ObtenirSurfaceMap()->w] != 0) && (uiH <= 2))
 										uiH++;
 
-									if (uiH <= 2) {
+									if (uiH <= 2) {			// Si elle est assez petite...
 										dComposanteY -= uiH;
-										pPlayerActif->DefinirPositionX(dComposanteX);
+										pPlayerActif->DefinirPositionX(dComposanteX);		// On fait monter le joueur.
 										pPlayerActif->DefinirPositionY(dComposanteY);
 									}
 
-									else {
+									else {		// Si la pente est trop grande...
 
-										if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 0 && (_uiXPieds > RectTmp.w / 2))
-											dComposanteX -= (RectTmp.w - _uiXPieds);
+										if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 0 && (_uiXPieds > RectTmp.w / 2))	// On rajuste selon la collision pour qu'il ne monte pas.
+											dComposanteX -= (RectTmp.w - _uiXPieds);													//
 
 										if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1 && (_uiXPieds < RectTmp.w / 2))
 											dComposanteX += _uiXPieds;
@@ -313,30 +394,31 @@ public:
 								}
 
 							}
-							
+							/*
 							if (!pPlayerActif->IsSliding() && !pPlayerActif->ObtenirSpriteJetPack()->IsActif()) {
-								if (abs(RegressionTest({ _uiXPieds + RectTmp.x, RectTmp.y }, RectTmp.w / 2, 2 * RectTmp.h, true)) >= 60) {
+								if (abs(Regression({ _uiXPieds + RectTmp.x, RectTmp.y }, RectTmp.w / 2, 2 * RectTmp.h, true)) >= 60) {
 									pPlayerActif->ModifierGlissadeJoueur(true);
 									pPlayerActif->ModifierChuteLibreJoueur(false);
 									pPlayerActif->ObtenirSpriteCourse()->DefinirActif(false);
 									pPlayerActif->ObtenirSpriteRepos()->DefinirActif(true);
 								}
 							}
-							
+							*/
 						}
 
 					}
 
-					else if (pPlayerActif->IsSliding() && !pPlayerActif->ObtenirSpriteJetPack()->IsActif()) {
+					// Les glissades n'ont pas été finies à temps pour la remise, malheureusement... :(  Ummm... C'est pas moi! Umm.... C'est Xavier! :|    -Nico
+					else if (pPlayerActif->IsSliding() && !pPlayerActif->ObtenirSpriteJetPack()->IsActif()) {		// Si le joueur glisse...
 						pPlayerActif->ModifierChuteLibreJoueur(false);
 						CVecteur2D* VecteurFrottement = new CVecteur2D(0.0f, 0.0f);
 						VerifierCollisionJoueurMap(pPlayerActif, RectTmp, &boCorps, &boPied, &_uiXPieds, &_uiYPieds, &_uiXCorps, &_uiYCorps);
 
-						//double doAngle = RegressionTest({ RectTmp.x + RectTmp.w / 2, RectTmp.y }, RectTmp.w / 2, 2 * RectTmp.h, true); // Variable qui sert a calcul juste 1 fois l'angle.
+						//double doAngle = Regression({ RectTmp.x + RectTmp.w / 2, RectTmp.y }, RectTmp.w / 2, 2 * RectTmp.h, true); // Variable qui sert a calcul juste 1 fois l'angle.
 
 
 						if (pPlayerActif->ObtenirSpriteCourse()->ObtenirEtage() == 1) { // Si le joueur se déplace vers la droite.
-							double doAngle = RegressionTest({ _uiXPieds + RectTmp.x, RectTmp.y }, RectTmp.w / 2, 2 * RectTmp.h, true); // Variable qui sert a calcul juste 1 fois l'angle.
+							double doAngle = Regression({ _uiXPieds + RectTmp.x, RectTmp.y }, RectTmp.w / 2, 2 * RectTmp.h, true); // Variable qui sert a calcul juste 1 fois l'angle.
 							VecteurFrottement->ModifierVecteur(1, doAngle + 180);
 							if (doAngle > 0) { // Si le joueur se déplace vers la gauche et que la pente est vers le haut à gauche.
 
@@ -364,7 +446,7 @@ public:
 
 						}
 						else { // Si le joueur va vers la droite
-							double doAngle = RegressionTest({ _uiXPieds + RectTmp.x, RectTmp.y }, RectTmp.w / 2, 2 * RectTmp.h, true); // Variable qui sert a calcul juste 1 fois l'angle.
+							double doAngle = Regression({ _uiXPieds + RectTmp.x, RectTmp.y }, RectTmp.w / 2, 2 * RectTmp.h, true); // Variable qui sert a calcul juste 1 fois l'angle.
 							VecteurFrottement->ModifierVecteur(1, doAngle);
 							if (doAngle > 0) { // Si le joueur se déplace vers la droite et que la pente est vers le bas à droite.
 								pPlayerActif->ObtenirVecteurVitesse()->ModifierOrientation(doAngle + 180);
@@ -399,8 +481,8 @@ public:
 
 					}
 					
-
-					else if (pPlayerActif->ObtenirJetPack()->ObtenirSprite("")->IsActif()) {
+					
+					else if (pPlayerActif->ObtenirJetPack()->ObtenirSprite("")->IsActif()) {		// Si le joueur est en JetPack...
 
 						if (pPlayerActif->ObtenirJetPack()->IsActive()) {
 							if (pPlayerActif->ObtenirJetPack()->ObtenirVecteur()->ObtenirComposanteX() == 0)
@@ -492,36 +574,37 @@ public:
 
 							pPlayer->DefinirPositionY(dPositionY);
 
-							else {
+						else {
 
-								bool boExplosion;
-								SDL_Point Pointexplosion;
+							bool boExplosion;
+							SDL_Point Pointexplosion;
 
-								dPositionY -= (RectPlayer.h - _uiYPieds);
-								pPlayer->DefinirPositionY(dPositionY);
-								pPlayer->ModifierStabiliteJoueur(true);
+							dPositionY -= (RectPlayer.h - _uiYPieds);
+							pPlayer->DefinirPositionY(dPositionY);
+							pPlayer->ModifierStabiliteJoueur(true);
+							pPlayer->ObtenirVecteurVitesse()->ModifierComposantY(0);
 
-								DetectionCollisionPack(pPlayer, &boExplosion, &Pointexplosion, _pRenderer);
+							DetectionCollisionPack(pPlayer, &boExplosion, &Pointexplosion, _pRenderer);
 
-								if (boExplosion) {
-									pPlayerListTmp->RetirerTrieur(true);
-									DommageExplosion(Pointexplosion, 45, _pRenderer);
-									m_pGameMap->CreateHealthPack();
-									m_boFinTour = true;
-									m_boDebutPartie = true;
-								}
-
-								if (boExplosion)
-									DommageExplosion(Pointexplosion, m_pGameMap->ObtenirPackList()->ObtenirElementCurseur()->GetRayon(), _pRenderer);
-
-
-
-								else if (DommageChuteLibre(pPlayer, _pRenderer)) {
-									pPlayerListTmp->RetirerTrieur(true);
-									m_pGameMap->CreateHealthPack();
-								}
-
+							if (boExplosion) {
+								pPlayerListTmp->RetirerTrieur(true);
+								DommageExplosion(Pointexplosion, 45, _pRenderer);
+								m_pGameMap->CreateHealthPack();
+								m_boFinTour = true;
+								m_boDebutPartie = true;
 							}
+
+							if (boExplosion)
+								DommageExplosion(Pointexplosion, m_pGameMap->ObtenirPackList()->ObtenirElementCurseur()->GetRayon(), _pRenderer);
+
+
+
+							else if (DommageChuteLibre(pPlayer, _pRenderer)) {
+								pPlayerListTmp->RetirerTrieur(true);
+								m_pGameMap->CreateHealthPack();
+							}
+
+						}
 						}
 
 						else if (pPlayer->ObtenirSpriteParachute()->IsActif()) {
@@ -591,12 +674,43 @@ public:
 					RectTmp.y = iY;
 					
 					// Obtention de l'angle de la pente...
+<<<<<<< HEAD
 					double dAngle = RegressionTest({ iX, RectTmp.y }, RectTmp.w / 2, 2*RectTmp.h, true);
 
 					// Modification de l'angle de la mine...
 					pPackListTmp->ObtenirElementCurseur()->ModifierAnlge(dAngle);
 					pPackListTmp->ObtenirElementCurseur()->ModifierStabilePack(true);
 					
+=======
+					double dAngle = Regression({ iX, RectTmp.y }, RectTmp.w / 2, 2*RectTmp.h, true);
+					// Si l'angle est plus grand que 70, il y aura glissade...
+					if (abs(dAngle) >= 70) {
+						// GLISSADEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE à faire..........
+						/*CVecteur2D* VecteurVitessePack = new CVecteur2D(0.0f,0.0f);
+						CVecteur2D* VecteurFrottement = new CVecteur2D(0.0f,0.0f);*/
+						if (dAngle < 0) {
+							/*VecteurFrottement->ModifierVecteur(1, dAngle + 180);
+							VecteurVitessePack->ModifierVecteur(m_pGameMap->ObtenirGravite()->ObtenirNorme(), dAngle);
+							pPackListTmp->ObtenirElementCurseur()->ModifierStabilePack(false);
+							*VecteurVitessePack += *VecteurFrottement;
+
+							RectTmp.x -= VecteurVitessePack->ObtenirComposanteX();
+							RectTmp.y -= VecteurVitessePack->ObtenirComposanteY();*/
+							RectTmp.x -= 50;
+						}
+						else
+						{
+							RectTmp.x += 50;
+						}
+						
+					}
+					// Sinon, modification de l'angle du pack selon la pente et stabilisation de celui-ci...
+					else
+					{
+						pPackListTmp->ObtenirElementCurseur()->ModifierAnlge(dAngle);
+						pPackListTmp->ObtenirElementCurseur()->ModifierStabilePack(true);
+					}
+>>>>>>> 18f1ba177055ad43f71db31fb7c35764d516aad2
 					// Modification de sa position...
 					pPackListTmp->ObtenirElementCurseur()->ModifierPosition(RectTmp);
 				}
@@ -752,11 +866,11 @@ public:
 
 							// Évaluation de la pente(dessus ou dessous)...
 							if (pVecteurVitesse->ObtenirComposanteY() >= 0 || iY >= RectTmp->h) {
-								fangle = RegressionTest({ RectTmp->x + iX, RectTmp->y }, RectTmp->w / 2, 2 * RectTmp->h, true);
+								fangle = Regression({ RectTmp->x + iX, RectTmp->y }, RectTmp->w / 2, 2 * RectTmp->h, true);
 							}
 							else
 							{
-								fangle = RegressionTest({ RectTmp->x + iX, RectTmp->y + RectTmp->h }, RectTmp->w / 2, -2 * RectTmp->h, false);
+								fangle = Regression({ RectTmp->x + iX, RectTmp->y + RectTmp->h }, RectTmp->w / 2, -2 * RectTmp->h, false);
 							}
 
 							// Modification du vecteur par rapport au rebond si il est assez puissant pour rebondir soit jusqu'à 35...
@@ -817,7 +931,7 @@ public:
 		}
 	}
 
-	// RegressionTest bas
+	// Regression bas
 	// En entrée:
 	// Param1: Position de départ de l'évalutation de la pente.
 	// Préférences: Partir le x au point de collision et le y en haut du point, habituellement le y du rect.
@@ -825,7 +939,7 @@ public:
 	// Param3: Limite de l'évaluation de la pente en y. (Mettre 2 * le hauteur du Rect).
 	// Param4: Direction de l'objet(True = vers le bas(chute libre habituellement) et False = vers le haut).
 	// Retour: l'angle de la pent(Une pent montante donne un angle négatif).
-	double RegressionTest(SDL_Point _StartPoint, unsigned int _uiLimitX, unsigned int _uiLimiteY, bool boDirection) {
+	double Regression(SDL_Point _StartPoint, unsigned int _uiLimitX, unsigned int _uiLimiteY, bool boDirection) {
 		_uiLimiteY += _StartPoint.y - 1; // Limite en y...
 		unsigned short int usiGauche = 1; // Déplacement vers la gauche...
 		unsigned short int usiDroit = 1; // Déplacement vers la droite...
@@ -1193,8 +1307,10 @@ public:
 	// Paramètre: _RectPlayer, rectangle qui encadre l'endroit ou l'on veut vérifier les collisions sur la map. (ex: Prochain rectangle destination d'un player.)
 	// Paramètre: _pboCollisionCorps, pointeur de booléenne qui indique si il y a eu une collision au corps.
 	// Paramètre: _pboCollisionPieds, pointeur de booléenne qui indique si il y a eu une collision au pieds.
-	// Paramètre: _puiXCorps, pointeur d'entier non-signé qui indique la position en x de la collision dans le rectangle du joueur entre le corps et la carte de jeu s'il y a lieu.
+	// Paramètre: _puiXPieds, pointeur d'entier non-signé qui indique la position en x de la collision dans le rectangle du joueur entre les pieds et la carte de jeu s'il y a lieu.
 	// Paramètre: _puiYPieds, pointeur d'entier non-signé qui indique la position en y de la collision dans le rectangle du joueur entre les pieds et la carte de jeu s'il y a lieu.
+	// Paramètre: _puiXCorps, pointeur d'entier non-signé qui indique la position en x de la collision dans le rectangle du joueur entre le corps et la carte de jeu s'il y a lieu.
+	// Paramètre: _puiYCorps, pointeur d'entier non-signé qui indique la position en y de la collision dans le rectangle du joueur entre le corps et la carte de jeu s'il y a lieu.
 	// Retour: Un booléen qui indique si il y a eu une collision.
 	bool VerifierCollisionJoueurMap(CPlayer* _pPlayer, SDL_Rect _RectPlayer, bool* _pboCollisionCorps, bool* _pboCollisionPieds, unsigned int* _puiXPieds, unsigned int* _puiYPieds, unsigned int* _puiXCorps, unsigned int* _puiYCorps) {
 
@@ -1269,7 +1385,7 @@ public:
 				TmpSDLRectPlayerHitboxCorps = _pPlayer->ObtenirHitboxCorpsGauche();		// On se sert du rectangle pour le corps de gauche.	
 
 		}
-		else if (_pPlayer->ObtenirSpriteJetPack()->IsActif()) {
+		else if (_pPlayer->ObtenirSpriteJetPack()->IsActif()) {						// Si le sprite JetPack est actif...
 
 			pTmpSDLSurfacePlayer = _pPlayer->ObtenirSpriteJetPack()->ObtenirSurface();
 
@@ -1281,7 +1397,7 @@ public:
 
 		}
 
-
+		// Initialisation des variables...
 		*_pboCollisionCorps = false;
 		*_pboCollisionPieds = false;
 
@@ -1303,8 +1419,8 @@ public:
 
 					if ((((unsigned int*)pTmpSDLSurfaceMap->pixels)[(TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerHitboxPieds.x + x) + (TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerHitboxPieds.y + y) * pTmpSDLSurfaceMap->w] != uiTransparenceMap) && (((unsigned int*)pTmpSDLSurfacePlayer->pixels)[(TmpSDLRectPlayerSource.x + TmpSDLRectPlayerHitboxPieds.x + x) + (TmpSDLRectPlayerSource.y + TmpSDLRectPlayerHitboxPieds.y + y) * pTmpSDLSurfacePlayer->w] != uiTransparenceJoueur)) {			// Si il y a une collision entre les pixels non-transparents de la map et les pixels non-transparents des pieds du joueur...
 
-						*_puiXPieds = TmpSDLRectPlayerHitboxPieds.x + x;
-						*_puiYPieds = TmpSDLRectPlayerHitboxPieds.y + y;		// Dans le rectangle destination, on prend la position en y de la collision pour la stocker.
+						*_puiXPieds = TmpSDLRectPlayerHitboxPieds.x + x;		// Dans le rectangle destination, on prend la position en x de la collision.
+						*_puiYPieds = TmpSDLRectPlayerHitboxPieds.y + y;		// Dans le rectangle destination, on prend la position en y de la collision.
 
 						*_pboCollisionPieds = true;				// On confirme la collision aux pieds.
 
@@ -1325,8 +1441,8 @@ public:
 
 					if ((((unsigned int*)pTmpSDLSurfaceMap->pixels)[(TmpSDLRectPlayerDestination.x + TmpSDLRectPlayerHitboxCorps.x + x) + (TmpSDLRectPlayerDestination.y + TmpSDLRectPlayerHitboxCorps.y + y) * pTmpSDLSurfaceMap->w] != uiTransparenceMap) && (((unsigned int*)pTmpSDLSurfacePlayer->pixels)[(TmpSDLRectPlayerSource.x + TmpSDLRectPlayerHitboxCorps.x + x) + (TmpSDLRectPlayerSource.y + TmpSDLRectPlayerHitboxCorps.y + y) * pTmpSDLSurfacePlayer->w] != uiTransparenceJoueur)) {			// Si il y a une collision entre les pixels non-transparents de la map et les pixels non-transparents du corps du joueur...
 
-						*_puiXCorps = TmpSDLRectPlayerHitboxCorps.x + x;
-						*_puiYCorps = TmpSDLRectPlayerHitboxCorps.y + y;		// Dans le rectangle destination, on prend la position en x de la collision pour la stocker.
+						*_puiXCorps = TmpSDLRectPlayerHitboxCorps.x + x;		// Dans le rectangle destination, on prend la position en x de la collision.
+						*_puiYCorps = TmpSDLRectPlayerHitboxCorps.y + y;		// Dans le rectangle destination, on prend la position en y de la collision.
 
 						*_pboCollisionCorps = true;
 
@@ -1336,7 +1452,7 @@ public:
 
 		}
 
-		return (*_pboCollisionPieds || *_pboCollisionCorps);			// On retourne vrai dès qu'il y a eu une collision.
+		return (*_pboCollisionPieds || *_pboCollisionCorps);			// On retourne vrai si il y a eu une collision.
 
 
 	}

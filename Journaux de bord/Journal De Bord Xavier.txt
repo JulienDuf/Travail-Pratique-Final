@@ -17,3 +17,9 @@ pour notre saut. Jeudi 12 décembre et lundi 15. ~3h . Travail sur la régression.
 veux. Donc, je dois modifier ma formule. Mardi 16 decembre. ~3h. Travail sur la glissade. On s'est recontrer aujourd'hui pour parler de ou ce qu'on étais rendu. 
 J'ai pas mal fini la régression. Il y a encore des choses louches avec mes angles mais ca va aller pour l'instant. Et il reste juste a finaliser la glissade parce
 que la logique est toute coder.
+
+c'est Nico! Xavier ne peut pas mettre son journal de bord à jour donc je le fais...
+Dernière fin de semaine: Xavier a retravaillé beaucoup la régression, elle fonctionne pour faire la rotation
+de la mine. Par contre, il n'a pas réussi à faire fonctionner la glissade. Après plusieurs heures pour essayer
+de faire fonctionner la régression avec la glissade, il n'a pas réussi à temps pour le projet.
+Nous n'avons donc pas de glissade, mais nous avons du code donc j'espère que ce sera la source de quelques points! :)

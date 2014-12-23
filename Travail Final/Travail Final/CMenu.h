@@ -77,9 +77,12 @@ public:
 
 	// Destructeur de CMenu...
 	~CMenu() {
-		if (m_pSprite != nullptr)
+		if (m_pSprite != nullptr) {
 			delete m_pSprite;
+			m_pSprite = nullptr;
+		}
 		delete m_pArbreControl;
+		m_pArbreControl = nullptr;
 	}
 
 	// Procédure permettant d'ajouter des contrôles au menu...

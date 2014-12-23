@@ -71,6 +71,45 @@ private:
 		delete _pNoeud;
 	}
 
+	// Procédure détruisant des textures...
+	void ParcoursDestructionTexture(CNoeudArbreAVL<T>* _pNoeud) {
+		// S'il a un enfant gauche...
+		if (_pNoeud->ObtenirEG() != nullptr) {
+			ParcoursDestructionTexture(_pNoeud->ObtenirEG());
+		}
+		// S'il a un enfant droit
+		if (_pNoeud->ObtenirED() != nullptr) {
+			ParcoursDestructionTexture(_pNoeud->ObtenirED());
+		}
+		SDL_DestroyTexture(_pNoeud->ObtenirElement());
+	}
+
+	// Procédure détruisant des surfaces...
+	void ParcoursDestructionSurface(CNoeudArbreAVL<T>* _pNoeud) {
+		// S'il a un enfant gauche...
+		if (_pNoeud->ObtenirEG() != nullptr) {
+			ParcoursDestructionSurface(_pNoeud->ObtenirEG());
+		}
+		// S'il a un enfant droit
+		if (_pNoeud->ObtenirED() != nullptr) {
+			ParcoursDestructionSurface(_pNoeud->ObtenirED());
+		}
+		SDL_FreeSurface(_pNoeud->ObtenirElement());
+	}
+
+	// Procédure détruisant des fonts...
+	void ParcoursDestructionFont(CNoeudArbreAVL<T>* _pNoeud) {
+		// S'il a un enfant gauche...
+		if (_pNoeud->ObtenirEG() != nullptr) {
+			ParcoursDestructionFont(_pNoeud->ObtenirEG());
+		}
+		// S'il a un enfant droit
+		if (_pNoeud->ObtenirED() != nullptr) {
+			ParcoursDestructionFont(_pNoeud->ObtenirED());
+		}
+		TTF_CloseFont(_pNoeud->ObtenirElement());
+	}
+
 	// :]
 
 	// Rotations [:
@@ -552,6 +591,27 @@ public:
 	void ParcoursDestructeur() {
 		if (m_pRacine != nullptr) {
 			ParcoursDestructeur(m_pRacine);
+		}
+	}
+
+	// Procédure détruisants toutes les textures...
+	void ParcoursDestructionTexture() {
+		if (m_pRacine != nullptr) {
+			ParcoursDestructionTexture(m_pRacine);
+		}
+	}
+
+	// Procédure détruisants toutes les surfaces...
+	void ParcoursDestructionSurface() {
+		if (m_pRacine != nullptr) {
+			ParcoursDestructionSurface(m_pRacine);
+		}
+	}
+
+	// Procédure détruisants toutes les fonts...
+	void ParcoursDestructionFont() {
+		if (m_pRacine != nullptr) {
+			ParcoursDestructionFont(m_pRacine);
 		}
 	}
 

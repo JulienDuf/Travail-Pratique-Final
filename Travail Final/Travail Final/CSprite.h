@@ -65,9 +65,7 @@ public:
 
 	//Destructeur...
 	~CSprite(void) {
-
 		delete m_pTimerDelay;
-
 	}
 
 	// Procédure qui rends le sprite dans la fenêtre.

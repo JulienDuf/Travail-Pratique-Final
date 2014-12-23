@@ -39,4 +39,20 @@ public:
 
 		return m_pArbreGestionaire->ObtenirElement(_strID);
 	}
+
+	void Destruction() {
+		m_pArbreGestionaire->ParcoursDestructeur();
+	}
+
+	void DestructionFont(void) {
+		m_pArbreGestionaire->ParcoursDestructionFont();
+	}
+
+	void DestructionTexture(void) {
+		m_pArbreGestionaire->ParcoursDestructionTexture();
+	}
+
+	void DestructionSurface(void) {
+		m_pArbreGestionaire->ParcoursDestructionSurface();
+	}
 };

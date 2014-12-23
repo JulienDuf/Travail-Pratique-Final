@@ -135,3 +135,14 @@ Mercredi 17 décembre 2014
 
 Les déplacements devraient être pas mal terminés, j'ai réparé le bug où les joueurs passaient au travers de la map.
 Il restera à gérer d'autres états du joueur comme glissade et chute libre, donc ce n'est pas fini!
+
+----------------------------------------------------------------------------------------------------------------------
+
+19 - 22 décembre 2014 (Dernière fin de semaine avant la remise)
+
+J'ai terminé la physique player, il y a pratiquement plus de bugs. J'ai ajouté la chute libre, par contre, à cause d'un
+bug que je n'ai pas eu le temps de régler, ma chute libre fait que lors de l'animation de début de partie et lors
+de l'utilisation du jetpack, il n'y a pas de dommage pour avoir tombé de haut.
+
+Nous n'avons pas eu le temps de compléter la glissade, elle est là mais ne fonctionne pas.
+J'ai fini par revoir nos diagrammes et par commenter ce qui n'était pas commenté.

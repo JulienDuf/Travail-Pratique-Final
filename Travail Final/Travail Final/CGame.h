@@ -674,43 +674,13 @@ public:
 					RectTmp.y = iY;
 					
 					// Obtention de l'angle de la pente...
-<<<<<<< HEAD
-					double dAngle = RegressionTest({ iX, RectTmp.y }, RectTmp.w / 2, 2*RectTmp.h, true);
 
-					// Modification de l'angle de la mine...
+					double dAngle = Regression({ iX, RectTmp.y }, RectTmp.w / 2, 2*RectTmp.h, true);
+					
 					pPackListTmp->ObtenirElementCurseur()->ModifierAnlge(dAngle);
 					pPackListTmp->ObtenirElementCurseur()->ModifierStabilePack(true);
 					
-=======
-					double dAngle = Regression({ iX, RectTmp.y }, RectTmp.w / 2, 2*RectTmp.h, true);
-					// Si l'angle est plus grand que 70, il y aura glissade...
-					if (abs(dAngle) >= 70) {
-						// GLISSADEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE à faire..........
-						/*CVecteur2D* VecteurVitessePack = new CVecteur2D(0.0f,0.0f);
-						CVecteur2D* VecteurFrottement = new CVecteur2D(0.0f,0.0f);*/
-						if (dAngle < 0) {
-							/*VecteurFrottement->ModifierVecteur(1, dAngle + 180);
-							VecteurVitessePack->ModifierVecteur(m_pGameMap->ObtenirGravite()->ObtenirNorme(), dAngle);
-							pPackListTmp->ObtenirElementCurseur()->ModifierStabilePack(false);
-							*VecteurVitessePack += *VecteurFrottement;
 
-							RectTmp.x -= VecteurVitessePack->ObtenirComposanteX();
-							RectTmp.y -= VecteurVitessePack->ObtenirComposanteY();*/
-							RectTmp.x -= 50;
-						}
-						else
-						{
-							RectTmp.x += 50;
-						}
-						
-					}
-					// Sinon, modification de l'angle du pack selon la pente et stabilisation de celui-ci...
-					else
-					{
-						pPackListTmp->ObtenirElementCurseur()->ModifierAnlge(dAngle);
-						pPackListTmp->ObtenirElementCurseur()->ModifierStabilePack(true);
-					}
->>>>>>> 18f1ba177055ad43f71db31fb7c35764d516aad2
 					// Modification de sa position...
 					pPackListTmp->ObtenirElementCurseur()->ModifierPosition(RectTmp);
 				}

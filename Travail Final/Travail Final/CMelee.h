@@ -140,7 +140,7 @@ public:
 	}
 
 	unsigned int ObtenirMunition() {
-		return NULL;
+		return 1000;
 	}
 
 	CSprite* ObtenirSprite(string _strNom) {

@@ -292,7 +292,7 @@ public:
 								}
 
 							}
-							/*
+							
 							if (!pPlayerActif->IsSliding() && !pPlayerActif->ObtenirSpriteJetPack()->IsActif()) {
 								if (abs(RegressionTest({ _uiXPieds + RectTmp.x, RectTmp.y }, RectTmp.w / 2, 2 * RectTmp.h, true)) >= 60) {
 									pPlayerActif->ModifierGlissadeJoueur(true);
@@ -301,7 +301,7 @@ public:
 									pPlayerActif->ObtenirSpriteRepos()->DefinirActif(true);
 								}
 							}
-							*/
+							
 						}
 
 					}
@@ -369,6 +369,14 @@ public:
 						if (pPlayerActif->ObtenirVecteurVitesse() == 0 || RectTmp.x > 1366 || RectTmp.y > 768)  { // Si la glissade est fini. IL RESTE A TUER LE JOUEUR ...... aussi il faut optimiser la glissade ...................
 							pPlayerActif->ModifierGlissadeJoueur(false);
 							pPlayerActif->ModifierStabiliteJoueur(true);
+						}
+
+						if (VerifierCollisionJoueurMap(pPlayerActif, RectTmp, &boCorps, &boPied, &_uiXPieds, &_uiYPieds, &_uiXCorps, &_uiYCorps)) {
+
+							if (boPied) {
+
+
+							}
 						}
 
 					}

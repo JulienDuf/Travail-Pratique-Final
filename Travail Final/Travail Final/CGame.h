@@ -12,6 +12,7 @@ private:
 	CTimer* m_pTimerPhysique; // Le timer pour la physique.
 
 	bool m_boDebutPartie; // Si le jeu est en début de partie.
+	bool m_boFinPartie;
 	bool m_boFinTour; // Si le jeu est en fin de tour.
 
 public:
@@ -50,6 +51,16 @@ public:
 		m_pToolBar = new CToolBar({ 0, 600, 1366, 168 }, { 0, 0, 0 }, _pRenderer, 265, 120, 60, 4, pGestionnaireTexture->ObtenirDonnee("BazookaTool"), pGestionnaireTexture->ObtenirDonnee("GrenadaTool"), pGestionnaireTexture->ObtenirDonnee("SwordTool"), pGestionnaireTexture->ObtenirDonnee("JetPackTool"));
 		// Début du Chrono de la physique
 		m_pTimerPhysique->Start();
+	}
+
+	// Destructeur de CGame...
+	~CGame() {
+
+		delete m_pGameMap; //La map.
+		delete m_pTeamList; // Liste d'équipe.
+		delete m_pListeDommage; // Listes des domages.
+		delete m_pToolBar; // La toolbar où le joueur choisi son outils pour son tour.
+		delete m_pTimerPhysique; // Le timer pour la physique.
 	}
 
 	// Procédure permettant de changer de tour...
@@ -1739,7 +1750,7 @@ public:
 		return m_pTeamList->ObtenirElementCurseur();
 	}
 
-	CListeDC<CTeam*>* ObtenirListePlayer(void) {
+	CListeDC<CTeam*>* ObtenirListeTeam(void) {
 		return m_pTeamList;
 	}
 

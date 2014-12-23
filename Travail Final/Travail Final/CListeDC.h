@@ -26,7 +26,6 @@ public:
 	}
 
 	// Destructeur...
-
 	~CListeDC() {
 		while (m_uiCompte != 0) {
 			Retirer(true);
@@ -35,6 +34,14 @@ public:
 	
 	// Méthodes...
 	
+	void DestructeurTexture(bool _boRetirer) {
+		while (m_uiCompte != 0) {
+			if (_boRetirer)
+				SDL_DestroyTexture(m_pCurseur->ObtenirElement());
+			Retirer(false);
+		}
+	}
+
 	/*
 	Fonction permettant de modifier le m_pTrieur sur la cellule suivante de la liste.
 	Si la modification a peut avoir lieu, retourn vrai, sinon, retourne faux.
@@ -296,6 +303,7 @@ public:
 			if (m_uiCompte == 0) {
 				m_pCurseur = nullptr;
 				m_pDerniere = nullptr;
+				m_pTrieur = nullptr;
 			}
 			return true;
 		}

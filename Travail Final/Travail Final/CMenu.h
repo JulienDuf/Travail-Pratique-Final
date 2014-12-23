@@ -7,9 +7,11 @@
 class CMenu {
 private:
 
+	CSprite* m_pSprite;
 	CArbreAVL<CControl*>* m_pArbreControl; // Liste des contrôles.
 	bool m_boShow; // Booléen qui dicte si le menu s'affiche ou non.
-	SDL_Rect m_RectDestinationBackGround; // La position du background.
+	SDL_Rect m_RectDestinationBackGround, // La position du background.
+		m_RectDestinationSprite; // La position du sprite.
 	SDL_Color m_CouleurBackground; // La couleur du background.
 	SDL_Texture* m_pTextureBackground; // La texture du background.
 
@@ -50,7 +52,10 @@ public:
 	// Param3: La texture du background.
 	// Param4: Nombre de Contrôles à ajouter.
 	// Param5...: Contrôles à ajouter.
-	CMenu(bool _boShow, SDL_Rect _RectDestination, SDL_Texture* _pTextureBackground, unsigned int argc, ...) {
+	CMenu(bool _boShow, SDL_Rect _RectDestination, SDL_Texture* _pTextureBackground, CSprite* _pSprite, SDL_Rect _RectDestinationSprite, unsigned int argc, ...) {
+
+		m_RectDestinationSprite = _RectDestinationSprite;
+		m_pSprite = _pSprite;
 
 		m_boShow = _boShow;
 		m_pArbreControl = new CArbreAVL<CControl*>();
@@ -70,9 +75,14 @@ public:
 		}
 	}
 
+	// Destructeur de CMenu...
 	~CMenu() {
-
+		if (m_pSprite != nullptr) {
+			delete m_pSprite;
+			m_pSprite = nullptr;
+		}
 		delete m_pArbreControl;
+		m_pArbreControl = nullptr;
 	}
 
 	// Procédure permettant d'ajouter des contrôles au menu...
@@ -130,11 +140,20 @@ public:
 				SDL_RenderCopy(_pSDLRenderer, m_pTextureBackground, NULL, NULL);
 			}
 			m_pArbreControl->ParcoursControl(_pSDLRenderer);
+
+			if (m_pSprite != nullptr) {
+				m_pSprite->Render(_pSDLRenderer, m_RectDestinationSprite);
+				m_pSprite->ModifierAnnimation();
+			}
 		}
 	}
 
 	void DefinirboShow(bool _boShow) {
 		m_boShow = _boShow;
+	}
+
+	bool ObtenirBoShow() {
+		return m_boShow;
 	}
 
 

@@ -125,7 +125,6 @@ public:
 
 	// Procédure qui affiche le joueur.
 	// Paramètre: _pSDLRenderer, Rendeur de la fenêtre dans laquelle on veut afficher le joueur.
-	// Retour: Rien.
 	void ReactToEvent(SDL_Event* _pSDLEvent, unsigned int _uiObjetSelectionner) {
 		if (!m_pSpriteParachute->IsActif()) {
 			if (_uiObjetSelectionner <= 2) {
@@ -189,6 +188,9 @@ public:
 		}
 	}
 
+	// Procédure affichant une description...
+	// En entrée:
+	// Param1: Le renderer de la fenêtre...
 	void ShowDescription(SDL_Renderer* _pRenderer) {
 		m_pListeMouvement->AllerATrieur(0);
 		m_pListeTools->AllerATrieur(0);
@@ -200,6 +202,9 @@ public:
 		}
 	}
 
+	// Procédure affichant l'étoile au dessus du joueur...
+	// En entrée:
+	// Param1: Le renderer de la fenêtre...
 	void ShowEtoile(SDL_Renderer* _pRenderer) {
 		m_RectDestinationEtoile.x = m_pBarreVie->ObtenirRectDestination().x + m_pBarreVie->ObtenirRectDestination().w / 2 - m_RectDestinationEtoile.w / 2;
 		m_RectDestinationEtoile.y = m_pBarreVie->ObtenirRectDestination().y - m_RectDestinationEtoile.h - 2;

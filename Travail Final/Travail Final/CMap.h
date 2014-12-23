@@ -137,6 +137,10 @@ public:
 		
 	}
 
+	// Procédure créant un nouveau vent...
+	// En entrée:
+	// Param1: Le font du texte...
+	// Param2: Le renderer de la fenêtre...
 	void NouveauVent(TTF_Font* _pFont, SDL_Renderer* _pRenderer) {
 		int iAngle = rand() % 360;
 		m_pVent->ModifierAngle(iAngle);
@@ -148,17 +152,24 @@ public:
 		str.append(" km/h");
 		m_pVent->ModifierForce(_pFont, str.c_str(), { 0, 0, 0 }, _pRenderer);
 	}
-
+	
+	// Procédure créant un healypack...
 	void CreateHealthPack(void) {
 
 		m_pPackList->AjouterFin(new CHealthPack());
 	}
 
+	// Procédure mettant la map en texture...
+	// En entrée: 
+	// Param1: Le renderer de la fenêtre...
 	void PutMapInTexture(SDL_Renderer* _pRenderer) {
 
 		SDL_DestroyTexture(m_pSDLTextureMap);
 		m_pSDLTextureMap = SDL_CreateTextureFromSurface(_pRenderer, m_pSDLSurfaceMap);
 	}
+
+
+	// Accesseurs...
 
 	SDL_Surface* ObtenirSurfaceMap(void) {
 

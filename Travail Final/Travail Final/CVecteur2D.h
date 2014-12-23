@@ -45,18 +45,28 @@ public:
 		m_dComposanteY += _VecteurB.m_dComposanteY;
 
 	}
-
+	
+	// Redéfinition de l'opérateur -= d'un vecteur.
+	// En entrée:
+	// Param1: L'autre vecteur à soustraire.
 	void operator -= (CVecteur2D _VecteurB) {
 		
 		m_dComposanteX -= _VecteurB.m_dComposanteX;
 		m_dComposanteY -= _VecteurB.m_dComposanteY;
 	}
 
+	// Redéfinition de l'opérateur * d'un vecteur.
+	// En entrée:
+	// Param1: Le scalaire.
 	CVecteur2D operator * (double _dScalaire) {
 
 		return CVecteur2D(_dScalaire*m_dComposanteX, _dScalaire*m_dComposanteY);
 	}
 
+	// Fonction du produit scalaire de vecteur...
+	// En entrée:
+	// Les composantes de l'autre vecteurs...
+	// En sortie : Le produit scalaire...
 	double Scalaire(double _dComposanteX, double _dComposanteY) {
 
 		return m_dComposanteX * _dComposanteX + m_dComposanteY * _dComposanteY;
@@ -97,6 +107,7 @@ public:
 
 		return atan(m_dComposanteY / m_dComposanteX);
 	}
+	
 	void ModifierOrientation(double _dOrientation) {
 
 		if (_dOrientation <= 360) {

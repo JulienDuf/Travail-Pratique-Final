@@ -1,20 +1,23 @@
 // Classe représentant des labels,
 // créée par Gabriel Beaudry (gabriel.bdry@gmail.com) le 30 septembre 2014.
+// Modifier par Julien Dufresne (dufresne_julien@hotmail.ca) le 19 décembre 2014.
+// La classe est maintenant optimisé...
 
 class CTemporaryLabel {
 private:
 
-	SDL_Texture* m_pTextureLabel;
-	SDL_Rect m_RectLabel;
-	SDL_Rect m_RectLabelDebut;
-	SDL_Rect m_RectLabelFin;
-	CTimer* m_pTimer;
-	CTimer* m_pTimerFinDeVie;
-	double m_dNombrePixelParDeplacementX;
-	double m_dNombrePixelParDeplacementY;
+	SDL_Texture* m_pTextureLabel; // La texture du label.
+	SDL_Rect m_RectLabel; // Le destination du label...
+	SDL_Rect m_RectLabelDebut; // Le rect du début du label.
+	SDL_Rect m_RectLabelFin; // Le rect de fin du label.
+	CTimer* m_pTimer; // Le timer de déplacement du label.
+	CTimer* m_pTimerFinDeVie; // Le timer de vie du label.
+	double m_dNombrePixelParDeplacementX; // Nombre de Pixels Par Deplacement en X.
+	double m_dNombrePixelParDeplacementY; // Nombre de Pixels Par Deplacement en Y.
 
 public:
 
+	// Constructeur...
 	CTemporaryLabel(string _strTextLabel, SDL_Color _CouleurTexte, SDL_Rect _RectDepart, SDL_Rect _RectFin, int _iVitesseDeplacement, int _iDureVie, SDL_Renderer* _pRenderer) {
 		
 		SDL_Surface* pSurfaceTmp = TTF_RenderText_Blended(pGestionnaireFont->ObtenirDonnee("pFontDomage"), _strTextLabel.c_str(), _CouleurTexte);
@@ -38,6 +41,16 @@ public:
 		m_dNombrePixelParDeplacementY = (m_RectLabelFin.y - m_RectLabelDebut.y) / _iVitesseDeplacement;
 	}
 
+	~CTemporaryLabel() {
+
+		SDL_DestroyTexture(m_pTextureLabel);
+		delete m_pTimer;
+		delete m_pTimerFinDeVie;
+	}
+
+	// Procédure affichant le label...
+	// En entrée:
+	// Param1: Le renderer de la fenêtre...
 	void ShowControl(SDL_Renderer* _pRenderer) {
 			
 		if (m_RectLabel.x != m_RectLabelFin.x || m_RectLabel.y != m_RectLabelFin.y) {

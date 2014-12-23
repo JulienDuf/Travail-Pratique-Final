@@ -1,5 +1,6 @@
 //Classe qui gere les mines.
 //crée le 13 novembre par Samuel Rambaud (Sam.Rambaud@outlook.com)
+// Terminé par Julien Dufresne....
 
 class CMine : public CPack{
 private:
@@ -77,13 +78,17 @@ public:
 		m_dAnglemine = 0;
 	}
 
-
+	// Fonction utilisant la mine...
+	// En entrée:
+	// Param1: Le player qui était sur la mine...
+	// En sortie: Si c'est une mine...
 	bool Use(CPlayer* _pPlayer) {
 
+		// Si le player existe...
 		if (_pPlayer != nullptr) 
 			_pPlayer->SetHealth(0.0f);
 
-
+		// Redéfinition du rect d'explosion...
 		m_RectExplosion.x = (m_RectDestination.x + (m_RectDestination.w/2)) - (m_RectExplosion.w/2);
 		m_RectExplosion.y = (m_RectDestination.y + m_RectDestination.h) - (m_RectExplosion.h/2) - 20;
 		m_pSpriteExplosion->DefinirActif(true);
@@ -128,6 +133,8 @@ public:
 
 		m_boUse = _boUse;
 	}
+
+	// Accesseurs...
 
 	unsigned int GetRayon() {
 		return m_uiRayon;

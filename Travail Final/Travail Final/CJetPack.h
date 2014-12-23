@@ -5,22 +5,21 @@ class CJetPack : public CMouvement {
 
 private:
 
-	CSprite* m_pSpriteJetPack; 
+	CSprite* m_pSpriteJetPack; // Le sprite du jetpack...
 
-	CBarreVie* m_pBarreDeCarburant;
+	CBarreVie* m_pBarreDeCarburant; // La barre de carburant...
 
-	CLabel* m_pLblDescription;
-	string m_strDescription[8];
+	CLabel* m_pLblDescription; // Le label description du jetpack...
+	string m_strDescription[8]; // La description du jetpack...
 
-	bool m_boSpace,
-		m_boShowDescription;
-	bool boFleche;
-	bool boDecoller;
+	bool m_boSpace, // Si la barre d'expace est enfoncé...
+		m_boShowDescription; // Si on affiche la description...
+	bool m_boDecoller; // Si le jectpack est décollé...
 
-	unsigned int m_uiTempsPropulsionInitiale;
-	int m_iVerticalThrust;
+	unsigned int m_uiTempsPropulsionInitiale; // Le temps de propulsion du jetpack...
+	int m_iVerticalThrust; // La poussée vertical...
 
-	CVecteur2D* pVecteur;
+	CVecteur2D* m_pVecteur; // Le vecteur du jetpack
 
 	SDL_Surface* BlitText(string _strTexte[], unsigned int _uiNombreElementTableau, SDL_Color _Couleur) {
 
@@ -47,6 +46,9 @@ private:
 		return pSurfaceBlitin;
 	}
 
+	// Procédure mettant ajour les munitions...
+	// En entrée: 
+	// Param1: Le renderer de la fenêtre...
 	void MiseajourMunition(SDL_Renderer* _pRenderer) {
 		char m_chrMunition[4];
 		
@@ -60,11 +62,11 @@ private:
 
 public:
 
+	// Constructeur...
 	CJetPack(string _strEmplacement, CSprite* _pSpriteJetPack, CBarreVie* _pBarreDeCarburant, SDL_Renderer* _pRenderer) {
-		boFleche = true;
 		m_boShowDescription = false;
-		boDecoller = false;
-		pVecteur = new CVecteur2D(0, 0.0f);
+		m_boDecoller = false;
+		m_pVecteur = new CVecteur2D(0, 0.0f);
 		m_strDescription;
 		string strEmplacement(_strEmplacement);
 		int i = strEmplacement.length();
@@ -118,52 +120,62 @@ public:
 		m_uiTempsPropulsionInitiale = 0;
 	}
 
-	void ReactToEvent(SDL_Event* _pEvent, CVecteur2D* _pVecteurVitesse, bool* _boStable) {
+	// Classe réagissant au évémement du programme...
+	// En entrée: 
+	// Param1: Le gestionnaire d'événement
+	// Param2: Le vecteur vitesse du joueur.
+	// Param3: Le boléan de stabilité du joueur.
+	void ReactToEvent(SDL_Event* _pEvent, CVecteur2D* pVecteurVitesse, bool* _boStable) {
 
-		*_boStable = false;
+		*_boStable = false; // Le joueur n'est pas stable...
 
+		// Le sprite devient actif...
 		m_pSpriteJetPack->DefinirActif(true);
+		
 		// Barre de carburant vide
 		if (m_pBarreDeCarburant->ObtenirVie() <= 0) {
 			m_pSpriteJetPack->DefinirPositionDeBouclage(0, 1);
 			*_boStable = false;
 		}
+
+		// S'il reste du carburant...
 		else {
 
 			switch (_pEvent->type) {
 
+			// S'il y a une touche d'enfoncée...
 			case SDL_KEYDOWN:
 
 				switch (_pEvent->key.keysym.scancode) {
 
+				// Si c'est la flèche de droite...
 				case SDL_SCANCODE_RIGHT:
 					m_pSpriteJetPack->DefinirEtage(0);
-					pVecteur->ModifierComposantX(2);
+					m_pVecteur->ModifierComposantX(2);
 					*_boStable = false;
-					boFleche = true;
 					break;
 
+				// Si c'est la flèche de gauche...
 				case SDL_SCANCODE_LEFT:
 					m_pSpriteJetPack->DefinirEtage(1);
-					pVecteur->ModifierComposantX(-2);
+					m_pVecteur->ModifierComposantX(-2);
 					*_boStable = false;
-					boFleche = true;
 					break;
 
+				// Si c'est la barre d'espace..
 				case SDL_SCANCODE_SPACE:
  					m_pBarreDeCarburant->ModifierPourcentageVie(m_pBarreDeCarburant->ObtenirVie() - 0.002);
 					
 					if (!m_boSpace) {
-						if (boDecoller)
-							pVecteur->ModifierComposantY(-m_iVerticalThrust);
+						if (m_boDecoller)
+							m_pVecteur->ModifierComposantY(-m_iVerticalThrust);
 						else {
-							pVecteur->ModifierComposantY(-100);
-							boDecoller = true;
+							m_pVecteur->ModifierComposantY(-100);
+							m_boDecoller = true;
 						}
 					}
 					m_uiTempsPropulsionInitiale++;
-					if (boFleche)
-  						boFleche = boFleche;
+
 					if (m_uiTempsPropulsionInitiale >= 3) {
 						m_pSpriteJetPack->DefinirPositionDeBouclage(4, 6);
 					}
@@ -177,25 +189,27 @@ public:
 				}
 				break;
 
+			// Si une touche n'est plus enfoncée...
 			case SDL_KEYUP:
 
 				switch (_pEvent->key.keysym.scancode) {
 
+				// Si c'est la flèche de droite...
 				case SDL_SCANCODE_RIGHT:
 					*_boStable = false;
-					pVecteur->ModifierComposantX(0);
-					boFleche = false;
+					m_pVecteur->ModifierComposantX(0);
 					break;
 
+				// Si c'est la flèche de gauche...
 				case SDL_SCANCODE_LEFT:
-					pVecteur->ModifierComposantX(0);
+					m_pVecteur->ModifierComposantX(0);
 					*_boStable = false;
-					boFleche = false;
 					break;
 
+				// Si c'est la barre d'espace..
 				case SDL_SCANCODE_SPACE:
 					m_pSpriteJetPack->DefinirPositionDeBouclage(0, 1);
-					pVecteur->ModifierComposantY(0);
+					m_pVecteur->ModifierComposantY(0);
 					m_boSpace = false;
 					m_uiTempsPropulsionInitiale = 0;
 					*_boStable = false;
@@ -204,14 +218,15 @@ public:
 				break;
 			}
 
+			// Si la barre d'espace est enfoncée... On fait comme dans le KEYDOWN...
 			if (m_boSpace) {
 				m_pBarreDeCarburant->ModifierPourcentageVie(m_pBarreDeCarburant->ObtenirVie() - 0.002);
 
-					if (boDecoller)
-						pVecteur->ModifierComposantY(-m_iVerticalThrust);
+					if (m_boDecoller)
+						m_pVecteur->ModifierComposantY(-m_iVerticalThrust);
 					else {
-						pVecteur->ModifierComposantY(-100);
-						boDecoller = true;
+						m_pVecteur->ModifierComposantY(-100);
+						m_boDecoller = true;
 					
 				}
 				m_uiTempsPropulsionInitiale++;
@@ -230,33 +245,34 @@ public:
 		}
 	}
 
+	// Procédure affichant le déplacement...
+	// En entrée: 
+	// Param1: Le renderer de la fenêtre.
+	// Param2: Le rect destination du joueur.
 	void ShowPlayer(SDL_Renderer* _pRenderer, SDL_Rect _RectPlayerDestination) {
+		
+		// Affiche le sprite...
 		m_pSpriteJetPack->ModifierAnnimation();
 		m_pSpriteJetPack->Render(_pRenderer, _RectPlayerDestination);
 		if (m_pSpriteJetPack->IsActif())
 			m_pBarreDeCarburant->ShowBarre(_pRenderer, { _RectPlayerDestination.x, _RectPlayerDestination.y + _RectPlayerDestination.h + 2});
 	}
 
+	// Procédure affichant une description...
+	// En entrée:
+	// Param1: Le renderer de la fenêtre...
 	void ShowDescription(SDL_Renderer* _pRenderer) {
+		
+		// Si elle s'affiche...
 		if (m_boShowDescription) {
 			MiseajourMunition(_pRenderer);
 			m_pLblDescription->ShowControl(_pRenderer);
 		}
 	}
 
-	void DefinirActif(bool _boActif) {
-		m_pSpriteJetPack->DefinirActif(_boActif);
-		boDecoller = _boActif;
-	}
-
-	CSprite* ObtenirSprite(string _strNom) {
-		return m_pSpriteJetPack;
-	}
-
-	unsigned int ObtenirMunition() {
-		return m_pBarreDeCarburant->ObtenirVie() * 100;
-	}
-
+	// Procédure modifiant la position et l'activité de la description.
+	// Param1: Si la description est active.
+	// Param2: La position de la descrition.
 	void UpdateDescription(bool _boShow, SDL_Point _PositionDescription) {
 		
 		m_boShowDescription = _boShow;
@@ -274,13 +290,28 @@ public:
 			m_pLblDescription->SetRectDestinationY(_PositionDescription.y);
 	}
 
+	void DefinirActif(bool _boActif) {
+		m_pSpriteJetPack->DefinirActif(_boActif);
+		m_boDecoller = _boActif;
+	}
+
+	// Accesseurs...
+
+	CSprite* ObtenirSprite(string _strNom) {
+		return m_pSpriteJetPack;
+	}
+
+	unsigned int ObtenirMunition() {
+		return m_pBarreDeCarburant->ObtenirVie() * 100;
+	}
+
 	bool IsActive(void) {
 
-		return boDecoller;
+		return m_boDecoller;
 	}
 
 	CVecteur2D* ObtenirVecteur(void) {
 
-		return pVecteur;
+		return m_pVecteur;
 	}
 };

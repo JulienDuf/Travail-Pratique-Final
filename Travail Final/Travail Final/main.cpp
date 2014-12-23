@@ -7,9 +7,7 @@
 #include <iostream>
 #include <fstream>
 #include <math.h>
-#define _CRTDBG_MAP_ALLOC
-#include <stdlib.h>
-#include <crtdbg.h>
+
 using namespace std;
 
 #include "CArbreAVL.h"
@@ -666,7 +664,7 @@ void Close(void) {
 
 
 int main(int argc, char* argv[]) {
-	_CrtDumpMemoryLeaks();
+
 	Start(argv[0]); // Initialisation
 
 	srand(time(NULL));

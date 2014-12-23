@@ -1,5 +1,6 @@
 //Classe qui gere les packs de santé.
 //crée le 13 novembre par SAmuel Rambaud (Sam.Rambaud@outlook.com)
+// Terminer par Julien Dufresne le 19 décembre 2014.
 
 
 class CHealthPack: public CPack{

@@ -74,6 +74,7 @@ public:
 		m_pToolBar->NouveauTour();
 	}
 
+	// Procédure changeant l'équipe acitive.
 	void ChangerTeamActive() {
 		m_pTeamList->AllerSuivantCurseur();
 	}
@@ -135,19 +136,25 @@ public:
 		}
 	}
 
+	// Procédure réagissant au événement du programme.
+	// En entrée:
+	// Param1: Le gestionnaire d'événement...
 	void ReactToEvent(SDL_Event* _pEvent) {
 		
 		// Événement par rapport à la game...
 		switch (_pEvent->type) {
 
+		// Si c'est une touche d'enfoncée...
 		case SDL_KEYDOWN:
 
+			// Si c'Est la touche "T"
 			if (_pEvent->key.keysym.scancode == SDL_SCANCODE_T && !m_boDebutPartie  && !m_boFinTour && m_pToolBar->ObtenirPositionObjetDoubleClick() > 3)
 				m_pToolBar->ReverseboShow();
 
 			break;
 		}
 		
+		// ReactToEvent de la tolbar...
 		m_pToolBar->ReactToEvent(_pEvent, m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif());
 
 		// Initialisation d'un entier correspondant à l'arme doubleclickée...
@@ -172,9 +179,12 @@ public:
 			}
 			break;
 		}
+
+		// Si il y encore des munitions, fait le reacToEvent du joueur...
 		if (uiMunition > 0)
 			m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ReactToEvent(_pEvent, m_pToolBar->ObtenirPositionObjetDoubleClick());
 
+		// Update de la description des outils...
 		m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->UpdateDescription(m_pToolBar->ObtenirPositionObjetSuvol(), m_pToolBar->ObtenirRectPositionSouris());
 	}
 
@@ -566,35 +576,14 @@ public:
 
 					// Repositionnement du pack selon le Y de la CollisionObjetMapChuteLibre...
 					RectTmp.y = iY;
+					
 					// Obtention de l'angle de la pente...
 					double dAngle = RegressionTest({ iX, RectTmp.y }, RectTmp.w / 2, 2*RectTmp.h, true);
-					// Si l'angle est plus grand que 70, il y aura glissade...
-					if (abs(dAngle) >= 70) {
-						// GLISSADEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE à faire..........
-						/*CVecteur2D* VecteurVitessePack = new CVecteur2D(0.0f,0.0f);
-						CVecteur2D* VecteurFrottement = new CVecteur2D(0.0f,0.0f);*/
-						if (dAngle < 0) {
-							/*VecteurFrottement->ModifierVecteur(1, dAngle + 180);
-							VecteurVitessePack->ModifierVecteur(m_pGameMap->ObtenirGravite()->ObtenirNorme(), dAngle);
-							pPackListTmp->ObtenirElementCurseur()->ModifierStabilePack(false);
-							*VecteurVitessePack += *VecteurFrottement;
 
-							RectTmp.x -= VecteurVitessePack->ObtenirComposanteX();
-							RectTmp.y -= VecteurVitessePack->ObtenirComposanteY();*/
-							RectTmp.x -= 50;
-						}
-						else
-						{
-							RectTmp.x += 50;
-						}
-						
-					}
-					// Sinon, modification de l'angle du pack selon la pente et stabilisation de celui-ci...
-					else
-					{
-						pPackListTmp->ObtenirElementCurseur()->ModifierAnlge(dAngle);
-						pPackListTmp->ObtenirElementCurseur()->ModifierStabilePack(true);
-					}
+					// Modification de l'angle de la mine...
+					pPackListTmp->ObtenirElementCurseur()->ModifierAnlge(dAngle);
+					pPackListTmp->ObtenirElementCurseur()->ModifierStabilePack(true);
+					
 					// Modification de sa position...
 					pPackListTmp->ObtenirElementCurseur()->ModifierPosition(RectTmp);
 				}
@@ -605,7 +594,7 @@ public:
 				}
 			}
 
-			pPackListTmp->AllerSuivantCurseur();
+			pPackListTmp->AllerSuivantCurseur(); // Changement de packc.
 		}
 	}
 
@@ -622,10 +611,12 @@ public:
 			SDL_Rect* RectTmp = pProjectileTmp->ObtenirRectDestination();
 			CVecteur2D* pVecteurVitesse = pProjectileTmp->ObtenirVecteurVitesse();
 			int iX, iY; // Position d'une collision.
-			float fangle;
+			float fangle; // Un angle...
 
+			// Si le tour peut se finir...
 			if (!pProjectileTmp->ObtenirSprite("")->IsActif() && pProjectileTmp->ExplosionEnCours()) {
 				
+				// On enlève les joueurs qui sont mort durant le processus...
 				m_pTeamList->AllerATrieur(0);
 				for (int i = m_pTeamList->ObtenirCompte(); i > 0; i--) {
 
@@ -644,34 +635,44 @@ public:
 						m_pTeamList->AllerSuivantTrieur();
 				}
 				
+				// Remet le joeur normal, ainsi que le projectile...
 				m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->DefinirToolActif(false);
 				pProjectileTmp->DefinirExplosion(false);
 				pProjectileTmp->ObtenirSprite("")->DefinirActif(false);
 				m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->ObtenirSpriteRepos()->DefinirActif(true);
+				
+				// Tous les joueurs sont affecté par la physique.
 				m_boDebutPartie = true;
 				m_boFinTour = true;
 				m_pToolBar->NouveauTour();
 			}
 			else {
+
 				// Si un missile est lancé...
 				if (m_pToolBar->ObtenirPositionObjetDoubleClick() == 0 && pProjectileTmp->EstLancer())  {
 
+					// s'il y a une collision avec le missile...
 					if (CollisionMissile(pProjectileTmp->ObtenirSurface(), *pProjectileTmp->ObtenirRectDestination(), &iX, &iY, _pRenderer)) {
 
+						// Réaction à la collision et dommage...
 						pProjectileTmp->ReactionExplosion(pProjectileTmp->ObtenirRectDestination()->x + iX, pProjectileTmp->ObtenirRectDestination()->y + iY);
 						DommageExplosion({ pProjectileTmp->ObtenirRectDestination()->x + iX, pProjectileTmp->ObtenirRectDestination()->y + iY }, 50, _pRenderer);
 					}
 
+					// Si le missile sort de l'écran, sauf vers le haut...
 					else if (RectTmp->x >= 1366 || RectTmp->x + RectTmp->w <= 0 || RectTmp->y >= 768) {
 						pProjectileTmp->ReactionExplosion(-100, -100);
 					}
 
+					// Changement de la position du missile...
 					RectTmp->x += pVecteurVitesse->ObtenirComposanteX() / 35;
 					RectTmp->y += pVecteurVitesse->ObtenirComposanteY() / 35;
 
+					// Addition de vecteur...
 					*pVecteurVitesse += *m_pGameMap->ObtenirGravite();
 					*pVecteurVitesse += *m_pGameMap->ObtenirVecteurVent();
 
+					// Changement de l'angle du missile
 					if (pVecteurVitesse->ObtenirComposanteY() < 0 && pVecteurVitesse->ObtenirComposanteX() >= 0)
 						pProjectileTmp->DefinirAngle((180 / M_PI) * atanf(((-(float)pVecteurVitesse->ObtenirComposanteY()) / ((float)pVecteurVitesse->ObtenirComposanteX()))));
 
@@ -791,8 +792,10 @@ public:
 					}
 				}
 
+				// Si c'est l'arme de mêlée
 				else if (m_pToolBar->ObtenirPositionObjetDoubleClick() == 2 && pProjectileTmp->EstLancer()) {
 
+					// Réaction lors de l'utilisation et dommage...
 					pProjectileTmp->ReactionExplosion(0, 0);
 					DommageMelee(m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif(), _pRenderer);
 
@@ -1530,6 +1533,7 @@ public:
 
 	void DommageExplosion(SDL_Point _ExplosionPoint, unsigned int _uiRayon, SDL_Renderer* _pRenderer) {
 
+		// Variable temporaires...
 		CListeDC<CPlayer*>* pPlayerList;
 		CListeDC<CPack*>* pPackList;
 		CPlayer* pPlayerTmp;
@@ -1537,26 +1541,29 @@ public:
 		SDL_Rect RectDestinationPlayer;
 		SDL_Rect RectDestinationPack;
 		SDL_Rect RectExplosion = { _ExplosionPoint.x - _uiRayon, _ExplosionPoint.y - _uiRayon, 2 * _uiRayon, 2 * _uiRayon };
-
 		int iDistanceRayon, iDomage;
 		float fPourcentage;
 		char chrTmp[8];
 		string strDomage;
 
+		// Pour tous les équipes...
 		m_pTeamList->AllerATrieur(0);
 		for (int i = 0; i < m_pTeamList->ObtenirCompte() && m_pTeamList->ObtenirCompte() > 0; i++) {
 
 			pPlayerList = m_pTeamList->ObtenirElementTrieur()->ObtenirListePlayer();
 
-
+			// Pour tous les joueurs des équipes...
 			pPlayerList->AllerATrieur(0);
 			for (int j = 0; j < pPlayerList->ObtenirCompte() && pPlayerList->ObtenirCompte() > 0; j++) {
 
+				// Obtention du joueur...
 				pPlayerTmp = pPlayerList->ObtenirElementTrieur();
 				RectDestinationPlayer = pPlayerTmp->ObtenirRectDestination();
 
+				// S'il a encore de la vie...
 				if (pPlayerTmp->GetHealth() > 0) {
 
+					// Si le joueur est à gauche de l'explosion, partiellement dans l'explosion en x et au moins dans l'explosion en y.
 					if ((RectDestinationPlayer.x < RectExplosion.x && RectDestinationPlayer.x + RectDestinationPlayer.w >= RectExplosion.x) && (RectDestinationPlayer.y + RectDestinationPlayer.h >= RectExplosion.y && RectDestinationPlayer.y <= RectExplosion.y + RectExplosion.h)) {
 
 						iDistanceRayon = (RectExplosion.x + _uiRayon) - (RectDestinationPlayer.x + RectDestinationPlayer.w);
@@ -1572,6 +1579,7 @@ public:
 						pPlayerTmp->ModifierStabiliteJoueur(false);
 					}
 
+					// Si le joueur est à droite de l'explosion, partiellement dans l'explosion en x et au moins dans l'explosion en y. 
 					else if ((RectDestinationPlayer.x <= RectExplosion.x + RectExplosion.w && RectDestinationPlayer.x + RectDestinationPlayer.w > RectExplosion.x + RectExplosion.w) && (RectDestinationPlayer.y + RectDestinationPlayer.h >= RectExplosion.y && RectDestinationPlayer.y <= RectExplosion.y + RectExplosion.h)) {
 
 						iDistanceRayon = RectDestinationPlayer.x - (RectExplosion.x + _uiRayon);
@@ -1587,6 +1595,7 @@ public:
 						pPlayerTmp->ModifierStabiliteJoueur(false);
 					}
 
+					// Si le joueur est complètement dans l'explosion...
 					else if ((RectDestinationPlayer.x >= RectExplosion.x && RectDestinationPlayer.x + RectDestinationPlayer.w <= RectExplosion.x + RectExplosion.w) && (RectDestinationPlayer.y >= RectExplosion.y && RectDestinationPlayer.y + RectDestinationPlayer.h <= RectExplosion.y + RectExplosion.h)) {
 
 						if (RectDestinationPlayer.x + RectDestinationPlayer.w >= RectExplosion.x + _uiRayon && RectDestinationPlayer.x <= RectExplosion.x + _uiRayon)
@@ -1611,6 +1620,7 @@ public:
 
 					}
 
+					// Si le joueur est en haut de l'explosion, partiellement dans l'explosion en y et au moins dans l'explosion en x.
 					else if ((RectDestinationPlayer.x >= RectExplosion.x && RectDestinationPlayer.x + RectDestinationPlayer.w <= RectExplosion.x + RectExplosion.w) && (RectDestinationPlayer.y < RectExplosion.y && RectDestinationPlayer.y + RectDestinationPlayer.h >= RectExplosion.y)) {
 
 						iDistanceRayon = (RectExplosion.y + _uiRayon) - (RectDestinationPlayer.y + RectDestinationPlayer.h);
@@ -1626,6 +1636,7 @@ public:
 						pPlayerTmp->ModifierStabiliteJoueur(false);
 					}
 
+					// Si le joueur est en bas de l'explosion, partiellement dans l'explosion en y et au moins dans l'explosion en x.
 					else if ((RectDestinationPlayer.x >= RectExplosion.x && RectDestinationPlayer.x + RectDestinationPlayer.w <= RectExplosion.x + RectExplosion.w) && (RectDestinationPlayer.y <= RectExplosion.y + RectExplosion.h && RectDestinationPlayer.y + RectDestinationPlayer.h > RectExplosion.y + RectExplosion.h)) {
 
 						iDistanceRayon = RectDestinationPlayer.y - (RectExplosion.y + _uiRayon);
@@ -1641,26 +1652,26 @@ public:
 						pPlayerTmp->ModifierStabiliteJoueur(false);
 					}
 				}
-
+				pPlayerList->AllerSuivantTrieur();
 			}
-
-			if (pPlayerList->ObtenirCompte() == 0)
-				m_pTeamList->RetirerTrieur(true);
-			
-			else 
-				m_pTeamList->AllerSuivantTrieur();
+			m_pTeamList->AllerSuivantTrieur();
 		}
+
+		// On obtient la liste des packs...
 		pPackList = m_pGameMap->ObtenirPackList();
 
+		// Pour tous les packs...
 		pPackList->AllerDebut();
-
 		for (int i = 0; i < pPackList->ObtenirCompte(); i++) {
 
+			// Obtenrion des packs...
 			pPackTmp = pPackList->ObtenirElementCurseur();
 			RectDestinationPack = pPackTmp->GetRectDestination();
 
+			// Si le pack n'est pas utilisé...
 			if (!pPackTmp->IsUse()) {
 
+				// Si le pack est à gauche de l'explosion, partiellement dans l'explosion en x et au moins dans l'explosion en y.
 				if ((RectDestinationPack.x < RectExplosion.x && RectDestinationPack.x + RectDestinationPack.w >= RectExplosion.x) && (RectDestinationPack.y + RectDestinationPack.h >= RectExplosion.y && RectDestinationPack.y <= RectExplosion.y + RectExplosion.h)) {
 
 					pPackTmp->Use(nullptr);
@@ -1668,6 +1679,7 @@ public:
 					DommageExplosion(PointTmp, pPackTmp->GetRayon(), _pRenderer);
 				}
 
+				// Si le pack est à droite de l'explosion, partiellement dans l'explosion en x et au moins dans l'explosion en y. 
 				else if ((RectDestinationPack.x <= RectExplosion.x + RectExplosion.w && RectDestinationPack.x + RectDestinationPack.w > RectExplosion.x + RectExplosion.w) && (RectDestinationPack.y + RectDestinationPack.h >= RectExplosion.y && RectDestinationPack.y <= RectExplosion.y + RectExplosion.h)) {
 
 					pPackTmp->Use(nullptr);
@@ -1675,6 +1687,7 @@ public:
 					DommageExplosion(PointTmp, pPackTmp->GetRayon(), _pRenderer);
 				}
 
+				// Si le pack est complètement dans l'explosion...
 				else if ((RectDestinationPack.x >= RectExplosion.x && RectDestinationPack.x + RectDestinationPack.w <= RectExplosion.x + RectExplosion.w) && (RectDestinationPack.y >= RectExplosion.y && RectDestinationPack.y + RectDestinationPack.h <= RectExplosion.y + RectExplosion.h)) {
 
 					pPackTmp->Use(nullptr);
@@ -1682,6 +1695,7 @@ public:
 					DommageExplosion(PointTmp, pPackTmp->GetRayon(), _pRenderer);
 				}
 
+				// Si le pack est en haut de l'explosion, partiellement dans l'explosion en y et au moins dans l'explosion en x.
 				else if ((RectDestinationPack.x >= RectExplosion.x && RectDestinationPack.x + RectDestinationPack.w <= RectExplosion.x + RectExplosion.w) && (RectDestinationPack.y < RectExplosion.y && RectDestinationPack.y + RectDestinationPack.h >= RectExplosion.y)) {
 
 					pPackTmp->Use(nullptr);
@@ -1689,6 +1703,7 @@ public:
 					DommageExplosion(PointTmp, pPackTmp->GetRayon(), _pRenderer);
 				}
 
+				// Si le pack est en bas de l'explosion, partiellement dans l'explosion en y et au moins dans l'explosion en x.
 				else if ((RectDestinationPack.x >= RectExplosion.x && RectDestinationPack.x + RectDestinationPack.w <= RectExplosion.x + RectExplosion.w) && (RectDestinationPack.y <= RectExplosion.y + RectExplosion.h && RectDestinationPack.y + RectDestinationPack.h > RectExplosion.y + RectExplosion.h)) {
 
 					pPackTmp->Use(nullptr);
@@ -1696,7 +1711,7 @@ public:
 					DommageExplosion(PointTmp, pPackTmp->GetRayon(), _pRenderer);
 				}
 			}
-			pPackList->AllerSuivantCurseur();
+			pPackList->AllerSuivantCurseur(); // Prochain pack
 		}
 		
 	}
@@ -1774,9 +1789,10 @@ public:
 		return true;
 	}
 
-
+	// Procédure infligeant un dommage avec l'arme de mêlée...
 	bool DommageMelee(CPlayer* _pPlayerActif, SDL_Renderer* _pRenderer) {
 
+		// Variable temporaire...
 		CListeDC<CPlayer*>* pPlayerListTmp;
 		CPlayer* pPlayerTmp;
 		string strDommage;
@@ -1784,20 +1800,26 @@ public:
 
 		strDommage.append("-");
 
+		// Pour toutes les équipes...
 		m_pTeamList->AllerATrieur(0);
 		for (int i = 0; i < m_pTeamList->ObtenirCompte(); i++) {
 
 			pPlayerListTmp = m_pTeamList->ObtenirElementTrieur()->ObtenirListePlayer();
 			pPlayerListTmp->AllerATrieur(0);
 
+			// Pour tous les joueurs...
 			for (int j = 0; j < pPlayerListTmp->ObtenirCompte(); j++) {
 
+				// Obtentions du joueur...
 				pPlayerTmp = pPlayerListTmp->ObtenirElementTrieur();
 
+				// Si ce n'est pas le joueur actif...
 				if (_pPlayerActif != pPlayerTmp) {
 
+					// S'il est vers la droite...
 					if (_pPlayerActif->ObtenirSpriteRepos()->ObtenirEtage() == 0) {
 
+						// S'il y a une collision avec le joueur actif, il a du dommage
 						if (_pPlayerActif->ObtenirRectDestination().x + _pPlayerActif->ObtenirRectDestination().w >= pPlayerTmp->ObtenirRectDestination().x && _pPlayerActif->ObtenirRectDestination().x + _pPlayerActif->ObtenirRectDestination().w < pPlayerTmp->ObtenirRectDestination().x + pPlayerTmp->ObtenirRectDestination().w) {
 
 							if (_pPlayerActif->ObtenirProjectile(2)->ObtenirRectDestination()->y + _pPlayerActif->ObtenirProjectile(2)->ObtenirRectDestination()->h / 2 >= pPlayerTmp->ObtenirRectDestination().y &&_pPlayerActif->ObtenirProjectile(2)->ObtenirRectDestination()->y + _pPlayerActif->ObtenirProjectile(2)->ObtenirRectDestination()->h / 2 <= pPlayerTmp->ObtenirRectDestination().y + pPlayerTmp->ObtenirRectDestination().h) {
@@ -1813,8 +1835,10 @@ public:
 						}
 					}
 
+					// S'il est vers la gauche...
 					else {
 
+						// S'il y a une collision avec le joueur actif, il a du dommage
 						if (_pPlayerActif->ObtenirProjectile(2)->ObtenirRectDestination()->x <= pPlayerTmp->ObtenirRectDestination().x + pPlayerTmp->ObtenirRectDestination().w && _pPlayerActif->ObtenirProjectile(2)->ObtenirRectDestination()->x > pPlayerTmp->ObtenirRectDestination().x) {
 
 							if (_pPlayerActif->ObtenirProjectile(2)->ObtenirRectDestination()->y + _pPlayerActif->ObtenirProjectile(2)->ObtenirRectDestination()->h / 2 >= pPlayerTmp->ObtenirRectDestination().y &&_pPlayerActif->ObtenirProjectile(2)->ObtenirRectDestination()->y + _pPlayerActif->ObtenirProjectile(2)->ObtenirRectDestination()->h / 2 <= pPlayerTmp->ObtenirRectDestination().y + pPlayerTmp->ObtenirRectDestination().h) {

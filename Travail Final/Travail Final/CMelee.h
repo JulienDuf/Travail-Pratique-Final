@@ -12,11 +12,11 @@ private:
 	SDL_Rect m_RectDestinationMelee; // La destination de l'arme de melee.
 
 	CLabel* m_pLblDescription; // La descripton du missile.
-	string m_strDescription[8];
-	bool m_boShowDescription;
-	bool m_boSpace;
-	bool m_boFinUtilisation;
-
+	string m_strDescription[8]; // La description du melee
+	bool m_boShowDescription; // Si on affiche la description...
+	bool m_boSpace; // Si la barre espace est enfoncé...
+	bool m_boFinUtilisation; // Si la mélée est en fon d'utilisation...
+	
 	SDL_Surface* BlitText(string _strTexte[], unsigned int _uiNombreElementTableau, SDL_Color _Couleur) {
 
 		SDL_Surface *pSurfaceBlitin,
@@ -104,48 +104,54 @@ public:
 		m_RectDestinationMelee = { 0, 0, m_pSprite->ObtenirRectSource().w, m_pSprite->ObtenirRectSource().h };
 	}
 
-
+	// Procédure réagissant aux événements reliés à l'arme de mélée
+	// En entrée:
+	// Param1: Les gestionnaires des événements...
 	void ReactToEvent(SDL_Event* _pEvent) { 
+		
+		// Le sprite jetpack devient actif...
 		m_pSprite->DefinirActif(true);
-   		if (_pEvent->key.keysym.scancode == SDL_SCANCODE_SPACE && !m_boSpace && !m_boFinUtilisation) {
+   		
+		// Si la barre d'espace est enfoncé et qu'elle ne l'a pas été avant et qu'il n'est pas en fin d'utilisation...
+		if (_pEvent->key.keysym.scancode == SDL_SCANCODE_SPACE && !m_boSpace && !m_boFinUtilisation) {
+			// Initialisation des variables...
 			m_boSpace = true;
 			m_pSprite->DefinirboBoucle(false);
 			m_pSprite->DefinirPositionDeBouclage(0, 30);
 		}
 	}
 
+	// Procédure affichant le tool...
+	// En entrée:
+	// Param1: Le renderer de la fenêtre...
+	// Param2: La destination du joueur...
 	void ShowTool(SDL_Renderer* _pRenderer, SDL_Rect _RectPlayerDestination) {
-		if (m_pSprite->ModifierAnnimation() && !m_boFinUtilisation) { // Fin du tour...
+		
+		// Si le sprite est fini et que l'arme n'est pas en fin d'utilisation...
+		if (m_pSprite->ModifierAnnimation() && !m_boFinUtilisation) {
 			m_pSprite->DefinirPositionDeBouclage(0, 1);
 			m_pSprite->DefinirActif(true);
 		}
+		// Réinitialisation de la position de l'arme...
 		m_RectDestinationMelee.x = _RectPlayerDestination.x;
 		m_RectDestinationMelee.y = _RectPlayerDestination.y - 5;
 
+		// Petite modification si l'arme est vers la gauche...
 		if (m_pSprite->ObtenirEtage() == 1)
 			m_RectDestinationMelee.x -= 25;
 
+		// Affiche de sprite...
 		m_pSprite->Render(_pRenderer, m_RectDestinationMelee);
 	}
 
+	// Procédure affichant la description du mélée...
+	// En entrée:
+	// Param1: Le renderer de la fenêtre...
 	void ShowDescription(SDL_Renderer* _pRenderer) {
+		
+		// Si la description doit s'afficher...
 		if (m_boShowDescription)
 			m_pLblDescription->ShowControl(_pRenderer);
-	}
-
-	void DefinirActif(bool _boActif) {
-
-		m_pSprite->DefinirActif(_boActif);
-		m_boSpace = false;
-	}
-
-	unsigned int ObtenirMunition() {
-		return 1000;
-	}
-
-	CSprite* ObtenirSprite(string _strNom) {
-		
-		return m_pSprite; 
 	}
 
 	void UpdateDescription(bool _boShow, SDL_Point _PositionDescription) {
@@ -163,6 +169,45 @@ public:
 			m_pLblDescription->SetRectDestinationY(_PositionDescription.y - uiH);
 		else
 			m_pLblDescription->SetRectDestinationY(_PositionDescription.y);
+	}
+
+	// Fonction réagissant à une fin d'utilisation...
+	// En entrée:
+	// Variables inutiles pour cette classe...
+	bool ReactionExplosion(int iX, int iY) {
+
+		m_boSpace = false;
+		m_boFinUtilisation = true;
+
+		return false;
+	}
+	
+	void DefinirActif(bool _boActif) {
+
+		m_pSprite->DefinirActif(_boActif);
+		m_boSpace = false;
+	}
+	
+	void DefinirExplosion(bool _boExplosion) {
+
+		m_boFinUtilisation = _boExplosion;
+
+	}
+
+	bool ExplosionEnCours() {
+
+		return m_boFinUtilisation;
+	}
+
+	// Accesseurs...
+
+	unsigned int ObtenirMunition() {
+		return 1000;
+	}
+
+	CSprite* ObtenirSprite(string _strNom) {
+
+		return m_pSprite;
 	}
 
 	unsigned int ObtenirRayonDommage() {
@@ -184,19 +229,13 @@ public:
 
 		return m_fDommage;
 	}
+	
+	
 	// Méthodes inutiles pour cette classe.......
 
 	CVecteur2D* ObtenirVecteurVitesse(void) {
 
 		return nullptr;
-	}
-
-	bool ReactionExplosion(int iX, int iY) {
-
-		m_boSpace = false;
-		m_boFinUtilisation = true;
-
-		return false;
 	}
 
 	void DefinirRotation(int _iVitesseAngulaire) {
@@ -220,14 +259,4 @@ public:
 
 	}
 
-	void DefinirExplosion(bool _boExplosion) {
-
-		m_boFinUtilisation = _boExplosion;
-
-	}
-
-	bool ExplosionEnCours() {
-
-		return m_boFinUtilisation;
-	}
 };

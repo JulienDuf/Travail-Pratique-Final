@@ -371,12 +371,9 @@ public:
 							pPlayerActif->ModifierStabiliteJoueur(true);
 						}
 
-						if (VerifierCollisionJoueurMap(pPlayerActif, RectTmp, &boCorps, &boPied, &_uiXPieds, &_uiYPieds, &_uiXCorps, &_uiYCorps)) {
-
-							if (boPied) {
-
-
-							}
+						if (!VerifierCollisionJoueurMap(pPlayerActif, RectTmp, &boCorps, &boPied, &_uiXPieds, &_uiYPieds, &_uiXCorps, &_uiYCorps)) {
+							pPlayerActif->ModifierGlissadeJoueur(false);
+							pPlayerActif->ModifierStabiliteJoueur(true);
 						}
 
 					}
@@ -617,6 +614,25 @@ public:
 			float fangle;
 
 			if (!pProjectileTmp->ObtenirSprite("")->IsActif() && pProjectileTmp->ExplosionEnCours()) {
+				
+				m_pTeamList->AllerATrieur(0);
+				for (int i = m_pTeamList->ObtenirCompte(); i > 0; i--) {
+
+					m_pTeamList->ObtenirElementTrieur()->ObtenirListePlayer()->AllerATrieur(0);
+					for (int j = m_pTeamList->ObtenirElementTrieur()->ObtenirListePlayer()->ObtenirCompte(); j > 0; j--) {
+
+						if (m_pTeamList->ObtenirElementTrieur()->ObtenirListePlayer()->ObtenirElementTrieur()->GetHealth() <= 0)
+							m_pTeamList->ObtenirElementTrieur()->ObtenirListePlayer()->RetirerTrieur(true);
+						else
+							m_pTeamList->ObtenirElementTrieur()->ObtenirListePlayer()->AllerSuivantTrieur();
+					}
+
+					if (m_pTeamList->ObtenirCompte() == 0)
+						m_pTeamList->RetirerTrieur(true);
+					else
+						m_pTeamList->AllerSuivantTrieur();
+				}
+				
 				m_pTeamList->ObtenirElementCurseur()->ObtenirPlayerActif()->DefinirToolActif(false);
 				pProjectileTmp->DefinirExplosion(false);
 				pProjectileTmp->ObtenirSprite("")->DefinirActif(false);
@@ -1080,10 +1096,8 @@ public:
 									strDommage.append("-");
 									strDommage.append(SDL_itoa(pPlayerListTmp->ObtenirElementTrieur()->GetHealth() * 100, chrTmp, 10));
 									m_pListeDommage->AjouterFin(new CTemporaryLabel(strDommage, { 200, 0, 0, 255 }, { RectPlayer.x, RectPlayer.y - 20, 0, 0 }, { RectPlayer.x, RectPlayer.y - 80, 0, 0 }, 30, 2000, _pRenderer));
-									
-									// Retire le joueur de la partie.
-									pPlayerListTmp->RetirerTrieur(true);
-									m_pGameMap->CreateHealthPack();
+									pPlayerListTmp->ObtenirElementTrieur()->SetHealth(0);
+
 									return true;
 
 								}
@@ -1530,97 +1544,92 @@ public:
 				pPlayerTmp = pPlayerList->ObtenirElementTrieur();
 				RectDestinationPlayer = pPlayerTmp->ObtenirRectDestination();
 
-				if ((RectDestinationPlayer.x < RectExplosion.x && RectDestinationPlayer.x + RectDestinationPlayer.w >= RectExplosion.x) && (RectDestinationPlayer.y + RectDestinationPlayer.h >= RectExplosion.y && RectDestinationPlayer.y <= RectExplosion.y + RectExplosion.h)) {
+				if (pPlayerTmp->GetHealth() > 0) {
 
-					iDistanceRayon = (RectExplosion.x + _uiRayon) - (RectDestinationPlayer.x + RectDestinationPlayer.w);
-					fPourcentage = ((float)iDistanceRayon / (float)_uiRayon);
+					if ((RectDestinationPlayer.x < RectExplosion.x && RectDestinationPlayer.x + RectDestinationPlayer.w >= RectExplosion.x) && (RectDestinationPlayer.y + RectDestinationPlayer.h >= RectExplosion.y && RectDestinationPlayer.y <= RectExplosion.y + RectExplosion.h)) {
 
-					iDomage = (float)((1 - fPourcentage) * pPlayerTmp->GetHealth()) * 100;
-
-					strDomage.append("-");
-					strDomage.append(SDL_itoa(iDomage, chrTmp, 10));
-					m_pListeDommage->AjouterFin(new CTemporaryLabel(strDomage, { 200, 0, 0, 255 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 20, 0, 0 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 80, 0, 0 }, 30, 2000, _pRenderer));
-
-					pPlayerTmp->SetHealth(pPlayerTmp->GetHealth() * fPourcentage);
-					pPlayerTmp->ModifierStabiliteJoueur(false);
-				}
-
-				else if ((RectDestinationPlayer.x <= RectExplosion.x + RectExplosion.w && RectDestinationPlayer.x + RectDestinationPlayer.w > RectExplosion.x + RectExplosion.w) && (RectDestinationPlayer.y + RectDestinationPlayer.h >= RectExplosion.y && RectDestinationPlayer.y <= RectExplosion.y + RectExplosion.h)) {
-
-					iDistanceRayon = RectDestinationPlayer.x - (RectExplosion.x + _uiRayon);
-					fPourcentage = ((float)iDistanceRayon / (float)_uiRayon);
-					
-					iDomage = (float)((1 - fPourcentage) * pPlayerTmp->GetHealth()) * 100;
-
-					strDomage.append("-");
-					strDomage.append(SDL_itoa(iDomage, chrTmp, 10));
-					m_pListeDommage->AjouterFin(new CTemporaryLabel(strDomage, { 200, 0, 0, 255 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 20, 0, 0 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 80, 0, 0 }, 30, 2000, _pRenderer));
-					
-					pPlayerTmp->SetHealth(pPlayerTmp->GetHealth() * fPourcentage);
-					pPlayerTmp->ModifierStabiliteJoueur(false);
-				}
-
-				else if ((RectDestinationPlayer.x >= RectExplosion.x && RectDestinationPlayer.x + RectDestinationPlayer.w <= RectExplosion.x + RectExplosion.w) && (RectDestinationPlayer.y >= RectExplosion.y && RectDestinationPlayer.y + RectDestinationPlayer.h <= RectExplosion.y + RectExplosion.h)) {
-
-					if (RectDestinationPlayer.x + RectDestinationPlayer.w >= RectExplosion.x + _uiRayon && RectDestinationPlayer.x <= RectExplosion.x + _uiRayon)
-						iDistanceRayon = 0;
-
-					else if (RectDestinationPlayer.x + RectDestinationPlayer.w < RectExplosion.x + _uiRayon && RectDestinationPlayer.x > RectExplosion.x)
 						iDistanceRayon = (RectExplosion.x + _uiRayon) - (RectDestinationPlayer.x + RectDestinationPlayer.w);
+						fPourcentage = ((float)iDistanceRayon / (float)_uiRayon);
 
-					else
+						iDomage = (float)((1 - fPourcentage) * pPlayerTmp->GetHealth()) * 100;
+
+						strDomage.append("-");
+						strDomage.append(SDL_itoa(iDomage, chrTmp, 10));
+						m_pListeDommage->AjouterFin(new CTemporaryLabel(strDomage, { 200, 0, 0, 255 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 20, 0, 0 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 80, 0, 0 }, 30, 2000, _pRenderer));
+
+						pPlayerTmp->SetHealth(pPlayerTmp->GetHealth() * fPourcentage);
+						pPlayerTmp->ModifierStabiliteJoueur(false);
+					}
+
+					else if ((RectDestinationPlayer.x <= RectExplosion.x + RectExplosion.w && RectDestinationPlayer.x + RectDestinationPlayer.w > RectExplosion.x + RectExplosion.w) && (RectDestinationPlayer.y + RectDestinationPlayer.h >= RectExplosion.y && RectDestinationPlayer.y <= RectExplosion.y + RectExplosion.h)) {
+
 						iDistanceRayon = RectDestinationPlayer.x - (RectExplosion.x + _uiRayon);
+						fPourcentage = ((float)iDistanceRayon / (float)_uiRayon);
 
-					fPourcentage = ((float)iDistanceRayon / (float)_uiRayon);
-					
-					iDomage = (float)((1 - fPourcentage) * pPlayerTmp->GetHealth()) * 100;
+						iDomage = (float)((1 - fPourcentage) * pPlayerTmp->GetHealth()) * 100;
 
-					strDomage.append("-");
-					strDomage.append(SDL_itoa(iDomage, chrTmp, 10));
-					m_pListeDommage->AjouterFin(new CTemporaryLabel(strDomage, { 200, 0, 0, 255 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 20, 0, 0 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 80, 0, 0 }, 30, 2000, _pRenderer));
-					
-					pPlayerTmp->SetHealth(pPlayerTmp->GetHealth() * fPourcentage);
-					pPlayerTmp->ModifierStabiliteJoueur(false);
+						strDomage.append("-");
+						strDomage.append(SDL_itoa(iDomage, chrTmp, 10));
+						m_pListeDommage->AjouterFin(new CTemporaryLabel(strDomage, { 200, 0, 0, 255 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 20, 0, 0 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 80, 0, 0 }, 30, 2000, _pRenderer));
 
+						pPlayerTmp->SetHealth(pPlayerTmp->GetHealth() * fPourcentage);
+						pPlayerTmp->ModifierStabiliteJoueur(false);
+					}
+
+					else if ((RectDestinationPlayer.x >= RectExplosion.x && RectDestinationPlayer.x + RectDestinationPlayer.w <= RectExplosion.x + RectExplosion.w) && (RectDestinationPlayer.y >= RectExplosion.y && RectDestinationPlayer.y + RectDestinationPlayer.h <= RectExplosion.y + RectExplosion.h)) {
+
+						if (RectDestinationPlayer.x + RectDestinationPlayer.w >= RectExplosion.x + _uiRayon && RectDestinationPlayer.x <= RectExplosion.x + _uiRayon)
+							iDistanceRayon = 0;
+
+						else if (RectDestinationPlayer.x + RectDestinationPlayer.w < RectExplosion.x + _uiRayon && RectDestinationPlayer.x > RectExplosion.x)
+							iDistanceRayon = (RectExplosion.x + _uiRayon) - (RectDestinationPlayer.x + RectDestinationPlayer.w);
+
+						else
+							iDistanceRayon = RectDestinationPlayer.x - (RectExplosion.x + _uiRayon);
+
+						fPourcentage = ((float)iDistanceRayon / (float)_uiRayon);
+
+						iDomage = (float)((1 - fPourcentage) * pPlayerTmp->GetHealth()) * 100;
+
+						strDomage.append("-");
+						strDomage.append(SDL_itoa(iDomage, chrTmp, 10));
+						m_pListeDommage->AjouterFin(new CTemporaryLabel(strDomage, { 200, 0, 0, 255 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 20, 0, 0 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 80, 0, 0 }, 30, 2000, _pRenderer));
+
+						pPlayerTmp->SetHealth(pPlayerTmp->GetHealth() * fPourcentage);
+						pPlayerTmp->ModifierStabiliteJoueur(false);
+
+					}
+
+					else if ((RectDestinationPlayer.x >= RectExplosion.x && RectDestinationPlayer.x + RectDestinationPlayer.w <= RectExplosion.x + RectExplosion.w) && (RectDestinationPlayer.y < RectExplosion.y && RectDestinationPlayer.y + RectDestinationPlayer.h >= RectExplosion.y)) {
+
+						iDistanceRayon = (RectExplosion.y + _uiRayon) - (RectDestinationPlayer.y + RectDestinationPlayer.h);
+						fPourcentage = ((float)iDistanceRayon / (float)_uiRayon);
+
+						iDomage = (float)((1 - fPourcentage) * pPlayerTmp->GetHealth()) * 100;
+
+						strDomage.append("-");
+						strDomage.append(SDL_itoa(iDomage, chrTmp, 10));
+						m_pListeDommage->AjouterFin(new CTemporaryLabel(strDomage, { 200, 0, 0, 255 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 20, 0, 0 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 80, 0, 0 }, 30, 2000, _pRenderer));
+
+						pPlayerTmp->SetHealth(pPlayerTmp->GetHealth() * fPourcentage);
+						pPlayerTmp->ModifierStabiliteJoueur(false);
+					}
+
+					else if ((RectDestinationPlayer.x >= RectExplosion.x && RectDestinationPlayer.x + RectDestinationPlayer.w <= RectExplosion.x + RectExplosion.w) && (RectDestinationPlayer.y <= RectExplosion.y + RectExplosion.h && RectDestinationPlayer.y + RectDestinationPlayer.h > RectExplosion.y + RectExplosion.h)) {
+
+						iDistanceRayon = RectDestinationPlayer.y - (RectExplosion.y + _uiRayon);
+						fPourcentage = ((float)iDistanceRayon / (float)_uiRayon);
+
+						iDomage = (float)((1 - fPourcentage) * pPlayerTmp->GetHealth()) * 100;
+
+						strDomage.append("-");
+						strDomage.append(SDL_itoa(iDomage, chrTmp, 10));
+						m_pListeDommage->AjouterFin(new CTemporaryLabel(strDomage, { 200, 0, 0, 255 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 20, 0, 0 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 80, 0, 0 }, 30, 2000, _pRenderer));
+
+						pPlayerTmp->SetHealth(pPlayerTmp->GetHealth() * fPourcentage);
+						pPlayerTmp->ModifierStabiliteJoueur(false);
+					}
 				}
-
-				else if ((RectDestinationPlayer.x >= RectExplosion.x && RectDestinationPlayer.x + RectDestinationPlayer.w <= RectExplosion.x + RectExplosion.w) && (RectDestinationPlayer.y < RectExplosion.y && RectDestinationPlayer.y + RectDestinationPlayer.h >= RectExplosion.y)) {
-
-					iDistanceRayon = (RectExplosion.y + _uiRayon) - (RectDestinationPlayer.y + RectDestinationPlayer.h);
-					fPourcentage = ((float)iDistanceRayon / (float)_uiRayon);
-					
-					iDomage = (float)((1 - fPourcentage) * pPlayerTmp->GetHealth()) * 100;
-
-					strDomage.append("-");
-					strDomage.append(SDL_itoa(iDomage, chrTmp, 10));
-					m_pListeDommage->AjouterFin(new CTemporaryLabel(strDomage, { 200, 0, 0, 255 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 20, 0, 0 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 80, 0, 0 }, 30, 2000, _pRenderer));
-					
-					pPlayerTmp->SetHealth(pPlayerTmp->GetHealth() * fPourcentage);
-					pPlayerTmp->ModifierStabiliteJoueur(false);
-				}
-
-				else if ((RectDestinationPlayer.x >= RectExplosion.x && RectDestinationPlayer.x + RectDestinationPlayer.w <= RectExplosion.x + RectExplosion.w) && (RectDestinationPlayer.y <= RectExplosion.y + RectExplosion.h && RectDestinationPlayer.y + RectDestinationPlayer.h > RectExplosion.y + RectExplosion.h)) {
-
-					iDistanceRayon = RectDestinationPlayer.y - (RectExplosion.y + _uiRayon);
-					fPourcentage = ((float)iDistanceRayon / (float)_uiRayon);
-					
-					iDomage = (float)((1 - fPourcentage) * pPlayerTmp->GetHealth()) * 100;
-
-					strDomage.append("-");
-					strDomage.append(SDL_itoa(iDomage, chrTmp, 10));
-					m_pListeDommage->AjouterFin(new CTemporaryLabel(strDomage, { 200, 0, 0, 255 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 20, 0, 0 }, { pPlayerTmp->ObtenirPositionX(), pPlayerTmp->ObtenirPositionY() - 80, 0, 0 }, 30, 2000, _pRenderer));
-					
-					pPlayerTmp->SetHealth(pPlayerTmp->GetHealth() * fPourcentage);
-					pPlayerTmp->ModifierStabiliteJoueur(false);
-				}
-				if (pPlayerTmp->GetHealth() <= 0)  {
-					pPlayerList->RetirerTrieur(true);
-					m_pGameMap->CreateHealthPack();
-				}
-				
-
-				else
-					pPlayerList->AllerSuivantTrieur();
 
 			}
 

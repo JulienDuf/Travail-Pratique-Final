@@ -2,9 +2,10 @@
 // Créée ppar Gabriel Beaudry le 02 décembre 2014 (gabriel.bdry@gmail.com)
 
 class CJetPack : public CMouvement {
+
 private:
 
-	CSprite* m_pSpriteJetPack;
+	CSprite* m_pSpriteJetPack; 
 
 	CBarreVie* m_pBarreDeCarburant;
 

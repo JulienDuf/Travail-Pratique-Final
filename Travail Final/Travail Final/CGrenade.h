@@ -183,6 +183,17 @@ public:
 
 		m_pSpriteExplosion = new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfaceExplosionGrenade"), pGestionnaireTexture->ObtenirDonnee("pTextureExplosionGrenade"), { 0, 0, m_uiRayon, m_uiRayon }, 10, 50, false, false, 1);
 	}
+
+	// Destructeur de CGrenade...
+	~CGrenade() {
+		delete m_pBarrePuissance;
+		delete m_pVecteurVitesseGrenade;
+		delete m_pSpriteExplosion;
+		delete m_pTimerExplosion;
+		delete m_pTimerRotation;
+		delete m_pLblDescription;
+		SDL_FreeSurface(m_pSurfaceGrenadeRotation);
+	}
 	
 	// Fontion qui "trigger" l'explosion...
 	// En entrée: Aucun, Si grenade, explosion à partir de son centre.

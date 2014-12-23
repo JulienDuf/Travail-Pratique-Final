@@ -7,6 +7,9 @@
 #include <iostream>
 #include <fstream>
 #include <math.h>
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
 using namespace std;
 
 #include "CArbreAVL.h"
@@ -527,6 +530,20 @@ void Start(char* _strApplicationFilename) {
 	strEmplacement.append("Personnage\\ContourBarre.png");
 	pGestionnaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTextureContourBarreVie");
 
+	// Chargement de la texture GameOver...
+	strEmplacement = strApplicationPath;
+	strEmplacement.append("GameOver\\GAMEOVER.png");
+	pGestionnaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTextureGameOver");
+
+	// Chargement du sprite pour le GameOver...
+
+	// Surface...
+	strEmplacement = strApplicationPath;
+	strEmplacement.append("GameOver\\polka.png");
+	pGestionnaireSurface->AjouterDonnee(IMG_Load(strEmplacement.c_str()), "pSurfacePolka");
+
+	// Texture...
+	pGestionnaireTexture->AjouterDonnee(IMG_LoadTexture(pWindowJeu->ObtenirRenderer(), strEmplacement.c_str()), "pTexturePolka");
 
 	// Chargements de la texture pour le bouton droit d'un LabelLeftRight.
 	strEmplacement = strApplicationPath;
@@ -604,12 +621,13 @@ void Start(char* _strApplicationFilename) {
 	strEmplacementFichier = strApplicationPath;
 
 	// Création des menus...
-	pGestionnaireMenu->AjouterDonnee(new CMenu(true, { 0, 0, iW, iH }, pGestionnaireTexture->ObtenirDonnee("pTextureMenuPrincipal"), 2, pGestionnaireControl->ObtenirDonnee("pBtnNouvellePartie"), pGestionnaireControl->ObtenirDonnee("pBtnQuitter")), "pMenuPrincipal"); // Crée le menu principal.
+	pGestionnaireMenu->AjouterDonnee(new CMenu(false, { 0, 0, 1366, 768 }, pGestionnaireTexture->ObtenirDonnee("pTextureGameOver"), new CSprite(pGestionnaireSurface->ObtenirDonnee("pSurfacePolka"), pGestionnaireTexture->ObtenirDonnee("pTexturePolka"), { 0, 0, 0, 0 }, 4, 200, true, true, 1), { 0, 548, 220, 220 }, 0), "pMenuGameOver");
+	pGestionnaireMenu->AjouterDonnee(new CMenu(true, { 0, 0, iW, iH }, pGestionnaireTexture->ObtenirDonnee("pTextureMenuPrincipal"), nullptr, {0,0,0,0}, 2, pGestionnaireControl->ObtenirDonnee("pBtnNouvellePartie"), pGestionnaireControl->ObtenirDonnee("pBtnQuitter")), "pMenuPrincipal"); // Crée le menu principal.
 	pGestionnaireMenu->AjouterDonnee(new CMenu(false, { 0, 0, iW, iH }, { 255, 255, 255, 255 }, 8, pGestionnaireControl->ObtenirDonnee("pBtnDebutPartie"), pGestionnaireControl->ObtenirDonnee("pBtnRetour"), pGestionnaireControl->ObtenirDonnee("pLblDescriptionMap"), pGestionnaireControl->ObtenirDonnee("pLblNombreJoueurEquipe"), pGestionnaireControl->ObtenirDonnee("pLblNombreEquipe"), pGestionnaireControl->ObtenirDonnee("pLblLRChoixNbrEquipe"), pGestionnaireControl->ObtenirDonnee("pLblLRChoixNbrJoueurEquipe"), pGestionnaireControl->ObtenirDonnee("pLblLRChoixMap")), "pMenuNouvellePartie"); // Créé le menu nouvelle partie.
 	pGestionnaireMenu->AjouterDonnee(new CMenu(false, { 341, 192, 683, 384 }, { 128, 128, 128, 165 }, 2, pGestionnaireControl->ObtenirDonnee("pBtnResumer"), pGestionnaireControl->ObtenirDonnee("pBtnQuitterGame")), "pMenuPause");
 
 	// Ajoue des menus dans la fenêtre.
-	pWindowJeu->AjouterMenu(3, pGestionnaireMenu->ObtenirDonnee("pMenuPrincipal"), pGestionnaireMenu->ObtenirDonnee("pMenuNouvellePartie"), pGestionnaireMenu->ObtenirDonnee("pMenuPause"));
+	pWindowJeu->AjouterMenu(4, pGestionnaireMenu->ObtenirDonnee("pMenuPrincipal"), pGestionnaireMenu->ObtenirDonnee("pMenuNouvellePartie"), pGestionnaireMenu->ObtenirDonnee("pMenuPause"), pGestionnaireMenu->ObtenirDonnee("pMenuGameOver"));
 
 	boExecution = true;
 	boPause = false;
@@ -625,6 +643,20 @@ void Close(void) {
 	delete pEvent;
 	delete pWindowJeu; // Détruit la fenêtre, donc tous les contrôles reliés à la fenêtre.
 
+	pGestionnaireFont->DestructionFont();
+	pGestionnaireSurface->DestructionSurface();
+	pGestionnaireTexture->DestructionTexture();
+
+	delete pGestionnaireFont;
+	delete pGestionnaireSurface;
+	delete pGestionnaireTexture;
+
+	pGestionnaireMenu->Destruction();
+	pGestionnaireControl->Destruction();
+
+	delete pGestionnaireControl;
+	delete pGestionnaireMenu;
+
 	// Quitte les librairies...
 	SDL_Quit();
 	TTF_Quit();
@@ -634,13 +666,18 @@ void Close(void) {
 
 
 int main(int argc, char* argv[]) {
-
+	_CrtDumpMemoryLeaks();
 	Start(argv[0]); // Initialisation
 
 	srand(time(NULL));
 
 	// Boucle principale de l'application.
 	while (boExecution) {
+
+		if (pWindowJeu->ObtenirGame() != nullptr && pWindowJeu->ObtenirGame()->ObtenirListeTeam()->ObtenirCompte() <= 1) {
+			pGestionnaireMenu->ObtenirDonnee("pMenuGameOver")->DefinirboShow(true);
+			pWindowJeu->FinDePartie();
+		}
 
 		pWindowJeu->Rafraichir(boPause);
 
@@ -663,7 +700,11 @@ int main(int argc, char* argv[]) {
 				switch (pEvent->key.keysym.scancode) {
 				case SDL_SCANCODE_ESCAPE:
 					if (pEvent->type == SDL_KEYDOWN) {
-						if (pWindowJeu->ObtenirGame() != nullptr) {
+						if (pGestionnaireMenu->ObtenirDonnee("pMenuGameOver")->ObtenirBoShow() == true) {
+							pGestionnaireMenu->ObtenirDonnee("pMenuGameOver")->DefinirboShow(false);
+							pGestionnaireMenu->ObtenirDonnee("pMenuPrincipal")->DefinirboShow(true);
+						}
+						else if (pWindowJeu->ObtenirGame() != nullptr) {
 							pGestionnaireMenu->ObtenirDonnee("pMenuPause")->DefinirboShow(true);
 							boPause = true;
 						}

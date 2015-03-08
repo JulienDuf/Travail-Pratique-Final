@@ -726,7 +726,7 @@ public:
 							m_pTeamList->ObtenirElementTrieur()->ObtenirListePlayer()->AllerSuivantTrieur();
 					}
 
-					if (m_pTeamList->ObtenirCompte() == 0)
+					if (m_pTeamList->ObtenirElementTrieur()->ObtenirListePlayer()->ObtenirCompte() == 0)
 						m_pTeamList->RetirerTrieur(true);
 					else
 						m_pTeamList->AllerSuivantTrieur();
